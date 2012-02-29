@@ -1,0 +1,6 @@
+check wether with an ordinary push/commit -a it would also be added to the master
+
+git pull/push -> alle branches
+pull für all ok
+git fetch merged nicht, pull automatisch
+push aufpassen, for den push status anschauen, an richtigen Ort pushed……
