@@ -70,6 +70,7 @@
     <addaction name="separator"/>
     <addaction name="actionMuteAudioOutput"/>
     <addaction name="actionJoystickSettings"/>
+    <addaction name="actionTestphase"/>
     <addaction name="actionSettings"/>
     <addaction name="menuPreferences"/>
     <addaction name="separator"/>
@@ -496,6 +497,15 @@
    </property>
    <property name="text">
     <string>Skye</string>
+   </property>
+  </action>
+  <action name="actionTestphase">
+   <property name="icon">
+    <iconset resource="../../qgroundcontrol.qrc">
+     <normaloff>:/images/skye_images/LOGO_DEF.png</normaloff>:/images/skye_images/LOGO_DEF.png</iconset>
+   </property>
+   <property name="text">
+    <string>Testphase</string>
    </property>
   </action>
  </widget>

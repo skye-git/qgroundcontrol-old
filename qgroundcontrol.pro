@@ -201,6 +201,7 @@ FORMS += src/ui/MainWindow.ui \
     src/ui/WaypointList.ui \    
     src/ui/ObjectDetectionView.ui \
     src/ui/JoystickWidget.ui \
+    src/ui/TestphaseWidget.ui \ #Beginn Ende Code AL (01.03)------------------------------------
     src/ui/DebugConsole.ui \
     src/ui/HDDisplay.ui \
     src/ui/MAVLinkSettingsWidget.ui \
@@ -291,6 +292,7 @@ HEADERS += src/MG.h \
     src/ui/ObjectDetectionView.h \
     src/input/JoystickInput.h \
     src/ui/JoystickWidget.h \
+    src/ui/TestphaseWidget.h \      #Beginn Ende Code AL (01.03.12) ------------------------------------
     src/ui/DebugConsole.h \
     src/ui/HDDisplay.h \
     src/ui/MAVLinkSettingsWidget.h \
@@ -438,6 +440,7 @@ SOURCES += src/main.cc \
     src/ui/ObjectDetectionView.cc \
     src/input/JoystickInput.cc \
     src/ui/JoystickWidget.cc \
+    src/ui/TestphaseWidget.cc \         #Beginn Ende Code AL (01.03.12)
     src/ui/DebugConsole.cc \
     src/ui/HDDisplay.cc \
     src/ui/MAVLinkSettingsWidget.cc \

@@ -53,6 +53,7 @@ This file is part of the QGROUNDCONTROL project
 #include "ObjectDetectionView.h"
 #include "HUD.h"
 #include "JoystickWidget.h"
+#include "TestphaseWidget.h"                //Beginn Ende Code AL (01.03.12)
 #include "input/JoystickInput.h"
 #include "DebugConsole.h"
 #include "ParameterInterface.h"
@@ -134,6 +135,8 @@ public slots:
 
     /** @brief Show the application settings */
     void showSettings();
+    /** @brief Show the TestphaseWidget */          //Beginn Code AL (01.03.12)------------------
+    void showTestphase();                            //Ende Code AL--------------------
     /** @brief Add a communication link */
     void addLink();
     void addLink(LinkInterface* link);
@@ -364,6 +367,7 @@ protected:
 
     // Popup widgets
     JoystickWidget* joystickWidget;
+    TestphaseWidget* testphaseWidget;       //Beginn Ende Code AL (01.03.12)
 
     JoystickInput* joystick;
 

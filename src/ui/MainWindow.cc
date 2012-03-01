@@ -45,6 +45,7 @@ This file is part of the QGROUNDCONTROL project
 #include "QGCWaypointListMulti.h"
 #include "MainWindow.h"
 #include "JoystickWidget.h"
+#include "TestphaseWidget.h"            //Beginn und Ende Code AL (01.03.12)
 #include "GAudioOutput.h"
 #include "QGCToolWidget.h"
 #include "QGCMAVLinkLogPlayer.h"
@@ -1060,6 +1061,9 @@ void MainWindow::connectCommonActions()
     connect(ui.actionJoystickSettings, SIGNAL(triggered()), this, SLOT(configure()));
     // Application Settings
     connect(ui.actionSettings, SIGNAL(triggered()), this, SLOT(showSettings()));
+
+    ui.actionTestphase->setVisible(true);                                           //Beginn Code AL (01.03.12)----------
+    connect(ui.actionTestphase, SIGNAL(triggered()), this, SLOT(showTestphase()));  //Ende Code AL ----------------------
 }
 
 void MainWindow::showHelp()
@@ -1116,6 +1120,12 @@ void MainWindow::configure()
     }
     joystickWidget->show();
 }
+
+void MainWindow::showTestphase()                    //Beginn Code AL (03.01.12)
+{
+    testphaseWidget = new TestphaseWidget(this);
+    testphaseWidget->show();
+}                                                   //Ende Code AL (03.01.12)
 
 void MainWindow::showSettings()
 {
