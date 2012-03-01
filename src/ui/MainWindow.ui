@@ -126,6 +126,7 @@
      <string>Perspectives</string>
     </property>
     <addaction name="actionOperatorsView"/>
+    <addaction name="actionSkyeView"/>
     <addaction name="actionEngineersView"/>
     <addaction name="actionPilotsView"/>
     <addaction name="separator"/>
@@ -483,6 +484,18 @@
    </property>
    <property name="toolTip">
     <string>Update the firmware of one of the connected autopilots</string>
+   </property>
+  </action>
+  <action name="actionSkyeView">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../qgroundcontrol.qrc">
+     <normaloff>:/images/skye_images/LOGO_DEF.png</normaloff>:/images/skye_images/LOGO_DEF.png</iconset>
+   </property>
+   <property name="text">
+    <string>Skye</string>
    </property>
   </action>
  </widget>

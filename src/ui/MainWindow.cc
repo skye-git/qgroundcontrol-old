@@ -113,6 +113,7 @@ MainWindow::MainWindow(QWidget *parent):
         VIEW_SECTIONS currentViewCandidate = (VIEW_SECTIONS) settings.value("CURRENT_VIEW", currentView).toInt();
         if (currentViewCandidate != VIEW_ENGINEER &&
                 currentViewCandidate != VIEW_OPERATOR &&
+                currentViewCandidate != VIEW_SKYE && //Beginn und Ende Code AL (01.03.12)--------------------------------------------------
                 currentViewCandidate != VIEW_PILOT &&
                 currentViewCandidate != VIEW_FULL)
         {
@@ -984,6 +985,7 @@ void MainWindow::connectCommonActions()
     perspectives->addAction(ui.actionMavlinkView);
     perspectives->addAction(ui.actionPilotsView);
     perspectives->addAction(ui.actionOperatorsView);
+    perspectives->addAction(ui.actionSkyeView);                                 //Beginn und Ende Code AL (01.03.12) ------------------------------------------
     perspectives->addAction(ui.actionFirmwareUpdateView);
     perspectives->addAction(ui.actionUnconnectedView);
     perspectives->setExclusive(true);
@@ -993,6 +995,7 @@ void MainWindow::connectCommonActions()
     if (currentView == VIEW_MAVLINK) ui.actionMavlinkView->setChecked(true);
     if (currentView == VIEW_PILOT) ui.actionPilotsView->setChecked(true);
     if (currentView == VIEW_OPERATOR) ui.actionOperatorsView->setChecked(true);
+    if (currentView == VIEW_SKYE) ui.actionSkyeView->setChecked(true);              //Beginn und Ende Code AL (01.03.12)---------------------------------
     if (currentView == VIEW_FIRMWAREUPDATE) ui.actionFirmwareUpdateView->setChecked(true);
     if (currentView == VIEW_UNCONNECTED) ui.actionUnconnectedView->setChecked(true);
 
@@ -1022,6 +1025,7 @@ void MainWindow::connectCommonActions()
     connect(ui.actionPilotsView, SIGNAL(triggered()), this, SLOT(loadPilotView()));
     connect(ui.actionEngineersView, SIGNAL(triggered()), this, SLOT(loadEngineerView()));
     connect(ui.actionOperatorsView, SIGNAL(triggered()), this, SLOT(loadOperatorView()));
+    connect(ui.actionSkyeView, SIGNAL(triggered()), this, SLOT(loadSkyeView()));                        //Beginn und Ende Code AL (01.03.12)------------------------------
     connect(ui.actionUnconnectedView, SIGNAL(triggered()), this, SLOT(loadUnconnectedView()));
 
     connect(ui.actionFirmwareUpdateView, SIGNAL(triggered()), this, SLOT(loadFirmwareUpdateView()));
@@ -1216,6 +1220,7 @@ void MainWindow::UASCreated(UASInterface* uas)
         // The pilot, operator and engineer views were not available on startup, enable them now
         ui.actionPilotsView->setEnabled(true);
         ui.actionOperatorsView->setEnabled(true);
+        ui.actionSkyeView->setEnabled(true);                                    //Beginn und Ende Code AL (01.03.12)-------------------------------------------------
         ui.actionEngineersView->setEnabled(true);
         // The UAS actions are not enabled without connection to system
         ui.actionLiftoff->setEnabled(true);
@@ -1346,6 +1351,8 @@ void MainWindow::UASCreated(UASInterface* uas)
                 case VIEW_PILOT:
                     loadPilotView();
                     break;
+                case VIEW_SKYE:         //Beginn Code AL (01.03.12)---------------------------------------
+                    loadSkyeView();     //Ende Code AL ---------------------------------------------------
                 case VIEW_UNCONNECTED:
                     loadUnconnectedView();
                     break;
@@ -1504,6 +1511,24 @@ void MainWindow::loadViewState()
             video2DockWidget->hide();
             mavlinkInspectorWidget->hide();
             break;
+        case VIEW_SKYE:                                 //Beginn Code AL (01.03.12) Hier werden spaeter unsere eigenen Widgets geladen----------
+            centerStack->setCurrentWidget(mapWidget);
+            controlDockWidget->hide();
+            listDockWidget->show();
+            waypointsDockWidget->show();
+            infoDockWidget->hide();
+            debugConsoleDockWidget->show();
+            logPlayerDockWidget->show();
+            parametersDockWidget->hide();
+            hsiDockWidget->show();
+            headDown1DockWidget->hide();
+            headDown2DockWidget->hide();
+            rcViewDockWidget->hide();
+            headUpDockWidget->show();
+            video1DockWidget->hide();
+            video2DockWidget->hide();
+            mavlinkInspectorWidget->hide();
+            break;                                      //Ende Code AL
         case VIEW_UNCONNECTED:
         case VIEW_FULL:
         default:
@@ -1555,6 +1580,17 @@ void MainWindow::loadOperatorView()
         loadViewState();
     }
 }
+
+void MainWindow::loadSkyeView()                         //Beginn Code AL (01.03.12)--------------------------------
+{
+    if (currentView != VIEW_SKYE)
+    {
+        storeViewState();
+        currentView = VIEW_SKYE;
+        ui.actionSkyeView->setChecked(true);
+        loadViewState();
+    }
+}                                                       //Ende Code AL---------------------------------------------
 
 void MainWindow::loadUnconnectedView()
 {

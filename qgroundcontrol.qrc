@@ -88,6 +88,7 @@
         <file>images/contrib/slugs.png</file>
         <file>images/style-outdoor.css</file>
         <file>images/patterns/lenna.jpg</file>
+        <file>images/skye_images/LOGO_DEF.png</file>
     </qresource>
     <qresource prefix="/general">
         <file alias="vera.ttf">images/Vera.ttf</file>

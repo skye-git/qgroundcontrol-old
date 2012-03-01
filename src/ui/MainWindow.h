@@ -157,6 +157,8 @@ public slots:
     void loadEngineerView();
     /** @brief Load view for operator */
     void loadOperatorView();
+    /** @brief Load view for skye */ //Beginn Code AL (01.03.12)----------------------------------------
+    void loadSkyeView();             //Ende Code AL-----------------------------------------------------
     /** @brief Load MAVLink XML generator view */
     void loadMAVLinkView();
     /** @brief Load firmware update view */
@@ -246,6 +248,7 @@ protected:
     {
         VIEW_ENGINEER,
         VIEW_OPERATOR,
+        VIEW_SKYE, // Beginn und Ende Code AL (01.03.12)-------------------------------------
         VIEW_PILOT,
         VIEW_MAVLINK,
         VIEW_FIRMWAREUPDATE,
