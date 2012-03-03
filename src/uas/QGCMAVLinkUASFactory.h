@@ -13,6 +13,7 @@
 #include "SlugsMAV.h"
 #include "PxQuadMAV.h"
 #include "senseSoarMAV.h"
+#include "SkyeMAV.h"            // Beginn/Ende Code MA (16.02.2012) copied AL (03.03.12)
 #include "ArduPilotMegaMAV.h"
 
 class QGCMAVLinkUASFactory : public QObject

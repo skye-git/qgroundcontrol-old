@@ -473,6 +473,9 @@ public:
         case MAV_AUTOPILOT_FP:
             return "FP";
             break;
+//        case MAV_AUTOPILOT_SKYE: //Start Code AL (03.03.12)-----------
+//            return "SKYE";
+//                break;           //Ende Code AL
         default:
             return "";
             break;

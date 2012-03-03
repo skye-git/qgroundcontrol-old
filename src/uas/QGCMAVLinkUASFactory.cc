@@ -88,6 +88,16 @@ UASInterface* QGCMAVLinkUASFactory::createUAS(MAVLinkProtocol* mavlink, LinkInte
 			break;
 		}
 #endif
+#ifdef QGC_USE_SKYE_MESSAGES                    // Beginn Code MA (16.02.2012) copied AL (03.03.12)
+        case MAV_AUTOPILOT_SKYE:
+                {
+                        SkyeMAV* mav = new SkyeMAV(mavlink,sysid);
+                        mav->setSystemType((int)heartbeat->type);
+                        connect(mavlink, SIGNAL(messageReceived(LinkInterface*, mavlink_message_t)), mav, SLOT(receiveMessage(LinkInterface*, mavlink_message_t)));
+                        uas = mav;
+                        break;
+                }
+#endif                                          // Ende Code MA (16.02.2012)
     default:
     {
         UAS* mav = new UAS(mavlink, sysid);

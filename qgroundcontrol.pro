@@ -142,6 +142,16 @@ contains(MAVLINK_CONF, senseSoar) {
     INCLUDEPATH += $$MAVLINKPATH/SenseSoar
     DEFINES += QGC_USE_SENSESOAR_MESSAGES
 }
+contains(MAVLINK_CONF, skye) {                      ## Beginn Code MA  (15.02.12) copied AL (03.02.12)------------------------------------------
+    # Remove the default set - it is included anyway
+    INCLUDEPATH -= $$BASEDIR/../mavlink/include/common
+    INCLUDEPATH -= $$BASEDIR/thirdParty/mavlink/include/common
+
+    # SKYE SPECIAL MESSAGES
+    INCLUDEPATH += $$BASEDIR/../mavlink/include/skye
+    INCLUDEPATH += $$BASEDIR/thirdParty/mavlink/include/skye
+    DEFINES += QGC_USE_SKYE_MESSAGES
+}                                                   ## Ende Code MA  ------------------------------------------
 
 
 # Include general settings for QGroundControl
@@ -306,6 +316,7 @@ HEADERS += src/MG.h \
     src/uas/PxQuadMAV.h \
     src/uas/ArduPilotMegaMAV.h \
     src/uas/senseSoarMAV.h \
+    src/uas/SkyeMAV.h \             #Beginn code AL (03.03.12)
     src/ui/watchdog/WatchdogControl.h \
     src/ui/watchdog/WatchdogProcessView.h \
     src/ui/watchdog/WatchdogView.h \
@@ -454,6 +465,7 @@ SOURCES += src/main.cc \
     src/uas/PxQuadMAV.cc \
     src/uas/ArduPilotMegaMAV.cc \
     src/uas/senseSoarMAV.cpp \
+    src/uas/SkyeMAV.cc \                    #Beginn Code AL (03.03.12)
     src/ui/watchdog/WatchdogControl.cc \
     src/ui/watchdog/WatchdogProcessView.cc \
     src/ui/watchdog/WatchdogView.cc \

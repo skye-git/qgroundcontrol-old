@@ -1,0 +1,234 @@
+<?xml version='1.0'?>
+<mavlink>
+     <include>common.xml</include>
+     <enums>
+          <enum name="MAV_SKYE_MODE">
+               <description>These defines are predefined OR-combined mode flags used for project skye. There is no need to use values from this enum, but it simplifies the use of the mode flags. Note that manual input is enabled in all modes as a safety override.</description>
+               <entry value="67" name="MAV_MODE_TESTPHASE_DISARMED">
+                    <description>System is ready to test the motors.</description>
+               </entry>
+               <entry value="195" name="MAV_MODE_TESTPHASE_ARMED">
+                    <description>System is ready to test the motors.</description>
+               </entry>
+               <entry value="65" name="MAV_MODE_DIRECT_CONTROL_DISARMED">
+                    <description>System is under Direct Control, no stabilization.</description>
+               </entry>
+               <entry value="193" name="MAV_MODE_DIRECT_CONTROL_ARMED">
+                    <description>System is under Direct Control, no stabilization.</description>
+               </entry>
+               <entry value="81" name="MAV_MODE_ASSISTED_CONTROL_DISARMED">
+                    <description>System is under Assisted Control, stabalized.</description>
+               </entry>
+               <entry value="209" name="MAV_MODE_ASSISTED_CONTROL_ARMED">
+                    <description>System is under Assisted Control, stabalized.</description>
+               </entry>
+               <entry value="89" name="MAV_MODE_HALF_AUTOMATIC_DISARMED">
+                    <description>System is under Half Automatic Control, translation by waypoints, rotation by manual input. Stabalized.</description>
+               </entry>
+               <entry value="217" name="MAV_MODE_HALF_AUTOMATIC_ARMED">
+                    <description>System is under Half Automatic Control, translation by waypoints, rotation by manual input. Stabalized.</description>
+               </entry>
+               <entry value="93" name="MAV_MODE_FULL_AUTOMATIC_DISARMED">
+                    <description>System is under Full Automatic Control, steering by waypoints only. Stabalized.</description>
+               </entry>
+               <entry value="221" name="MAV_MODE_FULL_AUTOMATIC_ARMED">
+                    <description>System is under Full Automatic Control, steering by waypoints only. Stabalized.</description>
+               </entry>
+          </enum>
+          <enum name="MAV_CAM_RECONFIG_PIXEL_CLOCK">
+               <description>Camera Reconfigure parameter "color_coding"</description>
+               <entry value="6" name="MAV_CAM_RECONFIG_PIXEL_CLOCK_6M">
+                    <description/>
+               </entry>
+               <entry value="8" name="MAV_CAM_RECONFIG_PIXEL_CLOCK_8M">
+                    <description/>
+               </entry>
+               <entry value="10" name="MAV_CAM_RECONFIG_PIXEL_CLOCK_10M">
+                    <description/>
+               </entry>
+               <entry value="13" name="MAV_CAM_RECONFIG_PIXEL_CLOCK_13M5">
+                    <description/>
+               </entry>
+               <entry value="20" name="MAV_CAM_RECONFIG_PIXEL_CLOCK_20M">
+                    <description/>
+               </entry>
+               <entry value="24" name="MAV_CAM_RECONFIG_PIXEL_CLOCK_24M">
+                    <description/>
+               </entry>
+               <entry value="27" name="MAV_CAM_RECONFIG_PIXEL_CLOCK_27M6">
+                    <description/>
+               </entry>
+               <entry value="32" name="MAV_CAM_RECONFIG_PIXEL_CLOCK_32M">
+                    <description/>
+               </entry>
+               <entry value="37" name="MAV_CAM_RECONFIG_PIXEL_CLOCK_37M">
+                    <description/>
+               </entry>
+               <entry value="40" name="MAV_CAM_RECONFIG_PIXEL_CLOCK_40M">
+                    <description/>
+               </entry>
+               <entry value="50" name="MAV_CAM_RECONFIG_PIXEL_CLOCK_50M">
+                    <description/>
+               </entry>
+               <entry value="57" name="MAV_CAM_RECONFIG_PIXEL_CLOCK_57M6">
+                    <description/>
+               </entry>
+          </enum>
+          <enum name="MAV_CAM_RECONFIG_COLOR_CODING">
+               <description>Camera Reconfigure parameter "color_coding"</description>
+               <entry value="0" name="MAV_CAM_RECONFIG_COLOR_CODING_AUTO">
+                    <description/>
+               </entry>
+               <entry value="1" name="MAV_CAM_RECONFIG_COLOR_CODING_MONO8">
+                    <description/>
+               </entry>
+               <entry value="2" name="MAV_CAM_RECONFIG_COLOR_CODING_MONO16">
+                    <description/>
+               </entry>
+               <entry value="3" name="MAV_CAM_RECONFIG_COLOR_CODING_RAW8">
+                    <description/>
+               </entry>
+               <entry value="4" name="MAV_CAM_RECONFIG_COLOR_CODING_BGR8">
+                    <description/>
+               </entry>
+               <entry value="5" name="MAV_CAM_RECONFIG_COLOR_CODING_BGRA8">
+                    <description/>
+               </entry>
+               <entry value="6" name="MAV_CAM_RECONFIG_COLOR_CODING_BGR16">
+                    <description/>
+               </entry>
+          </enum>
+          <enum name="MAV_CAM_RECONFIG_BAYER_METHOD">
+               <description>Camera Reconfigure parameter "bayer_method"</description>
+               <entry value="0" name="MAV_CAM_RECONFIG_BAYER_METHOD_IMAGE_PROC">
+                    <description/>Decode via ROS image_proc</entry>
+               <entry value="1" name="MAV_CAM_RECONFIG_BAYER_METHOD_DOWNSAMPLE">
+                    <description/>DownSample</entry>
+               <entry value="2" name="MAV_CAM_RECONFIG_BAYER_METHOD_SIMPLE">
+                    <description/>Simple</entry>
+               <entry value="3" name="MAV_CAM_RECONFIG_BAYER_METHOD_BILINEAR">
+                    <description/>Bilinear</entry>
+               <entry value="4" name="MAV_CAM_RECONFIG_BAYER_METHOD_HQ">
+                    <description/>HQ</entry>
+               <entry value="5" name="MAV_CAM_RECONFIG_BAYER_METHOD_VNG">
+                    <description/>VNG</entry>
+               <entry value="6" name="MAV_CAM_RECONFIG_BAYER_METHOD_AHD">
+                    <description/>AHD</entry>
+          </enum>
+          <enum name="MAV_CAM_RECONFIG_AUTO_CONTROL_SPEED">
+               <description>Camera Reconfigure parameter "auto_control_speed"</description>
+               <entry value="0" name="MAV_CAM_RECONFIG_AUTO_CONTROL_SPEED_ACS_MEDIUM">
+                    <description>Medium</description>
+               </entry>
+               <entry value="1" name="MAV_CAM_RECONFIG_AUTO_CONTROL_SPEED_ACS_SLOW">
+                    <description>Slow</description>
+               </entry>
+               <entry value="2" name="MAV_CAM_RECONFIG_AUTO_CONTROL_SPEED_ACS_FAST">
+                    <description>Fast</description>
+               </entry>
+          </enum>
+          <enum name="MAV_CAM_RECONFIG_HDR_MODE">
+               <description>Camera Reconfigure parameter "hdr_mode"</description>
+               <entry value="0" name="MAV_CAM_RECONFIG_AUTO_CONTROL_HDR_MODE_HDR_OFF">
+                    <description>Off</description>
+               </entry>
+               <entry value="1" name="MAV_CAM_RECONFIG_AUTO_CONTROL_HDR_MODE_HDR_FIXED0">
+                    <description>Fixed0</description>
+               </entry>
+               <entry value="2" name="MAV_CAM_RECONFIG_AUTO_CONTROL_HDR_MODE_HDR_FIXED1">
+                    <description>Fixed1</description>
+               </entry>
+               <entry value="3" name="MAV_CAM_RECONFIG_AUTO_CONTROL_HDR_MODE_HDR_FIXED2">
+                    <description>Fixed2</description>
+               </entry>
+               <entry value="4" name="MAV_CAM_RECONFIG_AUTO_CONTROL_HDR_MODE_HDR_FIXED3">
+                    <description>Fixed3</description>
+               </entry>
+               <entry value="5" name="MAV_CAM_RECONFIG_AUTO_CONTROL_HDR_MODE_HDR_FIXED4">
+                    <description>Fixed4</description>
+               </entry>
+               <entry value="6" name="MAV_CAM_RECONFIG_AUTO_CONTROL_HDR_MODE_HDR_FIXED5">
+                    <description>Fixed5</description>
+               </entry>
+               <entry value="7" name="MAV_CAM_RECONFIG_AUTO_CONTROL_HDR_MODE_HDR_FIXED6">
+                    <description>Fixed6</description>
+               </entry>
+               <entry value="8" name="MAV_CAM_RECONFIG_AUTO_CONTROL_HDR_MODE_HDR_USER">
+                    <description>User</description>
+               </entry>
+          </enum>
+     </enums>
+     <messages>
+          <message id="151" name="TEST_MOTORS">
+               <description>Message type for project SKYE configuration with four thrusters and four direction actuations.</description>
+               <field type="uint8_t" name="target_system" >System ID</field>
+               <field type="float" name="thrust_1">Thrust of motor 1, range [-1,1]</field>
+               <field type="float" name="thrust_2">Thrust of motor 2, range [-1,1]</field>
+               <field type="float" name="thrust_3">Thrust of motor 3, range [-1,1]</field>
+               <field type="float" name="thrust_4">Thrust of motor 4, range [-1,1]</field>
+               <field type="float" name="direct_1">Direction of direction motor 1, in radians</field>
+               <field type="float" name="direct_2">Direction of direction motor 2, in radians</field>
+               <field type="float" name="direct_3">Direction of direction motor 3, in radians</field>
+               <field type="float" name="direct_4">Direction of direction motor 4, in radians</field>
+          </message>
+          <message id="152" name="DIRECT_CONTROL">
+               <description>Control six degrees of freedom in Body Frame. This type of control is intended to use if there is no attitude feedback in the control.</description>
+               <field type="uint8_t" name="target_system">System ID</field>
+               <field type="float" name="thrust_x">Resulting thrust in Body Frame x, range [-1,1]</field>
+               <field type="float" name="thrust_y">Resulting thrust in Body Frame y, range [-1,1]</field>
+               <field type="float" name="thrust_z">Resulting thrust in Body Frame z, range [-1,1]</field>
+               <field type="float" name="moment_x">Resulting moment in Body Frame x (roll), range [-1,1]</field>
+               <field type="float" name="moment_y">Resulting moment in Body Frame y (pitch), range [-1,1]</field>
+               <field type="float" name="moment_z">Resulting moment in Body Frame z (yaw), range [-1,1]</field>
+          </message>
+          <message id="153" name="ASSISTED_CONTROL">
+               <description>Control six degrees of freedom. Position in Inertial (earth) Frame. Use this type if you have attitude feedback in the control loop.</description>
+               <field type="uint8_t" name="target_system">System ID</field>
+               <field type="float" name="translation_x">Translation (velocity) in Inertial Frame x, range [-1,1]</field>
+               <field type="float" name="translation_y">Translation (velocity) in Inertial Frame y, range [-1,1]</field>
+               <field type="float" name="translation_z">Translation (velocity) in Inertial Frame z, range [-1,1]</field>
+               <field type="float" name="rotation_x">Roll, range [-1,1]</field>
+               <field type="float" name="rotation_y">Pitch, range [-1,1]</field>
+               <field type="float" name="rotation_z">Yaw, range [-1,1]</field>
+          </message>
+          <message id="154" name="ASSISTED_RC_CONTROL">
+               <description>Control four degrees of freedom. This type of control is intended to use with a 4-channel limited input device. This message is similar to Message MANUAL_CONTROL</description>
+               <field type="uint8_t" name="target_system">System ID</field>
+               <field type="float" name="translation_x">Translation x [-1,1]</field>
+               <field type="float" name="rotation_x">Roll, range [-1,1]</field>
+               <field type="float" name="rotation_y">Pitch, range [-1,1]</field>
+               <field type="float" name="rotation_z">Yaw, range [-1,1]</field>
+          </message>
+          <message id="155" name="CAM_RECONFIGURE_BLUEFOX">
+               <field type="uint8_t" name="target_system">System ID</field>
+               <field type="uint8_t" name="target_component">System ID</field>
+               <description>Message to change all the parameters present in ROS Reconfigure GUI bluefox node</description>
+               <field type="char[32]" name="guid">Serial number of camera, suffix BLUEFOX_ + 8 dec digits (use first camera if null)</field>
+               <field type="char[32]" name="frame_id">ROS tf frame of reference, resolved with tf_prefix unless absolute.</field>
+               <field type="float" name="pixel_clock">Pixel clock of image sensor [MHz]. See enum MAV_CAM_RECONFIG_PIXEL_CLOCK</field>
+               <field type="float" name="frame_rate">Camera speed (frames per second). Range: 1.0 to 240.0</field>
+               <field type="char[32]" name="camera_info_url">Camera calibration URL for this video_mode (uncalibrated if null). </field>
+               <field type="uint8_t" name="binning_x">Number of pixels combined for horizontal binning, use device hints if zero. Range: 0 to 4</field>
+               <field type="uint8_t" name="binning_y">Number of pixels combined for vertical binning, use device hints if zero. Range: 0 to 4</field>
+               <field type="uint16_t" name="roi_width">Width of Region of Interest in unbinned pixels, full width if zero. Range: 0 to 5000</field>
+               <field type="uint16_t" name="roi_height">Height of Region of Interest in unbinned pixels, full height if zero. Range: 0 to 5000</field>
+               <field type="uint16_t" name="x_offset">Horizontal offset for left side of ROI in unbinned pixels. Range: 0 to 5000</field>
+               <field type="uint16_t" name="y_offset">Vertical offset for top of ROI in unbinned pixels. Range: 0 to 5000</field>
+               <field type="uint8_t" name="color_coding">Color coding. See enum MAV_CAM_RECONFIG_COLOR_CODING</field>
+               <field type="uint8_t" name="bayer_method">Bayer decoding method (default: ROS image_proc). See enum MAV_CAM_RECONFIG_BAYER_METHOD</field>
+               <field type="uint8_t" name="exposure">Auto exposure value . Range: 0 to 255</field>
+               <field type="uint8_t" name="shutter_auto">boolean. Shutter control state. </field>
+               <field type="float" name="shutter_auto_min">Min shutter time [s] in auto mode. Range: 0.0 to 0.1</field>
+               <field type="float" name="shutter_auto_max">Max shutter time [s] in auto mode Range: 0.0 to 0.1</field>
+               <field type="float" name="shutter">Shutter time [s]. Range: 0.0 to 0.1</field>
+               <field type="uint8_t" name="gain_auto">boolean. Gain control state. </field>
+               <field type="uint8_t" name="gain_auto_min">Min relative circuit gain [dB] in auto mode. Range: 0.0 to 12.0</field>
+               <field type="uint8_t" name="gain_auto_max">Max relative circuit gain [dB] in auto mode. Range: 0.0 to 12.0</field>
+               <field type="uint8_t" name="gain">Relative circuit gain [dB]  Range: 0.0 to 12.0</field>
+               <field type="uint8_t" name="auto_control_speed">Control speed for automatic features. See enum MAV_CAM_RECONFIG_AUTO_CONTROL_SPEED</field>
+               <field type="uint8_t" name="auto_query_values">boolean. Queries settings that are auto controlled. </field>
+               <field type="uint8_t" name="hdr_mode">HDR mode. See enum MAV_CAM_RECONFIG_HDR_MODE</field>
+               <field type="uint8_t" name="use_ros_time">boolean. Timestamp Image and CameraInfo using ros::Time::now() </field>
+          </message>
+     </messages>
+</mavlink>
