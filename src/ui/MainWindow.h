@@ -397,6 +397,10 @@ private:
     QString getWindowStateKey();
     QString getWindowGeometryKey();
 
+    // Event handler for 3dConnexion 3DMouse        // Beginn Code MA 06.03.2012 ----------
+    #ifdef MOUSE_ENABLED
+    bool x11Event(XEvent *event);
+    #endif //MOUSE_ENABLED                          // Ende Code MA 06.03.2012 ------------
 };
 
 #endif /* _MAINWINDOW_H_ */

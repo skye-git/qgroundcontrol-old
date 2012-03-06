@@ -67,6 +67,13 @@ This file is part of the QGROUNDCONTROL project
 
 #include "LogCompressor.h"
 
+#ifdef MOUSE_ENABLED                    // Beginn Code MA (06.03.2012)
+#include <QX11Info>
+#include <X11/Xlib.h>
+#undef Success              // Eigen library doesn't work if Success is defined
+#include "xdrvlib.h"
+#endif                                  // Ende Code MA (06.03.2012)
+
 MainWindow* MainWindow::instance(QSplashScreen* screen)
 {
     static MainWindow* _instance = 0;
@@ -1666,3 +1673,44 @@ QList<QAction*> MainWindow::listLinkMenuActions(void)
 {
     return ui.menuNetwork->actions();
 }
+
+#ifdef MOUSE_ENABLED                                // Beginn Code MA (06.03.2012) -----------
+bool MainWindow::x11Event(XEvent *event)
+{
+    MagellanFloatEvent MagellanEvent;
+
+    Display *display = QX11Info::display();
+    if(!display)
+    {
+        qDebug() << "Cannot open display!" << endl;
+    }
+    if ( !MagellanInit( display, winId() ) )
+      {
+           qDebug() << "No 3dXWare driver is running!";
+           return false;
+      };
+    qDebug("XEvent occured...");
+   switch (event->type)
+   {
+    case ClientMessage:
+          switch( MagellanTranslateEvent( display, event, &MagellanEvent, 1.0, 1.0 ) )
+           {
+            case MagellanInputMotionEvent :
+                 MagellanRemoveMotionEvents( display );
+                 qDebug("3D Mouse Motion Detected!");
+                 emit valueMouseChanged(MagellanEvent.MagellanData[ MagellanX ] / 3.5,
+                                        MagellanEvent.MagellanData[ MagellanY ] / 3.5,
+                                        MagellanEvent.MagellanData[ MagellanZ ] / 3.5,
+                                        MagellanEvent.MagellanData[ MagellanA ] / 3.5,
+                                        MagellanEvent.MagellanData[ MagellanB ] / 3.5,
+                                        MagellanEvent.MagellanData[ MagellanC ] / 3.5);
+            return false;
+            break;
+            }
+    default:
+    return false;
+    break;
+    }
+    return false;   // Event will not be destroyed
+}
+#endif // MOUSE_ENABLED                                     // Ende Code MA (06.03.2012) ------

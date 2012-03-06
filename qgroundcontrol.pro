@@ -620,3 +620,16 @@ win32-msvc2008|win32-msvc2010|linux {
     LIBS += -LthirdParty/libxbee/lib \
         -llibxbee
 }
+
+
+# 3DConnexion 3d Mice support                           # Beginn Code MA (06.03.2012) ----------
+# xdrvlib only supported by linux (X11) systems
+# TO DO: Use SDL for 3DConnexion support for Windows and Mac as a Joystick input
+linux-g++|linux-g++-64{
+    exists(/usr/local/libs/libxdrvlib.so){
+        message("Including support for Magellan 3DxWare for linux system.")
+        LIBS += -L/usr/local/lib/ -lxdrvlib
+        HEADERS  += lib/magellan/include/xdrvlib.h      # Is slightly different to default header file
+        DEFINES += MOUSE_ENABLED
+    }
+}                                                        # Ende Code MA (06.03.2012) ---------------
