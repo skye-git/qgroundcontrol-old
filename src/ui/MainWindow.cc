@@ -76,7 +76,6 @@ extern "C"
 {
 #include "xdrvlib.h"
 }
-#define ParameterCheck
 #endif // MOUSE_ENABLED                 // Ende Code MA (06.03.2012)
 
 MainWindow* MainWindow::instance(QSplashScreen* screen)

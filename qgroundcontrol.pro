@@ -633,6 +633,7 @@ linux-g++|linux-g++-64{
         message("Including support for Magellan 3DxWare for linux system.")
         LIBS += -L/usr/local/lib/ -lxdrvlib
         HEADERS  += lib/magellan/include/xdrvlib.h      # Is slightly different to default header file
-        DEFINES += MOUSE_ENABLED
+        DEFINES += MOUSE_ENABLED \
+                    ParameterCheck                      # Has to be defined for magellan usage
     }
 }                                                        # Ende Code MA (06.03.2012) ---------------
