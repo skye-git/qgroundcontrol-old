@@ -1,0 +1,101 @@
+ QGroundControl Open Source Micro Air Vehicle Ground Control Station
+
+This project has mainly be developed by:
+http://qgroundcontrol.org
+Files:
+http://github.com/mavlink/qgroundcontrol
+http://github.com/mavlink/mavlink
+Credits:
+http://qgroundcontrol.org/credits
+
+Project skye:
+http://projectskye.ch
+
+Files:
+http://github.com/skye-git/qgroundcontrol
+
+******************************************************************************
+
+See README for basic installation!
+If you want to use skye mavlink messages, rename user_config.pri.dist to user_config.pri
+If you are using Linux, you can additionally use 3dConnexion 3d mouse:
+
+Linux:
+======
+Follow instructions below or http://www.vtk.org/Wiki/VTK/3DConnexion_Devices_Support
+
+# =========== 3dConnexion Support on Linux System ==============
+# 
+# Install required packages: (on ubuntu 10.04 take libmotif3)
+sudo apt-get install libmotif4
+# And make a link on it because driver looks for libXm.so.3
+sudo ln -s /usr/lib/libXm.so.4 /usr/lib/libXm.so.3
+# 
+# Get newest Linux driver from
+# http://www.3dconnexion.com/support/downloads.php
+# 
+# Install the driver
+# If you downloaded the driver (I did x86) to Downloads folder, do:
+cd /tmp
+tar xzvf ~/Downloads/3dxware-linux-v1-6-0.x86_64.tar.gz
+sudo ./install-3dxunix.sh
+
+# If you are asked to install 3DxWareUnix, press y
+# Then choose your platform (Linux, 4)
+# Let 3DxWareUnix be started at every login
+# It's a USB device
+# -> Installation is done!
+
+# Then change permissions of installed files in /etc/3DxWare:
+sudo chmod go+rx /etc/3DxWare
+sudo chmod go+r /etc/3DxWare/*.scg 
+
+# ============ START DRIVER =================
+# If you want to start the driver:
+sudo /etc/3DxWare/daemon/3dxsrv -d usb
+
+# Then start a demo in a new terminal (ctrl+shift+T):
+/tmp/xcube
+# or:
+/tmp/xvalue
+
+# ============ 3DConnexion SDK ===============
+# 
+# You may also need the 3DConnexion SDK. Get the xdevelop.tgz from here:
+# http://www.3dconnexion.com/support/sdk.php
+
+# Unzip at any place:
+cd /tmp
+tar xzvf ~/Downloads/xdevelop.tgz
+
+# Get cmake
+sudo apt-get install cmake
+	# If <sudo cmake CMakeList.txt> errors with 
+	## CMake Error: your CXX compiler: "CMAKE_CXX_COMPILER-NOTFOUND" was not found.
+	# Then get g++
+	sudo apt-get install g++
+
+# Build and install the CMake project:
+# Download this file (http://www.vtk.org/Wiki/File:CMakeLists.txt)!
+mkdir build
+cd build
+cp ~/Downloads/CMakeLists.txt /tmp
+cmake ..
+make
+sudo make install
+
+# Probably you don't have ccmake installed, then type:
+sudo apt-get install cmake-curses-gui
+
+	# Now you'll probably need to add /usr/local/lib to your LD_LIBRARY_PATH in your ~/.bashrc:
+	gedit ~/.bashrc
+	# Add this line:
+	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+	# Then execute
+	source ~/.bashrc
+
+# You can try now to run xapp:
+sudo /etc/3DxWare/daemon/3dxsrv -d usb
+cd /usr/local/bin
+./xapp
+
