@@ -55,34 +55,21 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     modeButtonGroup->addButton(ui.assistedControlButton);
     modeButtonGroup->addButton((ui.halfAutomaticControlButton));
     modeButtonGroup->addButton((ui.fullAutomaticControlButton));
-    ui.directControlButton->setChecked(true);
 
     inputButtonGroup = new QButtonGroup;
     inputButtonGroup->addButton(ui.mouseButton);
     inputButtonGroup->addButton((ui.touchButton));
     inputButtonGroup->addButton((ui.keyboardButton));
-    ui.mouseButton->setChecked(true);
 
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 
-/*    ui.modeComboBox->clear();
-    ui.modeComboBox->insertItem(0, UAS::getShortModeTextFor(MAV_MODE_PREFLIGHT), MAV_MODE_PREFLIGHT);
-    ui.modeComboBox->insertItem(1, UAS::getShortModeTextFor((MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED)), (MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED));
-    ui.modeComboBox->insertItem(2, UAS::getShortModeTextFor(MAV_MODE_FLAG_MANUAL_INPUT_ENABLED), MAV_MODE_FLAG_MANUAL_INPUT_ENABLED);
-    ui.modeComboBox->insertItem(3, UAS::getShortModeTextFor((MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED)), (MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED));
-    ui.modeComboBox->insertItem(4, UAS::getShortModeTextFor((MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED | MAV_MODE_FLAG_AUTO_ENABLED)), (MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_GUIDED_ENABLED | MAV_MODE_FLAG_AUTO_ENABLED));
-    ui.modeComboBox->insertItem(5, UAS::getShortModeTextFor((MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_TEST_ENABLED)), (MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_TEST_ENABLED));
-    connect(ui.modeComboBox, SIGNAL(activated(int)), this, SLOT(setMode(int)));
-    connect(ui.setModeButton, SIGNAL(clicked()), this, SLOT(transmitMode()));*/
-
     connect(ui.directControlButton, SIGNAL(toggled(bool)), this, SLOT(setDirectControlMode(bool)));
     connect(ui.assistedControlButton, SIGNAL(toggled(bool)), this, SLOT(setAssistedControlMode(bool)));
+    connect(ui.halfAutomaticControlButton, SIGNAL(toggled(bool)), this, SLOT(setHalfAutomaticControlMode(bool)));
+    connect(ui.fullAutomaticControlButton, SIGNAL(toggled(bool)), this, SLOT(setFullAutomaticControlMode(bool)));
 
-
-//    uasMode = ui.modeComboBox->itemData(ui.modeComboBox->currentIndex()).toInt();
-    setDirectControlMode(ui.directControlButton->isChecked());
-    setAssistedControlMode(ui.assistedControlButton->isChecked());
-//    ui.modeComboBox->setCurrentIndex(0);
+    ui.directControlButton->click();
+    ui.mouseButton->click();
 
     ui.gridLayout->setAlignment(Qt::AlignTop);
 
@@ -195,7 +182,6 @@ void UASSkyeControlWidget::setDirectControlMode(bool checked)
     {
 #ifdef  MAVLINK_ENABLED_SKYE
         setMode(MAV_MODE_DIRECT_CONTROL_ARMED);
-        //controlMode = directControl;
         ui.lastActionLabel->setText(tr("Direct Control Mode not sent yet!"));
         transmitMode();
 #endif  // MAVLINK_ENABLED_SKYE
@@ -208,8 +194,31 @@ void UASSkyeControlWidget::setAssistedControlMode(bool checked)
     {
 #ifdef MAVLINK_ENABLED_SKYE
         setMode(MAV_MODE_ASSISTED_CONTROL_ARMED);
-        //controlMode = assistedControl;
         ui.lastActionLabel->setText(tr("Assisted Control Mode not sent yet!"));
+        transmitMode();
+#endif // MAVLINK_ENABLED_SKYE
+    }
+}
+
+void UASSkyeControlWidget::setHalfAutomaticControlMode(bool checked)
+{
+    if (checked)
+    {
+#ifdef MAVLINK_ENABLED_SKYE
+        setMode(MAV_MODE_HALF_AUTOMATIC_ARMED);
+        ui.lastActionLabel->setText(tr("Half Automatic Control Mode not sent yet!"));
+        transmitMode();
+#endif // MAVLINK_ENABLED_SKYE
+    }
+}
+
+void UASSkyeControlWidget::setFullAutomaticControlMode(bool checked)
+{
+    if (checked)
+    {
+#ifdef MAVLINK_ENABLED_SKYE
+        setMode(MAV_MODE_FULL_AUTOMATIC_ARMED);
+        ui.lastActionLabel->setText(tr("Full Automatic Control Mode not sent yet!"));
         transmitMode();
 #endif // MAVLINK_ENABLED_SKYE
     }

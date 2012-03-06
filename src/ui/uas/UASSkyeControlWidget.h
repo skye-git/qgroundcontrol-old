@@ -77,6 +77,10 @@ protected slots:
     void setDirectControlMode(bool checked);
     /** @brief Set uasMode to Assisted Control */
     void setAssistedControlMode(bool checked);
+    /** @brief Set uasMode to Half Automatic Control */
+    void setHalfAutomaticControlMode(bool checked);
+    /** @brief Set uasMode to Full Automatic Control */
+    void setFullAutomaticControlMode(bool checked);
 
 protected:
     int uas;              ///< Reference to the current uas
