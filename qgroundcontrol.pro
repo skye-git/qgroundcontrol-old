@@ -203,6 +203,7 @@ FORMS += src/ui/MainWindow.ui \
     src/ui/CommSettings.ui \
     src/ui/SerialSettings.ui \
     src/ui/UASControl.ui \
+    src/ui/UASSkyeControl.ui \  # Beginn Ende Code MA (06.03.2012)
     src/ui/UASList.ui \
     src/ui/UASInfo.ui \
     src/ui/Linechart.ui \
@@ -284,6 +285,7 @@ HEADERS += src/MG.h \
     src/ui/SerialConfigurationWindow.h \
     src/ui/MainWindow.h \
     src/ui/uas/UASControlWidget.h \
+    src/ui/uas/UASSkyeControlWidget.h \                 # Beginn Ende Code MA (06.03.2012)
     src/ui/uas/UASListWidget.h \
     src/ui/uas/UASInfoWidget.h \
     src/ui/HUD.h \
@@ -434,6 +436,7 @@ SOURCES += src/main.cc \
     src/ui/SerialConfigurationWindow.cc \
     src/ui/MainWindow.cc \
     src/ui/uas/UASControlWidget.cc \
+    src/ui/uas/UASSkyeControlWidget.cc \            # Beginn Ende Code MA (06.03.2012)
     src/ui/uas/UASListWidget.cc \
     src/ui/uas/UASInfoWidget.cc \
     src/ui/HUD.cc \

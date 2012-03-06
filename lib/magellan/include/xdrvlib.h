@@ -1,8 +1,3 @@
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #ifndef XDRVLIB_H
 #define XDRVLIB_H
 /*|--------------------------------------------------------------------------
@@ -31,10 +26,6 @@ extern "C"
 #endif
 
 #ifdef IBM
-#define ParameterCheck
-#endif
-
-#ifdef linux
 #define ParameterCheck
 #endif
 
@@ -168,7 +159,3 @@ typedef union _MagellanTypeConversion_ MagellanTypeConversion;
 #define XLow32( Value )         ((Value)&0x0000FFFF)
 
 #endif  /* Magellan X Window Driver Header */
-
-#ifdef __cplusplus
-}
-#endif

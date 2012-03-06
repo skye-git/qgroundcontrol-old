@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>uasSkyeControl</class>
+ <widget class="QWidget" name="uasSkyeControl">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>267</width>
+    <height>287</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>200</width>
+    <height>150</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>267</width>
+    <height>16777215</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="toolTip">
+   <string>Control widget to send basic control actions to the micro air vehicle</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="3" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QPushButton" name="directControlButton">
+       <property name="minimumSize">
+        <size>
+         <width>35</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>DC</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="assistedControlButton">
+       <property name="minimumSize">
+        <size>
+         <width>35</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>AC</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="halfAutomaticControlButton">
+       <property name="minimumSize">
+        <size>
+         <width>35</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>HAC</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="fullAutomaticControlButton">
+       <property name="minimumSize">
+        <size>
+         <width>35</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>FAC</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="4" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMinimumSize</enum>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="mouseButton">
+       <property name="minimumSize">
+        <size>
+         <width>35</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>3dMouse</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="touchButton">
+       <property name="minimumSize">
+        <size>
+         <width>35</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Touch</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="keyboardButton">
+       <property name="minimumSize">
+        <size>
+         <width>35</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Keyboard</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="1">
+    <widget class="QPushButton" name="controlButton">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>40</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Main control button</string>
+     </property>
+     <property name="statusTip">
+      <string>Main control button</string>
+     </property>
+     <property name="text">
+      <string>Activate Engine</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QLabel" name="lastActionLabel">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>25</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Status label</string>
+     </property>
+     <property name="statusTip">
+      <string>Status label</string>
+     </property>
+     <property name="text">
+      <string>No actions executed so far</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLabel" name="controlStatusLabel">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>10</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Currently controlled system</string>
+     </property>
+     <property name="statusTip">
+      <string>Currently controlled system</string>
+     </property>
+     <property name="text">
+      <string>UNCONNECTED</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>6</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="liftoffButton">
+       <property name="minimumSize">
+        <size>
+         <width>35</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Liftoff / Launch</string>
+       </property>
+       <property name="statusTip">
+        <string>Liftoff / Launch</string>
+       </property>
+       <property name="text">
+        <string>Start</string>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="landButton">
+       <property name="minimumSize">
+        <size>
+         <width>35</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Fly straight to landing spot</string>
+       </property>
+       <property name="statusTip">
+        <string>Fly straight to landing spot</string>
+       </property>
+       <property name="text">
+        <string>Land</string>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="shutdownButton">
+       <property name="minimumSize">
+        <size>
+         <width>25</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Only active on the ground: Poweroff system</string>
+       </property>
+       <property name="statusTip">
+        <string>Only active on the ground: Poweroff system</string>
+       </property>
+       <property name="text">
+        <string>Halt</string>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="0" column="0" rowspan="6">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>17</width>
+       <height>208</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="2" rowspan="6">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>17</width>
+       <height>218</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="6" column="1" colspan="2">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>218</width>
+       <height>37</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+  <zorder>controlButton</zorder>
+  <zorder>lastActionLabel</zorder>
+  <zorder>controlStatusLabel</zorder>
+  <zorder></zorder>
+  <zorder>horizontalSpacer</zorder>
+  <zorder>horizontalSpacer_2</zorder>
+  <zorder>verticalSpacer</zorder>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

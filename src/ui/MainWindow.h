@@ -43,6 +43,7 @@ This file is part of the QGROUNDCONTROL project
 #include "UASInterface.h"
 #include "UASManager.h"
 #include "UASControlWidget.h"
+#include "UASSkyeControlWidget.h"       // Beginn Ende Code MA (06.03.2012)
 #include "Linecharts.h"
 #include "UASInfoWidget.h"
 #include "WaypointList.h"
@@ -231,7 +232,7 @@ public slots:
 
 signals:
     void initStatusChanged(const QString& message);
-
+    void valueMouseChanged(double xValue, double yValue, double zValue, double aValue, double bValue, double cValue);   // Beginn und Ende Code MA (06.03.2012)
 public:
     QGCMAVLinkLogPlayer* getLogPlayer()
     {
@@ -332,6 +333,7 @@ protected:
 
     // Dock widgets
     QPointer<QDockWidget> controlDockWidget;
+    QPointer<QDockWidget> skyeControlDockWidget;        // Beginn Ende Code MA (06.03.2012)
     QPointer<QDockWidget> controlParameterWidget;
     QPointer<QDockWidget> infoDockWidget;
     QPointer<QDockWidget> cameraDockWidget;

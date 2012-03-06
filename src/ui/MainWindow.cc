@@ -55,6 +55,7 @@ This file is part of the QGROUNDCONTROL project
 #include "QGCMAVLinkMessageSender.h"
 #include "QGCRGBDView.h"
 #include "QGCFirmwareUpdate.h"
+#include "SkyeMAV.h"
 
 #ifdef QGC_OSG_ENABLED
 #include "Q3DWidgetFactory.h"
@@ -71,8 +72,12 @@ This file is part of the QGROUNDCONTROL project
 #include <QX11Info>
 #include <X11/Xlib.h>
 #undef Success              // Eigen library doesn't work if Success is defined
+extern "C"
+{
 #include "xdrvlib.h"
-#endif                                  // Ende Code MA (06.03.2012)
+}
+#define ParameterCheck
+#endif // MOUSE_ENABLED                 // Ende Code MA (06.03.2012)
 
 MainWindow* MainWindow::instance(QSplashScreen* screen)
 {
@@ -372,6 +377,16 @@ void MainWindow::buildCommonWidgets()
         controlDockWidget->setWidget( new UASControlWidget(this) );
         addTool(controlDockWidget, tr("Control"), Qt::LeftDockWidgetArea);
     }
+
+#ifdef MAVLINK_ENABLED_SKYE
+    if (!skyeControlDockWidget)         // Beginn Code MA (06.03.2012) -----------------------
+    {
+        skyeControlDockWidget = new QDockWidget(tr("Skye Control"), this);
+        skyeControlDockWidget->setObjectName("SKYE_CONTROL_DOCKWIDGET");
+        skyeControlDockWidget->setWidget( new UASSkyeControlWidget(this) );
+        addTool(skyeControlDockWidget, tr("Skye Control"), Qt::LeftDockWidgetArea);
+    }                                   // Ende Code MA (06.03.2012) --------------------------
+#endif // MAVLINK_ENABLED_SKYE
 
     if (!listDockWidget)
     {
@@ -1213,6 +1228,17 @@ void MainWindow::setActiveUAS(UASInterface* uas)
     // Enable and rename menu
     ui.menuUnmanned_System->setTitle(uas->getUASName());
     if (!ui.menuUnmanned_System->isEnabled()) ui.menuUnmanned_System->setEnabled(true);
+
+#ifdef MAVLINK_ENABLED_SKYE         // Begin Code MA (06.03.2012) [similar JoystickInput] -------------
+    // Connect 3d-Mouse Input to (skye) Mavlink messages
+    SkyeMAV* tmp = 0;
+    // TODO: Disconnect old uas
+
+    tmp = dynamic_cast<SkyeMAV*>(uas);
+    if(tmp) {
+        connect(this, SIGNAL(valueMouseChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommandsByMouse(double,double,double,double,double,double)));
+    }
+#endif // MAVLINK_ENABLED_SKYE      // Ende Code MA (27.02.2012) ---------------------------
 }
 
 void MainWindow::UASSpecsChanged(int uas)
@@ -1678,6 +1704,7 @@ QList<QAction*> MainWindow::listLinkMenuActions(void)
 bool MainWindow::x11Event(XEvent *event)
 {
     MagellanFloatEvent MagellanEvent;
+    double maxMagellanValue = 350;              // Valid for Space Navigator for Notebooks
 
     Display *display = QX11Info::display();
     if(!display)
@@ -1698,12 +1725,12 @@ bool MainWindow::x11Event(XEvent *event)
             case MagellanInputMotionEvent :
                  MagellanRemoveMotionEvents( display );
                  qDebug("3D Mouse Motion Detected!");
-                 emit valueMouseChanged(MagellanEvent.MagellanData[ MagellanX ] / 3.5,
-                                        MagellanEvent.MagellanData[ MagellanY ] / 3.5,
-                                        MagellanEvent.MagellanData[ MagellanZ ] / 3.5,
-                                        MagellanEvent.MagellanData[ MagellanA ] / 3.5,
-                                        MagellanEvent.MagellanData[ MagellanB ] / 3.5,
-                                        MagellanEvent.MagellanData[ MagellanC ] / 3.5);
+                 emit valueMouseChanged(MagellanEvent.MagellanData[ MagellanX ] / maxMagellanValue,
+                                        MagellanEvent.MagellanData[ MagellanY ] / maxMagellanValue,
+                                        MagellanEvent.MagellanData[ MagellanZ ] / maxMagellanValue,
+                                        MagellanEvent.MagellanData[ MagellanA ] / maxMagellanValue,
+                                        MagellanEvent.MagellanData[ MagellanB ] / maxMagellanValue,
+                                        MagellanEvent.MagellanData[ MagellanC ] / maxMagellanValue);
             return false;
             break;
             }
