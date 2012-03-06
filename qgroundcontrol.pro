@@ -626,7 +626,7 @@ win32-msvc2008|win32-msvc2010|linux {
 # xdrvlib only supported by linux (X11) systems
 # TO DO: Use SDL for 3DConnexion support for Windows and Mac as a Joystick input
 linux-g++|linux-g++-64{
-    exists(/usr/local/libs/libxdrvlib.so){
+    exists(/usr/local/lib/libxdrvlib.so){
         message("Including support for Magellan 3DxWare for linux system.")
         LIBS += -L/usr/local/lib/ -lxdrvlib
         HEADERS  += lib/magellan/include/xdrvlib.h      # Is slightly different to default header file
