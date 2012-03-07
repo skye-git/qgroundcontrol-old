@@ -1735,12 +1735,12 @@ bool MainWindow::x11Event(XEvent *event)
 //                     }
                      MagellanEvent.MagellanData[i] = (abs(MagellanEvent.MagellanData[i]) < maxMagellanValue) ? MagellanEvent.MagellanData[i] : (maxMagellanValue*MagellanEvent.MagellanData[i]/abs(MagellanEvent.MagellanData[i]));
                  }
-                 emit valueMouseChanged(MagellanEvent.MagellanData[ MagellanX ] / maxMagellanValue,
-                                        MagellanEvent.MagellanData[ MagellanY ] / maxMagellanValue,
-                                        MagellanEvent.MagellanData[ MagellanZ ] / maxMagellanValue,
+                 emit valueMouseChanged(MagellanEvent.MagellanData[ MagellanZ ] / maxMagellanValue,
+                                        MagellanEvent.MagellanData[ MagellanX ] / maxMagellanValue,
+                                        - MagellanEvent.MagellanData[ MagellanY ] / maxMagellanValue,
+                                        MagellanEvent.MagellanData[ MagellanC ] / maxMagellanValue,
                                         MagellanEvent.MagellanData[ MagellanA ] / maxMagellanValue,
-                                        MagellanEvent.MagellanData[ MagellanB ] / maxMagellanValue,
-                                        MagellanEvent.MagellanData[ MagellanC ] / maxMagellanValue);
+                                        - MagellanEvent.MagellanData[ MagellanB ] / maxMagellanValue);
             return false;
             break;
             }
