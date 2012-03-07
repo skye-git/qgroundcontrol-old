@@ -35,6 +35,7 @@ This file is part of the QGROUNDCONTROL project
 #include <QTimer>
 #include <QHostInfo>
 #include <QSplashScreen>
+#include <qmath.h>                      // Beginn nd Ende Code MA (07.03.2012)
 
 #include "QGC.h"
 #include "MAVLinkSimulationLink.h"
@@ -1715,7 +1716,7 @@ bool MainWindow::x11Event(XEvent *event)
            qDebug() << "No 3dXWare driver is running!";
            return false;
       };
-    qDebug("XEvent occured...");
+   // qDebug("XEvent occured...");
    switch (event->type)
    {
     case ClientMessage:
@@ -1724,6 +1725,16 @@ bool MainWindow::x11Event(XEvent *event)
             case MagellanInputMotionEvent :
                  MagellanRemoveMotionEvents( display );
                  qDebug("3D Mouse Motion Detected!");
+                 for (int i = 0; i < 6; i++) {  // Saturation
+//                     if (MagellanEvent.MagellanData[i] < (0-maxMagellanValue))
+//                     {
+//                         MagellanEvent.MagellanData[i] = - maxMagellanValue;
+//                     }else if (MagellanEvent.MagellanData[i] > maxMagellanValue)
+//                     {
+//                         MagellanEvent.MagellanData[i] = maxMagellanValue;
+//                     }
+                     MagellanEvent.MagellanData[i] = (abs(MagellanEvent.MagellanData[i]) < maxMagellanValue) ? MagellanEvent.MagellanData[i] : (maxMagellanValue*MagellanEvent.MagellanData[i]/abs(MagellanEvent.MagellanData[i]));
+                 }
                  emit valueMouseChanged(MagellanEvent.MagellanData[ MagellanX ] / maxMagellanValue,
                                         MagellanEvent.MagellanData[ MagellanY ] / maxMagellanValue,
                                         MagellanEvent.MagellanData[ MagellanZ ] / maxMagellanValue,

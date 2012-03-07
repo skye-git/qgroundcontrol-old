@@ -232,7 +232,20 @@ public slots:
 
 signals:
     void initStatusChanged(const QString& message);
+
+    /**
+    * @brief Emits new values of 3d mouse device
+    *
+    * @param xValue Translational motion of 3dmouse along x axis, scaled to in range [-1, 1]
+    * @param yValue Translational motion of 3dmouse along x axis, scaled to in range [-1, 1]
+    * @param zValue Translational motion of 3dmouse along x axis, scaled to in range [-1, 1]
+    * @param aValue Rotational motion of 3dmouse, scaled to in range [-1, 1]
+    * @param bValue Rotational motion of 3dmouse, scaled to in range [-1, 1]
+    * @param cValue Rotational motion of 3dmouse, scaled to in range [-1, 1]
+    *
+    */
     void valueMouseChanged(double xValue, double yValue, double zValue, double aValue, double bValue, double cValue);   // Beginn und Ende Code MA (06.03.2012)
+
 public:
     QGCMAVLinkLogPlayer* getLogPlayer()
     {
