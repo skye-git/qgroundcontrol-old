@@ -151,7 +151,6 @@ void UASSkyeControlWidget::setBackgroundColor(QColor color)
     setAutoFillBackground(true);
 }
 
-
 void UASSkyeControlWidget::updateMode(int uas,int baseMode)
 {
     if ((this->uas == uas) && (this->uasMode != baseMode))
