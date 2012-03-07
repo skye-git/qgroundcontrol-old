@@ -92,7 +92,31 @@ void SkyeMAV::setManualControlCommandsByMouse(double x , double y , double z , d
 #ifdef MAVLINK_ENABLED_SKYE
     
     qDebug() << "Recent Mode: " << mode << ": " << getShortModeTextFor(mode);
-    if (mode & MAV_MODE_DIRECT_CONTROL_ARMED)
+    if (mode & MAV_MODE_DIRECT_CONTROL_DISARMED)
+    {
+        sendDirectControlCommands(x, y, z, a, b, c);
+    }else if (mode & MAV_MODE_ASSISTED_CONTROL_DISARMED)
+    {
+        sendAssistedControlCommands(x, y, z, a, b, c);
+    }else{
+        qDebug() << "3DMOUSE/MANUAL CONTROL: IGNORING COMMANDS: Set mode to MANUAL and CUSTOM to send 3DMouse commands!";
+    }
+#else
+    Q_UNUSED(x);
+    Q_UNUSED(y);
+    Q_UNUSED(z);
+    Q_UNUSED(a);
+    Q_UNUSED(b);
+    Q_UNUSED(c);
+#endif // MAVLINK_ENABLED_SKYE
+}
+
+void SkyeMAV::setManualControlCommandsByKeyboard(double x , double y , double z , double a , double b, double c)
+{
+#ifdef MAVLINK_ENABLED_SKYE
+
+    qDebug() << "Recent Mode: " << mode << ": " << getShortModeTextFor(mode);
+    if (mode & MAV_MODE_DIRECT_CONTROL_DISARMED)
     {
         sendDirectControlCommands(x, y, z, a, b, c);
     }else if (mode & MAV_MODE_ASSISTED_CONTROL_DISARMED)
