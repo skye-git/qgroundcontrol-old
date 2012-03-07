@@ -425,12 +425,12 @@ void MAVLinkSimulationLink::mainloop()
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 
-        // GLOBAL POSITION VEHICLE 2
-        mavlink_msg_global_position_int_pack(systemId+1, componentId+1, &ret, 0, (473780.28137103+(x+0.00001))*1E3, (85489.9892510421+((y/2)+0.00001))*1E3, (z+550.0)*1000.0, (z+550.0)*1000.0-1, xSpeed, ySpeed, zSpeed, yaw);
-        bufferlength = mavlink_msg_to_send_buffer(buffer, &ret);
-        //add data into datastream
-        memcpy(stream+streampointer,buffer, bufferlength);
-        streampointer += bufferlength;
+//        // GLOBAL POSITION VEHICLE 2
+//        mavlink_msg_global_position_int_pack(systemId+1, componentId+1, &ret, 0, (473780.28137103+(x+0.00001))*1E3, (85489.9892510421+((y/2)+0.00001))*1E3, (z+550.0)*1000.0, (z+550.0)*1000.0-1, xSpeed, ySpeed, zSpeed, yaw);
+//        bufferlength = mavlink_msg_to_send_buffer(buffer, &ret);
+//        //add data into datastream
+//        memcpy(stream+streampointer,buffer, bufferlength);
+//        streampointer += bufferlength;
 
 //        // ATTITUDE VEHICLE 2
 //        mavlink_msg_attitude_pack(54, MAV_COMP_ID_IMU, &ret, 0, 0, 0, atan2((y/2)+0.3, (x+0.002)), 0, 0, 0);
@@ -559,7 +559,11 @@ void MAVLinkSimulationLink::mainloop()
         uint8_t mavType;
         if (typeCounter < 10)
         {
+#ifdef MAVLINK_ENABLED_SKYE                 // Begin Code MA (24.02.2012)
+            mavType = MAV_TYPE_AIRSHIP;
+#else                                       // Ende Code MA
             mavType = MAV_TYPE_QUADROTOR;
+#endif
         }
         else
         {
@@ -577,7 +581,11 @@ void MAVLinkSimulationLink::mainloop()
         streampointer += bufferlength;
 
         // Pack message and get size of encoded byte string
-        messageSize = mavlink_msg_heartbeat_pack(systemId+1, componentId+1, &msg, mavType, MAV_AUTOPILOT_GENERIC, system.base_mode, system.custom_mode, system.system_status);
+#ifdef MAVLINK_ENABLED_SKYE                                         // Begin Code MA (24.02.2012)
+        messageSize = mavlink_msg_heartbeat_pack(systemId, componentId, &msg, mavType, MAV_AUTOPILOT_SKYE, system.base_mode, system.custom_mode, system.system_status);
+#else                                                               // Ende Code MA
+        messageSize = mavlink_msg_heartbeat_pack(systemId, componentId, &msg, mavType, MAV_AUTOPILOT_ARDUPILOTMEGA, system.base_mode, system.custom_mode, system.system_status);
+#endif
         // Allocate buffer with packet data
         bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
         //qDebug() << "CRC:" << msg.ck_a << msg.ck_b;
@@ -614,13 +622,13 @@ void MAVLinkSimulationLink::mainloop()
 //        memcpy(stream+streampointer,buffer, bufferlength);
 //        streampointer += bufferlength;
 
-        // STATUS VEHICLE 2
-        mavlink_sys_status_t status2;
-        mavlink_heartbeat_t system2;
-        system2.base_mode = MAV_MODE_PREFLIGHT;
-        status2.voltage_battery = voltage;
-        status2.load = 120;
-        system2.system_status = MAV_STATE_STANDBY;
+//        // STATUS VEHICLE 2
+//        mavlink_sys_status_t status2;
+//        mavlink_heartbeat_t system2;
+//        system2.base_mode = MAV_MODE_PREFLIGHT;
+//        status2.voltage_battery = voltage;
+//        status2.load = 120;
+//        system2.system_status = MAV_STATE_STANDBY;
 
         // Pack message and get size of encoded byte string
         messageSize = mavlink_msg_sys_status_encode(54, componentId, &msg, &status);

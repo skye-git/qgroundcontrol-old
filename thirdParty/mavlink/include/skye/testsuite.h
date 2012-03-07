@@ -30,27 +30,27 @@ static void mavlink_test_test_motors(uint8_t system_id, uint8_t component_id, ma
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
 	mavlink_test_motors_t packet_in = {
-		17.0,
-	45.0,
-	73.0,
-	101.0,
-	129.0,
-	157.0,
-	185.0,
-	213.0,
-	101,
+		963497464,
+	963497672,
+	963497880,
+	963498088,
+	53,
+	120,
+	187,
+	254,
+	65,
 	};
 	mavlink_test_motors_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
-        	packet1.thrust_1 = packet_in.thrust_1;
-        	packet1.thrust_2 = packet_in.thrust_2;
-        	packet1.thrust_3 = packet_in.thrust_3;
-        	packet1.thrust_4 = packet_in.thrust_4;
         	packet1.direct_1 = packet_in.direct_1;
         	packet1.direct_2 = packet_in.direct_2;
         	packet1.direct_3 = packet_in.direct_3;
         	packet1.direct_4 = packet_in.direct_4;
         	packet1.target_system = packet_in.target_system;
+        	packet1.thrust_1 = packet_in.thrust_1;
+        	packet1.thrust_2 = packet_in.thrust_2;
+        	packet1.thrust_3 = packet_in.thrust_3;
+        	packet1.thrust_4 = packet_in.thrust_4;
         
         
 

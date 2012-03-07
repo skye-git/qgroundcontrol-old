@@ -45,7 +45,29 @@ MAVLinkSimulationMAV::MAVLinkSimulationMAV(MAVLinkSimulationLink *parent, int sy
     sys_state(MAV_STATE_STANDBY),
     nav_mode(0),
     flying(false),
-    mavlink_version(version)
+    mavlink_version(version),
+    // Begin Code MA (07.03.2012) -----------------------
+     thrustX(0),      // Direct Control input
+     thrustY(0),
+     thrustZ(0),
+     momentX(0),
+     momentY(0),
+     momentZ(0),
+     transX(0),      // Direct Control input
+     transY(0),
+     transZ(0),
+     rotX(0),
+     rotY(0),
+     rotZ(0),
+     thrust1(0),        //Testphase Control
+     thrust2(0),
+     thrust3(0),
+     thrust4(0),
+     orientation1(0),
+     orientation2(0),
+     orientation3(0),
+     orientation4(0)
+    // Ende Code MA (07.03.2012) --------------------------
 {
     // Please note: The waypoint planner is running
     connect(&mainloopTimer, SIGNAL(timeout()), this, SLOT(mainloop()));
@@ -58,7 +80,7 @@ MAVLinkSimulationMAV::MAVLinkSimulationMAV(MAVLinkSimulationLink *parent, int sy
 void MAVLinkSimulationMAV::mainloop()
 {
     // Calculate new simulator values
-    //    double maxSpeed = 0.0001; // rad/s in earth coordinate frame
+    //     maxSpeed = 0.0001; // rad/s in earth coordinate frame
 
     //        double xNew = // (nextSPX - previousSPX)
 
@@ -71,7 +93,11 @@ void MAVLinkSimulationMAV::mainloop()
     // 1 Hz execution
     if (timer1Hz <= 0) {
         mavlink_message_t msg;
+#ifdef MAVLINK_ENABLED_SKYE
+        mavlink_msg_heartbeat_pack(systemid, MAV_COMP_ID_IMU, &msg, MAV_TYPE_AIRSHIP, MAV_AUTOPILOT_SKYE, MAV_MODE_MANUAL_ARMED, 0, MAV_STATE_ACTIVE);
+#else
         mavlink_msg_heartbeat_pack(systemid, MAV_COMP_ID_IMU, &msg, MAV_TYPE_FIXED_WING, MAV_AUTOPILOT_ARDUPILOTMEGA, MAV_MODE_GUIDED_ARMED, 0, MAV_STATE_ACTIVE);
+#endif // MAVLINK_ENABLED_SKYE
         link->sendMAVLinkMessage(&msg);
         planner.handleMessage(msg);
 
@@ -211,7 +237,54 @@ void MAVLinkSimulationMAV::mainloop()
         pressure.time_usec = 0; // Works also with zero timestamp
         mavlink_msg_raw_pressure_encode(systemid, MAV_COMP_ID_IMU, &msg, &pressure);
         link->sendMAVLinkMessage(&msg);
+
+
+#ifdef MAVLINK_ENABLED_SKYE                     // Beginn Code MA (07.03.2012) ------------ TEMPORARY !!!
+        // RETURN DIRECT CONTROL MESSAGE
+        mavlink_direct_control_t direct;
+        direct.thrust_x = thrustX;
+        direct.thrust_y = thrustY;
+        direct.thrust_z = thrustZ;
+        direct.moment_x = momentX;
+        direct.moment_y = momentY;
+        direct.moment_z = momentZ;
+        direct.target_system = systemid;
+        mavlink_msg_direct_control_encode(systemid, MAV_COMP_ID_IMU, &msg, &direct);
+        link->sendMAVLinkMessage(&msg);
+
+        // RETURN ASSISTED CONTROL MESSAGE
+        mavlink_assisted_control_t assisted;
+        assisted.translation_x = transX;
+        assisted.translation_y = transY;
+        assisted.translation_z = transZ;
+        assisted.rotation_x = rotX;
+        assisted.rotation_y = rotY;
+        assisted.rotation_z = rotZ;
+        assisted.target_system = systemid;
+        mavlink_msg_assisted_control_encode(systemid, MAV_COMP_ID_IMU, &msg, &assisted);
+        link->sendMAVLinkMessage(&msg);
+
+        // RETURN TESTPHASE CONTROL MESSAGE
+        mavlink_test_motors_t testmotors;
+        testmotors.thrust_1=thrust1;
+        testmotors.thrust_2=thrust2;
+        testmotors.thrust_3=thrust3;
+        testmotors.thrust_4=thrust4;
+        testmotors.direct_1=orientation1;
+        testmotors.direct_2=orientation2;
+        testmotors.direct_3=orientation3;
+        testmotors.direct_4=orientation4;
+        testmotors.target_system = systemid;
+        mavlink_msg_test_motors_encode(systemid, MAV_COMP_ID_IMU, &msg, &testmotors);
+        link->sendMAVLinkMessage(&msg);
+
+#endif                                          // Ende Code MA (07.03.2012)  ----------------
+
+
+
     }
+
+
 
     // 25 Hz execution
     if (timer25Hz <= 0) {
@@ -469,6 +542,50 @@ void MAVLinkSimulationMAV::handleMessage(const mavlink_message_t& msg)
         }
         //qDebug() << "UPDATED SP:" << "X" << nextSPX << "Y" << nextSPY << "Z" << nextSPZ;
     }
+
+        break;                                  // Beginn Code MA (07.03.2012)
+        case MAVLINK_MSG_ID_DIRECT_CONTROL: {
+            mavlink_direct_control_t dc;
+            mavlink_msg_direct_control_decode(&msg, &dc);
+            if (dc.target_system == this->systemid) {
+                qDebug() << "thrust x: " << dc.thrust_x << "------------------------------------------";
+                thrustX = dc.thrust_x;
+                thrustY = dc.thrust_y;
+                thrustZ = dc.thrust_z;
+                momentX = dc.moment_x;
+                momentY = dc.moment_y;
+                momentZ = dc.moment_z;
+                // thrustX = 42;
+            }
+        }
+        break;
+        case MAVLINK_MSG_ID_ASSISTED_CONTROL: {
+            mavlink_assisted_control_t ac;
+            mavlink_msg_assisted_control_decode(&msg, &ac);
+            if (ac.target_system == this->systemid) {
+                transX = ac.translation_x;
+                transY = ac.translation_y;
+                transZ = ac.translation_z;
+                rotX = ac.rotation_x;
+                rotY = ac.rotation_y;
+                rotZ = ac.rotation_z;
+            }
+        }
+        break;
+        case MAVLINK_MSG_ID_TEST_MOTORS: {
+        mavlink_test_motors_t tm;
+        mavlink_msg_test_motors_decode(&msg, &tm);
+        if (tm.target_system == this->systemid) {
+             thrust1 = tm.thrust_1;        //Testphase Control
+             thrust2 = tm.thrust_2;
+             thrust3 = tm.thrust_3;
+             thrust4 = tm.thrust_4;
+             orientation1 = tm.direct_1;
+             orientation2 =tm.direct_2;
+             orientation3 = tm.direct_3;
+             orientation4 = tm.direct_4;
+        }
+    }   // Ende Code MA (07.03.2012)
     break;
     }
 }

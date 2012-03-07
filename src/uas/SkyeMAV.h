@@ -16,12 +16,26 @@ public slots:
     void receiveMessage(LinkInterface* link, mavlink_message_t message);
     /** @brief Send the 6 DOF command (from 3d Mouse) to MAV */
     void setManualControlCommandsByMouse(double x , double y , double z , double a , double b , double c );
+    /** @brief Send the 8 DOF command (from Testphase Widget) to MAV */
+    void setTestphaseCommandsByWidget(int Thrust1 , int Thrust3 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 ); //AL (06.03.12)
 
 protected:
     /** @brief Send a Direct Control Command to MAV: */
     void sendDirectControlCommands(double xThrust, double yThrust, double zThrust, double xMoment, double yMoment, double zMoment);
     /** @brief Send a Assisted Control Command to MAV: */
     void sendAssistedControlCommands(double xVel, double yVel, double zVel, double xRot, double yRot, double zRot);
+    /** @brief Send a Testphase Control Command to MAV: */
+    void sendTestphaseControlCommands(int Thrust1 , int Thrust3 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 );//AL (06.03.12)
+
+
+    int manual1Thrust;          ///<Thrust for Motor 1 set by human pilot
+    int manual2Thrust;          ///<Thrust for Motor 2 set by human pilot
+    int manual3Thrust;          ///<Thrust for Motor 3 set by human pilot
+    int manual4Thrust;          ///<Thrust for Motor 4 set by human pilot
+    int manual1Orientation;     ///<Orientation for Motor 1 set by human pilot
+    int manual2Orientation;     ///<Orientation for Motor 2 set by human pilot
+    int manual3Orientation;     ///<Orientation for Motor 3 set by human pilot
+    int manual4Orientation;     ///<Orientation for Motor 4 set by human pilot
 
     double manualXThrust;      ///< X Thrust set by human pilot
     double manualYThrust;      ///< Y Thrust set by human pilot

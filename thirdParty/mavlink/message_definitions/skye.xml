@@ -162,14 +162,14 @@
           <message id="151" name="TEST_MOTORS">
                <description>Message type for project SKYE configuration with four thrusters and four direction actuations.</description>
                <field type="uint8_t" name="target_system" >System ID</field>
-               <field type="float" name="thrust_1">Thrust of motor 1, range [-1,1]</field>
-               <field type="float" name="thrust_2">Thrust of motor 2, range [-1,1]</field>
-               <field type="float" name="thrust_3">Thrust of motor 3, range [-1,1]</field>
-               <field type="float" name="thrust_4">Thrust of motor 4, range [-1,1]</field>
-               <field type="float" name="direct_1">Direction of direction motor 1, in radians</field>
-               <field type="float" name="direct_2">Direction of direction motor 2, in radians</field>
-               <field type="float" name="direct_3">Direction of direction motor 3, in radians</field>
-               <field type="float" name="direct_4">Direction of direction motor 4, in radians</field>
+               <field type="uint8_t" name="thrust_1">Thrust of motor 1, range [-1,1]</field>
+               <field type="uint8_t" name="thrust_2">Thrust of motor 2, range [-1,1]</field>
+               <field type="uint8_t" name="thrust_3">Thrust of motor 3, range [-1,1]</field>
+               <field type="uint8_t" name="thrust_4">Thrust of motor 4, range [-1,1]</field>
+               <field type="int32_t" name="direct_1">Direction of direction motor 1, 360 degrees equal 38'000</field>
+               <field type="int32_t" name="direct_2">Direction of direction motor 2, 360 degrees equal 38'000</field>
+               <field type="int32_t" name="direct_3">Direction of direction motor 3, 360 degrees equal 38'000</field>
+               <field type="int32_t" name="direct_4">Direction of direction motor 4, 360 degrees equal 38'000</field>
           </message>
           <message id="152" name="DIRECT_CONTROL">
                <description>Control six degrees of freedom in Body Frame. This type of control is intended to use if there is no attitude feedback in the control.</description>

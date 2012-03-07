@@ -8,7 +8,15 @@ manualYThrust(0),
 manualZThrust(0),
 manualXMoment(0),
 manualYMoment(0),
-manualZMoment(0)
+manualZMoment(0),
+manual1Thrust(0),
+manual2Thrust(0),
+manual3Thrust(0),
+manual4Thrust(0),
+manual1Orientation(0),
+manual2Orientation(0),
+manual3Orientation(0),
+manual4Orientation(0)
 {
 }
 
@@ -34,6 +42,11 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
                 // TO DO: This is no receiving message, but one to send!!!
                 break;
             }
+            case MAVLINK_MSG_ID_TEST_MOTORS:
+            {
+                // TO DO: This is no receiving message, but one to send!!!
+                break;
+            }
                 
             default:
             {
@@ -50,6 +63,29 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
     Q_UNUSED(message);
 #endif // MAVLINK_ENABLED_SKYE
 }
+
+
+void SkyeMAV::setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4)//AL (06.03.12)
+{
+#ifdef MAVLINK_ENABLED_SKYE
+
+    sendTestphaseControlCommands(Thrust1, Thrust2, Thrust3, Thrust4, Orientation1, Orientation2, Orientation3, Orientation4);
+   // qDebug() << "Recent Mode: " << mode;
+   // qDebug() << "Direct is " << MAV_MODE_DIRECT_CONTROL_ARMED;
+#else
+    Q_UNUSED(Thrust1);
+    Q_UNUSED(Thrust2);
+    Q_UNUSED(Thrust3);
+    Q_UNUSED(Thrust4);
+    Q_UNUSED(Orientation1);
+    Q_UNUSED(Orientation2);
+    Q_UNUSED(Orientation3);
+    Q_UNUSED(Orientation4);
+
+#endif // MAVLINK_ENABLED_SKYE
+}
+
+
 
 void SkyeMAV::setManualControlCommandsByMouse(double x , double y , double z , double a , double b, double c)
 {
@@ -74,6 +110,41 @@ void SkyeMAV::setManualControlCommandsByMouse(double x , double y , double z , d
     Q_UNUSED(c);
 #endif // MAVLINK_ENABLED_SKYE
 }
+
+//AL (06.03.12)
+void SkyeMAV::sendTestphaseControlCommands(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 )
+{
+#ifdef MAVLINK_ENABLED_SKYE
+    // Scale values (The Testphase widget is designed that no scaling is needed from UI to the machine the value shouldn't change)
+    //double thrustScaling = 1.0f;
+    //double orientationScaling = 1.0f;
+
+    manual1Thrust = Thrust1;//*thrustScaling;
+    manual2Thrust = Thrust2;//*thrustScaling;
+    manual3Thrust = Thrust3;//*thrustScaling;
+    manual4Thrust = Thrust4;//*thrustScaling;
+    manual1Orientation = Orientation1;//*orientationScaling;
+    manual2Orientation = Orientation2;//*orientationScaling;
+    manual3Orientation = Orientation3;//*orientationScaling;
+    manual4Orientation = Orientation4;//*orientationScaling;
+
+    mavlink_message_t message;
+
+    mavlink_msg_test_motors_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (int)manual1Thrust, (int)manual2Thrust, (int)manual3Thrust,(int)manual4Thrust, (int)manual1Orientation, (int)manual2Orientation, (int)manual3Orientation,(int)manual4Orientation);
+    sendMessage(message);
+    qDebug() << __FILE__ << __LINE__ << ": SENT TESTPHASE CONTROL MESSAGE: 1Thrust" << manual1Thrust << " 2Thrust: " << manual2Thrust << " 3Thrust: " << manual3Thrust << " 4Thrust: " << manual4Thrust << " 1Orientation: " << manual1Orientation << " 2Orientation: " << manual2Orientation << " 3Orientation: " << manual3Orientation << " 4Orientation: " << manual4Orientation;
+
+    //emit attitudeThrustSetPointChanged(this, roll, pitch, yaw, thrust, MG::TIME::getGroundTimeNow());
+
+
+#endif // MAVLINK_ENABLED_SKYE
+}
+
+
+
+
+
+//AL (06.03.12)
 
 void SkyeMAV::sendDirectControlCommands(double xThrust, double yThrust, double zThrust, double xMoment, double yMoment, double zMoment)
 {

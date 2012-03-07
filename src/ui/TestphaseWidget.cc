@@ -1,12 +1,20 @@
 #include "TestphaseWidget.h"
 #include "ui_TestphaseWidget.h"
 #include <QDebug>
+#include "UAS.h"
+#include "UASManager.h"
+#include "QGC.h"
 
 TestphaseWidget::TestphaseWidget(QWidget *parent):
     QDialog(parent),
+    uas(NULL),
     m_ui(new Ui::TestphaseWidget)
 {
     m_ui->setupUi(this);
+
+    connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)),this, SLOT(setActiveUAS(UASInterface*)));
+
+
 
     //connect Sliders, spinBoxes and dials
 
@@ -38,6 +46,15 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
     connect(m_ui->HomingButton, SIGNAL(clicked()),this,SLOT(homing()));
     connect(m_ui->stopallButton, SIGNAL(clicked()),this, SLOT(stopall())); //Why connect to this?
 
+    //emit valueTestphaseChanged if some valueChanged
+    connect(m_ui->SliderThrust1, SIGNAL(valueChanged()),this, SLOT(somevalueChanged()));
+    connect(m_ui->SliderThrust2, SIGNAL(valueChanged()),this, SLOT(somevalueChanged()));
+    connect(m_ui->SliderThrust3, SIGNAL(valueChanged()),this, SLOT(somevalueChanged()));
+    connect(m_ui->SliderThrust4, SIGNAL(valueChanged()),this, SLOT(somevalueChanged()));
+    connect(m_ui->dialOrientation1, SIGNAL(valueChanged()),this, SLOT(somevalueChanged()));
+    connect(m_ui->dialOrientation2, SIGNAL(valueChanged()),this, SLOT(somevalueChanged()));
+    connect(m_ui->dialOrientation3, SIGNAL(valueChanged()),this, SLOT(somevalueChanged()));
+    connect(m_ui->dialOrientation4, SIGNAL(valueChanged()),this, SLOT(somevalueChanged()));
 
     // Display the widget
     this->window()->setWindowTitle(tr("Testphase"));
@@ -47,6 +64,31 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
 TestphaseWidget::~TestphaseWidget()
 {
     delete m_ui;
+}
+
+void TestphaseWidget::setActiveUAS(UASInterface *uas)
+{
+    //Only connect / disconnect if the UAS is of a controllable UAS class
+    UAS*tmp = 0;
+    if(this->uas)
+    {
+        tmp = dynamic_cast<UAS*>(this->uas);
+        if(tmp)
+        {
+            disconnect(this, SIGNAL(valueTestphaseChanged(int, int, int, int, int, int, int, int)), tmp, SLOT(setTestphaseCommandsByWidget(int, int, int, int, int, int, int, int)));
+        }
+    }
+
+    this->uas = uas;
+
+    tmp = dynamic_cast<UAS*>(this->uas);
+    if(tmp) {
+        connect(this, SIGNAL(valueTestphaseChanged(int, int, int, int, int, int, int, int)), tmp, SLOT(setTestphaseCommandsByWidget(int, int, int, int, int, int, int, int)));
+    }
+}
+void TestphaseWidget::somevalueChanged()
+{
+    emit valueTestphaseChanged(m_ui->SliderThrust1->value(), m_ui->SliderThrust2->value(), m_ui->SliderThrust3->value(), m_ui->SliderThrust4->value(), m_ui->spinBoxOrientation1->value(), m_ui->spinBoxOrientation2->value(), m_ui->spinBoxOrientation3->value(), m_ui->spinBoxOrientation4->value());
 }
 
 void TestphaseWidget::homing()
