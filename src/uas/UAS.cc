@@ -2489,6 +2489,12 @@ QString UAS::getShortModeTextFor(int id)
         mode.prepend("HIL:");
     }
 
+    // CUSTOM MODE DECODING
+    if (modeid & (uint8_t)MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE)
+    {
+        mode.prepend("C:");
+    }
+
     return mode;
 }
 

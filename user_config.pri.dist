@@ -26,8 +26,9 @@
 # Add or remove custom message specs here. The matching mavlink headers are
 # included in the main qgroundcontrol.pro file.
 
-MAVLINK_CONF += pixhawk
+MAVLINK_CONF += skye
 
+# pixhawk \
 # slugs \
 # ualberta
 

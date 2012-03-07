@@ -203,6 +203,7 @@ FORMS += src/ui/MainWindow.ui \
     src/ui/CommSettings.ui \
     src/ui/SerialSettings.ui \
     src/ui/UASControl.ui \
+    src/ui/UASSkyeControl.ui \  # Beginn Ende Code MA (06.03.2012)
     src/ui/UASList.ui \
     src/ui/UASInfo.ui \
     src/ui/Linechart.ui \
@@ -284,6 +285,7 @@ HEADERS += src/MG.h \
     src/ui/SerialConfigurationWindow.h \
     src/ui/MainWindow.h \
     src/ui/uas/UASControlWidget.h \
+    src/ui/uas/UASSkyeControlWidget.h \                 # Beginn Ende Code MA (06.03.2012)
     src/ui/uas/UASListWidget.h \
     src/ui/uas/UASInfoWidget.h \
     src/ui/HUD.h \
@@ -434,6 +436,7 @@ SOURCES += src/main.cc \
     src/ui/SerialConfigurationWindow.cc \
     src/ui/MainWindow.cc \
     src/ui/uas/UASControlWidget.cc \
+    src/ui/uas/UASSkyeControlWidget.cc \            # Beginn Ende Code MA (06.03.2012)
     src/ui/uas/UASListWidget.cc \
     src/ui/uas/UASInfoWidget.cc \
     src/ui/HUD.cc \
@@ -620,3 +623,17 @@ win32-msvc2008|win32-msvc2010|linux {
     LIBS += -LthirdParty/libxbee/lib \
         -llibxbee
 }
+
+
+# 3DConnexion 3d Mice support                           # Beginn Code MA (06.03.2012) ----------
+# xdrvlib only supported by linux (X11) systems
+# TO DO: Use SDL for 3DConnexion support for Windows and Mac as a Joystick input
+linux-g++|linux-g++-64{
+    exists(/usr/local/lib/libxdrvlib.so){
+        message("Including support for Magellan 3DxWare for linux system.")
+        LIBS += -L/usr/local/lib/ -lxdrvlib
+        INCLUDEPATH *= /usr/local/include
+        DEFINES += MOUSE_ENABLED \
+                    ParameterCheck                      # Has to be defined for magellan usage
+    }
+}                                                        # Ende Code MA (06.03.2012) ---------------
