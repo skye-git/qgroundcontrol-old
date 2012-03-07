@@ -232,7 +232,7 @@ void UASSkyeControlWidget::transmitMode()
         mav->setMode(uasMode);
         QString mode = UAS::getShortModeTextFor(uasMode);
 
-        ui.lastActionLabel->setText(QString("Sent new mode %1 to %2").arg(mode).arg(mav->getUASName()));
+        ui.lastActionLabel->setText(QString("Sent mode %1 to %2").arg(mode).arg(mav->getUASName()));
     }
 }
 
