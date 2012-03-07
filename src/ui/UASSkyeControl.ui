@@ -35,92 +35,6 @@
    <string>Control widget to send basic control actions to the micro air vehicle</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="3" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QPushButton" name="directControlButton">
-       <property name="minimumSize">
-        <size>
-         <width>35</width>
-         <height>35</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>DC</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="assistedControlButton">
-       <property name="minimumSize">
-        <size>
-         <width>35</width>
-         <height>35</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>AC</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="halfAutomaticControlButton">
-       <property name="minimumSize">
-        <size>
-         <width>35</width>
-         <height>35</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>HAC</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="fullAutomaticControlButton">
-       <property name="minimumSize">
-        <size>
-         <width>35</width>
-         <height>35</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>FAC</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
    <item row="4" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <property name="sizeConstraint">
@@ -144,7 +58,7 @@
         <bool>true</bool>
        </property>
        <property name="checked">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="autoExclusive">
         <bool>true</bool>
@@ -193,72 +107,6 @@
       </widget>
      </item>
     </layout>
-   </item>
-   <item row="1" column="1">
-    <widget class="QPushButton" name="controlButton">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>40</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Main control button</string>
-     </property>
-     <property name="statusTip">
-      <string>Main control button</string>
-     </property>
-     <property name="text">
-      <string>Activate Engine</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1">
-    <widget class="QLabel" name="lastActionLabel">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Status label</string>
-     </property>
-     <property name="statusTip">
-      <string>Status label</string>
-     </property>
-     <property name="text">
-      <string>No actions executed so far</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QLabel" name="controlStatusLabel">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>10</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Currently controlled system</string>
-     </property>
-     <property name="statusTip">
-      <string>Currently controlled system</string>
-     </property>
-     <property name="text">
-      <string>UNCONNECTED</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-     <property name="margin">
-      <number>0</number>
-     </property>
-    </widget>
    </item>
    <item row="2" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -343,6 +191,158 @@
        </property>
        <property name="autoExclusive">
         <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="1">
+    <widget class="QPushButton" name="controlButton">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>40</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Main control button</string>
+     </property>
+     <property name="statusTip">
+      <string>Main control button</string>
+     </property>
+     <property name="text">
+      <string>Activate Engine</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QLabel" name="lastActionLabel">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>25</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Status label</string>
+     </property>
+     <property name="statusTip">
+      <string>Status label</string>
+     </property>
+     <property name="text">
+      <string>No actions executed so far</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLabel" name="controlStatusLabel">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>10</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Currently controlled system</string>
+     </property>
+     <property name="statusTip">
+      <string>Currently controlled system</string>
+     </property>
+     <property name="text">
+      <string>UNCONNECTED</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QPushButton" name="directControlButton">
+       <property name="minimumSize">
+        <size>
+         <width>35</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>DC</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="assistedControlButton">
+       <property name="minimumSize">
+        <size>
+         <width>35</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>AC</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="halfAutomaticControlButton">
+       <property name="minimumSize">
+        <size>
+         <width>35</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>HAC</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="fullAutomaticControlButton">
+       <property name="minimumSize">
+        <size>
+         <width>35</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>FAC</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

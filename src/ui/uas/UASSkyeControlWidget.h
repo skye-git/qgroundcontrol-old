@@ -50,6 +50,12 @@ public:
     UASSkyeControlWidget(QWidget *parent = 0);
     ~UASSkyeControlWidget();
 
+    enum QGC_INPUT_MODE {
+        QGC_INPUT_MODE_MOUSE,
+        QGC_INPUT_MODE_TOUCH,
+        QGC_INPUT_MODE_KEYBOARD
+    };
+
 public slots:
     /** @brief Set the system this widget controls */
     void setUAS(UASInterface* uas);
@@ -60,7 +66,7 @@ public slots:
     /** @brief Transmit the operation mode */
     void transmitMode();
     /** @brief Update the mode */
-    void updateMode(int uas,QString mode,QString description);
+    void updateMode(int uas,int baseMode);
     /** @brief Update state */
     void updateState(int state);
     /** @brief Update internal state machine */
@@ -69,37 +75,37 @@ public slots:
 signals:
     void changedMode(int);
 
+    protected slots:
+        /** @brief Set the background color for the widget */
+        void setBackgroundColor(QColor color);
+        /** @brief Set uasMode to Direct Control */
+        void setDirectControlMode(bool checked);
+        /** @brief Set uasMode to Assisted Control */
+        void setAssistedControlMode(bool checked);
+        /** @brief Set uasMode to Half Automatic Control */
+        void setHalfAutomaticControlMode(bool checked);
+        /** @brief Set uasMode to Full Automatic Control */
+        void setFullAutomaticControlMode(bool checked);
 
-protected slots:
-    /** @brief Set the background color for the widget */
-    void setBackgroundColor(QColor color);
-    /** @brief Set uasMode to Direct Control */
-    void setDirectControlMode(bool checked);
-    /** @brief Set uasMode to Assisted Control */
-    void setAssistedControlMode(bool checked);
-    /** @brief Set uasMode to Half Automatic Control */
-    void setHalfAutomaticControlMode(bool checked);
-    /** @brief Set uasMode to Full Automatic Control */
-    void setFullAutomaticControlMode(bool checked);
-
-protected:
-    int uas;              ///< Reference to the current uas
-    unsigned int uasMode; ///< Current uas mode
-    bool engineOn;        ///< Engine state
-//    enum ctrlMode{        ///< Possible control modes
-//        directControl,
-//        assistedControl,
-//        halfAutomaticControl,
-//        fullAutomaticControl
-//    };
-//    ctrlMode controlMode;      ///< Current uas control mode
+    protected:
+        int uas;              ///< Reference to the current uas
+        unsigned int uasMode; ///< Current uas mode
+        bool engineOn;        ///< Engine state
+        QGC_INPUT_MODE inputMode;        ///< Current device for input
+    //    enum ctrlMode{        ///< Possible control modes
+    //        directControl,
+    //        assistedControl,
+    //        halfAutomaticControl,
+    //        fullAutomaticControl
+    //    };
+    //    ctrlMode controlMode;      ///< Current uas control mode
 
 
-private:
-    Ui::uasSkyeControl ui;
-    QButtonGroup *modeButtonGroup;
-    QButtonGroup *inputButtonGroup;
+    private:
+        Ui::uasSkyeControl ui;
+        QButtonGroup *modeButtonGroup;
+        QButtonGroup *inputButtonGroup;
 
-};
+    };
 
-#endif // _UASCONTROLWIDGET_H_
+    #endif // _UASCONTROLWIDGET_H_
