@@ -46,7 +46,7 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     uas(0),
     uasMode(0),
     engineOn(false),
-    inputMode(QGC_INPUT_MODE_MOUSE)
+    inputMode(QGC_INPUT_MODE_NONE)
 {
     ui.setupUi(this);
 
@@ -75,6 +75,10 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     connect(ui.assistedControlButton, SIGNAL(toggled(bool)), this, SLOT(setAssistedControlMode(bool)));
     connect(ui.halfAutomaticControlButton, SIGNAL(toggled(bool)), this, SLOT(setHalfAutomaticControlMode(bool)));
     connect(ui.fullAutomaticControlButton, SIGNAL(toggled(bool)), this, SLOT(setFullAutomaticControlMode(bool)));
+
+    connect(ui.mouseButton, SIGNAL(toggled(bool)), this, SLOT(setInputMouse(bool)));
+    connect(ui.touchButton, SIGNAL(toggled(bool)), this, SLOT(setInputTouch(bool)));
+    connect(ui.keyboardButton, SIGNAL(toggled(bool)), this, SLOT(setInputKeyboard(bool)));
 
     ui.gridLayout->setAlignment(Qt::AlignTop);
 }
@@ -233,6 +237,36 @@ void UASSkyeControlWidget::setFullAutomaticControlMode(bool checked)
         ui.lastActionLabel->setText(tr("Full Automatic Control Mode not sent yet!"));
         transmitMode();
 #endif // MAVLINK_ENABLED_SKYE
+    }
+}
+
+void UASSkyeControlWidget::setInputMouse(bool checked)
+{
+    if (checked)
+    {
+        inputMode = QGC_INPUT_MODE_MOUSE;
+        emit changedInput(inputMode);
+        ui.lastActionLabel->setText(tr("3dMouse activated!"));
+    }
+}
+
+void UASSkyeControlWidget::setInputTouch(bool checked)
+{
+    if (checked)
+    {
+        inputMode = QGC_INPUT_MODE_TOUCH;
+        emit changedInput(inputMode);
+        ui.lastActionLabel->setText(tr("Touchscreen activated!"));
+    }
+}
+
+void UASSkyeControlWidget::setInputKeyboard(bool checked)
+{
+    if (checked)
+    {
+        inputMode = QGC_INPUT_MODE_KEYBOARD;
+        emit changedInput(inputMode);
+        ui.lastActionLabel->setText(tr("Keyboard activated!"));
     }
 }
 

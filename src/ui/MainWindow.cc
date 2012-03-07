@@ -110,7 +110,8 @@ MainWindow::MainWindow(QWidget *parent):
     centerStackActionGroup(new QActionGroup(this)),
     styleFileName(QCoreApplication::applicationDirPath() + "/style-indoor.css"),
     autoReconnect(false),
-    lowPowerMode(false)
+    lowPowerMode(false),
+    inputMode(UASSkyeControlWidget::QGC_INPUT_MODE_NONE)
 {
     hide();
     emit initStatusChanged("Loading UI Settings..");
@@ -384,6 +385,9 @@ void MainWindow::buildCommonWidgets()
         skyeControlDockWidget = new QDockWidget(tr("Skye Control"), this);
         skyeControlDockWidget->setObjectName("SKYE_CONTROL_DOCKWIDGET");
         skyeControlDockWidget->setWidget( new UASSkyeControlWidget(this) );
+
+        UASSkyeControlWidget *uasSkyeControl = dynamic_cast<UASSkyeControlWidget*>(skyeControlDockWidget->widget());
+        connect(uasSkyeControl, SIGNAL(changedInput(int)), this, SLOT(setInputMode(int)));
         addTool(skyeControlDockWidget, tr("Skye Control"), Qt::LeftDockWidgetArea);
     }                                   // Ende Code MA (06.03.2012) --------------------------
 #endif // MAVLINK_ENABLED_SKYE
@@ -1700,9 +1704,36 @@ QList<QAction*> MainWindow::listLinkMenuActions(void)
     return ui.menuNetwork->actions();
 }
 
+
+void MainWindow::setInputMode(int inputMode)
+{
+    switch (inputMode)
+    {
+    case 1:
+            this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_MOUSE;
+            break;
+    case 2:
+            this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_TOUCH;
+            break;
+    case 3:
+            this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_KEYBOARD;
+            break;
+    default:
+            this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_NONE;
+            qDebug() << "No input device set!";
+            break;
+    }
+    statusBar()->showMessage("Set new Input mode", 20000);
+    qDebug() << "New Input: " << inputMode;
+}
+
 #ifdef MOUSE_ENABLED                                // Beginn Code MA (06.03.2012) -----------
 bool MainWindow::x11Event(XEvent *event)
 {
+#ifdef MAVLINK_ENABLED_SKYE
+    if (inputMode == UASSkyeControlWidget::QGC_INPUT_MODE_MOUSE)
+    {
+#endif // MAVLINK_ENABLED_SKYE
     MagellanFloatEvent MagellanEvent;
     double maxMagellanValue = 350;              // Valid for Space Navigator for Notebooks
 
@@ -1748,6 +1779,14 @@ bool MainWindow::x11Event(XEvent *event)
     return false;
     break;
     }
+    #ifdef MAVLINK_ENABLED_SKYE
+    }else
+    {
+        qDebug() << "Skipped 3dMouse input.. Input mode is " << inputMode;
+    }
+
+    #endif // MAVLINK_ENABLED_SKYE
     return false;   // Event will not be destroyed
+
 }
 #endif // MOUSE_ENABLED                                     // Ende Code MA (06.03.2012) ------

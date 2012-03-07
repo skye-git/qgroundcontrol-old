@@ -230,6 +230,9 @@ public slots:
     /** @brief Update the window name */
     void configureWindowName();
 
+    /** @brief Set input device to control uav */
+    void setInputMode(int inputMode);
+
 signals:
     void initStatusChanged(const QString& message);
 
@@ -412,10 +415,12 @@ private:
     QString getWindowStateKey();
     QString getWindowGeometryKey();
 
-    // Event handler for 3dConnexion 3DMouse        // Beginn Code MA 06.03.2012 ----------
+    // Event handler for 3dConnexion 3DMouse        //  Beginn Code MA 06.03.2012 ----------
     #ifdef MOUSE_ENABLED
     bool x11Event(XEvent *event);
     #endif //MOUSE_ENABLED                          // Ende Code MA 06.03.2012 ------------
+
+    UASSkyeControlWidget::QGC_INPUT_MODE inputMode; // Beginn Ende Code MA (07.03.2012)
 };
 
 #endif /* _MAINWINDOW_H_ */
