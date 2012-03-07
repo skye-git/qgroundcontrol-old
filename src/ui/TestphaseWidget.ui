@@ -29,13 +29,20 @@
       </item>
       <item>
        <widget class="QSlider" name="SliderThrust1">
+        <property name="maximum">
+         <number>200</number>
+        </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="spinBoxThrust1"/>
+       <widget class="QSpinBox" name="spinBoxThrust1">
+        <property name="maximum">
+         <number>200</number>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QLabel" name="label_2">
@@ -45,10 +52,24 @@
        </widget>
       </item>
       <item>
-       <widget class="QDial" name="dialOrientation1"/>
+       <widget class="QDial" name="dialOrientation1">
+        <property name="minimum">
+         <number>-76000</number>
+        </property>
+        <property name="maximum">
+         <number>76000</number>
+        </property>
+       </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="spinBoxOrientation1"/>
+       <widget class="QSpinBox" name="spinBoxOrientation1">
+        <property name="minimum">
+         <number>-76000</number>
+        </property>
+        <property name="maximum">
+         <number>76000</number>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -68,13 +89,20 @@
       </item>
       <item>
        <widget class="QSlider" name="SliderThrust2">
+        <property name="maximum">
+         <number>200</number>
+        </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="spinBoxThrust2"/>
+       <widget class="QSpinBox" name="spinBoxThrust2">
+        <property name="maximum">
+         <number>200</number>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QLabel" name="label_4">
@@ -84,10 +112,24 @@
        </widget>
       </item>
       <item>
-       <widget class="QDial" name="dialOrientation2"/>
+       <widget class="QDial" name="dialOrientation2">
+        <property name="minimum">
+         <number>-76000</number>
+        </property>
+        <property name="maximum">
+         <number>76000</number>
+        </property>
+       </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="spinBoxOrientation2"/>
+       <widget class="QSpinBox" name="spinBoxOrientation2">
+        <property name="minimum">
+         <number>-76000</number>
+        </property>
+        <property name="maximum">
+         <number>76000</number>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -107,13 +149,20 @@
       </item>
       <item>
        <widget class="QSlider" name="SliderThrust3">
+        <property name="maximum">
+         <number>200</number>
+        </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="spinBoxThrust3"/>
+       <widget class="QSpinBox" name="spinBoxThrust3">
+        <property name="maximum">
+         <number>200</number>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QLabel" name="label_6">
@@ -123,10 +172,24 @@
        </widget>
       </item>
       <item>
-       <widget class="QDial" name="dialOrientation3"/>
+       <widget class="QDial" name="dialOrientation3">
+        <property name="minimum">
+         <number>-76000</number>
+        </property>
+        <property name="maximum">
+         <number>76000</number>
+        </property>
+       </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="spinBoxOrientation3"/>
+       <widget class="QSpinBox" name="spinBoxOrientation3">
+        <property name="minimum">
+         <number>-76000</number>
+        </property>
+        <property name="maximum">
+         <number>76000</number>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -146,13 +209,20 @@
       </item>
       <item>
        <widget class="QSlider" name="SliderThrust4">
+        <property name="maximum">
+         <number>200</number>
+        </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="spinBoxThrust4"/>
+       <widget class="QSpinBox" name="spinBoxThrust4">
+        <property name="maximum">
+         <number>200</number>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QLabel" name="label_8">
@@ -162,10 +232,24 @@
        </widget>
       </item>
       <item>
-       <widget class="QDial" name="dialOrientation4"/>
+       <widget class="QDial" name="dialOrientation4">
+        <property name="minimum">
+         <number>-76000</number>
+        </property>
+        <property name="maximum">
+         <number>76000</number>
+        </property>
+       </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="spinBoxOrientation4"/>
+       <widget class="QSpinBox" name="spinBoxOrientation4">
+        <property name="minimum">
+         <number>-76000</number>
+        </property>
+        <property name="maximum">
+         <number>76000</number>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

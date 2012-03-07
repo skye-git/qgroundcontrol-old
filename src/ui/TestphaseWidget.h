@@ -8,6 +8,7 @@
 #define TESTPHASEWIDGET_H
 
 #include <QtGui/QDialog>
+#include "UASInterface.h"
 //#include "TestphaseInput.h"//not yet implemented
 
 namespace Ui
@@ -23,6 +24,10 @@ public:
     explicit TestphaseWidget(QWidget *parent = 0);
     virtual ~TestphaseWidget();
 
+protected:
+    UASInterface* uas;
+    //QList<int> uasButtonList;
+
 public slots:
 
 //    void setThrust1(int thrust1);
@@ -37,6 +42,11 @@ public slots:
 
     void stopall();
     void homing();
+    void setActiveUAS(UASInterface* uas);
+    void somevalueChanged();
+
+signals:
+    void valueTestphaseChanged(int Thrust1, int Thrust2, int Thrust3, int Thrust4, int Orientation1, int Orientation2, int Orientation3, int Orientation4);
 
 
 private:
