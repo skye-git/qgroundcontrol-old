@@ -42,6 +42,11 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
                 // TO DO: This is no receiving message, but one to send!!!
                 break;
             }
+            case MAVLINK_MSG_ID_TEST_MOTORS:
+            {
+                // TO DO: This is no receiving message, but one to send!!!
+                break;
+            }
                 
             default:
             {

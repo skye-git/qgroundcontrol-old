@@ -58,6 +58,33 @@ protected:
     bool flying;
     int mavlink_version;
 
+
+    // Begin Code MA (07.03.2012) -----------------------
+    double thrustX;      // Direct Control input
+    double thrustY;
+    double thrustZ;
+    double momentX;
+    double momentY;
+    double momentZ;
+    double transX;      // Direct Control input
+    double transY;
+    double transZ;
+    double rotX;
+    double rotY;
+    double rotZ;
+    int thrust1;        //Testphase Control
+    int thrust2;
+    int thrust3;
+    int thrust4;
+    int orientation1;
+    int orientation2;
+    int orientation3;
+    int orientation4;
+    // Ende Code MA (07.03.2012) --------------------------
+
+
+
+
     // FIXME MAVLINKV10PORTINGNEEDED
 //    static inline uint16_t mavlink_msg_heartbeat_pack_version_free(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, uint8_t type, uint8_t autopilot, uint8_t version) {
 //        uint16_t i = 0;
