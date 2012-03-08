@@ -14,10 +14,11 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
 
     qDebug()<< " AL:TestphaseWidgetConstructor Call";
 
-//    connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)),this, SLOT(setActiveUAS(UASInterface*)));
     this->uas = UASManager::instance()->getActiveUAS();
     connect(this, SIGNAL(valueTestphaseChanged(int, int, int, int, int, int, int, int)), uas, SLOT(setTestphaseCommandsByWidget(int, int, int, int, int, int, int, int)));
-    //Problem, funktioniert nur, falls getActiveUAS() ein UASInterface zurückgibt, dass SkyeMAV
+    //FIXME Problem, funktioniert nur, falls getActiveUAS() ein UASInterface zurückgibt, dass SkyeMAV
+    //mit if abfragen, ........
+
 
     //connect Sliders, spinBoxes and dials
 
@@ -69,33 +70,11 @@ TestphaseWidget::~TestphaseWidget()
     delete m_ui;
 }
 
-//void TestphaseWidget::setActiveUAS(UASInterface *uas)
-//{
-//    qDebug()<<"AL: setActiveUAS in TestphaseWidget aufgerufen "<<uas->getUASID()<<" AL:übergebenens uas";
-//    //Only connect / disconnect if the UAS is of a controllable UAS class
-//    UAS*tmp = 0;
-//    if(this->uas)
-//    {
-//        tmp = dynamic_cast<UAS*>(this->uas);
-//        if(tmp)
-//        {
-//            disconnect(this, SIGNAL(valueTestphaseChanged(int, int, int, int, int, int, int, int)), tmp, SLOT(setTestphaseCommandsByWidget(int, int, int, int, int, int, int, int)));
-//        }
-//    }
-
-//    this->uas = uas;
-
-//    tmp = dynamic_cast<UAS*>(this->uas);
-//    if(tmp) {
-//        connect(this, SIGNAL(valueTestphaseChanged(int, int, int, int, int, int, int, int)), tmp, SLOT(setTestphaseCommandsByWidget(int, int, int, int, int, int, int, int)));
-//        qDebug()<<"AL:SIGNAL(valueTestphaseChanged()) connected to SLOT(setTestphaseCommandsByWidget())";
-//    }
-//}
 void TestphaseWidget::somevalueChanged()
 {
-    qDebug()<<"AL:in somevalueChanged"<<m_ui->SliderThrust1->value() << "AL emit valueTestphaseChanged should be called next.";
+    //qDebug()<<"AL:in somevalueChanged"<<m_ui->SliderThrust1->value() << "AL emit valueTestphaseChanged should be called next.";
     emit valueTestphaseChanged(m_ui->SliderThrust1->value(), m_ui->SliderThrust2->value(), m_ui->SliderThrust3->value(), m_ui->SliderThrust4->value(), m_ui->spinBoxOrientation1->value(), m_ui->spinBoxOrientation2->value(), m_ui->spinBoxOrientation3->value(), m_ui->spinBoxOrientation4->value());
-    qDebug()<<"AL:emit should have been called now";
+    //qDebug()<<"AL:emit should have been called now";
 }
 
 void TestphaseWidget::homing()

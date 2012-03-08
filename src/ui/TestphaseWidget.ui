@@ -83,7 +83,7 @@
       <item>
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Thrust1</string>
+         <string>Thrust2</string>
         </property>
        </widget>
       </item>
@@ -107,7 +107,7 @@
       <item>
        <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>Orientation1</string>
+         <string>Orientation2</string>
         </property>
        </widget>
       </item>
@@ -143,7 +143,7 @@
       <item>
        <widget class="QLabel" name="label_5">
         <property name="text">
-         <string>Thrust1</string>
+         <string>Thrust3</string>
         </property>
        </widget>
       </item>
@@ -167,7 +167,7 @@
       <item>
        <widget class="QLabel" name="label_6">
         <property name="text">
-         <string>Orientation1</string>
+         <string>Orientation3</string>
         </property>
        </widget>
       </item>
@@ -203,7 +203,7 @@
       <item>
        <widget class="QLabel" name="label_7">
         <property name="text">
-         <string>Thrust1</string>
+         <string>Thrust4</string>
         </property>
        </widget>
       </item>
@@ -227,7 +227,7 @@
       <item>
        <widget class="QLabel" name="label_8">
         <property name="text">
-         <string>Orientation1</string>
+         <string>Orientation4</string>
         </property>
        </widget>
       </item>
@@ -278,6 +278,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="HomingButton">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>70</height>
+        </size>
+       </property>
        <property name="text">
         <string>Homing</string>
        </property>
@@ -290,6 +296,18 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>70</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
        </property>
        <property name="text">
         <string>stop all</string>

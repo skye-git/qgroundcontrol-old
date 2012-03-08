@@ -71,7 +71,7 @@ void SkyeMAV::setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrus
 
     sendTestphaseControlCommands(Thrust1, Thrust2, Thrust3, Thrust4, Orientation1, Orientation2, Orientation3, Orientation4);
     qDebug() << "sendTestphaseControlCommands aufgerufen " << Thrust1;
-    //qDebug() << "Direct is " << MAV_MODE_DIRECT_CONTROL_ARMED;
+
 #else
     Q_UNUSED(Thrust1);
     Q_UNUSED(Thrust2);
