@@ -35,6 +35,7 @@ This file is part of the QGROUNDCONTROL project
 #include <QTimer>
 #include <QHostInfo>
 #include <QSplashScreen>
+#include <qmath.h>                      // Beginn nd Ende Code MA (07.03.2012)
 
 #include "QGC.h"
 #include "MAVLinkSimulationLink.h"
@@ -109,7 +110,13 @@ MainWindow::MainWindow(QWidget *parent):
     centerStackActionGroup(new QActionGroup(this)),
     styleFileName(QCoreApplication::applicationDirPath() + "/style-indoor.css"),
     autoReconnect(false),
-    lowPowerMode(false)
+    lowPowerMode(false),
+    inputMode(UASSkyeControlWidget::QGC_INPUT_MODE_NONE),
+    keyXValue(0),
+    keyYValue(0),
+    keyZValue(0),
+    keyPitchValue(0),
+    keyYawValue(0)
 {
     hide();
     emit initStatusChanged("Loading UI Settings..");
@@ -383,6 +390,9 @@ void MainWindow::buildCommonWidgets()
         skyeControlDockWidget = new QDockWidget(tr("Skye Control"), this);
         skyeControlDockWidget->setObjectName("SKYE_CONTROL_DOCKWIDGET");
         skyeControlDockWidget->setWidget( new UASSkyeControlWidget(this) );
+
+        UASSkyeControlWidget *uasSkyeControl = dynamic_cast<UASSkyeControlWidget*>(skyeControlDockWidget->widget());
+        connect(uasSkyeControl, SIGNAL(changedInput(int)), this, SLOT(setInputMode(int)));
         addTool(skyeControlDockWidget, tr("Skye Control"), Qt::LeftDockWidgetArea);
     }                                   // Ende Code MA (06.03.2012) --------------------------
 #endif // MAVLINK_ENABLED_SKYE
@@ -1236,6 +1246,7 @@ void MainWindow::setActiveUAS(UASInterface* uas)
     tmp = dynamic_cast<SkyeMAV*>(uas);
     if(tmp) {
         connect(this, SIGNAL(valueMouseChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommandsByMouse(double,double,double,double,double,double)));
+        connect(this, SIGNAL(valueKeyboardChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommandsByKeyboard(double,double,double,double,double,double)));
     }
 #endif // MAVLINK_ENABLED_SKYE      // Ende Code MA (27.02.2012) ---------------------------
 }
@@ -1699,9 +1710,37 @@ QList<QAction*> MainWindow::listLinkMenuActions(void)
     return ui.menuNetwork->actions();
 }
 
+
+void MainWindow::setInputMode(int inputMode)
+{
+    switch (inputMode)
+    {
+    case 1:
+            this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_MOUSE;
+            break;
+    case 2:
+            this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_TOUCH;
+            break;
+    case 3:
+            this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_KEYBOARD;
+            break;
+    default:
+            this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_NONE;
+            qDebug() << "No input device set!";
+            break;
+    }
+    statusBar()->showMessage("Set new Input mode", 20000);
+    qDebug() << "New Input: " << inputMode;
+}
+
 #ifdef MOUSE_ENABLED                                // Beginn Code MA (06.03.2012) -----------
 bool MainWindow::x11Event(XEvent *event)
 {
+    qDebug("XEvent occured...");
+#ifdef MAVLINK_ENABLED_SKYE
+    if (inputMode == UASSkyeControlWidget::QGC_INPUT_MODE_MOUSE)
+    {
+#endif // MAVLINK_ENABLED_SKYE
     MagellanFloatEvent MagellanEvent;
     double maxMagellanValue = 350;              // Valid for Space Navigator for Notebooks
 
@@ -1715,7 +1754,6 @@ bool MainWindow::x11Event(XEvent *event)
            qDebug() << "No 3dXWare driver is running!";
            return false;
       };
-    qDebug("XEvent occured...");
    switch (event->type)
    {
     case ClientMessage:
@@ -1724,12 +1762,22 @@ bool MainWindow::x11Event(XEvent *event)
             case MagellanInputMotionEvent :
                  MagellanRemoveMotionEvents( display );
                  qDebug("3D Mouse Motion Detected!");
-                 emit valueMouseChanged(MagellanEvent.MagellanData[ MagellanX ] / maxMagellanValue,
-                                        MagellanEvent.MagellanData[ MagellanY ] / maxMagellanValue,
-                                        MagellanEvent.MagellanData[ MagellanZ ] / maxMagellanValue,
+                 for (int i = 0; i < 6; i++) {  // Saturation
+//                     if (MagellanEvent.MagellanData[i] < (0-maxMagellanValue))
+//                     {
+//                         MagellanEvent.MagellanData[i] = - maxMagellanValue;
+//                     }else if (MagellanEvent.MagellanData[i] > maxMagellanValue)
+//                     {
+//                         MagellanEvent.MagellanData[i] = maxMagellanValue;
+//                     }
+                     MagellanEvent.MagellanData[i] = (abs(MagellanEvent.MagellanData[i]) < maxMagellanValue) ? MagellanEvent.MagellanData[i] : (maxMagellanValue*MagellanEvent.MagellanData[i]/abs(MagellanEvent.MagellanData[i]));
+                 }
+                 emit valueMouseChanged(MagellanEvent.MagellanData[ MagellanZ ] / maxMagellanValue,
+                                        MagellanEvent.MagellanData[ MagellanX ] / maxMagellanValue,
+                                        - MagellanEvent.MagellanData[ MagellanY ] / maxMagellanValue,
+                                        MagellanEvent.MagellanData[ MagellanC ] / maxMagellanValue,
                                         MagellanEvent.MagellanData[ MagellanA ] / maxMagellanValue,
-                                        MagellanEvent.MagellanData[ MagellanB ] / maxMagellanValue,
-                                        MagellanEvent.MagellanData[ MagellanC ] / maxMagellanValue);
+                                        - MagellanEvent.MagellanData[ MagellanB ] / maxMagellanValue);
             return false;
             break;
             }
@@ -1737,6 +1785,139 @@ bool MainWindow::x11Event(XEvent *event)
     return false;
     break;
     }
+    #ifdef MAVLINK_ENABLED_SKYE
+    }else
+    {
+        qDebug() << "Skipped 3dMouse input.. Input mode is " << inputMode;
+    }
+
+    #endif // MAVLINK_ENABLED_SKYE
     return false;   // Event will not be destroyed
+
 }
 #endif // MOUSE_ENABLED                                     // Ende Code MA (06.03.2012) ------
+
+void MainWindow::keyPressEvent(QKeyEvent *event)            // Beginn Code MA (07.03.2012) ---------
+{
+    if (inputMode == UASSkyeControlWidget::QGC_INPUT_MODE_KEYBOARD)
+    {
+        qDebug() << "Key pressed and accepted!";
+        handleKeyEvents(event, true);
+    }
+    else
+    {
+        // Let base class implementation handle the event
+        event->ignore();
+    }
+}                                                           // Ende Code MA (07.03.2012) ------------
+
+void MainWindow::keyReleaseEvent(QKeyEvent *event)
+{
+    if (inputMode == UASSkyeControlWidget::QGC_INPUT_MODE_KEYBOARD)
+    {
+        qDebug() << "Key released and accepted!";
+        handleKeyEvents(event, false);
+    }
+    else
+    {
+        // Let base class implementation handle the event
+        event->ignore();
+    }
+}
+
+void MainWindow::handleKeyEvents(QKeyEvent *event, bool keyPressed)
+{
+    //int keyDirection = keyPressed ? 1 : -1;
+
+    switch (event->key())
+    {
+    // Translational motion
+    case Qt::Key_S:
+        // minus x
+        if (keyPressed)
+            keyXValue = (keyXValue > -0.9) ? (keyXValue - 0.25) : (-1);
+        else
+            keyXValue = 0;
+        break;
+    case Qt::Key_W:
+        // plus x
+        if (keyPressed)
+            keyXValue = (keyXValue < 0.9) ? (keyXValue + 0.25) : 1;
+        else
+            keyXValue = 0;
+        break;
+    case Qt::Key_A:
+        // minus y
+        if (keyPressed)
+            keyYValue = (keyYValue > -0.9) ? (keyYValue - 0.25) : (-1);
+        else
+            keyYValue = 0;
+        break;
+    case Qt::Key_D:
+        // plus y
+        if (keyPressed)
+            keyYValue = (keyYValue < 0.9) ? (keyYValue + 0.25) : 1;
+        else
+            keyYValue = 0;
+        break;
+    case Qt::Key_R:
+        // minus z
+        if (keyPressed)
+            keyZValue = (keyZValue > -0.9) ? (keyZValue - 0.25) : (-1);
+        else
+            keyYValue = 0;
+        break;
+    case Qt::Key_F:
+        // plus z
+        if (keyPressed)
+            keyZValue = (keyZValue < 0.9) ? (keyZValue + 0.25) : 1;
+        else
+            keyZValue = 0;
+        break;
+
+    // Rotational motion
+    case Qt::Key_Down:
+        // minus pitch
+        if (keyPressed)
+            keyPitchValue = (keyPitchValue > -0.9) ? (keyPitchValue - 0.25) : (-1);
+        else
+            keyPitchValue = 0;
+        break;
+    case Qt::Key_Up:
+        // plus pitch
+        if (keyPressed)
+        keyPitchValue = (keyPitchValue < 0.9) ? (keyPitchValue + 0.25) : 1;
+    else
+        keyPitchValue = 0;
+        break;
+    case Qt::Key_Left:
+        // minus yaw
+        if (keyPressed)
+            keyYawValue = (keyYawValue > -0.9) ? (keyYawValue - 0.25) : (-1);
+        else
+            keyYawValue = 0;
+        break;
+    case Qt::Key_Right:
+        // plus yaw
+        if (keyPressed)
+        keyYawValue = (keyYawValue < 0.9) ? (keyYawValue + 0.25) : 1;
+    else
+        keyYawValue = 0;
+        break;
+
+        // Special keys
+    case Qt::Key_Space:
+        // reset roll?
+        break;
+    case Qt::Key_Enter:
+        // reset roll and pitch
+        break;
+    default:
+        event->ignore();
+        break;
+
+
+    }
+
+    emit valueKeyboardChanged(keyXValue, keyYValue, keyZValue, keyRollValue, keyPitchValue, keyYawValue);
+}

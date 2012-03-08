@@ -230,9 +230,26 @@ public slots:
     /** @brief Update the window name */
     void configureWindowName();
 
+    /** @brief Set input device to control uav */
+    void setInputMode(int inputMode);
+
 signals:
     void initStatusChanged(const QString& message);
+
+    /**
+    * @brief Emits new values of 3d mouse device
+    *
+    * @param xValue Translational motion of 3dmouse along x axis, scaled to in range [-1, 1]
+    * @param yValue Translational motion of 3dmouse along x axis, scaled to in range [-1, 1]
+    * @param zValue Translational motion of 3dmouse along x axis, scaled to in range [-1, 1]
+    * @param aValue Rotational motion of 3dmouse, scaled to in range [-1, 1]
+    * @param bValue Rotational motion of 3dmouse, scaled to in range [-1, 1]
+    * @param cValue Rotational motion of 3dmouse, scaled to in range [-1, 1]
+    *
+    */
     void valueMouseChanged(double xValue, double yValue, double zValue, double aValue, double bValue, double cValue);   // Beginn und Ende Code MA (06.03.2012)
+    /** @brief Emits new contol values for UAS given by keyboard in range [-1, 1] */
+    void valueKeyboardChanged(double xValue, double yValue, double zValue, double rollValue, double pitchValue, double yawValue);   // Beginn und Ende Code MA (07.03.2012)
 public:
     QGCMAVLinkLogPlayer* getLogPlayer()
     {
@@ -395,14 +412,25 @@ protected:
 
 private:
     Ui::MainWindow ui;
-
+    UASSkyeControlWidget::QGC_INPUT_MODE inputMode; // Beginn Ende Code MA (07.03.2012)
     QString getWindowStateKey();
     QString getWindowGeometryKey();
 
-    // Event handler for 3dConnexion 3DMouse        // Beginn Code MA 06.03.2012 ----------
+    // Event handler for 3dConnexion 3DMouse        //  Beginn Code MA 06.03.2012 ----------
     #ifdef MOUSE_ENABLED
     bool x11Event(XEvent *event);
     #endif //MOUSE_ENABLED                          // Ende Code MA 06.03.2012 ------------
+    void keyPressEvent(QKeyEvent *event);           // Beginn Code MA (07.03.2012)
+    void keyReleaseEvent(QKeyEvent *event);
+    void handleKeyEvents(QKeyEvent *event, bool keyPressed);         // Ende Code MA (07.03.2012)
+
+    double keyXValue;        ///< X value caused by keyboard input (S,W)
+    double keyYValue;        ///< Y value caused by keyboard input (A,D)
+    double keyZValue;        ///< Z value caused by keyboard input (R,F)
+    double keyRollValue;     ///< Roll value caused by keyboard input (???)
+    double keyPitchValue;    ///< Pitch value caused by keyboard input (down, up)
+    double keyYawValue;      ///< Yaw value caused by keyboard input (left, right)
+
 };
 
 #endif /* _MAINWINDOW_H_ */

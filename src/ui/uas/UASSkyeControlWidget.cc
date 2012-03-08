@@ -45,18 +45,27 @@ This file is part of the PIXHAWK project
 UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     uas(0),
     uasMode(0),
-    engineOn(false)
+    engineOn(false),
+    inputMode(QGC_INPUT_MODE_NONE)
 {
+#ifdef MAVLINK_ENABLED_SKYE
     ui.setupUi(this);
 
     // Group buttons to enable exclusiv checkable
     modeButtonGroup = new QButtonGroup;
+    ui.directControlButton->setChecked(uasMode & MAV_MODE_DIRECT_CONTROL_DISARMED);
+    ui.assistedControlButton->setChecked(uasMode & MAV_MODE_ASSISTED_CONTROL_DISARMED);
+    ui.halfAutomaticControlButton->setChecked(uasMode & MAV_MODE_HALF_AUTOMATIC_DISARMED);
+    ui.fullAutomaticControlButton->setChecked(uasMode & MAV_MODE_FULL_AUTOMATIC_DISARMED);
     modeButtonGroup->addButton(ui.directControlButton);
     modeButtonGroup->addButton(ui.assistedControlButton);
     modeButtonGroup->addButton((ui.halfAutomaticControlButton));
     modeButtonGroup->addButton((ui.fullAutomaticControlButton));
 
     inputButtonGroup = new QButtonGroup;
+    ui.mouseButton->setChecked(inputMode == QGC_INPUT_MODE_MOUSE);
+    ui.touchButton->setChecked(inputMode == QGC_INPUT_MODE_TOUCH);
+    ui.keyboardButton->setChecked(inputMode == QGC_INPUT_MODE_KEYBOARD);
     inputButtonGroup->addButton(ui.mouseButton);
     inputButtonGroup->addButton((ui.touchButton));
     inputButtonGroup->addButton((ui.keyboardButton));
@@ -68,15 +77,17 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     connect(ui.halfAutomaticControlButton, SIGNAL(toggled(bool)), this, SLOT(setHalfAutomaticControlMode(bool)));
     connect(ui.fullAutomaticControlButton, SIGNAL(toggled(bool)), this, SLOT(setFullAutomaticControlMode(bool)));
 
-    ui.directControlButton->click();
-    ui.mouseButton->click();
+    connect(ui.mouseButton, SIGNAL(toggled(bool)), this, SLOT(setInputMouse(bool)));
+    connect(ui.touchButton, SIGNAL(toggled(bool)), this, SLOT(setInputTouch(bool)));
+    connect(ui.keyboardButton, SIGNAL(toggled(bool)), this, SLOT(setInputKeyboard(bool)));
 
     ui.gridLayout->setAlignment(Qt::AlignTop);
-
+#endif //MAVLINK_ENABLED_SKYE
 }
 
 void UASSkyeControlWidget::setUAS(UASInterface* uas)
 {
+#ifdef MAVLINK_ENABLED_SKYE
     if (this->uas != 0)
     {
         UASInterface* oldUAS = UASManager::instance()->getUASForId(this->uas);
@@ -95,22 +106,25 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
     connect(ui.landButton, SIGNAL(clicked()), uas, SLOT(home()));
     connect(ui.shutdownButton, SIGNAL(clicked()), uas, SLOT(shutdown()));
     //connect(ui.setHomeButton, SIGNAL(clicked()), uas, SLOT(setLocalOriginAtCurrentGPSPosition()));
-    connect(uas, SIGNAL(modeChanged(int,QString,QString)), this, SLOT(updateMode(int,QString,QString)));
+    connect(uas, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
     connect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
 
     ui.controlStatusLabel->setText(tr("Connected to ") + uas->getUASName());
 
     this->uas = uas->getUASID();
     setBackgroundColor(uas->getColor());
+#endif // MAVLINK_ENABLED_SKYE
 }
 
 UASSkyeControlWidget::~UASSkyeControlWidget()
 {
-
+#ifdef MAVLINK_ENABLED_SKYE
+#endif // MAVLINK_ENABLED_SKYE
 }
 
 void UASSkyeControlWidget::updateStatemachine()
 {
+#ifdef MAVLINK_ENABLED_SKYE
 
     if (engineOn)
     {
@@ -120,6 +134,7 @@ void UASSkyeControlWidget::updateStatemachine()
     {
         ui.controlButton->setText(tr("ARM SYSTEM"));
     }
+#endif // MAVLINK_ENABLED_SKYE
 }
 
 /**
@@ -128,6 +143,7 @@ void UASSkyeControlWidget::updateStatemachine()
  */
 void UASSkyeControlWidget::setBackgroundColor(QColor color)
 {
+#ifdef MAVLINK_ENABLED_SKYE
     // UAS color
     QColor uasColor = color;
     QString colorstyle;
@@ -141,18 +157,29 @@ void UASSkyeControlWidget::setBackgroundColor(QColor color)
     palette.setBrush(QPalette::Window, QBrush(uasColor));
     setPalette(palette);
     setAutoFillBackground(true);
+#endif // MAVLINK_ENABLED_SKYE
 }
 
-
-void UASSkyeControlWidget::updateMode(int uas,QString mode,QString description)
+void UASSkyeControlWidget::updateMode(int uas,int baseMode)
 {
-    Q_UNUSED(uas);
-    Q_UNUSED(mode);
-    Q_UNUSED(description);
+#ifdef MAVLINK_ENABLED_SKYE
+    if ((this->uas == uas) && (this->uasMode != baseMode))
+    {
+        if (baseMode & MAV_MODE_DIRECT_CONTROL_DISARMED)
+            ui.directControlButton->setChecked(true);
+        if (baseMode & MAV_MODE_ASSISTED_CONTROL_DISARMED)
+            ui.assistedControlButton->setChecked(true);
+        if (baseMode & MAV_MODE_HALF_AUTOMATIC_DISARMED)
+            ui.halfAutomaticControlButton->setChecked(true);
+        if (baseMode & MAV_MODE_FULL_AUTOMATIC_DISARMED)
+            ui.fullAutomaticControlButton->setChecked(true);
+    }
+#endif MAVLINK_ENABLED_SKYE
 }
 
 void UASSkyeControlWidget::updateState(int state)
 {
+#ifdef MAVLINK_ENABLED_SKYE
     switch (state)
     {
     case (int)MAV_STATE_ACTIVE:
@@ -164,6 +191,7 @@ void UASSkyeControlWidget::updateState(int state)
         ui.controlButton->setText(tr("ARM SYSTEM"));
         break;
     }
+#endif // MAVLINK_ENABLED_SKYE
 }
 
 /**
@@ -181,7 +209,7 @@ void UASSkyeControlWidget::setDirectControlMode(bool checked)
     if (checked)
     {
 #ifdef  MAVLINK_ENABLED_SKYE
-        setMode(MAV_MODE_DIRECT_CONTROL_ARMED);
+        setMode(MAV_MODE_DIRECT_CONTROL_DISARMED);
         ui.lastActionLabel->setText(tr("Direct Control Mode not sent yet!"));
         transmitMode();
 #endif  // MAVLINK_ENABLED_SKYE
@@ -193,7 +221,7 @@ void UASSkyeControlWidget::setAssistedControlMode(bool checked)
     if (checked)
     {
 #ifdef MAVLINK_ENABLED_SKYE
-        setMode(MAV_MODE_ASSISTED_CONTROL_ARMED);
+        setMode(MAV_MODE_ASSISTED_CONTROL_DISARMED);
         ui.lastActionLabel->setText(tr("Assisted Control Mode not sent yet!"));
         transmitMode();
 #endif // MAVLINK_ENABLED_SKYE
@@ -205,7 +233,7 @@ void UASSkyeControlWidget::setHalfAutomaticControlMode(bool checked)
     if (checked)
     {
 #ifdef MAVLINK_ENABLED_SKYE
-        setMode(MAV_MODE_HALF_AUTOMATIC_ARMED);
+        setMode(MAV_MODE_HALF_AUTOMATIC_DISARMED);
         ui.lastActionLabel->setText(tr("Half Automatic Control Mode not sent yet!"));
         transmitMode();
 #endif // MAVLINK_ENABLED_SKYE
@@ -217,27 +245,66 @@ void UASSkyeControlWidget::setFullAutomaticControlMode(bool checked)
     if (checked)
     {
 #ifdef MAVLINK_ENABLED_SKYE
-        setMode(MAV_MODE_FULL_AUTOMATIC_ARMED);
+        setMode(MAV_MODE_FULL_AUTOMATIC_DISARMED);
         ui.lastActionLabel->setText(tr("Full Automatic Control Mode not sent yet!"));
         transmitMode();
 #endif // MAVLINK_ENABLED_SKYE
     }
 }
 
+void UASSkyeControlWidget::setInputMouse(bool checked)
+{
+#ifdef MAVLINK_ENABLED_SKYE
+    if (checked)
+    {
+        inputMode = QGC_INPUT_MODE_MOUSE;
+        emit changedInput(inputMode);
+        ui.lastActionLabel->setText(tr("3dMouse activated!"));
+    }
+#endif // MAVLINK_ENABLED_SKYE
+}
+
+void UASSkyeControlWidget::setInputTouch(bool checked)
+{
+#ifdef MAVLINK_ENABLED_SKYE
+    if (checked)
+    {
+        inputMode = QGC_INPUT_MODE_TOUCH;
+        emit changedInput(inputMode);
+        ui.lastActionLabel->setText(tr("Touchscreen activated!"));
+    }
+#endif // MAVLINK_ENABLED_SKYE
+}
+
+void UASSkyeControlWidget::setInputKeyboard(bool checked)
+{
+#ifdef MAVLINK_ENABLED_SKYE
+    if (checked)
+    {
+        inputMode = QGC_INPUT_MODE_KEYBOARD;
+        emit changedInput(inputMode);
+        ui.lastActionLabel->setText(tr("Keyboard activated!"));
+    }
+#endif // MAVLINK_ENABLED_SKYE
+}
+
 void UASSkyeControlWidget::transmitMode()
 {
+#ifdef MAVLINK_ENABLED_SKYE
     UASInterface* mav = UASManager::instance()->getUASForId(this->uas);
     if (mav)
     {
         mav->setMode(uasMode);
         QString mode = UAS::getShortModeTextFor(uasMode);
 
-        ui.lastActionLabel->setText(QString("Sent new mode %1 to %2").arg(mode).arg(mav->getUASName()));
+        ui.lastActionLabel->setText(QString("Sent mode %1 to %2").arg(mode).arg(mav->getUASName()));
     }
+#endif // MAVLINK_ENABLED_SKYE
 }
 
 void UASSkyeControlWidget::cycleContextButton()
 {
+#ifdef MAVLINK_ENABLED_SKYE
     UAS* mav = dynamic_cast<UAS*>(UASManager::instance()->getUASForId(this->uas));
     if (mav)
     {
@@ -257,5 +324,5 @@ void UASSkyeControlWidget::cycleContextButton()
         QTimer::singleShot(200, this, SLOT(updateStatemachine()));
 
     }
-
+#endif MAVLINK_ENABLED_SKYE
 }

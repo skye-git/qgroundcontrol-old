@@ -370,6 +370,7 @@ void UAS::receiveMessage(LinkInterface* link, mavlink_message_t message)
                 shortModeText = getShortModeTextFor(this->mode);
 
                 emit modeChanged(this->getUASID(), shortModeText, "");
+                emit modeChanged(this->getUASID(), state.base_mode);        // Beginn und Ende Code MA (07.03.2012)
 
                 modeAudio = " is now in " + audiomodeText;
             }
