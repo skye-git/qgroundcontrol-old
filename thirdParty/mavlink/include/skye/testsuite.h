@@ -341,6 +341,83 @@ static void mavlink_test_cam_reconfigure_bluefox(uint8_t system_id, uint8_t comp
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
+static void mavlink_test_skye_scaled_pressure(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+{
+	mavlink_message_t msg;
+        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
+        uint16_t i;
+	mavlink_skye_scaled_pressure_t packet_in = {
+		963497464,
+	45.0,
+	73.0,
+	101.0,
+	129.0,
+	157.0,
+	185.0,
+	213.0,
+	241.0,
+	269.0,
+	297.0,
+	325.0,
+	353.0,
+	381.0,
+	409.0,
+	437.0,
+	465.0,
+	20771,
+	};
+	mavlink_skye_scaled_pressure_t packet1, packet2;
+        memset(&packet1, 0, sizeof(packet1));
+        	packet1.time_boot_ms = packet_in.time_boot_ms;
+        	packet1.press_abs1 = packet_in.press_abs1;
+        	packet1.press_diff11 = packet_in.press_diff11;
+        	packet1.press_diff12 = packet_in.press_diff12;
+        	packet1.press_diff13 = packet_in.press_diff13;
+        	packet1.press_abs2 = packet_in.press_abs2;
+        	packet1.press_diff21 = packet_in.press_diff21;
+        	packet1.press_diff22 = packet_in.press_diff22;
+        	packet1.press_diff23 = packet_in.press_diff23;
+        	packet1.press_abs3 = packet_in.press_abs3;
+        	packet1.press_diff31 = packet_in.press_diff31;
+        	packet1.press_diff32 = packet_in.press_diff32;
+        	packet1.press_diff33 = packet_in.press_diff33;
+        	packet1.press_abs4 = packet_in.press_abs4;
+        	packet1.press_diff41 = packet_in.press_diff41;
+        	packet1.press_diff42 = packet_in.press_diff42;
+        	packet1.press_diff43 = packet_in.press_diff43;
+        	packet1.temperature = packet_in.temperature;
+        
+        
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_scaled_pressure_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_skye_scaled_pressure_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_scaled_pressure_pack(system_id, component_id, &msg , packet1.time_boot_ms , packet1.press_abs1 , packet1.press_diff11 , packet1.press_diff12 , packet1.press_diff13 , packet1.press_abs2 , packet1.press_diff21 , packet1.press_diff22 , packet1.press_diff23 , packet1.press_abs3 , packet1.press_diff31 , packet1.press_diff32 , packet1.press_diff33 , packet1.press_abs4 , packet1.press_diff41 , packet1.press_diff42 , packet1.press_diff43 , packet1.temperature );
+	mavlink_msg_skye_scaled_pressure_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_scaled_pressure_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.time_boot_ms , packet1.press_abs1 , packet1.press_diff11 , packet1.press_diff12 , packet1.press_diff13 , packet1.press_abs2 , packet1.press_diff21 , packet1.press_diff22 , packet1.press_diff23 , packet1.press_abs3 , packet1.press_diff31 , packet1.press_diff32 , packet1.press_diff33 , packet1.press_abs4 , packet1.press_diff41 , packet1.press_diff42 , packet1.press_diff43 , packet1.temperature );
+	mavlink_msg_skye_scaled_pressure_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+        mavlink_msg_to_send_buffer(buffer, &msg);
+        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
+        	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
+        }
+	mavlink_msg_skye_scaled_pressure_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+        
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_scaled_pressure_send(MAVLINK_COMM_1 , packet1.time_boot_ms , packet1.press_abs1 , packet1.press_diff11 , packet1.press_diff12 , packet1.press_diff13 , packet1.press_abs2 , packet1.press_diff21 , packet1.press_diff22 , packet1.press_diff23 , packet1.press_abs3 , packet1.press_diff31 , packet1.press_diff32 , packet1.press_diff33 , packet1.press_abs4 , packet1.press_diff41 , packet1.press_diff42 , packet1.press_diff43 , packet1.temperature );
+	mavlink_msg_skye_scaled_pressure_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+}
+
 static void mavlink_test_skye(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
 {
 	mavlink_test_test_motors(system_id, component_id, last_msg);
@@ -348,6 +425,7 @@ static void mavlink_test_skye(uint8_t system_id, uint8_t component_id, mavlink_m
 	mavlink_test_assisted_control(system_id, component_id, last_msg);
 	mavlink_test_assisted_rc_control(system_id, component_id, last_msg);
 	mavlink_test_cam_reconfigure_bluefox(system_id, component_id, last_msg);
+	mavlink_test_skye_scaled_pressure(system_id, component_id, last_msg);
 }
 
 #ifdef __cplusplus

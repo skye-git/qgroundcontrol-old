@@ -35,6 +35,7 @@ This file is part of the QGROUNDCONTROL project
 #include <QStatusBar>
 #include <QStackedWidget>
 #include <QSettings>
+#include <QProcess>                     // Beginn Ende Code MA (08.03.2012)
 #include <qlist.h>
 
 #include "ui_MainWindow.h"
@@ -418,8 +419,10 @@ private:
 
     // Event handler for 3dConnexion 3DMouse        //  Beginn Code MA 06.03.2012 ----------
     #ifdef MOUSE_ENABLED
+    QProcess *process3dxDaemon;     ///< Process running 3dxDaemon 3dConnexion Mouse Driver
     bool x11Event(XEvent *event);
     #endif //MOUSE_ENABLED                          // Ende Code MA 06.03.2012 ------------
+
     void keyPressEvent(QKeyEvent *event);           // Beginn Code MA (07.03.2012)
     void keyReleaseEvent(QKeyEvent *event);
     void handleKeyEvents(QKeyEvent *event, bool keyPressed);         // Ende Code MA (07.03.2012)

@@ -34,7 +34,6 @@ This file is part of the PIXHAWK project
 #include <QLabel>
 #include <QFileDialog>
 #include <QDebug>
-#include <QProcess>
 #include <QPalette>
 
 #include "UASSkyeControlWidget.h"
@@ -174,7 +173,7 @@ void UASSkyeControlWidget::updateMode(int uas,int baseMode)
         if (baseMode & MAV_MODE_FULL_AUTOMATIC_DISARMED)
             ui.fullAutomaticControlButton->setChecked(true);
     }
-#endif MAVLINK_ENABLED_SKYE
+#endif // MAVLINK_ENABLED_SKYE
 }
 
 void UASSkyeControlWidget::updateState(int state)
@@ -324,5 +323,5 @@ void UASSkyeControlWidget::cycleContextButton()
         QTimer::singleShot(200, this, SLOT(updateStatemachine()));
 
     }
-#endif MAVLINK_ENABLED_SKYE
+#endif // MAVLINK_ENABLED_SKYE
 }
