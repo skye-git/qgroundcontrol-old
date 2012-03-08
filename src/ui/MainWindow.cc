@@ -1258,8 +1258,8 @@ void MainWindow::setActiveUAS(UASInterface* uas)
 
     tmp = dynamic_cast<SkyeMAV*>(uas);
     if(tmp) {
-        connect(this, SIGNAL(valueMouseChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommandsByMouse(double,double,double,double,double,double)));
-        connect(this, SIGNAL(valueKeyboardChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommandsByKeyboard(double,double,double,double,double,double)));
+        connect(this, SIGNAL(valueMouseChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
+        connect(this, SIGNAL(valueKeyboardChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
     }
 #endif // MAVLINK_ENABLED_SKYE      // Ende Code MA (27.02.2012) ---------------------------
 }

@@ -131,6 +131,11 @@ void MAVLinkSimulationLink::run()
 
     system.base_mode = MAV_MODE_PREFLIGHT;
     system.custom_mode = MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED;
+#ifdef MAVLINK_ENABLED_SKYE
+    system.custom_mode = MAV_MODE_DIRECT_CONTROL_ARMED;
+#else
+    system.custom_mode = MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED;
+#endif // MAVLINK ENABLED SKYE
     system.system_status = MAV_STATE_UNINIT;
 
     forever

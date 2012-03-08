@@ -86,7 +86,11 @@ void MAVLinkSimulationMAV::mainloop()
 
     if (flying) {
         sys_state = MAV_STATE_ACTIVE;
+#ifdef MAVLINK_ENABLED_SKYE
+        sys_mode = MAV_MODE_DIRECT_CONTROL_ARMED;
+#else
         sys_mode = MAV_MODE_AUTO_ARMED;
+#endif // MAVLINK_ENABLED_SKYE
         nav_mode = 0;
     }
 

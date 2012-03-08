@@ -164,13 +164,13 @@ void UASSkyeControlWidget::updateMode(int uas,int baseMode)
 #ifdef MAVLINK_ENABLED_SKYE
     if ((this->uas == uas) && (this->uasMode != baseMode))
     {
-        if (baseMode & MAV_MODE_DIRECT_CONTROL_DISARMED)
+        if ((baseMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE))
             ui.directControlButton->setChecked(true);
-        if (baseMode & MAV_MODE_ASSISTED_CONTROL_DISARMED)
+        if ((baseMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE))
             ui.assistedControlButton->setChecked(true);
-        if (baseMode & MAV_MODE_HALF_AUTOMATIC_DISARMED)
+        if  ((baseMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_GUIDED) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE))
             ui.halfAutomaticControlButton->setChecked(true);
-        if (baseMode & MAV_MODE_FULL_AUTOMATIC_DISARMED)
+        if  ((baseMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_GUIDED) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_AUTO) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE))
             ui.fullAutomaticControlButton->setChecked(true);
     }
 #endif // MAVLINK_ENABLED_SKYE
@@ -184,10 +184,20 @@ void UASSkyeControlWidget::updateState(int state)
     case (int)MAV_STATE_ACTIVE:
         engineOn = true;
         ui.controlButton->setText(tr("DISARM SYSTEM"));
+        ui.controlButton->setStyleSheet("* { background-color: rgb(255,125,100) }");
+        ui.directControlButton->setDisabled(true);
+        ui.assistedControlButton->setDisabled(true);
+        ui.halfAutomaticControlButton->setDisabled(true);
+        ui.fullAutomaticControlButton->setDisabled(true);
         break;
     case (int)MAV_STATE_STANDBY:
         engineOn = false;
         ui.controlButton->setText(tr("ARM SYSTEM"));
+        ui.controlButton->setStyleSheet("* { background-color: rgb(125,255,100) }");
+        ui.directControlButton->setEnabled(true);
+        ui.assistedControlButton->setEnabled(true);
+        ui.halfAutomaticControlButton->setEnabled(true);
+        ui.fullAutomaticControlButton->setEnabled(true);
         break;
     }
 #endif // MAVLINK_ENABLED_SKYE

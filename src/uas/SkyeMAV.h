@@ -15,9 +15,7 @@ public slots:
     /** @brief Receive a MAVLink message from this MAV */
     void receiveMessage(LinkInterface* link, mavlink_message_t message);
     /** @brief Send the 6 DOF command (from 3d Mouse) to MAV */
-    void setManualControlCommandsByMouse(double x , double y , double z , double a , double b, double c);
-    /** @brief Send the 6 DOF command (from keyboard) to MAV */
-    void setManualControlCommandsByKeyboard(double x , double y , double z , double a , double b, double c);
+    void setManualControlCommands6DoF(double x , double y , double z , double a , double b, double c);
     /** @brief Send the 8 DOF command (from Testphase Widget) to MAV */
     void setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 ); //AL (06.03.12)
 
