@@ -277,6 +277,8 @@ void MAVLinkSimulationMAV::mainloop()
         testmotors.target_system = systemid;
         mavlink_msg_test_motors_encode(systemid, MAV_COMP_ID_IMU, &msg, &testmotors);
         link->sendMAVLinkMessage(&msg);
+        qDebug() << "Testphase";
+        qDebug() << "Thrust"<< thrust1;
 
 #endif                                          // Ende Code MA (07.03.2012)  ----------------
 
