@@ -144,11 +144,9 @@ contains(MAVLINK_CONF, senseSoar) {
 }
 contains(MAVLINK_CONF, skye) {                      ## Beginn Code MA  (15.02.12) copied AL (03.02.12)------------------------------------------
     # Remove the default set - it is included anyway
-    INCLUDEPATH -= $$BASEDIR/../mavlink/include/common
     INCLUDEPATH -= $$BASEDIR/thirdParty/mavlink/include/common
 
     # SKYE SPECIAL MESSAGES
-    INCLUDEPATH += $$BASEDIR/../mavlink/include/skye
     INCLUDEPATH += $$BASEDIR/thirdParty/mavlink/include/skye
     DEFINES += QGC_USE_SKYE_MESSAGES
 }                                                   ## Ende Code MA  ------------------------------------------
