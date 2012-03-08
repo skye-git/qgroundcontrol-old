@@ -42,7 +42,7 @@ public slots:
 
     void stopall();
     void homing();
-    void setActiveUAS(UASInterface* uas);
+//    void setActiveUAS(UASInterface* uas);
     void somevalueChanged();
 
 signals:
