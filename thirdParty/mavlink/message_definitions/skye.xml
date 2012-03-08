@@ -230,5 +230,26 @@
                <field type="uint8_t" name="hdr_mode">HDR mode. See enum MAV_CAM_RECONFIG_HDR_MODE</field>
                <field type="uint8_t" name="use_ros_time">boolean. Timestamp Image and CameraInfo using ros::Time::now() </field>
           </message>
+		<message id="156" name="SKYE_SCALED_PRESSURE">
+               <description>The pressure readings for the typical setup of one absolute and differential pressure sensor. The units are as specified in each field.</description>
+               <field type="uint32_t" name="time_boot_ms">Timestamp (microseconds since UNIX epoch or microseconds since system boot)</field>
+               <field type="float" name="press_abs1">Absolute pressure (hectopascal)</field>
+               <field type="float" name="press_diff11">Differential pressure 1 (hectopascal)</field>
+               <field type="float" name="press_diff12">Differential pressure 1 (hectopascal)</field>
+               <field type="float" name="press_diff13">Differential pressure 1 (hectopascal)</field>
+               <field type="float" name="press_abs2">Absolute pressure (hectopascal)</field>
+               <field type="float" name="press_diff21">Differential pressure 1 (hectopascal)</field>
+               <field type="float" name="press_diff22">Differential pressure 1 (hectopascal)</field>
+               <field type="float" name="press_diff23">Differential pressure 1 (hectopascal)</field>
+               <field type="float" name="press_abs3">Absolute pressure (hectopascal)</field>
+               <field type="float" name="press_diff31">Differential pressure 1 (hectopascal)</field>
+               <field type="float" name="press_diff32">Differential pressure 1 (hectopascal)</field>
+               <field type="float" name="press_diff33">Differential pressure 1 (hectopascal)</field>
+               <field type="float" name="press_abs4">Absolute pressure (hectopascal)</field>
+               <field type="float" name="press_diff41">Differential pressure 1 (hectopascal)</field>
+               <field type="float" name="press_diff42">Differential pressure 1 (hectopascal)</field>
+               <field type="float" name="press_diff43">Differential pressure 1 (hectopascal)</field>
+               <field type="int16_t" name="temperature">Temperature measurement (0.01 degrees celsius)</field>
+          </message>
      </messages>
 </mavlink>
