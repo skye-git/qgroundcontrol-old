@@ -249,6 +249,17 @@ MainWindow::MainWindow(QWidget *parent):
     connect(&windowNameUpdateTimer, SIGNAL(timeout()), this, SLOT(configureWindowName()));
     windowNameUpdateTimer.start(15000);
     emit initStatusChanged("Done.");
+
+#ifdef MOUSE_ENABLED                // Beginn Code MA (08.03.2012)
+    QString processProgramm = "gksudo /etc/3DxWare/daemon/3dxsrv -d usb";
+    QStringList processArguments;
+    processArguments << "-d" << "usb";
+    process3dxDaemon = new QProcess();
+    process3dxDaemon->start(processProgramm);
+    qDebug() << "*************** Tried to start 3DxWare Daemon *******************";
+
+#endif // MOUSE_ENABLED             // Ende Code MA (08.03.2012)
+
     show();
 }
 
