@@ -251,13 +251,12 @@ MainWindow::MainWindow(QWidget *parent):
     emit initStatusChanged("Done.");
 
 #ifdef MOUSE_ENABLED                // Beginn Code MA (08.03.2012)
-    QString processProgramm = "gksudo /etc/3DxWare/daemon/3dxsrv -d usb";
+    qDebug() << "Starting 3DxWare Daemon for 3dConnexion 3dMouse";
+    QString processProgramm = "gksudo";
     QStringList processArguments;
-    processArguments << "-d" << "usb";
+    processArguments << "/etc/3DxWare/daemon/3dxsrv -d usb";
     process3dxDaemon = new QProcess();
-    process3dxDaemon->start(processProgramm);
-    qDebug() << "*************** Tried to start 3DxWare Daemon *******************";
-
+    process3dxDaemon->start(processProgramm, processArguments);
 #endif // MOUSE_ENABLED             // Ende Code MA (08.03.2012)
 
     show();
@@ -269,6 +268,9 @@ MainWindow::~MainWindow()
     {
         delete mavlink;
         mavlink = NULL;
+#ifdef MOUSE_ENABLED
+        delete process3dxDaemon;
+#endif
     }
 //    if (simulationLink)
 //    {
