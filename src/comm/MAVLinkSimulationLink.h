@@ -138,6 +138,31 @@ protected:
     static const uint8_t componentId = 200;
     static const uint16_t version = 1000;
 
+
+    // Begin Code MA (09.03.2012) -----------------------
+    double thrustX;      // Direct Control input
+    double thrustY;
+    double thrustZ;
+    double momentX;
+    double momentY;
+    double momentZ;
+    double transX;      // Direct Control input
+    double transY;
+    double transZ;
+    double rotX;
+    double rotY;
+    double rotZ;
+    int thrust1;        //Testphase Control
+    int thrust2;
+    int thrust3;
+    int thrust4;
+    int orientation1;
+    int orientation2;
+    int orientation3;
+    int orientation4;
+    // Ende Code MA (09.03.2012) --------------------------
+
+
 signals:
     void valueChanged(int uasId, QString curve, double value, quint64 usec);
     void messageReceived(const mavlink_message_t& message);

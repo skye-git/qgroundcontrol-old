@@ -473,6 +473,59 @@ void MAVLinkSimulationLink::mainloop()
         }
         rcCounter++;
 
+#ifdef MAVLINK_ENABLED_SKYE
+        // RETURN DIRECT CONTROL MESSAGE
+        mavlink_direct_control_t direct;
+        direct.thrust_x = thrustX;
+        direct.thrust_y = thrustY;
+        direct.thrust_z = thrustZ;
+        direct.moment_x = momentX;
+        direct.moment_y = momentY;
+        direct.moment_z = momentZ;
+        direct.target_system = systemId;
+        mavlink_msg_direct_control_encode(systemId, MAV_COMP_ID_IMU, &msg, &direct);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
+
+        // RETURN ASSISTED CONTROL MESSAGE
+        mavlink_assisted_control_t assisted;
+        assisted.translation_lat = transX;
+        assisted.translation_long = transY;
+        assisted.translation_alt = transZ;
+        assisted.rotation_x = rotX;
+        assisted.rotation_y = rotY;
+        assisted.rotation_z = rotZ;
+        assisted.target_system = systemId;
+        mavlink_msg_assisted_control_encode(systemId, MAV_COMP_ID_IMU, &msg, &assisted);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
+
+        // RETURN TESTPHASE CONTROL MESSAGE
+        mavlink_test_motors_t testmotors;
+        testmotors.thrust_1 = thrust1;
+        testmotors.thrust_2 = thrust2;
+        testmotors.thrust_3 = thrust3;
+        testmotors.thrust_4 = thrust4;
+        testmotors.direct_1  = orientation1;
+        testmotors.direct_2 = orientation2;
+        testmotors.direct_3 = orientation3;
+        testmotors.direct_4 = orientation4;
+        testmotors.target_system = systemId;
+        mavlink_msg_test_motors_encode(systemId, MAV_COMP_ID_IMU, &msg, &testmotors);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
+        qDebug() << "Return Testphase control message";
+        qDebug() << "testmotors.thrust_1"<< testmotors.thrust_1;
+
+#endif
+
+
     }
 
     // 1 HZ TASKS
@@ -565,7 +618,7 @@ void MAVLinkSimulationLink::mainloop()
         if (typeCounter < 10)
         {
 #ifdef MAVLINK_ENABLED_SKYE                 // Begin Code MA (24.02.2012)
-            mavType = MAV_TYPE_AIRSHIP;
+            mavType = MAV_TYPE_GENERIC;
 #else                                       // Ende Code MA
             mavType = MAV_TYPE_QUADROTOR;
 #endif
@@ -576,14 +629,6 @@ void MAVLinkSimulationLink::mainloop()
         }
         typeCounter++;
 
-        // Pack message and get size of encoded byte string
-        messageSize = mavlink_msg_heartbeat_pack(systemId, componentId, &msg, mavType, MAV_AUTOPILOT_PIXHAWK, system.base_mode, system.custom_mode, system.system_status);
-        // Allocate buffer with packet data
-        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-        //qDebug() << "CRC:" << msg.ck_a << msg.ck_b;
-        //add data into datastream
-        memcpy(stream+streampointer,buffer, bufferlength);
-        streampointer += bufferlength;
 
         // Pack message and get size of encoded byte string
 #ifdef MAVLINK_ENABLED_SKYE                                         // Begin Code MA (24.02.2012)
@@ -598,76 +643,31 @@ void MAVLinkSimulationLink::mainloop()
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 
-
-        // Send controller states
-
-        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-        memcpy(stream+streampointer, buffer, bufferlength);
-        streampointer += bufferlength;
-
-
-
-//        // HEARTBEAT VEHICLE 2
-
-//        // Pack message and get size of encoded byte string
-//        messageSize = mavlink_msg_heartbeat_pack(54, componentId, &msg, MAV_HELICOPTER, MAV_AUTOPILOT_ARDUPILOTMEGA);
-//        // Allocate buffer with packet data
-//        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-//        //add data into datastream
-//        memcpy(stream+streampointer,buffer, bufferlength);
-//        streampointer += bufferlength;
-
-//        // HEARTBEAT VEHICLE 3
-
-//        // Pack message and get size of encoded byte string
-//        messageSize = mavlink_msg_heartbeat_pack(60, componentId, &msg, MAV_FIXED_WING, MAV_AUTOPILOT_PIXHAWK);
-//        // Allocate buffer with packet data
-//        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-//        //add data into datastream
-//        memcpy(stream+streampointer,buffer, bufferlength);
-//        streampointer += bufferlength;
-
-//        // STATUS VEHICLE 2
-//        mavlink_sys_status_t status2;
-//        mavlink_heartbeat_t system2;
-//        system2.base_mode = MAV_MODE_PREFLIGHT;
-//        status2.voltage_battery = voltage;
-//        status2.load = 120;
-//        system2.system_status = MAV_STATE_STANDBY;
-
-        // Pack message and get size of encoded byte string
-        messageSize = mavlink_msg_sys_status_encode(54, componentId, &msg, &status);
-        // Allocate buffer with packet data
-        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-        //add data into datastream
-        memcpy(stream+streampointer,buffer, bufferlength);
-        streampointer += bufferlength;
-
         rate1hzCounter = 1;
     }
 
     // FULL RATE TASKS
-    // Default is 50 Hz
+    // Default is 50 H
 
-    /*
+
     // 50 HZ TASKS
     if (rate50hzCounter == 1000 / rate / 50)
     {
 
-        //streampointer = 0;
+//        //streampointer = 0;
 
-        // Attitude
+//        // Attitude
 
-        // Pack message and get size of encoded byte string
-        messageSize = mavlink_msg_attitude_pack(systemId, componentId, &msg, usec, roll, pitch, yaw, 0, 0, 0);
-        // Allocate buffer with packet data
-        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-        //add data into datastream
-        memcpy(stream+streampointer,buffer, bufferlength);
-        streampointer += bufferlength;
+//        // Pack message and get size of encoded byte string
+//        messageSize = mavlink_msg_attitude_pack(systemId, componentId, &msg, usec, roll, pitch, yaw, 0, 0, 0);
+//        // Allocate buffer with packet data
+//        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+//        //add data into datastream
+//        memcpy(stream+streampointer,buffer, bufferlength);
+//        streampointer += bufferlength;
 
         rate50hzCounter = 1;
-    }*/
+    }
 
     readyBufferMutex.lock();
     for (unsigned int i = 0; i < streampointer; i++) {
@@ -876,6 +876,53 @@ void MAVLinkSimulationLink::writeBytes(const char* data, qint64 size)
                 }
             }
             break;
+
+            // Beginn Code MA (09.03.2012)
+case MAVLINK_MSG_ID_DIRECT_CONTROL: {
+    mavlink_direct_control_t dc;
+    mavlink_msg_direct_control_decode(&msg, &dc);
+    if (dc.target_system == this->systemId) {
+        qDebug() << "thrust x: " << dc.thrust_x << "------------------------------------------";
+        thrustX = dc.thrust_x;
+        thrustY = dc.thrust_y;
+        thrustZ = dc.thrust_z;
+        momentX = dc.moment_x;
+        momentY = dc.moment_y;
+        momentZ = dc.moment_z;
+        // thrustX = 42;
+    }
+}
+break;
+case MAVLINK_MSG_ID_ASSISTED_CONTROL: {
+    mavlink_assisted_control_t ac;
+    mavlink_msg_assisted_control_decode(&msg, &ac);
+    if (ac.target_system == this->systemId) {
+        transX = ac.translation_lat;
+        transY = ac.translation_long;
+        transZ = ac.translation_alt;
+        rotX = ac.rotation_x;
+        rotY = ac.rotation_y;
+        rotZ = ac.rotation_z;
+    }
+}
+break;
+case MAVLINK_MSG_ID_TEST_MOTORS: {
+    mavlink_test_motors_t tm;
+    mavlink_msg_test_motors_decode(&msg, &tm);
+    if (tm.target_system == this->systemId) {
+        thrust1 = tm.thrust_1;        //Testphase Control
+        thrust2 = tm.thrust_2;
+        thrust3 = tm.thrust_3;
+        thrust4 = tm.thrust_4;
+        orientation1 = tm.direct_1;
+        orientation2 =tm.direct_2;
+        orientation3 = tm.direct_3;
+        orientation4 = tm.direct_4;
+    }
+}
+break;      // Ende Code MA (09.03.2012)
+
+
             }
         }
         unsigned char v=data[i];
@@ -968,8 +1015,9 @@ bool MAVLinkSimulationLink::connect()
     emit connected(true);
 
     start(LowPriority);
-    MAVLinkSimulationMAV* mav1 = new MAVLinkSimulationMAV(this, 1, 37.480391, -122.282883);
-    Q_UNUSED(mav1);
+//    MAVLinkSimulationSKYE* skyemav = new MAVLinkSimulationSKYE;
+//    MAVLinkSimulationMAV* mav1 = new MAVLinkSimulationMAV(this, 1, 37.480391, -122.282883);
+//    Q_UNUSED(mav1);
 //    MAVLinkSimulationMAV* mav2 = new MAVLinkSimulationMAV(this, 2, 47.375, 8.548, 1);
 //    Q_UNUSED(mav2);
     //    timer->start(rate);
