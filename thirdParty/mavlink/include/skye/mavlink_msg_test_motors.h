@@ -9,10 +9,10 @@ typedef struct __mavlink_test_motors_t
  int32_t direct_3; ///< Direction of direction motor 3, 360 degrees equal 38'000
  int32_t direct_4; ///< Direction of direction motor 4, 360 degrees equal 38'000
  uint8_t target_system; ///< System ID
- uint8_t thrust_1; ///< Thrust of motor 1, range [-1,1]
- uint8_t thrust_2; ///< Thrust of motor 2, range [-1,1]
- uint8_t thrust_3; ///< Thrust of motor 3, range [-1,1]
- uint8_t thrust_4; ///< Thrust of motor 4, range [-1,1]
+ uint8_t thrust_1; ///< Thrust of motor 1, range [0,200]
+ uint8_t thrust_2; ///< Thrust of motor 2, range [0,200]
+ uint8_t thrust_3; ///< Thrust of motor 3, range [0,200]
+ uint8_t thrust_4; ///< Thrust of motor 4, range [0,200]
 } mavlink_test_motors_t;
 
 #define MAVLINK_MSG_ID_TEST_MOTORS_LEN 21
@@ -43,10 +43,10 @@ typedef struct __mavlink_test_motors_t
  * @param msg The MAVLink message to compress the data into
  *
  * @param target_system System ID
- * @param thrust_1 Thrust of motor 1, range [-1,1]
- * @param thrust_2 Thrust of motor 2, range [-1,1]
- * @param thrust_3 Thrust of motor 3, range [-1,1]
- * @param thrust_4 Thrust of motor 4, range [-1,1]
+ * @param thrust_1 Thrust of motor 1, range [0,200]
+ * @param thrust_2 Thrust of motor 2, range [0,200]
+ * @param thrust_3 Thrust of motor 3, range [0,200]
+ * @param thrust_4 Thrust of motor 4, range [0,200]
  * @param direct_1 Direction of direction motor 1, 360 degrees equal 38'000
  * @param direct_2 Direction of direction motor 2, 360 degrees equal 38'000
  * @param direct_3 Direction of direction motor 3, 360 degrees equal 38'000
@@ -95,10 +95,10 @@ static inline uint16_t mavlink_msg_test_motors_pack(uint8_t system_id, uint8_t c
  * @param chan The MAVLink channel this message was sent over
  * @param msg The MAVLink message to compress the data into
  * @param target_system System ID
- * @param thrust_1 Thrust of motor 1, range [-1,1]
- * @param thrust_2 Thrust of motor 2, range [-1,1]
- * @param thrust_3 Thrust of motor 3, range [-1,1]
- * @param thrust_4 Thrust of motor 4, range [-1,1]
+ * @param thrust_1 Thrust of motor 1, range [0,200]
+ * @param thrust_2 Thrust of motor 2, range [0,200]
+ * @param thrust_3 Thrust of motor 3, range [0,200]
+ * @param thrust_4 Thrust of motor 4, range [0,200]
  * @param direct_1 Direction of direction motor 1, 360 degrees equal 38'000
  * @param direct_2 Direction of direction motor 2, 360 degrees equal 38'000
  * @param direct_3 Direction of direction motor 3, 360 degrees equal 38'000
@@ -159,10 +159,10 @@ static inline uint16_t mavlink_msg_test_motors_encode(uint8_t system_id, uint8_t
  * @param chan MAVLink channel to send the message
  *
  * @param target_system System ID
- * @param thrust_1 Thrust of motor 1, range [-1,1]
- * @param thrust_2 Thrust of motor 2, range [-1,1]
- * @param thrust_3 Thrust of motor 3, range [-1,1]
- * @param thrust_4 Thrust of motor 4, range [-1,1]
+ * @param thrust_1 Thrust of motor 1, range [0,200]
+ * @param thrust_2 Thrust of motor 2, range [0,200]
+ * @param thrust_3 Thrust of motor 3, range [0,200]
+ * @param thrust_4 Thrust of motor 4, range [0,200]
  * @param direct_1 Direction of direction motor 1, 360 degrees equal 38'000
  * @param direct_2 Direction of direction motor 2, 360 degrees equal 38'000
  * @param direct_3 Direction of direction motor 3, 360 degrees equal 38'000
@@ -219,7 +219,7 @@ static inline uint8_t mavlink_msg_test_motors_get_target_system(const mavlink_me
 /**
  * @brief Get field thrust_1 from test_motors message
  *
- * @return Thrust of motor 1, range [-1,1]
+ * @return Thrust of motor 1, range [0,200]
  */
 static inline uint8_t mavlink_msg_test_motors_get_thrust_1(const mavlink_message_t* msg)
 {
@@ -229,7 +229,7 @@ static inline uint8_t mavlink_msg_test_motors_get_thrust_1(const mavlink_message
 /**
  * @brief Get field thrust_2 from test_motors message
  *
- * @return Thrust of motor 2, range [-1,1]
+ * @return Thrust of motor 2, range [0,200]
  */
 static inline uint8_t mavlink_msg_test_motors_get_thrust_2(const mavlink_message_t* msg)
 {
@@ -239,7 +239,7 @@ static inline uint8_t mavlink_msg_test_motors_get_thrust_2(const mavlink_message
 /**
  * @brief Get field thrust_3 from test_motors message
  *
- * @return Thrust of motor 3, range [-1,1]
+ * @return Thrust of motor 3, range [0,200]
  */
 static inline uint8_t mavlink_msg_test_motors_get_thrust_3(const mavlink_message_t* msg)
 {
@@ -249,7 +249,7 @@ static inline uint8_t mavlink_msg_test_motors_get_thrust_3(const mavlink_message
 /**
  * @brief Get field thrust_4 from test_motors message
  *
- * @return Thrust of motor 4, range [-1,1]
+ * @return Thrust of motor 4, range [0,200]
  */
 static inline uint8_t mavlink_msg_test_motors_get_thrust_4(const mavlink_message_t* msg)
 {

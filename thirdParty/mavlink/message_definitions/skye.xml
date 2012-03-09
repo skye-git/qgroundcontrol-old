@@ -160,19 +160,19 @@
      </enums>
      <messages>
           <message id="151" name="TEST_MOTORS">
-               <description>Message type for project SKYE configuration with four thrusters and four direction actuations.</description>
+               <description>Message type for project SKYE configuration with four thrusters and four direction actuations. Requested mode: "MAV_MODE_TESTPHASE_ARMED"</description>
                <field type="uint8_t" name="target_system" >System ID</field>
-               <field type="uint8_t" name="thrust_1">Thrust of motor 1, range [-1,1]</field>
-               <field type="uint8_t" name="thrust_2">Thrust of motor 2, range [-1,1]</field>
-               <field type="uint8_t" name="thrust_3">Thrust of motor 3, range [-1,1]</field>
-               <field type="uint8_t" name="thrust_4">Thrust of motor 4, range [-1,1]</field>
+               <field type="uint8_t" name="thrust_1">Thrust of motor 1, range [0,200]</field>
+               <field type="uint8_t" name="thrust_2">Thrust of motor 2, range [0,200]</field>
+               <field type="uint8_t" name="thrust_3">Thrust of motor 3, range [0,200]</field>
+               <field type="uint8_t" name="thrust_4">Thrust of motor 4, range [0,200]</field>
                <field type="int32_t" name="direct_1">Direction of direction motor 1, 360 degrees equal 38'000</field>
                <field type="int32_t" name="direct_2">Direction of direction motor 2, 360 degrees equal 38'000</field>
                <field type="int32_t" name="direct_3">Direction of direction motor 3, 360 degrees equal 38'000</field>
                <field type="int32_t" name="direct_4">Direction of direction motor 4, 360 degrees equal 38'000</field>
           </message>
           <message id="152" name="DIRECT_CONTROL">
-               <description>Control six degrees of freedom in Body Frame. This type of control is intended to use if there is no attitude feedback in the control.</description>
+               <description>Control six degrees of freedom in Body Frame. This type of control is intended to use if there is no attitude feedback in the control. Requested mode: "MAV_MODE_DIRECT_CONTROL_ARMED"</description>
                <field type="uint8_t" name="target_system">System ID</field>
                <field type="float" name="thrust_x">Resulting thrust in Body Frame x, range [-1,1]</field>
                <field type="float" name="thrust_y">Resulting thrust in Body Frame y, range [-1,1]</field>
@@ -182,11 +182,11 @@
                <field type="float" name="moment_z">Resulting moment in Body Frame z (yaw), range [-1,1]</field>
           </message>
           <message id="153" name="ASSISTED_CONTROL">
-               <description>Control six degrees of freedom. Position in Inertial (earth) Frame. Use this type if you have attitude feedback in the control loop.</description>
+               <description>Control six degrees of freedom. Translational velocity in Inertial (earth) Frame, . Use this type if you have attitude feedback in the control loop. Requested mode: "MAV_MODE_ASSISTED_CONTROL_ARMED"</description>
                <field type="uint8_t" name="target_system">System ID</field>
-               <field type="float" name="translation_x">Translation (velocity) in Inertial Frame x, range [-1,1]</field>
-               <field type="float" name="translation_y">Translation (velocity) in Inertial Frame y, range [-1,1]</field>
-               <field type="float" name="translation_z">Translation (velocity) in Inertial Frame z, range [-1,1]</field>
+               <field type="float" name="translation_lat">Translation (velocity) in Inertial Frame latitude, range [-1,1]</field>
+               <field type="float" name="translation_long">Translation (velocity) in Inertial Frame longitude, range [-1,1]</field>
+               <field type="float" name="translation_alt">Translation (velocity) in Inertial Frame altitude, range [-1,1]</field>
                <field type="float" name="rotation_x">Roll, range [-1,1]</field>
                <field type="float" name="rotation_y">Pitch, range [-1,1]</field>
                <field type="float" name="rotation_z">Yaw, range [-1,1]</field>
@@ -250,6 +250,19 @@
                <field type="float" name="press_diff42">Differential pressure 1 (hectopascal)</field>
                <field type="float" name="press_diff43">Differential pressure 1 (hectopascal)</field>
                <field type="int16_t" name="temperature">Temperature measurement (0.01 degrees celsius)</field>
+          </message>
+          <message id="157" name="SKYE_STATUS">
+               <description>The general skye system state.</description>
+               <field type="uint32_t" name="onboard_control_sensors_present">Bitmask showing which controllers an sensors are present. =0:not present, =1:present, Sensors: last bit 1: 3D gyro, 2: 3D acc, 4: 3D mag, 8: absolute pressure, 16: differential pressures, 32: GPS, 64: motor homing, 128: motor decoding (EPOS), Controllers: 256: attitude stabilization, 512: z/altitude control, 1024: x/y position control, 2048: motor outputs control</field>
+		<field type="uint32_t" name="onboard_control_sensors_enabled">Bitmask showing which controllers an sensors are enabled. =0:not enabled, =1:enabled, same bit contribution as field before.
+		</field>
+                <field type="uint32_t" name="onboard_control_sensors_operating">Bitmask showing controllers and sensors are operating or have an error. =0:ERROR, =1:operating, same bit contribution as field before.</field>
+                <field type="uint16_t" name="mainloop_load">Maximum usage of the mainloop time, (0%: 0, 100%: 1000) should be always below 1000</field>
+		<field type="uint16_t" name="voltage_battery">Battery voltage, in millivolts (1 = 1 millivolt)</field>
+		<field type="int16_t" name="current_battery">Battery current, in 10*milliamperes (1 = 10 milliampere), -1: autopilot does not measure the current</field>
+		<field type="int8_t" name="battery_remaining">Remaining battery energy: (0%: 0, 100%: 100), -1: autopilot estimate the remaining battery</field>
+		<field type="uint16_t" name="drop_rate_comm">Communication drops in percent, (0%: 0, 100%: 10'000), (UART, I2C, SPI, CAN), dropped packets on all links (packets that were corrupted on reception on the MAV)</field>
+		<field type="uint16_t" name="errors_comm">Communication errors (UART, I2C, SPI, CAN), dropped packets on all links (packets that were corrupted on reception on the MAV)</field>
           </message>
      </messages>
 </mavlink>

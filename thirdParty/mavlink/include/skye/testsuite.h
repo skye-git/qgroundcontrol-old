@@ -154,9 +154,9 @@ static void mavlink_test_assisted_control(uint8_t system_id, uint8_t component_i
 	};
 	mavlink_assisted_control_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
-        	packet1.translation_x = packet_in.translation_x;
-        	packet1.translation_y = packet_in.translation_y;
-        	packet1.translation_z = packet_in.translation_z;
+        	packet1.translation_lat = packet_in.translation_lat;
+        	packet1.translation_long = packet_in.translation_long;
+        	packet1.translation_alt = packet_in.translation_alt;
         	packet1.rotation_x = packet_in.rotation_x;
         	packet1.rotation_y = packet_in.rotation_y;
         	packet1.rotation_z = packet_in.rotation_z;
@@ -170,12 +170,12 @@ static void mavlink_test_assisted_control(uint8_t system_id, uint8_t component_i
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_assisted_control_pack(system_id, component_id, &msg , packet1.target_system , packet1.translation_x , packet1.translation_y , packet1.translation_z , packet1.rotation_x , packet1.rotation_y , packet1.rotation_z );
+	mavlink_msg_assisted_control_pack(system_id, component_id, &msg , packet1.target_system , packet1.translation_lat , packet1.translation_long , packet1.translation_alt , packet1.rotation_x , packet1.rotation_y , packet1.rotation_z );
 	mavlink_msg_assisted_control_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_assisted_control_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.translation_x , packet1.translation_y , packet1.translation_z , packet1.rotation_x , packet1.rotation_y , packet1.rotation_z );
+	mavlink_msg_assisted_control_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.translation_lat , packet1.translation_long , packet1.translation_alt , packet1.rotation_x , packet1.rotation_y , packet1.rotation_z );
 	mavlink_msg_assisted_control_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -188,7 +188,7 @@ static void mavlink_test_assisted_control(uint8_t system_id, uint8_t component_i
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_assisted_control_send(MAVLINK_COMM_1 , packet1.target_system , packet1.translation_x , packet1.translation_y , packet1.translation_z , packet1.rotation_x , packet1.rotation_y , packet1.rotation_z );
+	mavlink_msg_assisted_control_send(MAVLINK_COMM_1 , packet1.target_system , packet1.translation_lat , packet1.translation_long , packet1.translation_alt , packet1.rotation_x , packet1.rotation_y , packet1.rotation_z );
 	mavlink_msg_assisted_control_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
@@ -418,6 +418,65 @@ static void mavlink_test_skye_scaled_pressure(uint8_t system_id, uint8_t compone
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
+static void mavlink_test_skye_status(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+{
+	mavlink_message_t msg;
+        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
+        uint16_t i;
+	mavlink_skye_status_t packet_in = {
+		963497464,
+	963497672,
+	963497880,
+	17859,
+	17963,
+	18067,
+	18171,
+	18275,
+	199,
+	};
+	mavlink_skye_status_t packet1, packet2;
+        memset(&packet1, 0, sizeof(packet1));
+        	packet1.onboard_control_sensors_present = packet_in.onboard_control_sensors_present;
+        	packet1.onboard_control_sensors_enabled = packet_in.onboard_control_sensors_enabled;
+        	packet1.onboard_control_sensors_operating = packet_in.onboard_control_sensors_operating;
+        	packet1.mainloop_load = packet_in.mainloop_load;
+        	packet1.voltage_battery = packet_in.voltage_battery;
+        	packet1.current_battery = packet_in.current_battery;
+        	packet1.drop_rate_comm = packet_in.drop_rate_comm;
+        	packet1.errors_comm = packet_in.errors_comm;
+        	packet1.battery_remaining = packet_in.battery_remaining;
+        
+        
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_status_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_skye_status_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_status_pack(system_id, component_id, &msg , packet1.onboard_control_sensors_present , packet1.onboard_control_sensors_enabled , packet1.onboard_control_sensors_operating , packet1.mainloop_load , packet1.voltage_battery , packet1.current_battery , packet1.battery_remaining , packet1.drop_rate_comm , packet1.errors_comm );
+	mavlink_msg_skye_status_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_status_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.onboard_control_sensors_present , packet1.onboard_control_sensors_enabled , packet1.onboard_control_sensors_operating , packet1.mainloop_load , packet1.voltage_battery , packet1.current_battery , packet1.battery_remaining , packet1.drop_rate_comm , packet1.errors_comm );
+	mavlink_msg_skye_status_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+        mavlink_msg_to_send_buffer(buffer, &msg);
+        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
+        	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
+        }
+	mavlink_msg_skye_status_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+        
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_status_send(MAVLINK_COMM_1 , packet1.onboard_control_sensors_present , packet1.onboard_control_sensors_enabled , packet1.onboard_control_sensors_operating , packet1.mainloop_load , packet1.voltage_battery , packet1.current_battery , packet1.battery_remaining , packet1.drop_rate_comm , packet1.errors_comm );
+	mavlink_msg_skye_status_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+}
+
 static void mavlink_test_skye(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
 {
 	mavlink_test_test_motors(system_id, component_id, last_msg);
@@ -426,6 +485,7 @@ static void mavlink_test_skye(uint8_t system_id, uint8_t component_id, mavlink_m
 	mavlink_test_assisted_rc_control(system_id, component_id, last_msg);
 	mavlink_test_cam_reconfigure_bluefox(system_id, component_id, last_msg);
 	mavlink_test_skye_scaled_pressure(system_id, component_id, last_msg);
+	mavlink_test_skye_status(system_id, component_id, last_msg);
 }
 
 #ifdef __cplusplus

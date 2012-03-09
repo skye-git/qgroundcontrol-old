@@ -4,9 +4,9 @@
 
 typedef struct __mavlink_assisted_control_t
 {
- float translation_x; ///< Translation (velocity) in Inertial Frame x, range [-1,1]
- float translation_y; ///< Translation (velocity) in Inertial Frame y, range [-1,1]
- float translation_z; ///< Translation (velocity) in Inertial Frame z, range [-1,1]
+ float translation_lat; ///< Translation (velocity) in Inertial Frame latitude, range [-1,1]
+ float translation_long; ///< Translation (velocity) in Inertial Frame longitude, range [-1,1]
+ float translation_alt; ///< Translation (velocity) in Inertial Frame altitude, range [-1,1]
  float rotation_x; ///< Roll, range [-1,1]
  float rotation_y; ///< Pitch, range [-1,1]
  float rotation_z; ///< Yaw, range [-1,1]
@@ -21,9 +21,9 @@ typedef struct __mavlink_assisted_control_t
 #define MAVLINK_MESSAGE_INFO_ASSISTED_CONTROL { \
 	"ASSISTED_CONTROL", \
 	7, \
-	{  { "translation_x", NULL, MAVLINK_TYPE_FLOAT, 0, 0, offsetof(mavlink_assisted_control_t, translation_x) }, \
-         { "translation_y", NULL, MAVLINK_TYPE_FLOAT, 0, 4, offsetof(mavlink_assisted_control_t, translation_y) }, \
-         { "translation_z", NULL, MAVLINK_TYPE_FLOAT, 0, 8, offsetof(mavlink_assisted_control_t, translation_z) }, \
+	{  { "translation_lat", NULL, MAVLINK_TYPE_FLOAT, 0, 0, offsetof(mavlink_assisted_control_t, translation_lat) }, \
+         { "translation_long", NULL, MAVLINK_TYPE_FLOAT, 0, 4, offsetof(mavlink_assisted_control_t, translation_long) }, \
+         { "translation_alt", NULL, MAVLINK_TYPE_FLOAT, 0, 8, offsetof(mavlink_assisted_control_t, translation_alt) }, \
          { "rotation_x", NULL, MAVLINK_TYPE_FLOAT, 0, 12, offsetof(mavlink_assisted_control_t, rotation_x) }, \
          { "rotation_y", NULL, MAVLINK_TYPE_FLOAT, 0, 16, offsetof(mavlink_assisted_control_t, rotation_y) }, \
          { "rotation_z", NULL, MAVLINK_TYPE_FLOAT, 0, 20, offsetof(mavlink_assisted_control_t, rotation_z) }, \
@@ -39,22 +39,22 @@ typedef struct __mavlink_assisted_control_t
  * @param msg The MAVLink message to compress the data into
  *
  * @param target_system System ID
- * @param translation_x Translation (velocity) in Inertial Frame x, range [-1,1]
- * @param translation_y Translation (velocity) in Inertial Frame y, range [-1,1]
- * @param translation_z Translation (velocity) in Inertial Frame z, range [-1,1]
+ * @param translation_lat Translation (velocity) in Inertial Frame latitude, range [-1,1]
+ * @param translation_long Translation (velocity) in Inertial Frame longitude, range [-1,1]
+ * @param translation_alt Translation (velocity) in Inertial Frame altitude, range [-1,1]
  * @param rotation_x Roll, range [-1,1]
  * @param rotation_y Pitch, range [-1,1]
  * @param rotation_z Yaw, range [-1,1]
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_assisted_control_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-						       uint8_t target_system, float translation_x, float translation_y, float translation_z, float rotation_x, float rotation_y, float rotation_z)
+						       uint8_t target_system, float translation_lat, float translation_long, float translation_alt, float rotation_x, float rotation_y, float rotation_z)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[25];
-	_mav_put_float(buf, 0, translation_x);
-	_mav_put_float(buf, 4, translation_y);
-	_mav_put_float(buf, 8, translation_z);
+	_mav_put_float(buf, 0, translation_lat);
+	_mav_put_float(buf, 4, translation_long);
+	_mav_put_float(buf, 8, translation_alt);
 	_mav_put_float(buf, 12, rotation_x);
 	_mav_put_float(buf, 16, rotation_y);
 	_mav_put_float(buf, 20, rotation_z);
@@ -63,9 +63,9 @@ static inline uint16_t mavlink_msg_assisted_control_pack(uint8_t system_id, uint
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, 25);
 #else
 	mavlink_assisted_control_t packet;
-	packet.translation_x = translation_x;
-	packet.translation_y = translation_y;
-	packet.translation_z = translation_z;
+	packet.translation_lat = translation_lat;
+	packet.translation_long = translation_long;
+	packet.translation_alt = translation_alt;
 	packet.rotation_x = rotation_x;
 	packet.rotation_y = rotation_y;
 	packet.rotation_z = rotation_z;
@@ -75,7 +75,7 @@ static inline uint16_t mavlink_msg_assisted_control_pack(uint8_t system_id, uint
 #endif
 
 	msg->msgid = MAVLINK_MSG_ID_ASSISTED_CONTROL;
-	return mavlink_finalize_message(msg, system_id, component_id, 25, 120);
+	return mavlink_finalize_message(msg, system_id, component_id, 25, 85);
 }
 
 /**
@@ -85,9 +85,9 @@ static inline uint16_t mavlink_msg_assisted_control_pack(uint8_t system_id, uint
  * @param chan The MAVLink channel this message was sent over
  * @param msg The MAVLink message to compress the data into
  * @param target_system System ID
- * @param translation_x Translation (velocity) in Inertial Frame x, range [-1,1]
- * @param translation_y Translation (velocity) in Inertial Frame y, range [-1,1]
- * @param translation_z Translation (velocity) in Inertial Frame z, range [-1,1]
+ * @param translation_lat Translation (velocity) in Inertial Frame latitude, range [-1,1]
+ * @param translation_long Translation (velocity) in Inertial Frame longitude, range [-1,1]
+ * @param translation_alt Translation (velocity) in Inertial Frame altitude, range [-1,1]
  * @param rotation_x Roll, range [-1,1]
  * @param rotation_y Pitch, range [-1,1]
  * @param rotation_z Yaw, range [-1,1]
@@ -95,13 +95,13 @@ static inline uint16_t mavlink_msg_assisted_control_pack(uint8_t system_id, uint
  */
 static inline uint16_t mavlink_msg_assisted_control_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
 							   mavlink_message_t* msg,
-						           uint8_t target_system,float translation_x,float translation_y,float translation_z,float rotation_x,float rotation_y,float rotation_z)
+						           uint8_t target_system,float translation_lat,float translation_long,float translation_alt,float rotation_x,float rotation_y,float rotation_z)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[25];
-	_mav_put_float(buf, 0, translation_x);
-	_mav_put_float(buf, 4, translation_y);
-	_mav_put_float(buf, 8, translation_z);
+	_mav_put_float(buf, 0, translation_lat);
+	_mav_put_float(buf, 4, translation_long);
+	_mav_put_float(buf, 8, translation_alt);
 	_mav_put_float(buf, 12, rotation_x);
 	_mav_put_float(buf, 16, rotation_y);
 	_mav_put_float(buf, 20, rotation_z);
@@ -110,9 +110,9 @@ static inline uint16_t mavlink_msg_assisted_control_pack_chan(uint8_t system_id,
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, 25);
 #else
 	mavlink_assisted_control_t packet;
-	packet.translation_x = translation_x;
-	packet.translation_y = translation_y;
-	packet.translation_z = translation_z;
+	packet.translation_lat = translation_lat;
+	packet.translation_long = translation_long;
+	packet.translation_alt = translation_alt;
 	packet.rotation_x = rotation_x;
 	packet.rotation_y = rotation_y;
 	packet.rotation_z = rotation_z;
@@ -122,7 +122,7 @@ static inline uint16_t mavlink_msg_assisted_control_pack_chan(uint8_t system_id,
 #endif
 
 	msg->msgid = MAVLINK_MSG_ID_ASSISTED_CONTROL;
-	return mavlink_finalize_message_chan(msg, system_id, component_id, chan, 25, 120);
+	return mavlink_finalize_message_chan(msg, system_id, component_id, chan, 25, 85);
 }
 
 /**
@@ -135,7 +135,7 @@ static inline uint16_t mavlink_msg_assisted_control_pack_chan(uint8_t system_id,
  */
 static inline uint16_t mavlink_msg_assisted_control_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_assisted_control_t* assisted_control)
 {
-	return mavlink_msg_assisted_control_pack(system_id, component_id, msg, assisted_control->target_system, assisted_control->translation_x, assisted_control->translation_y, assisted_control->translation_z, assisted_control->rotation_x, assisted_control->rotation_y, assisted_control->rotation_z);
+	return mavlink_msg_assisted_control_pack(system_id, component_id, msg, assisted_control->target_system, assisted_control->translation_lat, assisted_control->translation_long, assisted_control->translation_alt, assisted_control->rotation_x, assisted_control->rotation_y, assisted_control->rotation_z);
 }
 
 /**
@@ -143,39 +143,39 @@ static inline uint16_t mavlink_msg_assisted_control_encode(uint8_t system_id, ui
  * @param chan MAVLink channel to send the message
  *
  * @param target_system System ID
- * @param translation_x Translation (velocity) in Inertial Frame x, range [-1,1]
- * @param translation_y Translation (velocity) in Inertial Frame y, range [-1,1]
- * @param translation_z Translation (velocity) in Inertial Frame z, range [-1,1]
+ * @param translation_lat Translation (velocity) in Inertial Frame latitude, range [-1,1]
+ * @param translation_long Translation (velocity) in Inertial Frame longitude, range [-1,1]
+ * @param translation_alt Translation (velocity) in Inertial Frame altitude, range [-1,1]
  * @param rotation_x Roll, range [-1,1]
  * @param rotation_y Pitch, range [-1,1]
  * @param rotation_z Yaw, range [-1,1]
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_assisted_control_send(mavlink_channel_t chan, uint8_t target_system, float translation_x, float translation_y, float translation_z, float rotation_x, float rotation_y, float rotation_z)
+static inline void mavlink_msg_assisted_control_send(mavlink_channel_t chan, uint8_t target_system, float translation_lat, float translation_long, float translation_alt, float rotation_x, float rotation_y, float rotation_z)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[25];
-	_mav_put_float(buf, 0, translation_x);
-	_mav_put_float(buf, 4, translation_y);
-	_mav_put_float(buf, 8, translation_z);
+	_mav_put_float(buf, 0, translation_lat);
+	_mav_put_float(buf, 4, translation_long);
+	_mav_put_float(buf, 8, translation_alt);
 	_mav_put_float(buf, 12, rotation_x);
 	_mav_put_float(buf, 16, rotation_y);
 	_mav_put_float(buf, 20, rotation_z);
 	_mav_put_uint8_t(buf, 24, target_system);
 
-	_mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ASSISTED_CONTROL, buf, 25, 120);
+	_mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ASSISTED_CONTROL, buf, 25, 85);
 #else
 	mavlink_assisted_control_t packet;
-	packet.translation_x = translation_x;
-	packet.translation_y = translation_y;
-	packet.translation_z = translation_z;
+	packet.translation_lat = translation_lat;
+	packet.translation_long = translation_long;
+	packet.translation_alt = translation_alt;
 	packet.rotation_x = rotation_x;
 	packet.rotation_y = rotation_y;
 	packet.rotation_z = rotation_z;
 	packet.target_system = target_system;
 
-	_mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ASSISTED_CONTROL, (const char *)&packet, 25, 120);
+	_mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ASSISTED_CONTROL, (const char *)&packet, 25, 85);
 #endif
 }
 
@@ -195,31 +195,31 @@ static inline uint8_t mavlink_msg_assisted_control_get_target_system(const mavli
 }
 
 /**
- * @brief Get field translation_x from assisted_control message
+ * @brief Get field translation_lat from assisted_control message
  *
- * @return Translation (velocity) in Inertial Frame x, range [-1,1]
+ * @return Translation (velocity) in Inertial Frame latitude, range [-1,1]
  */
-static inline float mavlink_msg_assisted_control_get_translation_x(const mavlink_message_t* msg)
+static inline float mavlink_msg_assisted_control_get_translation_lat(const mavlink_message_t* msg)
 {
 	return _MAV_RETURN_float(msg,  0);
 }
 
 /**
- * @brief Get field translation_y from assisted_control message
+ * @brief Get field translation_long from assisted_control message
  *
- * @return Translation (velocity) in Inertial Frame y, range [-1,1]
+ * @return Translation (velocity) in Inertial Frame longitude, range [-1,1]
  */
-static inline float mavlink_msg_assisted_control_get_translation_y(const mavlink_message_t* msg)
+static inline float mavlink_msg_assisted_control_get_translation_long(const mavlink_message_t* msg)
 {
 	return _MAV_RETURN_float(msg,  4);
 }
 
 /**
- * @brief Get field translation_z from assisted_control message
+ * @brief Get field translation_alt from assisted_control message
  *
- * @return Translation (velocity) in Inertial Frame z, range [-1,1]
+ * @return Translation (velocity) in Inertial Frame altitude, range [-1,1]
  */
-static inline float mavlink_msg_assisted_control_get_translation_z(const mavlink_message_t* msg)
+static inline float mavlink_msg_assisted_control_get_translation_alt(const mavlink_message_t* msg)
 {
 	return _MAV_RETURN_float(msg,  8);
 }
@@ -263,9 +263,9 @@ static inline float mavlink_msg_assisted_control_get_rotation_z(const mavlink_me
 static inline void mavlink_msg_assisted_control_decode(const mavlink_message_t* msg, mavlink_assisted_control_t* assisted_control)
 {
 #if MAVLINK_NEED_BYTE_SWAP
-	assisted_control->translation_x = mavlink_msg_assisted_control_get_translation_x(msg);
-	assisted_control->translation_y = mavlink_msg_assisted_control_get_translation_y(msg);
-	assisted_control->translation_z = mavlink_msg_assisted_control_get_translation_z(msg);
+	assisted_control->translation_lat = mavlink_msg_assisted_control_get_translation_lat(msg);
+	assisted_control->translation_long = mavlink_msg_assisted_control_get_translation_long(msg);
+	assisted_control->translation_alt = mavlink_msg_assisted_control_get_translation_alt(msg);
 	assisted_control->rotation_x = mavlink_msg_assisted_control_get_rotation_x(msg);
 	assisted_control->rotation_y = mavlink_msg_assisted_control_get_rotation_y(msg);
 	assisted_control->rotation_z = mavlink_msg_assisted_control_get_rotation_z(msg);

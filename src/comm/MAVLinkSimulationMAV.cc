@@ -258,9 +258,9 @@ void MAVLinkSimulationMAV::mainloop()
 
         // RETURN ASSISTED CONTROL MESSAGE
         mavlink_assisted_control_t assisted;
-        assisted.translation_x = transX;
-        assisted.translation_y = transY;
-        assisted.translation_z = transZ;
+        assisted.translation_lat = transX;
+        assisted.translation_long = transY;
+        assisted.translation_alt = transZ;
         assisted.rotation_x = rotX;
         assisted.rotation_y = rotY;
         assisted.rotation_z = rotZ;
@@ -569,9 +569,9 @@ void MAVLinkSimulationMAV::handleMessage(const mavlink_message_t& msg)
             mavlink_assisted_control_t ac;
             mavlink_msg_assisted_control_decode(&msg, &ac);
             if (ac.target_system == this->systemid) {
-                transX = ac.translation_x;
-                transY = ac.translation_y;
-                transZ = ac.translation_z;
+                transX = ac.translation_lat;
+                transY = ac.translation_long;
+                transZ = ac.translation_alt;
                 rotX = ac.rotation_x;
                 rotY = ac.rotation_y;
                 rotZ = ac.rotation_z;
