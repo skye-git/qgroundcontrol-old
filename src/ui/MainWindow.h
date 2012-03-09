@@ -419,7 +419,7 @@ private:
 
     // Event handler for 3dConnexion 3DMouse        //  Beginn Code MA 06.03.2012 ----------
     #ifdef MOUSE_ENABLED
-    QProcess *process3dxDaemon;     ///< Process running 3dxDaemon 3dConnexion Mouse Driver
+//    QProcess *process3dxDaemon;     ///< Process running 3dxDaemon 3dConnexion Mouse Driver
     bool x11Event(XEvent *event);
     #endif //MOUSE_ENABLED                          // Ende Code MA 06.03.2012 ------------
 

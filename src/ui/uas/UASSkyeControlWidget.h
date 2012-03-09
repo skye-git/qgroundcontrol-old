@@ -96,7 +96,7 @@ signals:
         void setInputKeyboard(bool checked);
 
     protected:
-        int uas;              ///< Reference to the current uas
+        int uasId;              ///< Reference to the current uas
         unsigned int uasMode; ///< Current uas mode
         bool engineOn;        ///< Engine state
         QGC_INPUT_MODE inputMode;        ///< Current device for input
