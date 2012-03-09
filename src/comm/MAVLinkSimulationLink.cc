@@ -133,6 +133,7 @@ void MAVLinkSimulationLink::run()
     system.custom_mode = MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED;
 #ifdef MAVLINK_ENABLED_SKYE
     system.custom_mode = MAV_MODE_DIRECT_CONTROL_ARMED;
+    system.type = MAV_TYPE_AIRSHIP;
 #else
     system.custom_mode = MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED;
 #endif // MAVLINK ENABLED SKYE
@@ -593,14 +594,14 @@ void MAVLinkSimulationLink::mainloop()
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 
-        // Pack debug text message
-        mavlink_statustext_t text;
-        text.severity = 0;
-        strcpy((char*)(text.text), "Text message from system 32");
-        mavlink_msg_statustext_encode(systemId, componentId, &msg, &text);
-        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-        memcpy(stream+streampointer, buffer, bufferlength);
-        streampointer += bufferlength;
+//        // Pack debug text message
+//        mavlink_statustext_t text;
+//        text.severity = 0;
+//        strcpy((char*)(text.text), "Text message from system 32");
+//        mavlink_msg_statustext_encode(systemId, componentId, &msg, &text);
+//        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+//        memcpy(stream+streampointer, buffer, bufferlength);
+//        streampointer += bufferlength;
 
         /*
         // Pack message and get size of encoded byte string
@@ -613,28 +614,11 @@ void MAVLinkSimulationLink::mainloop()
 
         // HEARTBEAT
 
-        static int typeCounter = 0;
-        uint8_t mavType;
-        if (typeCounter < 10)
-        {
-#ifdef MAVLINK_ENABLED_SKYE                 // Begin Code MA (24.02.2012)
-            mavType = MAV_TYPE_GENERIC;
-#else                                       // Ende Code MA
-            mavType = MAV_TYPE_QUADROTOR;
-#endif
-        }
-        else
-        {
-            mavType = typeCounter % (MAV_TYPE_GCS);
-        }
-        typeCounter++;
-
-
         // Pack message and get size of encoded byte string
 #ifdef MAVLINK_ENABLED_SKYE                                         // Begin Code MA (24.02.2012)
-        messageSize = mavlink_msg_heartbeat_pack(systemId, componentId, &msg, mavType, MAV_AUTOPILOT_SKYE, system.base_mode, system.custom_mode, system.system_status);
+        messageSize = mavlink_msg_heartbeat_pack(systemId, componentId, &msg, system.type, MAV_AUTOPILOT_SKYE, system.base_mode, system.custom_mode, system.system_status);
 #else                                                               // Ende Code MA
-        messageSize = mavlink_msg_heartbeat_pack(systemId, componentId, &msg, mavType, MAV_AUTOPILOT_ARDUPILOTMEGA, system.base_mode, system.custom_mode, system.system_status);
+        messageSize = mavlink_msg_heartbeat_pack(systemId, componentId, &msg, system.type, MAV_AUTOPILOT_ARDUPILOTMEGA, system.base_mode, system.custom_mode, system.system_status);
 #endif
         // Allocate buffer with packet data
         bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);

@@ -55,6 +55,7 @@ void QGCRGBDView::loadSettings()
 
 void QGCRGBDView::setActiveUAS(UASInterface* uas)
 {
+#ifdef QGC_USE_PIXHAWK_MESSAGES
     if (this->uas != NULL)
     {
         // Disconnect any previously connected active MAV
@@ -69,7 +70,7 @@ void QGCRGBDView::setActiveUAS(UASInterface* uas)
         // Setup communication
         connect(uas, SIGNAL(rgbdImageChanged(UASInterface*)), this, SLOT(updateData(UASInterface*)));
     }
-
+#endif
     HUD::setActiveUAS(uas);
 }
 

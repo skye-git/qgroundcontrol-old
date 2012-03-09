@@ -315,6 +315,7 @@ void UASView::updateName(const QString& name)
  */
 void UASView::setSystemType(UASInterface* uas, unsigned int systemType)
 {
+    qDebug() << "System Type is: " << systemType;
     if (uas == this->uas)
     {
         // Set matching icon
@@ -357,6 +358,11 @@ void UASView::setSystemType(UASInterface* uas, unsigned int systemType)
                 m_ui->typeButton->setIcon(QIcon(":/images/mavs/groundstation.svg"));
             }
             break;
+        case 7:     // Beginn Code MA (09.03.2012)
+        {
+            m_ui->typeButton->setIcon(QIcon(":/images/skye_images/LOGO_DEF.png"));
+        }
+        break;      // Ende Code MA (09.03.2012)
         default:
             m_ui->typeButton->setIcon(QIcon(":/images/mavs/unknown.svg"));
             break;
