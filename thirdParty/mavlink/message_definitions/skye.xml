@@ -194,9 +194,9 @@
           <message id="154" name="ASSISTED_RC_CONTROL">
                <description>Control four degrees of freedom. This type of control is intended to use with a 4-channel limited input device. This message is similar to Message MANUAL_CONTROL</description>
                <field type="uint8_t" name="target_system">System ID</field>
-               <field type="float" name="translation_x">Translation x [-1,1]</field>
-               <field type="float" name="rotation_x">Roll, range [-1,1]</field>
-               <field type="float" name="rotation_y">Pitch, range [-1,1]</field>
+               <field type="float" name="translation_lat">Translation latitude [-1,1]</field>
+               <field type="float" name="translation_long">Translation longitude [-1,1]</field>
+               <field type="float" name="translation_alt">Translation altitude [-1,1]</field>
                <field type="float" name="rotation_z">Yaw, range [-1,1]</field>
           </message>
           <message id="155" name="CAM_RECONFIGURE_BLUEFOX">

@@ -207,9 +207,9 @@ static void mavlink_test_assisted_rc_control(uint8_t system_id, uint8_t componen
 	};
 	mavlink_assisted_rc_control_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
-        	packet1.translation_x = packet_in.translation_x;
-        	packet1.rotation_x = packet_in.rotation_x;
-        	packet1.rotation_y = packet_in.rotation_y;
+        	packet1.translation_lat = packet_in.translation_lat;
+        	packet1.translation_long = packet_in.translation_long;
+        	packet1.translation_alt = packet_in.translation_alt;
         	packet1.rotation_z = packet_in.rotation_z;
         	packet1.target_system = packet_in.target_system;
         
@@ -221,12 +221,12 @@ static void mavlink_test_assisted_rc_control(uint8_t system_id, uint8_t componen
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_assisted_rc_control_pack(system_id, component_id, &msg , packet1.target_system , packet1.translation_x , packet1.rotation_x , packet1.rotation_y , packet1.rotation_z );
+	mavlink_msg_assisted_rc_control_pack(system_id, component_id, &msg , packet1.target_system , packet1.translation_lat , packet1.translation_long , packet1.translation_alt , packet1.rotation_z );
 	mavlink_msg_assisted_rc_control_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_assisted_rc_control_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.translation_x , packet1.rotation_x , packet1.rotation_y , packet1.rotation_z );
+	mavlink_msg_assisted_rc_control_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.translation_lat , packet1.translation_long , packet1.translation_alt , packet1.rotation_z );
 	mavlink_msg_assisted_rc_control_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -239,7 +239,7 @@ static void mavlink_test_assisted_rc_control(uint8_t system_id, uint8_t componen
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_assisted_rc_control_send(MAVLINK_COMM_1 , packet1.target_system , packet1.translation_x , packet1.rotation_x , packet1.rotation_y , packet1.rotation_z );
+	mavlink_msg_assisted_rc_control_send(MAVLINK_COMM_1 , packet1.target_system , packet1.translation_lat , packet1.translation_long , packet1.translation_alt , packet1.rotation_z );
 	mavlink_msg_assisted_rc_control_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
