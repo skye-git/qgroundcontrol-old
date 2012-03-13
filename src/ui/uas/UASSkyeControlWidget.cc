@@ -112,6 +112,12 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
 
     this->uasId= uas->getUASID();
     setBackgroundColor(uas->getColor());
+
+    SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
+    updateMode(mav->getUASID(), mav->getUASMode());
+    updateState(mav->getUASState());
+
+
 #endif // MAVLINK_ENABLED_SKYE
 }
 
@@ -345,7 +351,6 @@ void UASSkyeControlWidget::cycleContextButton()
     UAS* mav = dynamic_cast<UAS*>(UASManager::instance()->getUASForId(this->uasId));
     if (mav)
     {
-
         if (!engineOn)
         {
             mav->armSystem();

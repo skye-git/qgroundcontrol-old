@@ -76,6 +76,10 @@ public:
     const QString& getShortMode() const;
     /** @brief Translate from mode id to text */
     static QString getShortModeTextFor(int id);
+    /** @brief Get the current state of active UAS */       // Beginn Code MA (13.03.2012)
+    int getUASState();
+    /** @brief Get the current mode of active UAS */
+    uint8_t getUASMode();                             // Ende Code MA (13.03.2012)
     /** @brief Translate from mode id to audio text */
     static QString getAudioModeTextFor(int id);
     /** @brief Get the unique system id */
