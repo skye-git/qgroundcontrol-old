@@ -251,13 +251,14 @@ MainWindow::MainWindow(QWidget *parent):
     emit initStatusChanged("Done.");
 
 #ifdef MOUSE_ENABLED                // Beginn Code MA (08.03.2012)
-    // man visudo --> then you can omit giving password
+    // man visudo --> then you can omit giving password (did not work..)
     qDebug() << "Starting 3DxWare Daemon for 3dConnexion 3dMouse";
     QString processProgramm = "gksudo";
     QStringList processArguments;
     processArguments << "/etc/3DxWare/daemon/3dxsrv -d usb";
-    QProcess process3dxDaemon;
-    process3dxDaemon.start(processProgramm, processArguments);
+   // QProcess process3dxDaemon;
+    process3dxDaemon = new QProcess();
+    process3dxDaemon->start(processProgramm, processArguments);
 #endif // MOUSE_ENABLED             // Ende Code MA (08.03.2012)
 
     show();
