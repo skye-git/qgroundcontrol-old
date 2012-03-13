@@ -197,7 +197,7 @@ MainWindow::MainWindow(QWidget *parent):
     // Connect user interface devices
     emit initStatusChanged("Initializing joystick interface.");
     joystickWidget = 0;
-    joystick = new JoystickInput();
+    //joystick = new JoystickInput();                               // Modified Code MA (13.03.2012) ----- Disabled JoystickThread
 
     // Connect link
     if (autoReconnect)
