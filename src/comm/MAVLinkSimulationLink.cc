@@ -132,7 +132,6 @@ void MAVLinkSimulationLink::run()
     system.base_mode = MAV_MODE_PREFLIGHT;
     system.custom_mode = MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED;
 #ifdef MAVLINK_ENABLED_SKYE
-    system.custom_mode = MAV_MODE_DIRECT_CONTROL_ARMED;
     system.type = MAV_TYPE_AIRSHIP;
 #else
     system.custom_mode = MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED;
@@ -229,12 +228,12 @@ void MAVLinkSimulationLink::mainloop()
     voltage = voltage - ((fullVoltage - emptyVoltage) * drainRate / rate);
     if (voltage < 3.550f * 3.0f) voltage = 3.550f * 3.0f;
 
-    static int state = 0;
+//    static int state = 0;
 
-    if (state == 0)
-    {
-        state++;
-    }
+//    if (state == 0)
+//    {
+//        state++;
+//    }
 
 
     // 50 HZ TASKS
@@ -532,12 +531,12 @@ void MAVLinkSimulationLink::mainloop()
     // 1 HZ TASKS
     if (rate1hzCounter == 1000 / rate / 1) {
         // STATE
-        static int statusCounter = 0;
-        if (statusCounter == 100) {
-            system.base_mode = (system.base_mode + 1) % MAV_MODE_ENUM_END;
-            statusCounter = 0;
-        }
-        statusCounter++;
+//        static int statusCounter = 0;
+//        if (statusCounter == 100) {
+//            system.base_mode = (system.base_mode + 1) % MAV_MODE_ENUM_END;
+//            statusCounter = 0;
+//        }
+//        statusCounter++;
 
         static int detectionCounter = 6;
         if (detectionCounter % 10 == 0) {
@@ -703,6 +702,17 @@ void MAVLinkSimulationLink::writeBytes(const char* data, qint64 size)
                 mavlink_msg_set_mode_decode(&msg, &mode);
                 // Set mode indepent of mode.target
                 system.base_mode = mode.base_mode;
+#ifdef MAVLINK_ENABLED_SKYE                             // Beginn Code MA (13.03.2012)
+                if (system.base_mode & MAV_MODE_FLAG_DECODE_POSITION_SAFETY)
+                {
+                    system.system_status = MAV_STATE_ACTIVE;
+                }
+                else
+                {
+                    system.system_status = MAV_STATE_STANDBY;
+                }
+
+#endif                                                  // Ende Code MA
             }
             break;
             case MAVLINK_MSG_ID_SET_LOCAL_POSITION_SETPOINT:
