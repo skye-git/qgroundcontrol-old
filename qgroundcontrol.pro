@@ -621,6 +621,22 @@ win32-msvc2008|win32-msvc2010|linux {
     LIBS += -LthirdParty/libxbee/lib \
         -llibxbee
 }
+linux-g++|linux-g++-64{
+exists(src/thirdParty/libxbee/lib/libxbee.so){
+    HEADERS += src/comm/XbeeLinkInterface.h \
+        src/comm/XbeeLink.h \
+        src/comm/HexSpinBox.h \
+        src/ui/XbeeConfigurationWindow.h \
+        src/comm/CallConv.h
+    SOURCES += src/comm/XbeeLink.cpp \
+        src/comm/HexSpinBox.cpp \
+        src/ui/XbeeConfigurationWindow.cpp
+    DEFINES += XBEELINK
+    INCLUDEPATH += thirdParty/libxbee
+# TO DO: build library when it does not exist already
+    LIBS += -LthirdParty/libxbee/lib \
+        -lxbee
+}}
 
 
 # 3DConnexion 3d Mice support                           # Beginn Code MA (06.03.2012) ----------
