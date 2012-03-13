@@ -476,7 +476,7 @@ void MAVLinkSimulationLink::mainloop()
 
 #ifdef MAVLINK_ENABLED_SKYE
         // RETURN DIRECT CONTROL MESSAGE
-        mavlink_direct_control_t direct;
+        mavlink_skye_direct_control_t direct;
         direct.thrust_x = thrustX;
         direct.thrust_y = thrustY;
         direct.thrust_z = thrustZ;
@@ -484,14 +484,14 @@ void MAVLinkSimulationLink::mainloop()
         direct.moment_y = momentY;
         direct.moment_z = momentZ;
         direct.target_system = systemId;
-        mavlink_msg_direct_control_encode(systemId, MAV_COMP_ID_IMU, &msg, &direct);
+        mavlink_msg_skye_direct_control_encode(systemId, MAV_COMP_ID_IMU, &msg, &direct);
         bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
         //add data into datastream
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 
         // RETURN ASSISTED CONTROL MESSAGE
-        mavlink_assisted_control_t assisted;
+        mavlink_skye_assisted_control_t assisted;
         assisted.translation_lat = transX;
         assisted.translation_long = transY;
         assisted.translation_alt = transZ;
@@ -499,14 +499,14 @@ void MAVLinkSimulationLink::mainloop()
         assisted.rotation_y = rotY;
         assisted.rotation_z = rotZ;
         assisted.target_system = systemId;
-        mavlink_msg_assisted_control_encode(systemId, MAV_COMP_ID_IMU, &msg, &assisted);
+        mavlink_msg_skye_assisted_control_encode(systemId, MAV_COMP_ID_IMU, &msg, &assisted);
         bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
         //add data into datastream
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 
         // RETURN TESTPHASE CONTROL MESSAGE
-        mavlink_test_motors_t testmotors;
+        mavlink_skye_test_motors_t testmotors;
         testmotors.thrust_1 = thrust1;
         testmotors.thrust_2 = thrust2;
         testmotors.thrust_3 = thrust3;
@@ -516,7 +516,7 @@ void MAVLinkSimulationLink::mainloop()
         testmotors.direct_3 = orientation3;
         testmotors.direct_4 = orientation4;
         testmotors.target_system = systemId;
-        mavlink_msg_test_motors_encode(systemId, MAV_COMP_ID_IMU, &msg, &testmotors);
+        mavlink_msg_skye_test_motors_encode(systemId, MAV_COMP_ID_IMU, &msg, &testmotors);
         bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
         //add data into datastream
         memcpy(stream+streampointer,buffer, bufferlength);
@@ -862,9 +862,9 @@ void MAVLinkSimulationLink::writeBytes(const char* data, qint64 size)
             break;
 
             // Beginn Code MA (09.03.2012)
-case MAVLINK_MSG_ID_DIRECT_CONTROL: {
-    mavlink_direct_control_t dc;
-    mavlink_msg_direct_control_decode(&msg, &dc);
+case MAVLINK_MSG_ID_SKYE_DIRECT_CONTROL: {
+    mavlink_skye_direct_control_t dc;
+    mavlink_msg_skye_direct_control_decode(&msg, &dc);
     if (dc.target_system == this->systemId) {
         qDebug() << "thrust x: " << dc.thrust_x << "------------------------------------------";
         thrustX = dc.thrust_x;
@@ -877,9 +877,9 @@ case MAVLINK_MSG_ID_DIRECT_CONTROL: {
     }
 }
 break;
-case MAVLINK_MSG_ID_ASSISTED_CONTROL: {
-    mavlink_assisted_control_t ac;
-    mavlink_msg_assisted_control_decode(&msg, &ac);
+case MAVLINK_MSG_ID_SKYE_ASSISTED_CONTROL: {
+    mavlink_skye_assisted_control_t ac;
+    mavlink_msg_skye_assisted_control_decode(&msg, &ac);
     if (ac.target_system == this->systemId) {
         transX = ac.translation_lat;
         transY = ac.translation_long;
@@ -890,9 +890,9 @@ case MAVLINK_MSG_ID_ASSISTED_CONTROL: {
     }
 }
 break;
-case MAVLINK_MSG_ID_TEST_MOTORS: {
-    mavlink_test_motors_t tm;
-    mavlink_msg_test_motors_decode(&msg, &tm);
+case MAVLINK_MSG_ID_SKYE_TEST_MOTORS: {
+    mavlink_skye_test_motors_t tm;
+    mavlink_msg_skye_test_motors_decode(&msg, &tm);
     if (tm.target_system == this->systemId) {
         thrust1 = tm.thrust_1;        //Testphase Control
         thrust2 = tm.thrust_2;

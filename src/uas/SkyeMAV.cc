@@ -32,17 +32,17 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
         if (!link) return;
         switch (message.msgid)
         {
-            case MAVLINK_MSG_ID_DIRECT_CONTROL:
+            case MAVLINK_MSG_ID_SKYE_DIRECT_CONTROL:
             {
                 // TO DO: This is no receiving message, but one to send!!!
                 break;
             }
-            case MAVLINK_MSG_ID_ASSISTED_CONTROL:
+            case MAVLINK_MSG_ID_SKYE_ASSISTED_CONTROL:
             {
                 // TO DO: This is no receiving message, but one to send!!!
                 break;
             }
-            case MAVLINK_MSG_ID_TEST_MOTORS:
+            case MAVLINK_MSG_ID_SKYE_TEST_MOTORS:
             {
                 // TO DO: This is no receiving message, but one to send!!!
                 break;
@@ -135,7 +135,7 @@ void SkyeMAV::sendTestphaseControlCommands(int Thrust1 , int Thrust2 , int Thrus
 
     mavlink_message_t message;
 
-    mavlink_msg_test_motors_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (int)manual1Thrust, (int)manual2Thrust, (int)manual3Thrust,(int)manual4Thrust, (int)manual1Orientation, (int)manual2Orientation, (int)manual3Orientation,(int)manual4Orientation);
+    mavlink_msg_skye_test_motors_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (int)manual1Thrust, (int)manual2Thrust, (int)manual3Thrust,(int)manual4Thrust, (int)manual1Orientation, (int)manual2Orientation, (int)manual3Orientation,(int)manual4Orientation);
     sendMessage(message);
     qDebug() << __FILE__ << __LINE__ << ": SENT TESTPHASE CONTROL MESSAGE: 1Thrust" << manual1Thrust << " 2Thrust: " << manual2Thrust << " 3Thrust: " << manual3Thrust << " 4Thrust: " << manual4Thrust << " 1Orientation: " << manual1Orientation << " 2Orientation: " << manual2Orientation << " 3Orientation: " << manual3Orientation << " 4Orientation: " << manual4Orientation;
 
@@ -167,7 +167,7 @@ void SkyeMAV::sendDirectControlCommands(double xThrust, double yThrust, double z
     
     mavlink_message_t message;
     
-    mavlink_msg_direct_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (float)manualXThrust, (float)manualYThrust, (float)manualZThrust, (float)manualXMoment, (float)manualYMoment, (float)manualZMoment);
+    mavlink_msg_skye_direct_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (float)manualXThrust, (float)manualYThrust, (float)manualZThrust, (float)manualXMoment, (float)manualYMoment, (float)manualZMoment);
     sendMessage(message);
     qDebug() << __FILE__ << __LINE__ << ": SENT DIRECT CONTROL MESSAGE: xThrust" << manualXThrust << " yThrust: " << manualYThrust << " zThrust: " << manualZThrust << " xMoment: " << manualXMoment << " yMoment: " << manualYMoment << " zMoment: " << manualZMoment;
     
@@ -195,7 +195,7 @@ void SkyeMAV::sendAssistedControlCommands(double xVel, double yVel, double zVel,
     
     mavlink_message_t message;
     
-    mavlink_msg_assisted_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (float)manualXVel, (float)manualYVel, (float)manualZVel, (float)manualXRot, (float)manualYRot, (float)manualZRot);
+    mavlink_msg_skye_assisted_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (float)manualXVel, (float)manualYVel, (float)manualZVel, (float)manualXRot, (float)manualYRot, (float)manualZRot);
     sendMessage(message);
     qDebug() << __FILE__ << __LINE__ << ": SENT ASSISTED CONTROL MESSAGE: x velocity" << manualXVel << " y velocity: " << manualYVel << " z velocity: " << manualZVel << " x rotation: " << manualXRot << " y rotation: " << manualYRot << " z rotation: " << manualZRot;
     

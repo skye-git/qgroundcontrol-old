@@ -245,7 +245,7 @@ void MAVLinkSimulationMAV::mainloop()
 
 #ifdef MAVLINK_ENABLED_SKYE                     // Beginn Code MA (07.03.2012) ------------ TEMPORARY !!!
         // RETURN DIRECT CONTROL MESSAGE
-        mavlink_direct_control_t direct;
+        mavlink_skye_direct_control_t direct;
         direct.thrust_x = thrustX;
         direct.thrust_y = thrustY;
         direct.thrust_z = thrustZ;
@@ -253,11 +253,11 @@ void MAVLinkSimulationMAV::mainloop()
         direct.moment_y = momentY;
         direct.moment_z = momentZ;
         direct.target_system = systemid;
-        mavlink_msg_direct_control_encode(systemid, MAV_COMP_ID_IMU, &msg, &direct);
+        mavlink_msg_skye_direct_control_encode(systemid, MAV_COMP_ID_IMU, &msg, &direct);
         link->sendMAVLinkMessage(&msg);
 
         // RETURN ASSISTED CONTROL MESSAGE
-        mavlink_assisted_control_t assisted;
+        mavlink_skye_assisted_control_t assisted;
         assisted.translation_lat = transX;
         assisted.translation_long = transY;
         assisted.translation_alt = transZ;
@@ -265,11 +265,11 @@ void MAVLinkSimulationMAV::mainloop()
         assisted.rotation_y = rotY;
         assisted.rotation_z = rotZ;
         assisted.target_system = systemid;
-        mavlink_msg_assisted_control_encode(systemid, MAV_COMP_ID_IMU, &msg, &assisted);
+        mavlink_msg_skye_assisted_control_encode(systemid, MAV_COMP_ID_IMU, &msg, &assisted);
         link->sendMAVLinkMessage(&msg);
 
         // RETURN TESTPHASE CONTROL MESSAGE
-        mavlink_test_motors_t testmotors;
+        mavlink_skye_test_motors_t testmotors;
         testmotors.thrust_1=thrust1;
         testmotors.thrust_2=thrust2;
         testmotors.thrust_3=thrust3;
@@ -279,7 +279,7 @@ void MAVLinkSimulationMAV::mainloop()
         testmotors.direct_3=orientation3;
         testmotors.direct_4=orientation4;
         testmotors.target_system = systemid;
-        mavlink_msg_test_motors_encode(systemid, MAV_COMP_ID_IMU, &msg, &testmotors);
+        mavlink_msg_skye_test_motors_encode(systemid, MAV_COMP_ID_IMU, &msg, &testmotors);
         link->sendMAVLinkMessage(&msg);
         qDebug() << "Return Testphase control message";
         qDebug() << "testmotors.thrust_1"<< testmotors.thrust_1;
@@ -550,9 +550,9 @@ void MAVLinkSimulationMAV::handleMessage(const mavlink_message_t& msg)
     }
 
         break;                                  // Beginn Code MA (07.03.2012)
-        case MAVLINK_MSG_ID_DIRECT_CONTROL: {
-            mavlink_direct_control_t dc;
-            mavlink_msg_direct_control_decode(&msg, &dc);
+        case MAVLINK_MSG_ID_SKYE_DIRECT_CONTROL: {
+            mavlink_skye_direct_control_t dc;
+            mavlink_msg_skye_direct_control_decode(&msg, &dc);
             if (dc.target_system == this->systemid) {
                 qDebug() << "thrust x: " << dc.thrust_x << "------------------------------------------";
                 thrustX = dc.thrust_x;
@@ -565,9 +565,9 @@ void MAVLinkSimulationMAV::handleMessage(const mavlink_message_t& msg)
             }
         }
         break;
-        case MAVLINK_MSG_ID_ASSISTED_CONTROL: {
-            mavlink_assisted_control_t ac;
-            mavlink_msg_assisted_control_decode(&msg, &ac);
+        case MAVLINK_MSG_ID_SKYE_ASSISTED_CONTROL: {
+            mavlink_skye_assisted_control_t ac;
+            mavlink_msg_skye_assisted_control_decode(&msg, &ac);
             if (ac.target_system == this->systemid) {
                 transX = ac.translation_lat;
                 transY = ac.translation_long;
@@ -578,9 +578,9 @@ void MAVLinkSimulationMAV::handleMessage(const mavlink_message_t& msg)
             }
         }
         break;
-        case MAVLINK_MSG_ID_TEST_MOTORS: {
-        mavlink_test_motors_t tm;
-        mavlink_msg_test_motors_decode(&msg, &tm);
+        case MAVLINK_MSG_ID_SKYE_TEST_MOTORS: {
+        mavlink_skye_test_motors_t tm;
+        mavlink_msg_skye_test_motors_decode(&msg, &tm);
         if (tm.target_system == this->systemid) {
              thrust1 = tm.thrust_1;        //Testphase Control
              thrust2 = tm.thrust_2;
