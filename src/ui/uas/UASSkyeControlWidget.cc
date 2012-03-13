@@ -218,14 +218,13 @@ void UASSkyeControlWidget::setDirectControlMode(bool checked)
     if (checked)
     {
 #ifdef  MAVLINK_ENABLED_SKYE
-//        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
-        if (uasId){
+        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
+        if (mav){
             UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
             if (mav->isArmed())
                 setMode(MAV_MODE_DIRECT_CONTROL_ARMED);
             else
                 setMode(MAV_MODE_DIRECT_CONTROL_DISARMED);
-            ui.lastActionLabel->setText(tr("Direct Control Mode not sent yet!"));
             transmitMode();
         }
 #endif  // MAVLINK_ENABLED_SKYE
@@ -244,7 +243,6 @@ void UASSkyeControlWidget::setAssistedControlMode(bool checked)
                 setMode(MAV_MODE_ASSISTED_CONTROL_ARMED);
             else
                 setMode(MAV_MODE_ASSISTED_CONTROL_DISARMED);
-            ui.lastActionLabel->setText(tr("Assisted Control Mode not sent yet!"));
             transmitMode();
         }
 #endif // MAVLINK_ENABLED_SKYE
@@ -263,7 +261,6 @@ void UASSkyeControlWidget::setHalfAutomaticControlMode(bool checked)
                 setMode(MAV_MODE_HALF_AUTOMATIC_ARMED);
             else
                 setMode(MAV_MODE_HALF_AUTOMATIC_DISARMED);
-            ui.lastActionLabel->setText(tr("Half Automatic Control Mode not sent yet!"));
             transmitMode();
         }
 #endif // MAVLINK_ENABLED_SKYE
@@ -282,7 +279,6 @@ void UASSkyeControlWidget::setFullAutomaticControlMode(bool checked)
                 setMode(MAV_MODE_FULL_AUTOMATIC_ARMED);
             else
                 setMode(MAV_MODE_FULL_AUTOMATIC_DISARMED);
-            ui.lastActionLabel->setText(tr("Full Automatic Control Mode not sent yet!"));
             transmitMode();
         }
 #endif // MAVLINK_ENABLED_SKYE
@@ -335,6 +331,10 @@ void UASSkyeControlWidget::transmitMode()
         QString mode = UAS::getShortModeTextFor(uasMode);
 
         ui.lastActionLabel->setText(QString("Sent mode %1 to %2").arg(mode).arg(mav->getUASName()));
+    }
+    else
+    {
+        ui.lastActionLabel->setText("No UAS activated!");
     }
 #endif // MAVLINK_ENABLED_SKYE
 }
