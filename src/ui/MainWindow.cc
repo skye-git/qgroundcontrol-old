@@ -794,24 +794,24 @@ void MainWindow::loadSettings()
 
 void MainWindow::storeSettings()
 {
-    QSettings settings;
-    settings.beginGroup("QGC_MAINWINDOW");
-    settings.setValue("AUTO_RECONNECT", autoReconnect);
-    settings.setValue("CURRENT_STYLE", currentStyle);
-    settings.endGroup();
-    if (!aboutToCloseFlag && isVisible())
-    {
-        settings.setValue(getWindowGeometryKey(), saveGeometry());
-        // Save the last current view in any case
-        settings.setValue("CURRENT_VIEW", currentView);
-        // Save the current window state, but only if a system is connected (else no real number of widgets would be present)
-        if (UASManager::instance()->getUASList().length() > 0) settings.setValue(getWindowStateKey(), saveState(QGC::applicationVersion()));
-        // Save the current view only if a UAS is connected
-        if (UASManager::instance()->getUASList().length() > 0) settings.setValue("CURRENT_VIEW_WITH_UAS_CONNECTED", currentView);
-        // Save the current power mode
-    }
-    settings.setValue("LOW_POWER_MODE", lowPowerMode);
-    settings.sync();
+//    QSettings settings;
+//    settings.beginGroup("QGC_MAINWINDOW");
+//    settings.setValue("AUTO_RECONNECT", autoReconnect);
+//    settings.setValue("CURRENT_STYLE", currentStyle);
+//    settings.endGroup();
+//    if (!aboutToCloseFlag && isVisible())
+//    {
+//        settings.setValue(getWindowGeometryKey(), saveGeometry());
+//        // Save the last current view in any case
+//        settings.setValue("CURRENT_VIEW", currentView);
+//        // Save the current window state, but only if a system is connected (else no real number of widgets would be present)
+//        if (UASManager::instance()->getUASList().length() > 0) settings.setValue(getWindowStateKey(), saveState(QGC::applicationVersion()));
+//        // Save the current view only if a UAS is connected
+//        if (UASManager::instance()->getUASList().length() > 0) settings.setValue("CURRENT_VIEW_WITH_UAS_CONNECTED", currentView);
+//        // Save the current power mode
+//    }
+//    settings.setValue("LOW_POWER_MODE", lowPowerMode);
+//    settings.sync();
 }
 
 void MainWindow::configureWindowName()
