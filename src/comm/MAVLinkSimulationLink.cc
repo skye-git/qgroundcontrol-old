@@ -57,7 +57,20 @@ This file is part of the QGROUNDCONTROL project
  **/
 MAVLinkSimulationLink::MAVLinkSimulationLink(QString readFile, QString writeFile, int rate, QObject* parent) : LinkInterface(parent),
     readyBytes(0),
-    timeOffset(0)
+    timeOffset(0),
+    time_boot(0),
+    roll(0),
+    pitch(0),
+    yaw(0),
+    speedRoll(0),
+    speedPitch(0),
+    speedYaw(0),
+    x(0),
+    y(0),
+    z(0),
+    speedX(0),
+    speedY(0),
+    speedZ(0)
 {
     this->rate = rate;
     _isConnected = false;
@@ -126,15 +139,19 @@ MAVLinkSimulationLink::~MAVLinkSimulationLink()
 void MAVLinkSimulationLink::run()
 {
 
-    status.voltage_battery = 0;
-    status.errors_comm = 0;
+
 
     system.base_mode = MAV_MODE_PREFLIGHT;
     system.custom_mode = MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED;
 #ifdef MAVLINK_ENABLED_SKYE
-    system.custom_mode = MAV_MODE_DIRECT_CONTROL_ARMED;
+    statusSkye.voltage_battery = 0;
+    statusSkye.errors_comm = 0;
+
     system.type = MAV_TYPE_AIRSHIP;
 #else
+    status.voltage_battery = 0;
+    status.errors_comm = 0;
+
     system.custom_mode = MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED;
 #endif // MAVLINK ENABLED SKYE
     system.system_status = MAV_STATE_UNINIT;
@@ -229,145 +246,167 @@ void MAVLinkSimulationLink::mainloop()
     voltage = voltage - ((fullVoltage - emptyVoltage) * drainRate / rate);
     if (voltage < 3.550f * 3.0f) voltage = 3.550f * 3.0f;
 
-    static int state = 0;
+//    static int state = 0;
 
-    if (state == 0)
-    {
-        state++;
-    }
+//    if (state == 0)
+//    {
+//        state++;
+//    }
 
 
     // 50 HZ TASKS
     if (rate50hzCounter == 1000 / rate / 40)
     {
-        if (simulationFile->isOpen())
-        {
-            if (simulationFile->atEnd()) {
-                // We reached the end of the file, start from scratch
-                simulationFile->reset();
-                simulationHeader = simulationFile->readLine();
-            }
+//        if (simulationFile->isOpen())
+//        {
+//            if (simulationFile->atEnd()) {
+//                // We reached the end of the file, start from scratch
+//                simulationFile->reset();
+//                simulationHeader = simulationFile->readLine();
+//            }
 
-            // Data was made available, read one line
-            // first entry is the timestamp
-            QString values = QString(simulationFile->readLine());
-            QStringList parts = values.split("\t");
-            QStringList keys = simulationHeader.split("\t");
-            //qDebug() << simulationHeader;
-            //qDebug() << values;
-            bool ok;
-            static quint64 lastTime = 0;
-            static quint64 baseTime = 0;
-            quint64 time = QString(parts.first()).toLongLong(&ok, 10);
-            // FIXME Remove multiplicaton by 1000
-            time *= 1000;
+//            // Data was made available, read one line
+//            // first entry is the timestamp
+//            QString values = QString(simulationFile->readLine());
+//            QStringList parts = values.split("\t");
+//            QStringList keys = simulationHeader.split("\t");
+//            //qDebug() << simulationHeader;
+//            //qDebug() << values;
+//            bool ok;
+//            static quint64 lastTime = 0;
+//            static quint64 baseTime = 0;
+//            quint64 time = QString(parts.first()).toLongLong(&ok, 10);
+//            // FIXME Remove multiplicaton by 1000
+//            time *= 1000;
 
-            if (ok) {
-                if (timeOffset == 0) {
-                    timeOffset = time;
-                    baseTime = time;
-                }
+//            if (ok) {
+//                if (timeOffset == 0) {
+//                    timeOffset = time;
+//                    baseTime = time;
+//                }
 
-                if (lastTime > time) {
-                    // We have wrapped around in the logfile
-                    // Add the measurement time interval to the base time
-                    baseTime += lastTime - timeOffset;
-                }
-                lastTime = time;
+//                if (lastTime > time) {
+//                    // We have wrapped around in the logfile
+//                    // Add the measurement time interval to the base time
+//                    baseTime += lastTime - timeOffset;
+//                }
+//                lastTime = time;
 
-                time = time - timeOffset + baseTime;
+//                time = time - timeOffset + baseTime;
 
-                // Gather individual measurement values
-                for (int i = 1; i < (parts.size() - 1); ++i) {
-                    // Get one data field
-                    bool res;
-                    double d = QString(parts.at(i)).toDouble(&res);
-                    if (!res) d = 0;
+//                // Gather individual measurement values
+//                for (int i = 1; i < (parts.size() - 1); ++i) {
+//                    // Get one data field
+//                    bool res;
+//                    double d = QString(parts.at(i)).toDouble(&res);
+//                    if (!res) d = 0;
 
-                    if (keys.value(i, "") == "Accel._X") {
-                        rawImuValues.xacc = d;
-                    }
+//                    if (keys.value(i, "") == "Accel._X") {
+//                        rawImuValues.xacc = d;
+//                    }
 
-                    if (keys.value(i, "") == "Accel._Y") {
-                        rawImuValues.yacc = d;
-                    }
+//                    if (keys.value(i, "") == "Accel._Y") {
+//                        rawImuValues.yacc = d;
+//                    }
 
-                    if (keys.value(i, "") == "Accel._Z") {
-                        rawImuValues.zacc = d;
-                    }
-                    if (keys.value(i, "") == "Gyro_Phi") {
-                        rawImuValues.xgyro = d;
-                        attitude.rollspeed = ((d-29.000)/15000.0)*2.7-2.7-2.65;
-                    }
+//                    if (keys.value(i, "") == "Accel._Z") {
+//                        rawImuValues.zacc = d;
+//                    }
+//                    if (keys.value(i, "") == "Gyro_Phi") {
+//                        rawImuValues.xgyro = d;
+//                        attitude.rollspeed = ((d-29.000)/15000.0)*2.7-2.7-2.65;
+//                    }
 
-                    if (keys.value(i, "") == "Gyro_Theta") {
-                        rawImuValues.ygyro = d;
-                        attitude.pitchspeed = ((d-29.000)/15000.0)*2.7-2.7-2.65;
-                    }
+//                    if (keys.value(i, "") == "Gyro_Theta") {
+//                        rawImuValues.ygyro = d;
+//                        attitude.pitchspeed = ((d-29.000)/15000.0)*2.7-2.7-2.65;
+//                    }
 
-                    if (keys.value(i, "") == "Gyro_Psi") {
-                        rawImuValues.zgyro = d;
-                        attitude.yawspeed = ((d-29.000)/3000.0)*2.7-2.7-2.65;
-                    }
-#ifdef MAVLINK_ENABLED_PIXHAWK
-                    if (keys.value(i, "") == "Pressure") {
-                        rawAuxValues.baro = d;
-                    }
+//                    if (keys.value(i, "") == "Gyro_Psi") {
+//                        rawImuValues.zgyro = d;
+//                        attitude.yawspeed = ((d-29.000)/3000.0)*2.7-2.7-2.65;
+//                    }
+//#ifdef MAVLINK_ENABLED_PIXHAWK
+//                    if (keys.value(i, "") == "Pressure") {
+//                        rawAuxValues.baro = d;
+//                    }
 
-                    if (keys.value(i, "") == "Battery") {
-                        rawAuxValues.vbat = d;
-                    }
-#endif
-                    if (keys.value(i, "") == "roll_IMU") {
-                        attitude.roll = d;
-                    }
+//                    if (keys.value(i, "") == "Battery") {
+//                        rawAuxValues.vbat = d;
+//                    }
+//#endif
+//                    if (keys.value(i, "") == "roll_IMU") {
+//                        attitude.roll = d;
+//                    }
 
-                    if (keys.value(i, "") == "pitch_IMU") {
-                        attitude.pitch = d;
-                    }
+//                    if (keys.value(i, "") == "pitch_IMU") {
+//                        attitude.pitch = d;
+//                    }
 
-                    if (keys.value(i, "") == "yaw_IMU") {
-                        attitude.yaw = d;
-                    }
+//                    if (keys.value(i, "") == "yaw_IMU") {
+//                        attitude.yaw = d;
+//                    }
 
-                    //Accel._X	Accel._Y	Accel._Z	Battery	Bottom_Rotor	CPU_Load	Ground_Dist.	Gyro_Phi	Gyro_Psi	Gyro_Theta	Left_Servo	Mag._X	Mag._Y	Mag._Z	Pressure	Right_Servo	Temperature	Top_Rotor	pitch_IMU	roll_IMU	yaw_IMU
+//                    //Accel._X	Accel._Y	Accel._Z	Battery	Bottom_Rotor	CPU_Load	Ground_Dist.	Gyro_Phi	Gyro_Psi	Gyro_Theta	Left_Servo	Mag._X	Mag._Y	Mag._Z	Pressure	Right_Servo	Temperature	Top_Rotor	pitch_IMU	roll_IMU	yaw_IMU
 
-                }
-                // Send out packets
+//                }
+//                // Send out packets
 
 
-                // ATTITUDE
-                attitude.time_boot_ms = time/1000;
-                // Pack message and get size of encoded byte string
-                mavlink_msg_attitude_encode(systemId, componentId, &msg, &attitude);
-                // Allocate buffer with packet data
-                bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-                //add data into datastream
-                memcpy(stream+streampointer,buffer, bufferlength);
-                streampointer += bufferlength;
+//                // ATTITUDE
 
-                // IMU
-                rawImuValues.time_usec = time;
-                rawImuValues.xmag = 0;
-                rawImuValues.ymag = 0;
-                rawImuValues.zmag = 0;
-                // Pack message and get size of encoded byte string
-                mavlink_msg_raw_imu_encode(systemId, componentId, &msg, &rawImuValues);
-                // Allocate buffer with packet data
-                bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-                //add data into datastream
-                memcpy(stream+streampointer,buffer, bufferlength);
-                streampointer += bufferlength;
+//                attitude.time_boot_ms = time/1000;
+//                // Pack message and get size of encoded byte string
+//                mavlink_msg_attitude_encode(systemId, componentId, &msg, &attitude);
+//                // Allocate buffer with packet data
+//                bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+//                //add data into datastream
+//                memcpy(stream+streampointer,buffer, bufferlength);
+//                streampointer += bufferlength;
 
-                //qDebug() << "ATTITUDE" << "BUF LEN" << bufferlength << "POINTER" << streampointer;
+//                // IMU
+//                rawImuValues.time_usec = time;
+//                rawImuValues.xmag = 0;
+//                rawImuValues.ymag = 0;
+//                rawImuValues.zmag = 0;
+//                // Pack message and get size of encoded byte string
+//                mavlink_msg_raw_imu_encode(systemId, componentId, &msg, &rawImuValues);
+//                // Allocate buffer with packet data
+//                bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+//                //add data into datastream
+//                memcpy(stream+streampointer,buffer, bufferlength);
+//                streampointer += bufferlength;
 
-                //qDebug() << "REALTIME" << QGC::groundTimeMilliseconds() << "ONBOARDTIME" << attitude.msec << "ROLL" << attitude.roll;
+//                //qDebug() << "ATTITUDE" << "BUF LEN" << bufferlength << "POINTER" << streampointer;
 
-            }
+//                //qDebug() << "REALTIME" << QGC::groundTimeMilliseconds() << "ONBOARDTIME" << attitude.msec << "ROLL" << attitude.roll;
 
-        }
+//            }
+
+//        }
+
+          // ATTITUDE
+
+          attitude.roll = this->roll;          // Beginn Code MA (13.03.2012)
+          attitude.pitch = this->pitch;
+          attitude.yaw = this->yaw;
+          attitude.rollspeed = this->speedRoll;
+          attitude.pitchspeed = this->speedPitch;
+          attitude.yawspeed = this->speedYaw;                  // Ende Code MA
+
+          attitude.time_boot_ms = time_boot/1000;
+          // Pack message and get size of encoded byte string
+          mavlink_msg_attitude_encode(systemId, componentId, &msg, &attitude);
+          // Allocate buffer with packet data
+          bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+          //add data into datastream
+          memcpy(stream+streampointer,buffer, bufferlength);
+          streampointer += bufferlength;
+
 
         rate50hzCounter = 1;
+        time_boot += 20;
+//        qDebug() << "Time since boot: " << time_boot;
     }
 
 
@@ -375,21 +414,19 @@ void MAVLinkSimulationLink::mainloop()
     if (rate10hzCounter == 1000 / rate / 9) {
         rate10hzCounter = 1;
 
-        double lastX = x;
-        double lastY = y;
-        double lastZ = z;
-        double hackDt = 0.1f; // 100 ms
+//        double lastX = x;
+//        double lastY = y;
+//        double lastZ = z;
+//        double hackDt = 0.1f; // 100 ms
 
-        // Move X Position
-        x = 12.0*sin(((double)circleCounter)/200.0);
-        y = 5.0*cos(((double)circleCounter)/200.0);
-        z = 1.8 + 1.2*sin(((double)circleCounter)/200.0);
+//        // Move X Position
+//        x = 7.0*sin(((double)circleCounter)/200.0);
+//        y = 5.0*cos(((double)circleCounter)/200.0);
+//        z = 1.8 + 1.2*sin(((double)circleCounter)/200.0);
 
-        double xSpeed = (x - lastX)/hackDt;
-        double ySpeed = (y - lastY)/hackDt;
-        double zSpeed = (z - lastZ)/hackDt;
-
-
+//        double xSpeed = (x - lastX)/hackDt;
+//        double ySpeed = (y - lastY)/hackDt;
+//        double zSpeed = (z - lastZ)/hackDt;
 
         circleCounter++;
 
@@ -404,14 +441,14 @@ void MAVLinkSimulationLink::mainloop()
 
         // Send back new setpoint
         mavlink_message_t ret;
-        mavlink_msg_local_position_setpoint_pack(systemId, componentId, &ret, MAV_FRAME_LOCAL_NED, spX, spY, spZ, spYaw); // spYaw/180.0*M_PI);
+        mavlink_msg_local_position_setpoint_pack(systemId, componentId, &ret, MAV_FRAME_LOCAL_NED, spX, spY, spZ, speedYaw); // spYaw/180.0*M_PI);
         bufferlength = mavlink_msg_to_send_buffer(buffer, &ret);
         //add data into datastream
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 
         // Send back new position
-        mavlink_msg_local_position_ned_pack(systemId, componentId, &ret, 0, x, y, -fabs(z), xSpeed, ySpeed, zSpeed);
+        mavlink_msg_local_position_ned_pack(systemId, componentId, &ret, 0, x, y, -fabs(z), speedX, speedY, speedZ);
         bufferlength = mavlink_msg_to_send_buffer(buffer, &ret);
         //add data into datastream
         memcpy(stream+streampointer,buffer, bufferlength);
@@ -425,7 +462,7 @@ void MAVLinkSimulationLink::mainloop()
 //        streampointer += bufferlength;
 
         // GLOBAL POSITION
-        mavlink_msg_global_position_int_pack(systemId, componentId, &ret, 0, (473780.28137103+(x))*1E3, (85489.9892510421+(y))*1E3, (z+550.0)*1000.0, (z+550.0)*1000.0-1, xSpeed, ySpeed, zSpeed, yaw);
+        mavlink_msg_global_position_int_pack(systemId, componentId, &ret, 0, (473780.28137103+(x))*1E3, (85489.9892510421+(y))*1E3, (z+550.0)*1000.0, (z+550.0)*1000.0-1, speedX, speedY, speedZ, yaw);
         bufferlength = mavlink_msg_to_send_buffer(buffer, &ret);
         //add data into datastream
         memcpy(stream+streampointer,buffer, bufferlength);
@@ -532,12 +569,12 @@ void MAVLinkSimulationLink::mainloop()
     // 1 HZ TASKS
     if (rate1hzCounter == 1000 / rate / 1) {
         // STATE
-        static int statusCounter = 0;
-        if (statusCounter == 100) {
-            system.base_mode = (system.base_mode + 1) % MAV_MODE_ENUM_END;
-            statusCounter = 0;
-        }
-        statusCounter++;
+//        static int statusCounter = 0;
+//        if (statusCounter == 100) {
+//            system.base_mode = (system.base_mode + 1) % MAV_MODE_ENUM_END;
+//            statusCounter = 0;
+//        }
+//        statusCounter++;
 
         static int detectionCounter = 6;
         if (detectionCounter % 10 == 0) {
@@ -583,11 +620,21 @@ void MAVLinkSimulationLink::mainloop()
         }
         detectionCounter++;
 
+
+
+#ifdef MAVLINK_ENABLED_SKYE
+        statusSkye.voltage_battery = voltage * 1000; // millivolts
+        statusSkye.mainloop_load = 33 * detectionCounter % 1000;
+
+        // Pack message and get size of encoded byte string
+        messageSize = mavlink_msg_skye_status_encode(systemId, componentId, &msg, &statusSkye);
+#else
         status.voltage_battery = voltage * 1000; // millivolts
         status.load = 33 * detectionCounter % 1000;
 
         // Pack message and get size of encoded byte string
         messageSize = mavlink_msg_sys_status_encode(systemId, componentId, &msg, &status);
+#endif
         // Allocate buffer with packet data
         bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
         //add data into datastream
@@ -633,25 +680,6 @@ void MAVLinkSimulationLink::mainloop()
     // FULL RATE TASKS
     // Default is 50 H
 
-
-    // 50 HZ TASKS
-    if (rate50hzCounter == 1000 / rate / 50)
-    {
-
-//        //streampointer = 0;
-
-//        // Attitude
-
-//        // Pack message and get size of encoded byte string
-//        messageSize = mavlink_msg_attitude_pack(systemId, componentId, &msg, usec, roll, pitch, yaw, 0, 0, 0);
-//        // Allocate buffer with packet data
-//        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-//        //add data into datastream
-//        memcpy(stream+streampointer,buffer, bufferlength);
-//        streampointer += bufferlength;
-
-        rate50hzCounter = 1;
-    }
 
     readyBufferMutex.lock();
     for (unsigned int i = 0; i < streampointer; i++) {
@@ -703,6 +731,17 @@ void MAVLinkSimulationLink::writeBytes(const char* data, qint64 size)
                 mavlink_msg_set_mode_decode(&msg, &mode);
                 // Set mode indepent of mode.target
                 system.base_mode = mode.base_mode;
+#ifdef MAVLINK_ENABLED_SKYE                             // Beginn Code MA (13.03.2012)
+                if (system.base_mode & MAV_MODE_FLAG_DECODE_POSITION_SAFETY)
+                {
+                    system.system_status = MAV_STATE_ACTIVE;
+                }
+                else
+                {
+                    system.system_status = MAV_STATE_STANDBY;
+                }
+
+#endif                                                  // Ende Code MA
             }
             break;
             case MAVLINK_MSG_ID_SET_LOCAL_POSITION_SETPOINT:
@@ -874,6 +913,28 @@ case MAVLINK_MSG_ID_SKYE_DIRECT_CONTROL: {
         momentY = dc.moment_y;
         momentZ = dc.moment_z;
         // thrustX = 42;
+        // Set ATTITUDE also with direct control
+        float lastRoll = roll;
+        float lastPitch = pitch;
+        float lastYaw = yaw;
+        float lastX = x;
+        float lastY = y;
+        float lastZ = z;
+
+        speedRoll = -1.5*dc.moment_x;
+        speedPitch = 1.5*dc.moment_y;
+        speedYaw = 1.5*dc.moment_z;
+        speedX = 10*dc.thrust_x;
+        speedY = 10*dc.thrust_y;
+        speedZ = 10*dc.thrust_z;
+
+        float dTime = 0.01;
+        roll = lastRoll + speedRoll*dTime;
+        pitch = lastPitch + speedPitch*dTime;
+        yaw = lastYaw + speedYaw*dTime;
+        x = lastX + cos(yaw)*speedX*dTime - sin(yaw)*speedY*dTime;
+        y = lastY + sin(yaw)*speedX*dTime + cos(yaw)*speedY*dTime;
+        z = lastZ + speedZ*dTime;
     }
 }
 break;
@@ -887,6 +948,20 @@ case MAVLINK_MSG_ID_SKYE_ASSISTED_CONTROL: {
         rotX = ac.rotation_x;
         rotY = ac.rotation_y;
         rotZ = ac.rotation_z;
+
+        // Set ATTITUDE also with direct control
+        float lastRoll = roll;
+        float lastPitch = pitch;
+        float lastYaw = yaw;
+
+        roll = -3.14159*ac.rotation_x;
+        pitch = 3.14159*ac.rotation_y;
+        yaw = 3.14159*ac.rotation_z;
+
+        float dTime = 0.01;
+        speedRoll = (roll - lastRoll)/dTime;
+        speedPitch = (pitch - lastPitch)/dTime;
+        speedYaw = (yaw - lastYaw)/dTime;
     }
 }
 break;
@@ -921,9 +996,12 @@ break;      // Ende Code MA (09.03.2012)
     }
     readyBufferMutex.unlock();
 
+#ifdef MAVLINK_ENABLED_SKYE
     // Update comm status
+    statusSkye.errors_comm = comm.packet_rx_drop_count;
+#else
     status.errors_comm = comm.packet_rx_drop_count;
-
+#endif // MAVLINK_ENABLED_SKYE
 }
 
 

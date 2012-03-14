@@ -97,8 +97,11 @@ protected:
 
     // UAS properties
     float roll, pitch, yaw;
+    float speedRoll, speedPitch, speedYaw;       // Code MA (14.03.2012)
     double x, y, z;
-    double spX, spY, spZ, spYaw;
+    double spYaw;//    double spX, spY, spZ, spYaw;
+    double speedX, speedY, speedZ;      // Code MA (14.03.2012)
+    double spX, spY, spZ;
     int battery;
 
     QTimer* timer;
@@ -128,8 +131,13 @@ protected:
     int id;
     QString name;
     qint64 timeOffset;
+#ifdef MAVLINK_ENABLED_SKYE
+    mavlink_skye_status_t statusSkye;
+#else
     mavlink_sys_status_t status;
+#endif
     mavlink_heartbeat_t system;
+
     QMap<QString, float> onboardParams;
 
     void enqueue(uint8_t* stream, uint8_t* index, mavlink_message_t* msg);
@@ -160,6 +168,8 @@ protected:
     int orientation2;
     int orientation3;
     int orientation4;
+
+    int time_boot;      ///< Time since boot in ms
     // Ende Code MA (09.03.2012) --------------------------
 
 

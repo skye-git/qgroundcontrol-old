@@ -2159,7 +2159,8 @@ void UAS::armSystem()
 void UAS::disarmSystem()
 {
     mavlink_message_t msg;
-    mavlink_msg_set_mode_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, this->getUASID(), mode, navMode & !MAV_MODE_FLAG_SAFETY_ARMED);
+    // Mod Code MA (13.03.2012): We only use base_mode
+    mavlink_msg_set_mode_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, this->getUASID(), mode & !MAV_MODE_FLAG_SAFETY_ARMED, navMode & !MAV_MODE_FLAG_SAFETY_ARMED);
     sendMessage(msg);
 }
 
@@ -2505,6 +2506,16 @@ const QString& UAS::getShortMode() const
 {
     return shortModeText;
 }
+
+int UAS::getUASState()                          // Begin Code MA (13.03.2012)
+{
+    return status;
+}
+
+uint8_t UAS::getUASMode()
+{
+    return mode;
+}                                               // Ende Code MA (13.03.2012)
 
 void UAS::addLink(LinkInterface* link)
 {

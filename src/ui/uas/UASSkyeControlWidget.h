@@ -78,8 +78,8 @@ signals:
     void changedInput(int);
 
     protected slots:
-        /** @brief Set the background color for the widget */
-        void setBackgroundColor(QColor color);
+//        /** @brief Set the background color for the widget */
+//        void setBackgroundColor(QColor color);
         /** @brief Set uasMode to Direct Control */
         void setDirectControlMode(bool checked);
         /** @brief Set uasMode to Assisted Control */

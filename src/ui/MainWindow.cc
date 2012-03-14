@@ -197,7 +197,7 @@ MainWindow::MainWindow(QWidget *parent):
     // Connect user interface devices
     emit initStatusChanged("Initializing joystick interface.");
     joystickWidget = 0;
-    joystick = new JoystickInput();
+    //joystick = new JoystickInput();                               // Modified Code MA (13.03.2012) ----- Disabled JoystickThread
 
     // Connect link
     if (autoReconnect)
@@ -1325,6 +1325,9 @@ void MainWindow::UASCreated(UASInterface* uas)
         case MAV_TYPE_GCS:
             icon = QIcon(":/images/mavs/groundstation.svg");
             break;
+        case MAV_TYPE_AIRSHIP:
+            icon = QIcon(":/images/skye_images/LOGO_DEF.png");
+            break;
         default:
             icon = QIcon(":/images/mavs/unknown.svg");
             break;
@@ -1886,7 +1889,7 @@ void MainWindow::handleKeyEvents(QKeyEvent *event, bool keyPressed)
         if (keyPressed)
             keyZValue = (keyZValue > -0.9) ? (keyZValue - 0.25) : (-1);
         else
-            keyYValue = 0;
+            keyZValue = 0;
         break;
     case Qt::Key_F:
         // plus z
