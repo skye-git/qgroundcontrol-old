@@ -102,7 +102,8 @@ public:
     {
         QGC_MAINWINDOW_STYLE_NATIVE,
         QGC_MAINWINDOW_STYLE_INDOOR,
-        QGC_MAINWINDOW_STYLE_OUTDOOR
+        QGC_MAINWINDOW_STYLE_OUTDOOR,
+        QGC_MAINWINDOW_STYLE_SKYE,              //Beginn Ende Code AL (14.03.12)
     };
 
     /** @brief Get current visual style */
@@ -190,6 +191,8 @@ public slots:
     void loadIndoorStyle();
     /** @brief Switch to outdoor mission style */
     void loadOutdoorStyle();
+    /** @brief Switch to skye mission style */
+    void loadSkyeStyle();                               //Beginn Ende Code AL (14.03.12)
     /** @brief Load a specific style */
     void loadStyle(QGC_MAINWINDOW_STYLE style);
 

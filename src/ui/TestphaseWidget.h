@@ -46,6 +46,7 @@ public slots:
     void somevalueChanged();
 
 signals:
+    //void modechanged(int mode);
     void valueTestphaseChanged(int Thrust1, int Thrust2, int Thrust3, int Thrust4, int Orientation1, int Orientation2, int Orientation3, int Orientation4);
 
 

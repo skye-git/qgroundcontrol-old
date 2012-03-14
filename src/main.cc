@@ -71,5 +71,12 @@ int main(int argc, char *argv[])
 #endif
 
     QGCCore core(argc, argv);
+
+//    QFile file(":files/skye/skye.txt"); Code AL (14.03.12) to be removed
+//    file.open(QFile::ReadOnly);
+//    core.setStyleSheet(file.readAll());
+
+
+
     return core.exec();
 }

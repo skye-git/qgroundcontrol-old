@@ -14,10 +14,17 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
 
     qDebug()<< " AL:TestphaseWidgetConstructor Call";
 
+    //get active UAS
     this->uas = UASManager::instance()->getActiveUAS();
     connect(this, SIGNAL(valueTestphaseChanged(int, int, int, int, int, int, int, int)), uas, SLOT(setTestphaseCommandsByWidget(int, int, int, int, int, int, int, int)));
     //FIXME Problem, funktioniert nur, falls getActiveUAS() ein UASInterface zurückgibt, dass SkyeMAV
     //mit if abfragen, ........
+
+
+    //emit mode Testphase disarmed
+//    UASInterface* mav = UASManager::instance()->getUASForId(this->uas);
+//    mav->setMode(67);//corresponds to MAV_MODE_TESTPHASE_DISARMED????????????????
+    uas->setMode(67);
 
 
     //connect Sliders, spinBoxes and dials
@@ -67,6 +74,9 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
 
 TestphaseWidget::~TestphaseWidget()
 {
+//    UASInterface* mav = UASManager::instance()->getUASForId(this->uas);
+//    mav->setMode(0); //Corespnads to MAV_MODE_PREFLIGHT
+    uas->setMode(0);
     delete m_ui;
 }
 

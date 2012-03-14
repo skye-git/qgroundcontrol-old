@@ -897,6 +897,11 @@ void MainWindow::loadOutdoorStyle()
     loadStyle(QGC_MAINWINDOW_STYLE_OUTDOOR);
 }
 
+void MainWindow::loadSkyeStyle()                            //Code AL (14.03.12)
+{
+    loadStyle(QGC_MAINWINDOW_STYLE_SKYE);
+}
+
 void MainWindow::loadStyle(QGC_MAINWINDOW_STYLE style)
 {
     switch (style) {
@@ -921,6 +926,10 @@ void MainWindow::loadStyle(QGC_MAINWINDOW_STYLE style)
         styleFileName = ":/images/style-outdoor.css";
         reloadStylesheet();
         break;
+    case QGC_MAINWINDOW_STYLE_SKYE:
+        qApp->setStyle("plastique");
+        styleFileName = ":/images/style-skye.css";
+        reloadStylesheet();
     }
     currentStyle = style;
 }

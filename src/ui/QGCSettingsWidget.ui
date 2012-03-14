@@ -30,7 +30,7 @@
           <string>Mute all audio output</string>
          </property>
          <property name="icon">
-          <iconset resource="../../mavground.qrc">
+          <iconset resource="../../qgroundcontrol.qrc">
            <normaloff>:/images/status/audio-volume-muted.svg</normaloff>:/images/status/audio-volume-muted.svg</iconset>
          </property>
         </widget>
@@ -41,7 +41,7 @@
           <string>Automatically reconnect last link on application startup</string>
          </property>
          <property name="icon">
-          <iconset resource="../../mavground.qrc">
+          <iconset resource="../../qgroundcontrol.qrc">
            <normaloff>:/images/devices/network-wireless.svg</normaloff>:/images/devices/network-wireless.svg</iconset>
          </property>
         </widget>
@@ -63,13 +63,6 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
-        <widget class="QRadioButton" name="outdoorStyle">
-         <property name="text">
-          <string>Use outdoor mission style (light background)</string>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="0">
         <widget class="QCheckBox" name="lowPowerCheckBox">
          <property name="toolTip">
@@ -77,6 +70,20 @@
          </property>
          <property name="text">
           <string>Enable low power mode</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QRadioButton" name="outdoorStyle">
+         <property name="text">
+          <string>Use outdoor mission style (light background)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QRadioButton" name="skyeStyle">
+         <property name="text">
+          <string>Use skye mission style (adopted to touch input)</string>
          </property>
         </widget>
        </item>
@@ -97,7 +104,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../mavground.qrc"/>
+  <include location="../../qgroundcontrol.qrc"/>
  </resources>
  <connections>
   <connection>
