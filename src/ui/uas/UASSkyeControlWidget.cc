@@ -82,6 +82,7 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
 
     ui.gridLayout->setAlignment(Qt::AlignTop);
 
+    this->setStyleSheet("QPushButton { height: 40;}");
 #endif //MAVLINK_ENABLED_SKYE
 }
 
@@ -112,7 +113,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
     ui.controlStatusLabel->setText(tr("Connected to ") + uas->getUASName());
 
     this->uasId= uas->getUASID();
-    setBackgroundColor(uas->getColor());
+    //setBackgroundColor(uas->getColor());
 
     SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
     if (mav)
@@ -146,28 +147,28 @@ void UASSkyeControlWidget::updateStatemachine()
 #endif // MAVLINK_ENABLED_SKYE
 }
 
-/**
- * Set the background color based on the MAV color. If the MAV is selected as the
- * currently actively controlled system, the frame color is highlighted
- */
-void UASSkyeControlWidget::setBackgroundColor(QColor color)
-{
-#ifdef MAVLINK_ENABLED_SKYE
-    // UAS color
-    QColor uasColor = color;
-    QString colorstyle;
-    QString borderColor = "#4A4A4F";
-    borderColor = "#FA4A4F";
-    uasColor = uasColor.darker(900);
-    colorstyle = colorstyle.sprintf("QLabel { border-radius: 3px; padding: 0px; margin: 0px; background-color: #%02X%02X%02X; border: 0px solid %s; }",
-                                    uasColor.red(), uasColor.green(), uasColor.blue(), borderColor.toStdString().c_str());
-    setStyleSheet(colorstyle);
-    QPalette palette = this->palette();
-    palette.setBrush(QPalette::Window, QBrush(uasColor));
-    setPalette(palette);
-    setAutoFillBackground(true);
-#endif // MAVLINK_ENABLED_SKYE
-}
+///**
+// * Set the background color based on the MAV color. If the MAV is selected as the
+// * currently actively controlled system, the frame color is highlighted
+// */
+//void UASSkyeControlWidget::setBackgroundColor(QColor color)
+//{
+//#ifdef MAVLINK_ENABLED_SKYE
+//    // UAS color
+//    QColor uasColor = color;
+//    QString colorstyle;
+//    QString borderColor = "#4A4A4F";
+//    borderColor = "#FA4A4F";
+//    uasColor = uasColor.darker(900);
+//    colorstyle = colorstyle.sprintf("QLabel { border-radius: 3px; padding: 0px; margin: 0px; background-color: #%02X%02X%02X; border: 0px solid %s; }",
+//                                    uasColor.red(), uasColor.green(), uasColor.blue(), borderColor.toStdString().c_str());
+//    setStyleSheet(colorstyle);
+//    QPalette palette = this->palette();
+//    palette.setBrush(QPalette::Window, QBrush(uasColor));
+//    setPalette(palette);
+//    setAutoFillBackground(true);
+//#endif // MAVLINK_ENABLED_SKYE
+//}
 
 void UASSkyeControlWidget::updateMode(int uas,int baseMode)
 {
