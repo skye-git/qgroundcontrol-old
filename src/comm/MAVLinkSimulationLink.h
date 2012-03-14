@@ -97,9 +97,10 @@ protected:
 
     // UAS properties
     float roll, pitch, yaw;
-    float spRoll, spPitch, spYaw;       // Code MA (14.03.2012)
+    float speedRoll, speedPitch, speedYaw;       // Code MA (14.03.2012)
     double x, y, z;
-//    double spX, spY, spZ, spYaw;
+    double spYaw;//    double spX, spY, spZ, spYaw;
+    double speedX, speedY, speedZ;      // Code MA (14.03.2012)
     double spX, spY, spZ;
     int battery;
 

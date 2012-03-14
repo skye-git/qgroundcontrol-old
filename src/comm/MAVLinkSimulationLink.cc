@@ -62,9 +62,15 @@ MAVLinkSimulationLink::MAVLinkSimulationLink(QString readFile, QString writeFile
     roll(0),
     pitch(0),
     yaw(0),
-    spRoll(0),
-    spPitch(0),
-    spYaw(0)
+    speedRoll(0),
+    speedPitch(0),
+    speedYaw(0),
+    x(0),
+    y(0),
+    z(0),
+    speedX(0),
+    speedY(0),
+    speedZ(0)
 {
     this->rate = rate;
     _isConnected = false;
@@ -384,9 +390,9 @@ void MAVLinkSimulationLink::mainloop()
           attitude.roll = this->roll;          // Beginn Code MA (13.03.2012)
           attitude.pitch = this->pitch;
           attitude.yaw = this->yaw;
-          attitude.rollspeed = this->spRoll;
-          attitude.pitchspeed = this->spPitch;
-          attitude.yawspeed = this->spYaw;                  // Ende Code MA
+          attitude.rollspeed = this->speedRoll;
+          attitude.pitchspeed = this->speedPitch;
+          attitude.yawspeed = this->speedYaw;                  // Ende Code MA
 
           attitude.time_boot_ms = time_boot/1000;
           // Pack message and get size of encoded byte string
@@ -408,19 +414,19 @@ void MAVLinkSimulationLink::mainloop()
     if (rate10hzCounter == 1000 / rate / 9) {
         rate10hzCounter = 1;
 
-        double lastX = x;
-        double lastY = y;
-        double lastZ = z;
-        double hackDt = 0.1f; // 100 ms
+//        double lastX = x;
+//        double lastY = y;
+//        double lastZ = z;
+//        double hackDt = 0.1f; // 100 ms
 
-        // Move X Position
-        x = 7.0*sin(((double)circleCounter)/200.0);
-        y = 5.0*cos(((double)circleCounter)/200.0);
-        z = 1.8 + 1.2*sin(((double)circleCounter)/200.0);
+//        // Move X Position
+//        x = 7.0*sin(((double)circleCounter)/200.0);
+//        y = 5.0*cos(((double)circleCounter)/200.0);
+//        z = 1.8 + 1.2*sin(((double)circleCounter)/200.0);
 
-        double xSpeed = (x - lastX)/hackDt;
-        double ySpeed = (y - lastY)/hackDt;
-        double zSpeed = (z - lastZ)/hackDt;
+//        double xSpeed = (x - lastX)/hackDt;
+//        double ySpeed = (y - lastY)/hackDt;
+//        double zSpeed = (z - lastZ)/hackDt;
 
         circleCounter++;
 
@@ -435,14 +441,14 @@ void MAVLinkSimulationLink::mainloop()
 
         // Send back new setpoint
         mavlink_message_t ret;
-        mavlink_msg_local_position_setpoint_pack(systemId, componentId, &ret, MAV_FRAME_LOCAL_NED, spX, spY, spZ, spYaw); // spYaw/180.0*M_PI);
+        mavlink_msg_local_position_setpoint_pack(systemId, componentId, &ret, MAV_FRAME_LOCAL_NED, spX, spY, spZ, speedYaw); // spYaw/180.0*M_PI);
         bufferlength = mavlink_msg_to_send_buffer(buffer, &ret);
         //add data into datastream
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 
         // Send back new position
-        mavlink_msg_local_position_ned_pack(systemId, componentId, &ret, 0, x, y, -fabs(z), xSpeed, ySpeed, zSpeed);
+        mavlink_msg_local_position_ned_pack(systemId, componentId, &ret, 0, x, y, -fabs(z), speedX, speedY, speedZ);
         bufferlength = mavlink_msg_to_send_buffer(buffer, &ret);
         //add data into datastream
         memcpy(stream+streampointer,buffer, bufferlength);
@@ -456,7 +462,7 @@ void MAVLinkSimulationLink::mainloop()
 //        streampointer += bufferlength;
 
         // GLOBAL POSITION
-        mavlink_msg_global_position_int_pack(systemId, componentId, &ret, 0, (473780.28137103+(x))*1E3, (85489.9892510421+(y))*1E3, (z+550.0)*1000.0, (z+550.0)*1000.0-1, xSpeed, ySpeed, zSpeed, yaw);
+        mavlink_msg_global_position_int_pack(systemId, componentId, &ret, 0, (473780.28137103+(x))*1E3, (85489.9892510421+(y))*1E3, (z+550.0)*1000.0, (z+550.0)*1000.0-1, speedX, speedY, speedZ, yaw);
         bufferlength = mavlink_msg_to_send_buffer(buffer, &ret);
         //add data into datastream
         memcpy(stream+streampointer,buffer, bufferlength);
@@ -911,15 +917,24 @@ case MAVLINK_MSG_ID_SKYE_DIRECT_CONTROL: {
         float lastRoll = roll;
         float lastPitch = pitch;
         float lastYaw = yaw;
+        float lastX = x;
+        float lastY = y;
+        float lastZ = z;
 
-        spRoll = -1.5*dc.moment_x;
-        spPitch = 1.5*dc.moment_y;
-        spYaw = 1.5*dc.moment_z;
+        speedRoll = -1.5*dc.moment_x;
+        speedPitch = 1.5*dc.moment_y;
+        speedYaw = 1.5*dc.moment_z;
+        speedX = 10*dc.thrust_x;
+        speedY = 10*dc.thrust_y;
+        speedZ = 10*dc.thrust_z;
 
         float dTime = 0.01;
-        roll = lastRoll + spRoll*dTime;
-        pitch = lastPitch + spPitch*dTime;
-        yaw = lastYaw + spYaw*dTime;
+        roll = lastRoll + speedRoll*dTime;
+        pitch = lastPitch + speedPitch*dTime;
+        yaw = lastYaw + speedYaw*dTime;
+        x = lastX + cos(yaw)*speedX*dTime - sin(yaw)*speedY*dTime;
+        y = lastY + sin(yaw)*speedX*dTime + cos(yaw)*speedY*dTime;
+        z = lastZ + speedZ*dTime;
     }
 }
 break;
@@ -944,9 +959,9 @@ case MAVLINK_MSG_ID_SKYE_ASSISTED_CONTROL: {
         yaw = 3.14159*ac.rotation_z;
 
         float dTime = 0.01;
-        spRoll = (roll - lastRoll)/dTime;
-        spPitch = (pitch - lastPitch)/dTime;
-        spYaw = (yaw - lastYaw)/dTime;
+        speedRoll = (roll - lastRoll)/dTime;
+        speedPitch = (pitch - lastPitch)/dTime;
+        speedYaw = (yaw - lastYaw)/dTime;
     }
 }
 break;
