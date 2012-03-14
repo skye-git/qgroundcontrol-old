@@ -10,6 +10,7 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
     uas(NULL),
     m_ui(new Ui::TestphaseWidget)
 {
+    //m_ui->setAttribute(Qt::WA_DeleteOnClose, true);//why no member named 'setAttribute'
     m_ui->setupUi(this);
 
     qDebug()<< " AL:TestphaseWidgetConstructor Call";
@@ -21,9 +22,8 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
     //mit if abfragen, ........
 
 
-    //emit mode Testphase disarmed
-//    UASInterface* mav = UASManager::instance()->getUASForId(this->uas);
-//    mav->setMode(67);//corresponds to MAV_MODE_TESTPHASE_DISARMED????????????????
+
+    //mav->setMode(67);//corresponds to MAV_MODE_TESTPHASE_DISARMED????????????????
     uas->setMode(67);
 
 
@@ -56,6 +56,9 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
     //connect Pushbuttons
     connect(m_ui->HomingButton, SIGNAL(clicked()),this,SLOT(homing()));
     connect(m_ui->stopallButton, SIGNAL(clicked()),this, SLOT(stopall())); //Why connect to this?
+    connect(m_ui->closeButton, SIGNAL(clicked()),this, SLOT(stopall()));
+    connect(m_ui->closeButton, SIGNAL(clicked()),this, SLOT(homing()));
+    connect(m_ui->closeButton, SIGNAL(clicked()),this, SLOT(Testphaseclose()));
 
     //emit valueTestphaseChanged if some valueChanged
     connect(m_ui->SliderThrust1, SIGNAL(valueChanged(int)),this, SLOT(somevalueChanged()));
@@ -77,6 +80,7 @@ TestphaseWidget::~TestphaseWidget()
 //    UASInterface* mav = UASManager::instance()->getUASForId(this->uas);
 //    mav->setMode(0); //Corespnads to MAV_MODE_PREFLIGHT
     uas->setMode(0);
+    qDebug()<< " AL:TestphaseWidgetDestructor Call";
     delete m_ui;
 }
 
@@ -85,6 +89,18 @@ void TestphaseWidget::somevalueChanged()
     //qDebug()<<"AL:in somevalueChanged"<<m_ui->SliderThrust1->value() << "AL emit valueTestphaseChanged should be called next.";
     emit valueTestphaseChanged(m_ui->SliderThrust1->value(), m_ui->SliderThrust2->value(), m_ui->SliderThrust3->value(), m_ui->SliderThrust4->value(), m_ui->spinBoxOrientation1->value(), m_ui->spinBoxOrientation2->value(), m_ui->spinBoxOrientation3->value(), m_ui->spinBoxOrientation4->value());
     //qDebug()<<"AL:emit should have been called now";
+}
+
+void TestphaseWidget::modeChanged(int mode_in)
+{
+    uas->setMode(mode_in);
+}
+
+void TestphaseWidget::Testphaseclose()
+{
+
+    uas->setMode(0);
+    this->close();
 }
 
 void TestphaseWidget::homing()

@@ -70,7 +70,15 @@ MAVLinkSimulationLink::MAVLinkSimulationLink(QString readFile, QString writeFile
     z(0),
     speedX(0),
     speedY(0),
-    speedZ(0)
+    speedZ(0),
+    thrust1(0),        //Testphase Control
+    thrust2(0),
+    thrust3(0),
+    thrust4(0),
+    orientation1(0),
+    orientation2(0),
+    orientation3(0),
+    orientation4(0)
 {
     this->rate = rate;
     _isConnected = false;
@@ -558,8 +566,8 @@ void MAVLinkSimulationLink::mainloop()
         //add data into datastream
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
-        qDebug() << "Return Testphase control message";
-        qDebug() << "testmotors.thrust_1"<< testmotors.thrust_1;
+        //qDebug() << "Return Testphase control message";
+        //qDebug() << "testmotors.thrust_1"<< testmotors.thrust_1;
 
 #endif
 
