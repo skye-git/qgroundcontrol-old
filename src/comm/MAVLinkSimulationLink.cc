@@ -912,14 +912,14 @@ case MAVLINK_MSG_ID_SKYE_DIRECT_CONTROL: {
         float lastPitch = pitch;
         float lastYaw = yaw;
 
-        roll = -3.14159*dc.moment_x;
-        pitch = 3.14159*dc.moment_y;
-        yaw = 3.14159*dc.moment_z;
+        spRoll = -1.5*dc.moment_x;
+        spPitch = 1.5*dc.moment_y;
+        spYaw = 1.5*dc.moment_z;
 
         float dTime = 0.01;
-        spRoll = (roll - lastRoll)/dTime;
-        spPitch = (pitch - lastPitch)/dTime;
-        spYaw = (yaw - lastYaw)/dTime;
+        roll = lastRoll + spRoll*dTime;
+        pitch = lastPitch + spPitch*dTime;
+        yaw = lastYaw + spYaw*dTime;
     }
 }
 break;
@@ -933,6 +933,20 @@ case MAVLINK_MSG_ID_SKYE_ASSISTED_CONTROL: {
         rotX = ac.rotation_x;
         rotY = ac.rotation_y;
         rotZ = ac.rotation_z;
+
+        // Set ATTITUDE also with direct control
+        float lastRoll = roll;
+        float lastPitch = pitch;
+        float lastYaw = yaw;
+
+        roll = -3.14159*ac.rotation_x;
+        pitch = 3.14159*ac.rotation_y;
+        yaw = 3.14159*ac.rotation_z;
+
+        float dTime = 0.01;
+        spRoll = (roll - lastRoll)/dTime;
+        spPitch = (pitch - lastPitch)/dTime;
+        spYaw = (yaw - lastYaw)/dTime;
     }
 }
 break;
