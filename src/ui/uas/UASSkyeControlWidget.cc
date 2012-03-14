@@ -81,6 +81,7 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     connect(ui.keyboardButton, SIGNAL(toggled(bool)), this, SLOT(setInputKeyboard(bool)));
 
     ui.gridLayout->setAlignment(Qt::AlignTop);
+
 #endif //MAVLINK_ENABLED_SKYE
 }
 
@@ -114,8 +115,11 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
     setBackgroundColor(uas->getColor());
 
     SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
-    updateMode(mav->getUASID(), mav->getUASMode());
-    updateState(mav->getUASState());
+    if (mav)
+    {
+        updateMode(mav->getUASID(), mav->getUASMode());
+        updateState(mav->getUASState());
+    }
 
 
 #endif // MAVLINK_ENABLED_SKYE
@@ -233,6 +237,10 @@ void UASSkyeControlWidget::setDirectControlMode(bool checked)
                 setMode(MAV_MODE_DIRECT_CONTROL_DISARMED);
             transmitMode();
         }
+        else
+        {
+            ui.lastActionLabel->setText("UAS is no SKYE!");
+        }
 #endif  // MAVLINK_ENABLED_SKYE
     }
 }
@@ -242,14 +250,18 @@ void UASSkyeControlWidget::setAssistedControlMode(bool checked)
     if (checked)
     {
 #ifdef MAVLINK_ENABLED_SKYE
-//        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
-        if (uasId){
+        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
+        if (mav){
             UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
             if (mav->isArmed())
                 setMode(MAV_MODE_ASSISTED_CONTROL_ARMED);
             else
                 setMode(MAV_MODE_ASSISTED_CONTROL_DISARMED);
             transmitMode();
+        }
+        else
+        {
+            ui.lastActionLabel->setText("UAS is no SKYE!");
         }
 #endif // MAVLINK_ENABLED_SKYE
     }
@@ -260,14 +272,18 @@ void UASSkyeControlWidget::setHalfAutomaticControlMode(bool checked)
     if (checked)
     {
 #ifdef MAVLINK_ENABLED_SKYE
-//        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
-        if (uasId){
+        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
+        if (mav){
             UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
             if (mav->isArmed())
                 setMode(MAV_MODE_HALF_AUTOMATIC_ARMED);
             else
                 setMode(MAV_MODE_HALF_AUTOMATIC_DISARMED);
             transmitMode();
+        }
+        else
+        {
+            ui.lastActionLabel->setText("UAS is no SKYE!");
         }
 #endif // MAVLINK_ENABLED_SKYE
     }
@@ -279,13 +295,17 @@ void UASSkyeControlWidget::setFullAutomaticControlMode(bool checked)
     {
 #ifdef MAVLINK_ENABLED_SKYE
         SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
-        if (uasId){
+        if (mav){
             UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
             if (mav->isArmed())
                 setMode(MAV_MODE_FULL_AUTOMATIC_ARMED);
             else
                 setMode(MAV_MODE_FULL_AUTOMATIC_DISARMED);
             transmitMode();
+        }
+        else
+        {
+            ui.lastActionLabel->setText("UAS is no SKYE!");
         }
 #endif // MAVLINK_ENABLED_SKYE
     }
