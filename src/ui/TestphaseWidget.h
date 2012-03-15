@@ -35,13 +35,16 @@ public slots:
     void somevalueChanged();
     void modeChanged(int mode_in);
     void Testphaseclose();
+    void cycleContextButton();
 
 signals:
     void valueTestphaseChanged(int Thrust1, int Thrust2, int Thrust3, int Thrust4, int Orientation1, int Orientation2, int Orientation3, int Orientation4);
 
 
 private:
+    bool engineOn;
     Ui::TestphaseWidget *m_ui;
+
 };
 
 

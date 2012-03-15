@@ -303,6 +303,7 @@ HEADERS += src/MG.h \
     src/input/JoystickInput.h \
     src/ui/JoystickWidget.h \
     src/ui/TestphaseWidget.h \      #Beginn Ende Code AL (01.03.12) ------------------------------------
+    #src/ui/shapedclock.h \          #Beginn und Ende Code AL (15.03.12)------------
     src/ui/DebugConsole.h \
     src/ui/HDDisplay.h \
     src/ui/MAVLinkSettingsWidget.h \
@@ -453,6 +454,7 @@ SOURCES += src/main.cc \
     src/input/JoystickInput.cc \
     src/ui/JoystickWidget.cc \
     src/ui/TestphaseWidget.cc \         #Beginn Ende Code AL (01.03.12)
+    #src/ui/shapedclock.cc   \            #Beginn Ende Code AL (15.03.12)
     src/ui/DebugConsole.cc \
     src/ui/HDDisplay.cc \
     src/ui/MAVLinkSettingsWidget.cc \

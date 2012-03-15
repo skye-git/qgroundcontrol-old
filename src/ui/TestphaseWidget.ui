@@ -257,9 +257,15 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
-      <widget class="QLabel" name="statusLabel">
+      <widget class="QPushButton" name="controlButton">
+       <property name="minimumSize">
+        <size>
+         <width>70</width>
+         <height>70</height>
+        </size>
+       </property>
        <property name="text">
-        <string>QGC is connected to skye</string>
+        <string>Activate Engine</string>
        </property>
       </widget>
      </item>
@@ -335,6 +341,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="closeButton">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>70</height>
+        </size>
+       </property>
        <property name="text">
         <string>Close</string>
        </property>

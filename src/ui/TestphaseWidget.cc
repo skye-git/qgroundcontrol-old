@@ -8,6 +8,7 @@
 TestphaseWidget::TestphaseWidget(QWidget *parent):
     QDialog(parent),
     uas(NULL),
+    engineOn(false),
     m_ui(new Ui::TestphaseWidget)
 {
     //m_ui->setAttribute(Qt::WA_DeleteOnClose, true);//why no member named 'setAttribute'
@@ -17,14 +18,15 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
 
     //get active UAS
     this->uas = UASManager::instance()->getActiveUAS();
+
+#ifdef MAVLINK_ENABLED_SKYE
+    if (uas->getUASID()!= 0)
+    {
+
     connect(this, SIGNAL(valueTestphaseChanged(int, int, int, int, int, int, int, int)), uas, SLOT(setTestphaseCommandsByWidget(int, int, int, int, int, int, int, int)));
-    //FIXME Problem, funktioniert nur, falls getActiveUAS() ein UASInterface zurückgibt, dass SkyeMAV
-    //mit if abfragen, ........
-
-
-
-    //mav->setMode(67);//corresponds to MAV_MODE_TESTPHASE_DISARMED????????????????
-    uas->setMode(67);
+    uas->setMode(MAV_MODE_TESTPHASE_DISARMED);
+    }
+#endif //MAVLINK_ENABLED_SKye
 
 
     //connect Sliders, spinBoxes and dials
@@ -56,6 +58,7 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
     //connect Pushbuttons
     connect(m_ui->HomingButton, SIGNAL(clicked()),this,SLOT(homing()));
     connect(m_ui->stopallButton, SIGNAL(clicked()),this, SLOT(stopall())); //Why connect to this?
+    connect(m_ui->controlButton, SIGNAL(clicked()), this, SLOT(cycleContextButton()));
     connect(m_ui->closeButton, SIGNAL(clicked()),this, SLOT(stopall()));
     connect(m_ui->closeButton, SIGNAL(clicked()),this, SLOT(homing()));
     connect(m_ui->closeButton, SIGNAL(clicked()),this, SLOT(Testphaseclose()));
@@ -77,9 +80,7 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
 
 TestphaseWidget::~TestphaseWidget()
 {
-//    UASInterface* mav = UASManager::instance()->getUASForId(this->uas);
-//    mav->setMode(0); //Corespnads to MAV_MODE_PREFLIGHT
-    uas->setMode(0);
+    uas->setMode(MAV_MODE_PREFLIGHT);
     qDebug()<< " AL:TestphaseWidgetDestructor Call";
     delete m_ui;
 }
@@ -99,7 +100,7 @@ void TestphaseWidget::modeChanged(int mode_in)
 void TestphaseWidget::Testphaseclose()
 {
 
-    uas->setMode(0);
+    uas->setMode(MAV_MODE_PREFLIGHT);
     this->close();
 }
 
@@ -117,5 +118,30 @@ void TestphaseWidget::stopall()
     m_ui->SliderThrust2->setValue(0);
     m_ui->SliderThrust3->setValue(0);
     m_ui->SliderThrust4->setValue(0);
+}
+
+void TestphaseWidget::cycleContextButton()
+{
+#ifdef MAVLINK_ENABLED_SKYE
+    UAS* mav = dynamic_cast<UAS*>(UASManager::instance()->getUASForId(uas->getUASID()));
+    if (mav)
+    {
+        if (!engineOn)
+        {
+            mav->armSystem();
+            m_ui->controlButton->setText(tr("ARM SYSTEM"));
+            m_ui->controlButton->setStyleSheet("* { background-color: rgb(125,255,100) }");
+            uas->setMode(MAV_MODE_TESTPHASE_ARMED);
+            engineOn=true;
+        } else {
+            mav->disarmSystem();
+            m_ui->controlButton->setText(tr("DISARMSYSTEM"));
+            m_ui->controlButton->setStyleSheet("* { background-color: rgb(255,125,100) }");
+            uas->setMode(MAV_MODE_TESTPHASE_DISARMED);
+            engineOn=false;
+        }
+
+    }
+#endif // MAVLINK_ENABLED_SKYE
 }
 
