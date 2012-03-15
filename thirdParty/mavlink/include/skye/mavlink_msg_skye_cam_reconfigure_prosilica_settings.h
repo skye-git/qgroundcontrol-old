@@ -1,6 +1,6 @@
 // MESSAGE SKYE_CAM_RECONFIGURE_PROSILICA_SETTINGS PACKING
 
-#define MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_PROSILICA_SETTINGS 161
+#define MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_PROSILICA_SETTINGS 162
 
 typedef struct __mavlink_skye_cam_reconfigure_prosilica_settings_t
 {
@@ -9,7 +9,7 @@ typedef struct __mavlink_skye_cam_reconfigure_prosilica_settings_t
 } mavlink_skye_cam_reconfigure_prosilica_settings_t;
 
 #define MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_PROSILICA_SETTINGS_LEN 2
-#define MAVLINK_MSG_ID_161_LEN 2
+#define MAVLINK_MSG_ID_162_LEN 2
 
 
 

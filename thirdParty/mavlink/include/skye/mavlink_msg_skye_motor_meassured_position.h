@@ -1,6 +1,6 @@
 // MESSAGE SKYE_MOTOR_MEASSURED_POSITION PACKING
 
-#define MAVLINK_MSG_ID_SKYE_MOTOR_MEASSURED_POSITION 158
+#define MAVLINK_MSG_ID_SKYE_MOTOR_MEASSURED_POSITION 159
 
 typedef struct __mavlink_skye_motor_meassured_position_t
 {
@@ -12,7 +12,7 @@ typedef struct __mavlink_skye_motor_meassured_position_t
 } mavlink_skye_motor_meassured_position_t;
 
 #define MAVLINK_MSG_ID_SKYE_MOTOR_MEASSURED_POSITION_LEN 12
-#define MAVLINK_MSG_ID_158_LEN 12
+#define MAVLINK_MSG_ID_159_LEN 12
 
 
 

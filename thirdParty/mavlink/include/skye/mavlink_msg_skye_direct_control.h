@@ -1,6 +1,6 @@
 // MESSAGE SKYE_DIRECT_CONTROL PACKING
 
-#define MAVLINK_MSG_ID_SKYE_DIRECT_CONTROL 153
+#define MAVLINK_MSG_ID_SKYE_DIRECT_CONTROL 154
 
 typedef struct __mavlink_skye_direct_control_t
 {
@@ -14,7 +14,7 @@ typedef struct __mavlink_skye_direct_control_t
 } mavlink_skye_direct_control_t;
 
 #define MAVLINK_MSG_ID_SKYE_DIRECT_CONTROL_LEN 25
-#define MAVLINK_MSG_ID_153_LEN 25
+#define MAVLINK_MSG_ID_154_LEN 25
 
 
 

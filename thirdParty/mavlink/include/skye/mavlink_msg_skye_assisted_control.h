@@ -1,6 +1,6 @@
 // MESSAGE SKYE_ASSISTED_CONTROL PACKING
 
-#define MAVLINK_MSG_ID_SKYE_ASSISTED_CONTROL 154
+#define MAVLINK_MSG_ID_SKYE_ASSISTED_CONTROL 155
 
 typedef struct __mavlink_skye_assisted_control_t
 {
@@ -14,7 +14,7 @@ typedef struct __mavlink_skye_assisted_control_t
 } mavlink_skye_assisted_control_t;
 
 #define MAVLINK_MSG_ID_SKYE_ASSISTED_CONTROL_LEN 25
-#define MAVLINK_MSG_ID_154_LEN 25
+#define MAVLINK_MSG_ID_155_LEN 25
 
 
 
