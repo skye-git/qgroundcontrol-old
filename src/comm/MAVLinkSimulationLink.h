@@ -131,11 +131,6 @@ protected:
     int id;
     QString name;
     qint64 timeOffset;
-#ifdef MAVLINK_ENABLED_SKYE
-    mavlink_skye_status_t statusSkye;
-#else
-    mavlink_sys_status_t status;
-#endif
     mavlink_heartbeat_t system;
 
     QMap<QString, float> onboardParams;
