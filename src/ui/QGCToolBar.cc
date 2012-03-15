@@ -375,6 +375,9 @@ void QGCToolBar::setSystemType(UASInterface* uas, unsigned int systemType)
         case 5:
             symbolButton->setIcon(QIcon(":/images/mavs/unknown.svg"));
             break;
+        case 7:
+            symbolButton->setIcon(QIcon(":/images/skye_images/LOGO_DEF.png"));
+            break;
         default:
             symbolButton->setIcon(QIcon(":/images/mavs/unknown.svg"));
             break;
