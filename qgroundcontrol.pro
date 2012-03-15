@@ -622,7 +622,7 @@ win32-msvc2008|win32-msvc2010|linux {
         -llibxbee
 }
 linux-g++|linux-g++-64{
-exists(src/thirdParty/libxbee/lib/libxbee.so){
+exists(thirdParty/libxbee/lib/libxbee.so){
     HEADERS += src/comm/XbeeLinkInterface.h \
         src/comm/XbeeLink.h \
         src/comm/HexSpinBox.h \
