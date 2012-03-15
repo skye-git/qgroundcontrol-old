@@ -132,6 +132,7 @@ protected:
     QString name;
     qint64 timeOffset;
     mavlink_heartbeat_t system;
+    mavlink_sys_status_t status;
 
     QMap<QString, float> onboardParams;
 

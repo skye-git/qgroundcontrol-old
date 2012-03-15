@@ -1405,6 +1405,18 @@ void MainWindow::UASCreated(UASInterface* uas)
             }
         }
 
+        if (uas->getAutopilotType() == MAV_AUTOPILOT_SKYE)
+        {
+            // Dock widget
+            if (!skyeBatteryInfoDockWidget)
+            {
+                skyeBatteryInfoDockWidget = new QDockWidget("Detailed Battery Info", this);
+                skyeBatteryInfoDockWidget->setWidget( new UASSkyeBatteryInfoWidget);
+                skyeBatteryInfoDockWidget->setObjectName("SKYE_BATTERY_INFO_DOCKWIDGET");
+                addTool(skyeBatteryInfoDockWidget, tr("Battery Info"), Qt::RightDockWidgetArea);
+            }
+        }
+
         // Change the view only if this is the first UAS
 
         // If this is the first connected UAS, it is both created as well as

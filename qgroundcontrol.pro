@@ -251,7 +251,9 @@ FORMS += src/ui/MainWindow.ui \
     src/ui/mavlink/QGCMAVLinkMessageSender.ui \
     src/ui/firmwareupdate/QGCFirmwareUpdateWidget.ui \
     src/ui/QGCPluginHost.ui \
-    src/ui/firmwareupdate/QGCPX4FirmwareUpdate.ui
+    src/ui/firmwareupdate/QGCPX4FirmwareUpdate.ui \
+    src/ui/uas/UASSkyeBatteryInfoWidget.ui \
+    src/ui/uas/UASSkyeBatteryPackWidget.ui
 INCLUDEPATH += src \
     src/ui \
     src/ui/linechart \
@@ -376,7 +378,9 @@ HEADERS += src/MG.h \
     src/ui/mavlink/QGCMAVLinkMessageSender.h \
     src/ui/firmwareupdate/QGCFirmwareUpdateWidget.h \
     src/ui/QGCPluginHost.h \
-    src/ui/firmwareupdate/QGCPX4FirmwareUpdate.h
+    src/ui/firmwareupdate/QGCPX4FirmwareUpdate.h \
+    src/ui/uas/UASSkyeBatteryInfoWidget.h \
+    src/ui/uas/UASSkyeBatteryPackWidget.h
 
 # Google Earth is only supported on Mac OS and Windows with Visual Studio Compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010::HEADERS += src/ui/map3D/QGCGoogleEarthView.h
@@ -522,7 +526,9 @@ SOURCES += src/main.cc \
     src/ui/mavlink/QGCMAVLinkMessageSender.cc \
     src/ui/firmwareupdate/QGCFirmwareUpdateWidget.cc \
     src/ui/QGCPluginHost.cc \
-    src/ui/firmwareupdate/QGCPX4FirmwareUpdate.cc
+    src/ui/firmwareupdate/QGCPX4FirmwareUpdate.cc \
+    src/ui/uas/UASSkyeBatteryInfoWidget.cpp \
+    src/ui/uas/UASSkyeBatteryPackWidget.cpp
 
 # Enable Google Earth only on Mac OS and Windows with Visual Studio compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010::SOURCES += src/ui/map3D/QGCGoogleEarthView.cc
