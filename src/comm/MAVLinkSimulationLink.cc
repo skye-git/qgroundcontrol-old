@@ -59,7 +59,7 @@ MAVLinkSimulationLink::MAVLinkSimulationLink(QString readFile, QString writeFile
     readyBytes(0),
     timeOffset(0),
     time_boot(0),
-    roll(0),
+    roll(0),            // Attitude
     pitch(0),
     yaw(0),
     speedRoll(0),
@@ -71,6 +71,18 @@ MAVLinkSimulationLink::MAVLinkSimulationLink(QString readFile, QString writeFile
     speedX(0),
     speedY(0),
     speedZ(0),
+    thrustX(0),         // Direct Control
+    thrustY(0),
+    thrustZ(0),
+    momentX(0),
+    momentY(0),
+    momentZ(0),
+    transX(0),          // Assisted Control
+    transY(0),
+    transZ(0),
+    rotX(0),
+    rotY(0),
+    rotZ(0),
     thrust1(0),        //Testphase Control
     thrust2(0),
     thrust3(0),
