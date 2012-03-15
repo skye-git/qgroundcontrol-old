@@ -186,7 +186,7 @@
           </enum>
      </enums>
      <messages>
-          <message id="151" name="SKYE_STATUS">
+<!--          <message id="151" name="SKYE_STATUS">
                <description>The general skye system state.</description>
                <field type="uint32_t" name="onboard_control_sensors_present">Bitmask showing which controllers an sensors are present. =0:not present, =1:present, Sensors: last bit 1: 3D gyro, 2: 3D acc, 4: 3D mag, 8: absolute pressure, 16: differential pressures, 32: GPS, 64: motor homing, 128: motor decoding (EPOS), Controllers: 256: attitude stabilization, 512: z/altitude control, 1024: x/y position control, 2048: motor outputs control</field>
                <field type="uint32_t" name="onboard_control_sensors_enabled">Bitmask showing which controllers an sensors are enabled. =0:not enabled, =1:enabled, same bit contribution as field before.
@@ -197,7 +197,7 @@
                <field type="float" name="hull_temperature">Hull temperature (Kelvin), -1: no temperature data</field>
                <field type="uint16_t" name="drop_rate_comm">Communication drops in percent, (0%: 0, 100%: 10'000), (UART, I2C, SPI, CAN), dropped packets on all links (packets that were corrupted on reception on the MAV)</field>
                <field type="uint16_t" name="errors_comm">Communication errors (UART, I2C, SPI, CAN), dropped packets on all links (packets that were corrupted on reception on the MAV)</field>
-          </message>
+          </message>  -->
           <message id="152" name="SKYE_BATTERY_STATUS">
                <description>Transmitte battery informations for a accu pack.</description>
                <field type="uint8_t" name="target_system">System ID</field>
