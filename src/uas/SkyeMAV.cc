@@ -18,6 +18,7 @@ manual2Orientation(0),
 manual3Orientation(0),
 manual4Orientation(0)
 {
+    qDebug() << "Start Voltage should be -1, actual value is: " << startVoltage;
 }
 
 SkyeMAV::~SkyeMAV(void)
@@ -32,27 +33,70 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
         if (!link) return;
         switch (message.msgid)
         {
-            case MAVLINK_MSG_ID_SKYE_DIRECT_CONTROL:
+        case MAVLINK_MSG_ID_SKYE_DIRECT_CONTROL:
+        {
+            // TO DO: This is no receiving message, but one to send!!!
+            break;
+        }
+        case MAVLINK_MSG_ID_SKYE_ASSISTED_CONTROL:
+        {
+            // TO DO: This is no receiving message, but one to send!!!
+            break;
+        }
+        case MAVLINK_MSG_ID_SKYE_TEST_MOTORS:
+        {
+            // TO DO: This is no receiving message, but one to send!!!
+            break;
+        }
+        case MAVLINK_MSG_ID_SKYE_STATUS:
+        {
+            mavlink_skye_status_t state;
+            mavlink_msg_skye_status_decode(&message, &state);
+
+            // Prepare for sending data to the realtime plotter
+            quint64 time = getUnixTime();
+            QString name = QString("M%1:SYS_STATUS.%2").arg(message.sysid);
+            emit valueChanged(uasId, name.arg("sensors_present"), "bits", state.onboard_control_sensors_present, time);
+            emit valueChanged(uasId, name.arg("sensors_enabled"), "bits", state.onboard_control_sensors_enabled, time);
+            emit valueChanged(uasId, name.arg("sensors_operating"), "bits", state.onboard_control_sensors_operating, time);
+            emit valueChanged(uasId, name.arg("errors_comm"), "-", state.errors_comm, time);
+
+            // Process CPU load.
+            emit loadChanged(this,state.mainloop_load/10.0f);
+            emit valueChanged(uasId, name.arg("mainloop_load"), "%", state.mainloop_load/10.0f, time);
+
+//            // control_sensors_enabled:
+//            // relevant bits: 11: attitude stabilization, 12: yaw position, 13: z/altitude control, 14: x/y position control
+//            emit attitudeControlEnabled(state.onboard_control_sensors_enabled & (1 << 11));
+//            emit positionYawControlEnabled(state.onboard_control_sensors_enabled & (1 << 12));
+//            emit positionZControlEnabled(state.onboard_control_sensors_enabled & (1 << 13));
+//            emit positionXYControlEnabled(state.onboard_control_sensors_enabled & (1 << 14));
+
+            // Trigger drop rate updates as needed. Here we convert the incoming
+            // drop_rate_comm value from 1/100 of a percent in a uint16 to a true
+            // percentage as a float. We also cap the incoming value at 100% as defined
+            // by the MAVLink specifications.
+            if (state.drop_rate_comm > 10000)
             {
-                // TO DO: This is no receiving message, but one to send!!!
-                break;
+                 state.drop_rate_comm = 10000;
             }
-            case MAVLINK_MSG_ID_SKYE_ASSISTED_CONTROL:
-            {
-                // TO DO: This is no receiving message, but one to send!!!
-                break;
-            }
-            case MAVLINK_MSG_ID_SKYE_TEST_MOTORS:
-            {
-                // TO DO: This is no receiving message, but one to send!!!
-                break;
-            }
-                
-            default:
-            {
-                // Let UAS handle the default message set
-                UAS::receiveMessage(link, message);
-                break;
+            emit dropRateChanged(this->getUASID(), state.drop_rate_comm/100.0f);
+            emit valueChanged(uasId, name.arg("drop_rate_comm"), "%", state.drop_rate_comm/100.0f, time);
+        }
+        break;
+        case MAVLINK_MSG_ID_SKYE_BATTERY_STATUS:
+        {
+            mavlink_skye_battery_status_t battery;
+            mavlink_msg_skye_battery_status_decode(&message, &battery);
+
+
+        }
+        break;
+        default:
+        {
+            // Let UAS handle the default message set
+            UAS::receiveMessage(link, message);
+            break;
             }
         }
     }
