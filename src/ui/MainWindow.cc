@@ -173,6 +173,7 @@ MainWindow::MainWindow(QWidget *parent):
     toolBar->addPerspectiveChangeAction(ui.actionOperatorsView);
     toolBar->addPerspectiveChangeAction(ui.actionEngineersView);
     toolBar->addPerspectiveChangeAction(ui.actionPilotsView);
+    toolBar->addPerspectiveChangeAction(ui.actionSkyeView);                 // Beginn und Ende Code MA (15.05.2012)
 
     emit initStatusChanged("Building common widgets.");
 
@@ -1441,7 +1442,14 @@ void MainWindow::UASCreated(UASInterface* uas)
             }
             else
             {
-                loadOperatorView();
+                if (uas->getAutopilotType() == MAV_AUTOPILOT_SKYE)      // Beginn Code MA (15.03.2012)
+                {
+                    loadSkyeView();
+                }
+                else
+                {                               // Ende Code MA (15.03.2012)
+                    loadOperatorView();
+                }
             }
         }
 
@@ -1604,7 +1612,7 @@ void MainWindow::loadViewState()
             headUpDockWidget->show();
             video1DockWidget->hide();
             video2DockWidget->hide();
-            mavlinkInspectorWidget->hide();
+            mavlinkInspectorWidget->show();
             break;                                      //Ende Code AL
         case VIEW_UNCONNECTED:
         case VIEW_FULL:
