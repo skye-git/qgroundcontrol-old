@@ -1,3 +1,4 @@
+#include <QDebug>
 #include "UASSkyeBatteryPackWidget.h"
 #include "ui_UASSkyeBatteryPackWidget.h"
 
@@ -10,10 +11,13 @@ UASSkyeBatteryPackWidget::UASSkyeBatteryPackWidget(QWidget *parent, MAV_SKYE_BAT
     this->setStyleSheet("QProgressBar {height: 35;}");
     this->setStyleSheet("QProgressBar::chunk {background-color: green;}");
 
-    ui->progressBarVoltageCell1->setToolTip("Voltage of cell 1");
-    ui->progressBarVoltageCell2->setToolTip("Voltage of cell 2");
-    ui->progressBarVoltageCell3->setToolTip("Voltage of cell 3");
-    ui->progressBarVoltageCell4->setToolTip("Voltage of cell 4");
+//    toolBarBatteryVoltageLabel->setStyleSheet(QString("QLabel { margin: 0px 0px 0px 4px; font: 14px; color: %1; }").arg(QColor(Qt::green).name()));
+    ui->lcdNumberVoltage1->setToolTip("Voltage of cell 1");
+    ui->lcdNumberVoltage2->setToolTip("Voltage of cell 2");
+    ui->lcdNumberVoltage3->setToolTip("Voltage of cell 3");
+    ui->lcdNumberVoltage4->setToolTip("Voltage of cell 4");
+    ui->lcdNumberCurrent->setToolTip("Current of this accu pack");
+    ui->progressBarRemaining->setToolTip("Estimated remaining battery");
 
     QString labelText;
     switch (pack)
@@ -46,4 +50,16 @@ UASSkyeBatteryPackWidget::UASSkyeBatteryPackWidget(QWidget *parent, MAV_SKYE_BAT
 UASSkyeBatteryPackWidget::~UASSkyeBatteryPackWidget()
 {
     delete ui;
+}
+
+void UASSkyeBatteryPackWidget::changeBatteryStatus(double voltage1, double voltage2, double voltage3, double voltage4, double current, int remaining)
+{
+    ui->lcdNumberVoltage1->display(voltage1);
+    ui->lcdNumberVoltage2->display(voltage2);
+    ui->lcdNumberVoltage3->display(voltage3);
+    ui->lcdNumberVoltage4->display(voltage4);
+    ui->lcdNumberCurrent->display(current);
+    ui->progressBarRemaining->setValue(remaining);
+
+    // TODO: change styleSheet if value is low
 }

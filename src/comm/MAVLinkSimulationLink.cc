@@ -90,7 +90,8 @@ MAVLinkSimulationLink::MAVLinkSimulationLink(QString readFile, QString writeFile
     orientation1(0),
     orientation2(0),
     orientation3(0),
-    orientation4(0)
+    orientation4(0),
+    battery_pack_id(0)
 {
     this->rate = rate;
     _isConnected = false;
@@ -575,6 +576,25 @@ void MAVLinkSimulationLink::mainloop()
         //qDebug() << "Return Testphase control message";
         //qDebug() << "testmotors.thrust_1"<< testmotors.thrust_1;
 
+        battery_pack_id++;
+        if (battery_pack_id >= 4){
+            battery_pack_id = 0;
+        }
+        mavlink_skye_battery_status_t battery;
+        battery.accu_id = battery_pack_id;
+        battery.voltage_cell_1 = 1000*(3 + sin(time_boot*0.01));
+        battery.voltage_cell_2 = 1000*(3 + cos(time_boot*0.01));
+        battery.voltage_cell_3 = 1000*(3 - sin(time_boot*0.01));
+        battery.voltage_cell_4 = 1000*(3 + cos(time_boot*0.01));
+        battery.current_battery = 100*2.12;
+        battery.battery_remaining = (int8_t)round(100 - 0.0005*time_boot);
+        mavlink_msg_skye_battery_status_encode(systemId, MAV_COMP_ID_IMU, &msg, &battery);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
+
+//        qDebug() << "Sent battery status message...";
 #endif
 
 
@@ -908,87 +928,85 @@ void MAVLinkSimulationLink::writeBytes(const char* data, qint64 size)
             break;
 
             // Beginn Code MA (09.03.2012)
-case MAVLINK_MSG_ID_SKYE_DIRECT_CONTROL: {
-    mavlink_skye_direct_control_t dc;
-    mavlink_msg_skye_direct_control_decode(&msg, &dc);
-    if (dc.target_system == this->systemId) {
-        qDebug() << "thrust x: " << dc.thrust_x << "------------------------------------------";
-        thrustX = dc.thrust_x;
-        thrustY = dc.thrust_y;
-        thrustZ = dc.thrust_z;
-        momentX = dc.moment_x;
-        momentY = dc.moment_y;
-        momentZ = dc.moment_z;
-        // thrustX = 42;
-        // Set ATTITUDE also with direct control
-        float lastRoll = roll;
-        float lastPitch = pitch;
-        float lastYaw = yaw;
-        float lastX = x;
-        float lastY = y;
-        float lastZ = z;
+            case MAVLINK_MSG_ID_SKYE_DIRECT_CONTROL: {
+                mavlink_skye_direct_control_t dc;
+                mavlink_msg_skye_direct_control_decode(&msg, &dc);
+                if (dc.target_system == this->systemId) {
+                    qDebug() << "thrust x: " << dc.thrust_x << "------------------------------------------";
+                    thrustX = dc.thrust_x;
+                    thrustY = dc.thrust_y;
+                    thrustZ = dc.thrust_z;
+                    momentX = dc.moment_x;
+                    momentY = dc.moment_y;
+                    momentZ = dc.moment_z;
+                    // thrustX = 42;
+                    // Set ATTITUDE also with direct control
+                    float lastRoll = roll;
+                    float lastPitch = pitch;
+                    float lastYaw = yaw;
+                    float lastX = x;
+                    float lastY = y;
+                    float lastZ = z;
 
-        speedRoll = -1.5*dc.moment_x;
-        speedPitch = 1.5*dc.moment_y;
-        speedYaw = 1.5*dc.moment_z;
-        speedX = 10*dc.thrust_x;
-        speedY = 10*dc.thrust_y;
-        speedZ = 10*dc.thrust_z;
+                    speedRoll = -1.5*dc.moment_x;
+                    speedPitch = 1.5*dc.moment_y;
+                    speedYaw = 1.5*dc.moment_z;
+                    speedX = 10*dc.thrust_x;
+                    speedY = 10*dc.thrust_y;
+                    speedZ = 10*dc.thrust_z;
 
-        float dTime = 0.01;
-        roll = lastRoll + speedRoll*dTime;
-        pitch = lastPitch + speedPitch*dTime;
-        yaw = lastYaw + speedYaw*dTime;
-        x = lastX + cos(yaw)*speedX*dTime - sin(yaw)*speedY*dTime;
-        y = lastY + sin(yaw)*speedX*dTime + cos(yaw)*speedY*dTime;
-        z = lastZ + speedZ*dTime;
-    }
-}
-break;
-case MAVLINK_MSG_ID_SKYE_ASSISTED_CONTROL: {
-    mavlink_skye_assisted_control_t ac;
-    mavlink_msg_skye_assisted_control_decode(&msg, &ac);
-    if (ac.target_system == this->systemId) {
-        transX = ac.translation_lat;
-        transY = ac.translation_long;
-        transZ = ac.translation_alt;
-        rotX = ac.rotation_x;
-        rotY = ac.rotation_y;
-        rotZ = ac.rotation_z;
+                    float dTime = 0.01;
+                    roll = lastRoll + speedRoll*dTime;
+                    pitch = lastPitch + speedPitch*dTime;
+                    yaw = lastYaw + speedYaw*dTime;
+                    x = lastX + cos(yaw)*speedX*dTime - sin(yaw)*speedY*dTime;
+                    y = lastY + sin(yaw)*speedX*dTime + cos(yaw)*speedY*dTime;
+                    z = lastZ + speedZ*dTime;
+                }
+            }
+            break;
+            case MAVLINK_MSG_ID_SKYE_ASSISTED_CONTROL: {
+                mavlink_skye_assisted_control_t ac;
+                mavlink_msg_skye_assisted_control_decode(&msg, &ac);
+                if (ac.target_system == this->systemId) {
+                    transX = ac.translation_lat;
+                    transY = ac.translation_long;
+                    transZ = ac.translation_alt;
+                    rotX = ac.rotation_x;
+                    rotY = ac.rotation_y;
+                    rotZ = ac.rotation_z;
 
-        // Set ATTITUDE also with direct control
-        float lastRoll = roll;
-        float lastPitch = pitch;
-        float lastYaw = yaw;
+                    // Set ATTITUDE also with direct control
+                    float lastRoll = roll;
+                    float lastPitch = pitch;
+                    float lastYaw = yaw;
 
-        roll = -3.14159*ac.rotation_x;
-        pitch = 3.14159*ac.rotation_y;
-        yaw = 3.14159*ac.rotation_z;
+                    roll = -3.14159*ac.rotation_x;
+                    pitch = 3.14159*ac.rotation_y;
+                    yaw = 3.14159*ac.rotation_z;
 
-        float dTime = 0.01;
-        speedRoll = (roll - lastRoll)/dTime;
-        speedPitch = (pitch - lastPitch)/dTime;
-        speedYaw = (yaw - lastYaw)/dTime;
-    }
-}
-break;
-case MAVLINK_MSG_ID_SKYE_TEST_MOTORS: {
-    mavlink_skye_test_motors_t tm;
-    mavlink_msg_skye_test_motors_decode(&msg, &tm);
-    if (tm.target_system == this->systemId) {
-        thrust1 = tm.thrust_1;        //Testphase Control
-        thrust2 = tm.thrust_2;
-        thrust3 = tm.thrust_3;
-        thrust4 = tm.thrust_4;
-        orientation1 = tm.direct_1;
-        orientation2 =tm.direct_2;
-        orientation3 = tm.direct_3;
-        orientation4 = tm.direct_4;
-    }
-}
-break;      // Ende Code MA (09.03.2012)
-
-
+                    float dTime = 0.01;
+                    speedRoll = (roll - lastRoll)/dTime;
+                    speedPitch = (pitch - lastPitch)/dTime;
+                    speedYaw = (yaw - lastYaw)/dTime;
+                }
+            }
+            break;
+            case MAVLINK_MSG_ID_SKYE_TEST_MOTORS: {
+                mavlink_skye_test_motors_t tm;
+                mavlink_msg_skye_test_motors_decode(&msg, &tm);
+                if (tm.target_system == this->systemId) {
+                    thrust1 = tm.thrust_1;        //Testphase Control
+                    thrust2 = tm.thrust_2;
+                    thrust3 = tm.thrust_3;
+                    thrust4 = tm.thrust_4;
+                    orientation1 = tm.direct_1;
+                    orientation2 =tm.direct_2;
+                    orientation3 = tm.direct_3;
+                    orientation4 = tm.direct_4;
+                }
+            }
+            break;      // Ende Code MA (09.03.2012)
             }
         }
         unsigned char v=data[i];

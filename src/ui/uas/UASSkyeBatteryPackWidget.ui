@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>260</width>
-    <height>112</height>
+    <height>140</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,45 +26,45 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayoutBatteries">
        <item>
-        <widget class="QProgressBar" name="progressBarVoltageCell1">
-         <property name="toolTip">
-          <string>Voltage of Cell 1</string>
+        <widget class="QLCDNumber" name="lcdNumberVoltage1">
+         <property name="smallDecimalPoint">
+          <bool>true</bool>
          </property>
-         <property name="value">
-          <number>24</number>
+         <property name="numDigits">
+          <number>3</number>
          </property>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QProgressBar" name="progressBarVoltageCell2">
-         <property name="value">
-          <number>24</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
+         <property name="value" stdset="0">
+          <double>0.000000000000000</double>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QProgressBar" name="progressBarVoltageCell3">
-         <property name="value">
-          <number>24</number>
+        <widget class="QLCDNumber" name="lcdNumberVoltage2">
+         <property name="smallDecimalPoint">
+          <bool>true</bool>
          </property>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
+         <property name="numDigits">
+          <number>3</number>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QProgressBar" name="progressBarVoltageCell4">
-         <property name="value">
-          <number>24</number>
+        <widget class="QLCDNumber" name="lcdNumberVoltage3">
+         <property name="smallDecimalPoint">
+          <bool>true</bool>
          </property>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
+         <property name="numDigits">
+          <number>3</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLCDNumber" name="lcdNumberVoltage4">
+         <property name="smallDecimalPoint">
+          <bool>true</bool>
+         </property>
+         <property name="numDigits">
+          <number>3</number>
          </property>
         </widget>
        </item>
@@ -76,12 +76,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QProgressBar" name="progressBarCurrent">
-         <property name="value">
-          <number>24</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
+        <widget class="QLCDNumber" name="lcdNumberCurrent">
+         <property name="smallDecimalPoint">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
