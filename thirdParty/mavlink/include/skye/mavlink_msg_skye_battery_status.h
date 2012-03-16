@@ -10,7 +10,7 @@ typedef struct __mavlink_skye_battery_status_t
  uint16_t voltage_cell_4; ///< Battery voltage of cell 4, in millivolts (1 = 1 millivolt)
  int16_t current_battery; ///< Battery current, in 10*milliamperes (1 = 10 milliampere), -1: autopilot does not measure the current
  uint8_t target_system; ///< System ID
- uint8_t accu_id; ///< Accupack ID
+ uint8_t accu_id; ///< Accupack ID, see ENUM MAV_SKYE_BATTERY_PACK_ID
  int8_t battery_remaining; ///< Remaining battery energy: (0%: 0, 100%: 100), -1: autopilot estimate the remaining battery
 } mavlink_skye_battery_status_t;
 
@@ -41,7 +41,7 @@ typedef struct __mavlink_skye_battery_status_t
  * @param msg The MAVLink message to compress the data into
  *
  * @param target_system System ID
- * @param accu_id Accupack ID
+ * @param accu_id Accupack ID, see ENUM MAV_SKYE_BATTERY_PACK_ID
  * @param voltage_cell_1 Battery voltage of cell 1, in millivolts (1 = 1 millivolt)
  * @param voltage_cell_2 Battery voltage of cell 2, in millivolts (1 = 1 millivolt)
  * @param voltage_cell_3 Battery voltage of cell 3, in millivolts (1 = 1 millivolt)
@@ -90,7 +90,7 @@ static inline uint16_t mavlink_msg_skye_battery_status_pack(uint8_t system_id, u
  * @param chan The MAVLink channel this message was sent over
  * @param msg The MAVLink message to compress the data into
  * @param target_system System ID
- * @param accu_id Accupack ID
+ * @param accu_id Accupack ID, see ENUM MAV_SKYE_BATTERY_PACK_ID
  * @param voltage_cell_1 Battery voltage of cell 1, in millivolts (1 = 1 millivolt)
  * @param voltage_cell_2 Battery voltage of cell 2, in millivolts (1 = 1 millivolt)
  * @param voltage_cell_3 Battery voltage of cell 3, in millivolts (1 = 1 millivolt)
@@ -151,7 +151,7 @@ static inline uint16_t mavlink_msg_skye_battery_status_encode(uint8_t system_id,
  * @param chan MAVLink channel to send the message
  *
  * @param target_system System ID
- * @param accu_id Accupack ID
+ * @param accu_id Accupack ID, see ENUM MAV_SKYE_BATTERY_PACK_ID
  * @param voltage_cell_1 Battery voltage of cell 1, in millivolts (1 = 1 millivolt)
  * @param voltage_cell_2 Battery voltage of cell 2, in millivolts (1 = 1 millivolt)
  * @param voltage_cell_3 Battery voltage of cell 3, in millivolts (1 = 1 millivolt)
@@ -208,7 +208,7 @@ static inline uint8_t mavlink_msg_skye_battery_status_get_target_system(const ma
 /**
  * @brief Get field accu_id from skye_battery_status message
  *
- * @return Accupack ID
+ * @return Accupack ID, see ENUM MAV_SKYE_BATTERY_PACK_ID
  */
 static inline uint8_t mavlink_msg_skye_battery_status_get_accu_id(const mavlink_message_t* msg)
 {

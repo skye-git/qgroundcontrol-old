@@ -163,25 +163,40 @@
                     <description>Off</description>
                </entry>
                <entry value="1" name="MAV_CAM_ID_PROSILICA">
-                    <description>Fixed1</description>
+                    <description>High resolution AVT prosilica camera</description>
                </entry>
                <entry value="2" name="MAV_CAM_ID_BLUEFOX_LEFT">
-                    <description>Off</description>
+                    <description>Low resolution matrix-vision bluefox camera, position left</description>
                </entry>
                <entry value="3" name="MAV_CAM_ID_BLUEFOX_RIGHT">
-                    <description>Fixed0</description>
+                    <description>Low resolution matrix-vision bluefox camera, position right</description>
                </entry>
           </enum>
           <enum name="MAV_CAM_IMAGE_FORMAT">
                <description>Image Format</description>
                <entry value="0" name="MAV_CAM_IMAGE_FORMAT_RAW">
-                    <description>Fixed1</description>
+                    <description>RAW format</description>
                </entry>
                <entry value="1" name="MAV_CAM_IMAGE_FORMAT_JPEG">
-                    <description>Off</description>
+                    <description>JPEG format</description>
                </entry>
                <entry value="2" name="MAV_CAM_IMAGE_FORMAT_PNG">
-                    <description>Fixed1</description>
+                    <description>PNG format</description>
+               </entry>
+          </enum>
+          <enum name="MAV_SKYE_BATTERY_PACK_ID">
+               <description>ID for each accu pack for detailed battery information</description>
+               <entry value="0" name="MAV_SKYE_BATTERY_PACK_ID_NONE">
+                    <description>no accu</description>
+               </entry>
+               <entry value="1" name="MAV_SKYE_BATTERY_PACK_ID_1">
+                    <description>Accu pack 1</description>
+               </entry>
+               <entry value="2" name="MAV_SKYE_BATTERY_PACK_ID_2">
+                    <description>Accu pack 1</description>
+               </entry>
+               <entry value="3" name="MAV_SKYE_BATTERY_PACK_ID_3">
+                    <description>Accu pack 1</description>
                </entry>
           </enum>
      </enums>
@@ -201,7 +216,7 @@
           <message id="152" name="SKYE_BATTERY_STATUS">
                <description>Transmitte battery informations for a accu pack.</description>
                <field type="uint8_t" name="target_system">System ID</field>
-               <field type="uint8_t" name="accu_id">Accupack ID</field>
+               <field type="uint8_t" name="accu_id">Accupack ID, see ENUM MAV_SKYE_BATTERY_PACK_ID</field>
                <field type="uint16_t" name="voltage_cell_1">Battery voltage of cell 1, in millivolts (1 = 1 millivolt)</field>
                <field type="uint16_t" name="voltage_cell_2">Battery voltage of cell 2, in millivolts (1 = 1 millivolt)</field>
                <field type="uint16_t" name="voltage_cell_3">Battery voltage of cell 3, in millivolts (1 = 1 millivolt)</field>

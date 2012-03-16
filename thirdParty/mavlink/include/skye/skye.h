@@ -151,9 +151,9 @@ enum MAV_CAM_RECONFIG_HDR_MODE
 enum MAV_CAM_ID
 {
 	MAV_CAM_ID_ALL=0, /* Off | */
-	MAV_CAM_ID_PROSILICA=1, /* Fixed1 | */
-	MAV_CAM_ID_BLUEFOX_LEFT=2, /* Off | */
-	MAV_CAM_ID_BLUEFOX_RIGHT=3, /* Fixed0 | */
+	MAV_CAM_ID_PROSILICA=1, /* High resolution AVT prosilica camera | */
+	MAV_CAM_ID_BLUEFOX_LEFT=2, /* Low resolution matrix-vision bluefox camera, position left | */
+	MAV_CAM_ID_BLUEFOX_RIGHT=3, /* Low resolution matrix-vision bluefox camera, position right | */
 	MAV_CAM_ID_ENUM_END=4, /*  | */
 };
 #endif
@@ -163,10 +163,23 @@ enum MAV_CAM_ID
 #define HAVE_ENUM_MAV_CAM_IMAGE_FORMAT
 enum MAV_CAM_IMAGE_FORMAT
 {
-	MAV_CAM_IMAGE_FORMAT_RAW=0, /* Fixed1 | */
-	MAV_CAM_IMAGE_FORMAT_JPEG=1, /* Off | */
-	MAV_CAM_IMAGE_FORMAT_PNG=2, /* Fixed1 | */
+	MAV_CAM_IMAGE_FORMAT_RAW=0, /* RAW format | */
+	MAV_CAM_IMAGE_FORMAT_JPEG=1, /* JPEG format | */
+	MAV_CAM_IMAGE_FORMAT_PNG=2, /* PNG format | */
 	MAV_CAM_IMAGE_FORMAT_ENUM_END=3, /*  | */
+};
+#endif
+
+/** @brief ID for each accu pack for detailed battery information */
+#ifndef HAVE_ENUM_MAV_SKYE_BATTERY_PACK_ID
+#define HAVE_ENUM_MAV_SKYE_BATTERY_PACK_ID
+enum MAV_SKYE_BATTERY_PACK_ID
+{
+	MAV_SKYE_BATTERY_PACK_ID_NONE=0, /* no accu | */
+	MAV_SKYE_BATTERY_PACK_ID_1=1, /* Accu pack 1 | */
+	MAV_SKYE_BATTERY_PACK_ID_2=2, /* Accu pack 1 | */
+	MAV_SKYE_BATTERY_PACK_ID_3=3, /* Accu pack 1 | */
+	MAV_SKYE_BATTERY_PACK_ID_ENUM_END=4, /*  | */
 };
 #endif
 
