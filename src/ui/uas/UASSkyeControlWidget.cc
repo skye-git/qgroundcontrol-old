@@ -106,6 +106,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
     connect(ui.liftoffButton, SIGNAL(clicked()), uas, SLOT(launch()));
     connect(ui.landButton, SIGNAL(clicked()), uas, SLOT(home()));
     connect(ui.shutdownButton, SIGNAL(clicked()), uas, SLOT(shutdown()));
+    connect(this, SIGNAL(changedMode(int)), uas, SLOT(setMode(int)));
     //connect(ui.setHomeButton, SIGNAL(clicked()), uas, SLOT(setLocalOriginAtCurrentGPSPosition()));
     connect(uas, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
     connect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
