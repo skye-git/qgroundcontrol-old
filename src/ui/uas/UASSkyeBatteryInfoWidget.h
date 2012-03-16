@@ -18,6 +18,10 @@ public:
     explicit UASSkyeBatteryInfoWidget(QWidget *parent = 0);
     ~UASSkyeBatteryInfoWidget();
 
+public slots:
+    /** @brief New values for battery pack **/
+    //changeBatteryPack(mavlink_skye_battery_status_t* battery);
+
 private:
     Ui::UASSkyeBatteryInfoWidget *ui;
 

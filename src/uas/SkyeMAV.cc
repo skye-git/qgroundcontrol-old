@@ -18,7 +18,7 @@ manual2Orientation(0),
 manual3Orientation(0),
 manual4Orientation(0)
 {
-    qDebug() << "Start Voltage should be -1, actual value is: " << startVoltage;
+
 }
 
 SkyeMAV::~SkyeMAV(void)
@@ -54,6 +54,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             mavlink_skye_battery_status_t battery;
             mavlink_msg_skye_battery_status_decode(&message, &battery);
 
+            //emit batteryPackChanged(const &battery);
 
         }
         break;

@@ -1,7 +1,7 @@
 #include "UASSkyeBatteryPackWidget.h"
 #include "ui_UASSkyeBatteryPackWidget.h"
 
-UASSkyeBatteryPackWidget::UASSkyeBatteryPackWidget(QWidget *parent, QGC_SKYE_BATTERY_PACK pack) :
+UASSkyeBatteryPackWidget::UASSkyeBatteryPackWidget(QWidget *parent, MAV_SKYE_BATTERY_PACK_ID pack) :
     QWidget(parent),
     ui(new Ui::UASSkyeBatteryPackWidget)
 {
@@ -10,32 +10,35 @@ UASSkyeBatteryPackWidget::UASSkyeBatteryPackWidget(QWidget *parent, QGC_SKYE_BAT
     this->setStyleSheet("QProgressBar {height: 35;}");
     this->setStyleSheet("QProgressBar::chunk {background-color: green;}");
 
-    ui->progressBarVoltageCell1->setToolTip("Voltage of Cell 1");
-    ui->progressBarVoltageCell2->setToolTip("Voltage of Cell 2");
-    ui->progressBarVoltageCell3->setToolTip("Voltage of Cell 3");
-    ui->progressBarVoltageCell4->setToolTip("Voltage of Cell 4");
+    ui->progressBarVoltageCell1->setToolTip("Voltage of cell 1");
+    ui->progressBarVoltageCell2->setToolTip("Voltage of cell 2");
+    ui->progressBarVoltageCell3->setToolTip("Voltage of cell 3");
+    ui->progressBarVoltageCell4->setToolTip("Voltage of cell 4");
 
     QString labelText;
     switch (pack)
     {
-        case QGC_SKYE_BATTERY_PACK_1:
+        case MAV_SKYE_BATTERY_PACK_ID_1:
         {
             labelText = "Battery pack 1";
+            this->setToolTip("Battery info for accu pack 1");
         }
         break;
-        case QGC_SKYE_BATTERY_PACK_2:
+        case MAV_SKYE_BATTERY_PACK_ID_2:
         {
             labelText = "Battery pack 2";
+            this->setToolTip("Battery info for accu pack 2");
         }
         break;
-        case QGC_SKYE_BATTERY_PACK_3:
+        case MAV_SKYE_BATTERY_PACK_ID_3:
         {
             labelText = "Battery pack 3";
+            this->setToolTip("Battery info for accu pack 3");
         }
         break;
         default:
             labelText = "no pack";
-            break;
+        break;
     }
     ui->labelBatteryPack->setText(labelText);
 }

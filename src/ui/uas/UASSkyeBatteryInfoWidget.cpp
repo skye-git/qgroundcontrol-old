@@ -15,14 +15,16 @@ UASSkyeBatteryInfoWidget::UASSkyeBatteryInfoWidget(QWidget *parent) :
 
     batteryPacks = QMap<int, UASSkyeBatteryPackWidget*>();
 
-    batteryPacks.insert(QGC_SKYE_BATTERY_PACK_1, new UASSkyeBatteryPackWidget(this, QGC_SKYE_BATTERY_PACK_1));
-    listLayout->addWidget(batteryPacks.value(QGC_SKYE_BATTERY_PACK_1));
+    batteryPacks.insert(MAV_SKYE_BATTERY_PACK_ID_1, new UASSkyeBatteryPackWidget(this, MAV_SKYE_BATTERY_PACK_ID_1));
+    listLayout->addWidget(batteryPacks.value(MAV_SKYE_BATTERY_PACK_ID_1));
 
-    batteryPacks.insert(QGC_SKYE_BATTERY_PACK_1, new UASSkyeBatteryPackWidget(this, QGC_SKYE_BATTERY_PACK_2));
-    listLayout->addWidget(batteryPacks.value(QGC_SKYE_BATTERY_PACK_1));
+    batteryPacks.insert(MAV_SKYE_BATTERY_PACK_ID_2, new UASSkyeBatteryPackWidget(this, MAV_SKYE_BATTERY_PACK_ID_2));
+    listLayout->addWidget(batteryPacks.value(MAV_SKYE_BATTERY_PACK_ID_2));
 
-    batteryPacks.insert(QGC_SKYE_BATTERY_PACK_1, new UASSkyeBatteryPackWidget(this, QGC_SKYE_BATTERY_PACK_3));
-    listLayout->addWidget(batteryPacks.value(QGC_SKYE_BATTERY_PACK_1));
+    batteryPacks.insert(MAV_SKYE_BATTERY_PACK_ID_3, new UASSkyeBatteryPackWidget(this, MAV_SKYE_BATTERY_PACK_ID_3));
+    listLayout->addWidget(batteryPacks.value(MAV_SKYE_BATTERY_PACK_ID_3));
+
+//    connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 }
 
 UASSkyeBatteryInfoWidget::~UASSkyeBatteryInfoWidget()

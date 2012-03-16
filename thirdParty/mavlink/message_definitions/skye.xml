@@ -215,7 +215,6 @@
           </message>  -->
           <message id="152" name="SKYE_BATTERY_STATUS">
                <description>Transmitte battery informations for a accu pack.</description>
-               <field type="uint8_t" name="target_system">System ID</field>
                <field type="uint8_t" name="accu_id">Accupack ID, see ENUM MAV_SKYE_BATTERY_PACK_ID</field>
                <field type="uint16_t" name="voltage_cell_1">Battery voltage of cell 1, in millivolts (1 = 1 millivolt)</field>
                <field type="uint16_t" name="voltage_cell_2">Battery voltage of cell 2, in millivolts (1 = 1 millivolt)</field>

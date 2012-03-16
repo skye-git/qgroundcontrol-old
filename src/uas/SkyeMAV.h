@@ -19,6 +19,20 @@ public slots:
     /** @brief Send the 8 DOF command (from Testphase Widget) to MAV */
     void setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 ); //AL (06.03.12)
 
+signals:
+    /** @brief Emit new detailed accu info for one accu pack
+     *  @param packID see ENUM MAV_SKYE_BATTERY_PACK_ID
+     *          voltCell1 Voltage of cell 1 in volt
+     *          voltCell2 Voltage of cell 2 in volt
+     *          voltCell3 Voltage of cell 3 in volt
+     *          voltCell4 Voltage of cell 4 in volt
+     *          current Recent current of accu pack in ampere
+     *          percent Estimated remaining battery, -1 when not estimated
+    **/
+    void batteryPackChanged(mavlink_skye_battery_status_t* battery);
+
+
+
 protected:
     /** @brief Send a Direct Control Command to MAV: */
     void sendDirectControlCommands(double xThrust, double yThrust, double zThrust, double xMoment, double yMoment, double zMoment);
