@@ -18,6 +18,7 @@ manual2Orientation(0),
 manual3Orientation(0),
 manual4Orientation(0)
 {
+
 }
 
 SkyeMAV::~SkyeMAV(void)
@@ -32,27 +33,36 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
         if (!link) return;
         switch (message.msgid)
         {
-            case MAVLINK_MSG_ID_SKYE_DIRECT_CONTROL:
-            {
-                // TO DO: This is no receiving message, but one to send!!!
-                break;
-            }
-            case MAVLINK_MSG_ID_SKYE_ASSISTED_CONTROL:
-            {
-                // TO DO: This is no receiving message, but one to send!!!
-                break;
-            }
-            case MAVLINK_MSG_ID_SKYE_TEST_MOTORS:
-            {
-                // TO DO: This is no receiving message, but one to send!!!
-                break;
-            }
-                
-            default:
-            {
-                // Let UAS handle the default message set
-                UAS::receiveMessage(link, message);
-                break;
+        case MAVLINK_MSG_ID_SKYE_DIRECT_CONTROL:
+        {
+            // TO DO: This is no receiving message, but one to send!!!
+            break;
+        }
+        case MAVLINK_MSG_ID_SKYE_ASSISTED_CONTROL:
+        {
+            // TO DO: This is no receiving message, but one to send!!!
+            break;
+        }
+        case MAVLINK_MSG_ID_SKYE_TEST_MOTORS:
+        {
+            // TO DO: This is no receiving message, but one to send!!!
+            break;
+        }
+
+        case MAVLINK_MSG_ID_SKYE_BATTERY_STATUS:
+        {
+            mavlink_skye_battery_status_t battery;
+            mavlink_msg_skye_battery_status_decode(&message, &battery);
+
+            //emit batteryPackChanged(const &battery);
+
+        }
+        break;
+        default:
+        {
+            // Let UAS handle the default message set
+            UAS::receiveMessage(link, message);
+            break;
             }
         }
     }

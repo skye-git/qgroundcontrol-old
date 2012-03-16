@@ -173,6 +173,7 @@ MainWindow::MainWindow(QWidget *parent):
     toolBar->addPerspectiveChangeAction(ui.actionOperatorsView);
     toolBar->addPerspectiveChangeAction(ui.actionEngineersView);
     toolBar->addPerspectiveChangeAction(ui.actionPilotsView);
+    toolBar->addPerspectiveChangeAction(ui.actionSkyeView);                 // Beginn und Ende Code MA (15.05.2012)
 
     emit initStatusChanged("Building common widgets.");
 
@@ -1404,6 +1405,18 @@ void MainWindow::UASCreated(UASInterface* uas)
             }
         }
 
+        if (uas->getAutopilotType() == MAV_AUTOPILOT_SKYE)
+        {
+            // Dock widget
+            if (!skyeBatteryInfoDockWidget)
+            {
+                skyeBatteryInfoDockWidget = new QDockWidget("Detailed Battery Info", this);
+                skyeBatteryInfoDockWidget->setWidget( new UASSkyeBatteryInfoWidget);
+                skyeBatteryInfoDockWidget->setObjectName("SKYE_BATTERY_INFO_DOCKWIDGET");
+                addTool(skyeBatteryInfoDockWidget, tr("Battery Info"), Qt::RightDockWidgetArea);
+            }
+        }
+
         // Change the view only if this is the first UAS
 
         // If this is the first connected UAS, it is both created as well as
@@ -1441,7 +1454,14 @@ void MainWindow::UASCreated(UASInterface* uas)
             }
             else
             {
-                loadOperatorView();
+                if (uas->getAutopilotType() == MAV_AUTOPILOT_SKYE)      // Beginn Code MA (15.03.2012)
+                {
+                    loadSkyeView();
+                }
+                else
+                {                               // Ende Code MA (15.03.2012)
+                    loadOperatorView();
+                }
             }
         }
 
@@ -1604,7 +1624,7 @@ void MainWindow::loadViewState()
             headUpDockWidget->show();
             video1DockWidget->hide();
             video2DockWidget->hide();
-            mavlinkInspectorWidget->hide();
+            mavlinkInspectorWidget->show();
             break;                                      //Ende Code AL
         case VIEW_UNCONNECTED:
         case VIEW_FULL:

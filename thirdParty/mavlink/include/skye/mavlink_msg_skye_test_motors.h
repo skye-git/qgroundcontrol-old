@@ -1,6 +1,6 @@
 // MESSAGE SKYE_TEST_MOTORS PACKING
 
-#define MAVLINK_MSG_ID_SKYE_TEST_MOTORS 152
+#define MAVLINK_MSG_ID_SKYE_TEST_MOTORS 153
 
 typedef struct __mavlink_skye_test_motors_t
 {
@@ -16,7 +16,7 @@ typedef struct __mavlink_skye_test_motors_t
 } mavlink_skye_test_motors_t;
 
 #define MAVLINK_MSG_ID_SKYE_TEST_MOTORS_LEN 21
-#define MAVLINK_MSG_ID_152_LEN 21
+#define MAVLINK_MSG_ID_153_LEN 21
 
 
 

@@ -163,47 +163,69 @@
                     <description>Off</description>
                </entry>
                <entry value="1" name="MAV_CAM_ID_PROSILICA">
-                    <description>Fixed1</description>
+                    <description>High resolution AVT prosilica camera</description>
                </entry>
                <entry value="2" name="MAV_CAM_ID_BLUEFOX_LEFT">
-                    <description>Off</description>
+                    <description>Low resolution matrix-vision bluefox camera, position left</description>
                </entry>
                <entry value="3" name="MAV_CAM_ID_BLUEFOX_RIGHT">
-                    <description>Fixed0</description>
+                    <description>Low resolution matrix-vision bluefox camera, position right</description>
                </entry>
           </enum>
           <enum name="MAV_CAM_IMAGE_FORMAT">
                <description>Image Format</description>
                <entry value="0" name="MAV_CAM_IMAGE_FORMAT_RAW">
-                    <description>Fixed1</description>
+                    <description>RAW format</description>
                </entry>
                <entry value="1" name="MAV_CAM_IMAGE_FORMAT_JPEG">
-                    <description>Off</description>
+                    <description>JPEG format</description>
                </entry>
                <entry value="2" name="MAV_CAM_IMAGE_FORMAT_PNG">
-                    <description>Fixed1</description>
+                    <description>PNG format</description>
+               </entry>
+          </enum>
+          <enum name="MAV_SKYE_BATTERY_PACK_ID">
+               <description>ID for each accu pack for detailed battery information</description>
+               <entry value="0" name="MAV_SKYE_BATTERY_PACK_ID_NONE">
+                    <description>no accu</description>
+               </entry>
+               <entry value="1" name="MAV_SKYE_BATTERY_PACK_ID_1">
+                    <description>Accu pack 1</description>
+               </entry>
+               <entry value="2" name="MAV_SKYE_BATTERY_PACK_ID_2">
+                    <description>Accu pack 1</description>
+               </entry>
+               <entry value="3" name="MAV_SKYE_BATTERY_PACK_ID_3">
+                    <description>Accu pack 1</description>
                </entry>
           </enum>
      </enums>
      <messages>
-          <message id="151" name="SKYE_STATUS">
+<!--          <message id="151" name="SKYE_STATUS">
                <description>The general skye system state.</description>
                <field type="uint32_t" name="onboard_control_sensors_present">Bitmask showing which controllers an sensors are present. =0:not present, =1:present, Sensors: last bit 1: 3D gyro, 2: 3D acc, 4: 3D mag, 8: absolute pressure, 16: differential pressures, 32: GPS, 64: motor homing, 128: motor decoding (EPOS), Controllers: 256: attitude stabilization, 512: z/altitude control, 1024: x/y position control, 2048: motor outputs control</field>
-		<field type="uint32_t" name="onboard_control_sensors_enabled">Bitmask showing which controllers an sensors are enabled. =0:not enabled, =1:enabled, same bit contribution as field before.
+               <field type="uint32_t" name="onboard_control_sensors_enabled">Bitmask showing which controllers an sensors are enabled. =0:not enabled, =1:enabled, same bit contribution as field before.
 		</field>
-                <field type="uint32_t" name="onboard_control_sensors_operating">Bitmask showing controllers and sensors are operating or have an error. =0:ERROR, =1:operating, same bit contribution as field before.</field>
-                <field type="uint16_t" name="mainloop_load">Maximum usage of the mainloop time, (0%: 0, 100%: 1000) should be always below 1000</field>
-		<field type="uint16_t" name="voltage_battery">Battery voltage, in millivolts (1 = 1 millivolt)</field>
-		<field type="int16_t" name="current_battery">Battery current, in 10*milliamperes (1 = 10 milliampere), -1: autopilot does not measure the current</field>
-		<field type="int8_t" name="battery_remaining">Remaining battery energy: (0%: 0, 100%: 100), -1: autopilot estimate the remaining battery</field>
-		<field type="float" name="hull_pressure">Remaining hull pressure (hectopascal), -1: no pressure data</field>
-		<field type="float" name="hull_temperature">Hull temperature (Kelvin), -1: no temperature data</field>
-		<field type="uint16_t" name="drop_rate_comm">Communication drops in percent, (0%: 0, 100%: 10'000), (UART, I2C, SPI, CAN), dropped packets on all links (packets that were corrupted on reception on the MAV)</field>
-		<field type="uint16_t" name="errors_comm">Communication errors (UART, I2C, SPI, CAN), dropped packets on all links (packets that were corrupted on reception on the MAV)</field>
+               <field type="uint32_t" name="onboard_control_sensors_operating">Bitmask showing controllers and sensors are operating or have an error. =0:ERROR, =1:operating, same bit contribution as field before.</field>
+               <field type="uint16_t" name="mainloop_load">Maximum usage of the mainloop time, (0%: 0, 100%: 1000) should be always below 1000</field>
+               <field type="float" name="hull_pressure">Remaining hull pressure (hectopascal), -1: no pressure data</field>
+               <field type="float" name="hull_temperature">Hull temperature (Kelvin), -1: no temperature data</field>
+               <field type="uint16_t" name="drop_rate_comm">Communication drops in percent, (0%: 0, 100%: 10'000), (UART, I2C, SPI, CAN), dropped packets on all links (packets that were corrupted on reception on the MAV)</field>
+               <field type="uint16_t" name="errors_comm">Communication errors (UART, I2C, SPI, CAN), dropped packets on all links (packets that were corrupted on reception on the MAV)</field>
+          </message>  -->
+          <message id="152" name="SKYE_BATTERY_STATUS">
+               <description>Transmitte battery informations for a accu pack.</description>
+               <field type="uint8_t" name="accu_id">Accupack ID, see ENUM MAV_SKYE_BATTERY_PACK_ID</field>
+               <field type="uint16_t" name="voltage_cell_1">Battery voltage of cell 1, in millivolts (1 = 1 millivolt)</field>
+               <field type="uint16_t" name="voltage_cell_2">Battery voltage of cell 2, in millivolts (1 = 1 millivolt)</field>
+               <field type="uint16_t" name="voltage_cell_3">Battery voltage of cell 3, in millivolts (1 = 1 millivolt)</field>
+               <field type="uint16_t" name="voltage_cell_4">Battery voltage of cell 4, in millivolts (1 = 1 millivolt)</field>
+               <field type="int16_t" name="current_battery">Battery current, in 10*milliamperes (1 = 10 milliampere), -1: autopilot does not measure the current</field>
+               <field type="int8_t" name="battery_remaining">Remaining battery energy: (0%: 0, 100%: 100), -1: autopilot estimate the remaining battery</field>
           </message>
-          <message id="152" name="SKYE_TEST_MOTORS">
+          <message id="153" name="SKYE_TEST_MOTORS">
                <description>Message type for project SKYE configuration with four thrusters and four direction actuations. Requested mode: "MAV_MODE_TESTPHASE_ARMED"</description>
-               <field type="uint8_t" name="target_system" >System ID</field>
+               <field type="uint8_t" name="target_system">System ID</field>
                <field type="uint8_t" name="thrust_1">Thrust of motor 1, range [0,200]</field>
                <field type="uint8_t" name="thrust_2">Thrust of motor 2, range [0,200]</field>
                <field type="uint8_t" name="thrust_3">Thrust of motor 3, range [0,200]</field>
@@ -213,7 +235,7 @@
                <field type="int32_t" name="direct_3">Direction of direction motor 3, 360 degrees equal 38'000</field>
                <field type="int32_t" name="direct_4">Direction of direction motor 4, 360 degrees equal 38'000</field>
           </message>
-          <message id="153" name="SKYE_DIRECT_CONTROL">
+          <message id="154" name="SKYE_DIRECT_CONTROL">
                <description>Control six degrees of freedom in Body Frame. This type of control is intended to use if there is no attitude feedback in the control. Requested mode: "MAV_MODE_DIRECT_CONTROL_ARMED"</description>
                <field type="uint8_t" name="target_system">System ID</field>
                <field type="float" name="thrust_x">Resulting thrust in Body Frame x, range [-1,1]</field>
@@ -223,7 +245,7 @@
                <field type="float" name="moment_y">Resulting moment in Body Frame y (pitch), range [-1,1]</field>
                <field type="float" name="moment_z">Resulting moment in Body Frame z (yaw), range [-1,1]</field>
           </message>
-          <message id="154" name="SKYE_ASSISTED_CONTROL">
+          <message id="155" name="SKYE_ASSISTED_CONTROL">
                <description>Control six degrees of freedom. Translational velocity in Inertial (earth) Frame, . Use this type if you have attitude feedback in the control loop. Requested mode: "MAV_MODE_ASSISTED_CONTROL_ARMED"</description>
                <field type="uint8_t" name="target_system">System ID</field>
                <field type="float" name="translation_lat">Translation (velocity) in Inertial Frame latitude, range [-1,1]</field>
@@ -233,7 +255,7 @@
                <field type="float" name="rotation_y">Pitch, range [-1,1]</field>
                <field type="float" name="rotation_z">Yaw, range [-1,1]</field>
           </message>
-          <message id="155" name="SKYE_ASSISTED_RC_CONTROL">
+          <message id="156" name="SKYE_ASSISTED_RC_CONTROL">
                <description>FIXME: NOT USED YET.. Control four degrees of freedom. This type of control is intended to use with a 4-channel limited input device. This message is similar to Message MANUAL_CONTROL</description>
                <field type="uint8_t" name="target_system">System ID</field>
                <field type="float" name="translation_lat">Translation latitude [-1,1]</field>
@@ -241,7 +263,7 @@
                <field type="float" name="translation_alt">Translation altitude [-1,1]</field>
                <field type="float" name="rotation_z">Yaw, range [-1,1]</field>
           </message>
-		<message id="156" name="SKYE_SCALED_PRESSURE">
+          <message id="157" name="SKYE_SCALED_PRESSURE">
                <description>The pressure readings for the typical setup of one absolute and differential pressure sensor. The units are as specified in each field.</description>
                <field type="uint32_t" name="time_boot_ms">Timestamp (microseconds since UNIX epoch or microseconds since system boot)</field>
                <field type="float" name="press_abs1">Absolute pressure (hectopascal)</field>
@@ -262,9 +284,9 @@
                <field type="float" name="press_diff43">Differential pressure 1 (hectopascal)</field>
                <field type="int16_t" name="temperature">Temperature measurement (0.01 degrees celsius)</field>
           </message>
-          <message id="157" name="SKYE_MOTOR_SIGNAL">
+          <message id="158" name="SKYE_MOTOR_SIGNAL">
                <description>The values transmitted to the motor nodes. FIXME: IDICATE FIELD'S SCALING/DIMENSION</description>
-	       <field type="uint32_t" name="time_usec">Timestamp (since UNIX epoch or microseconds since system boot)</field>
+               <field type="uint32_t" name="time_usec">Timestamp (since UNIX epoch or microseconds since system boot)</field>
                <field type="uint16_t" name="thrust1_raw">Thrust output thruster 1 FIXME: VALUES</field>
                <field type="uint16_t" name="thrust2_raw">Thrust output thruster 2 FIXME: VALUES</field>
                <field type="uint16_t" name="thrust3_raw">Thrust output thruster 3 FIXME: VALUES</field>
@@ -274,7 +296,7 @@
                <field type="uint16_t" name="position3_raw">Orientation output position motor 3 FIXME: VALUES</field>
                <field type="uint16_t" name="position4_raw">Orientation output position motor 4 FIXME: VALUES</field>
           </message>
-          <message id="158" name="SKYE_MOTOR_MEASSURED_POSITION">
+          <message id="159" name="SKYE_MOTOR_MEASSURED_POSITION">
                <description>The meassured orientation of the motors, (Homing position: 0, 360deg: 36000)</description>
                <field type="uint32_t" name="time_usec">Timestamp (since UNIX epoch or microseconds since system boot)</field>
                <field type="uint16_t" name="thrust1_raw">Meassureed orientation motor 1 (Homing position: 0, 360deg: 36000)</field>
@@ -282,7 +304,7 @@
                <field type="uint16_t" name="thrust3_raw">Meassureed orientation motor 1 (Homing position: 0, 360deg: 36000)</field>
                <field type="uint16_t" name="thrust4_raw">Meassureed orientation motor 1 (Homing position: 0, 360deg: 36000)</field>
           </message>
-          <message id="159" name="SKYE_CONTROLLER_OUTPUT">
+          <message id="160" name="SKYE_CONTROLLER_OUTPUT">
                <description>Output of controller (Input for actuation chain)</description>
                <field type="uint32_t" name="time_usec">Timestamp (since UNIX epoch or microseconds since system boot)</field>
                <field type="uint16_t" name="force_x">Signal given from controller to actuation chain FIXME: VALUES</field>
@@ -292,13 +314,10 @@
                <field type="uint16_t" name="moment_y">Signal given from controller to actuation chain FIXME: VALUES</field>
                <field type="uint16_t" name="moment_z">Signal given from controller to actuation chain FIXME: VALUES</field>
           </message>
-
-
-
-          <message id="160" name="SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS">
+          <message id="161" name="SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS">
                <description>Message to change all the parameters present in ROS Reconfigure GUI bluefox node</description>
                <field type="uint8_t" name="target_system">System ID</field>
-<!--               <field type="char[32]" name="guid">Serial number of camera, suffix BLUEFOX_ + 8 dec digits (use first camera if null)</field> -->
+               <!--               <field type="char[32]" name="guid">Serial number of camera, suffix BLUEFOX_ + 8 dec digits (use first camera if null)</field> -->
                <field type="uint8_t" name="cam_id">ID of camera, see ENUM MAV_CAM_ID</field>
                <field type="char[32]" name="frame_id">ROS tf frame of reference, resolved with tf_prefix unless absolute.</field>
                <field type="float" name="pixel_clock">Pixel clock of image sensor [MHz]. See enum MAV_CAM_RECONFIG_PIXEL_CLOCK</field>
@@ -326,13 +345,13 @@
                <field type="uint8_t" name="hdr_mode">HDR mode. See enum MAV_CAM_RECONFIG_HDR_MODE</field>
                <field type="uint8_t" name="use_ros_time">boolean. Timestamp Image and CameraInfo using ros::Time::now() </field>
           </message>
-          <message id="161" name="SKYE_CAM_RECONFIGURE_PROSILICA_SETTINGS">
+          <message id="162" name="SKYE_CAM_RECONFIGURE_PROSILICA_SETTINGS">
                <description>Message to change all the parameters present in ROS Reconfigure GUI prosilica node. FIXME: MESSAGE NOT DEFINED YET</description>
                <field type="uint8_t" name="target_system">System ID</field>
                <field type="uint8_t" name="cam_id">ID of camera, see ENUM MAV_CAM_ID (MAV_CAM_ID_PROSILICA)</field>
           </message>
-          <message id="162" name="SKYE_CAM_HANDLE_SAVE_IMAGE">
-               <description></description>
+          <message id="163" name="SKYE_CAM_HANDLE_SAVE_IMAGE">
+               <description/>
                <field type="uint8_t" name="target_system">System ID</field>
                <field type="uint8_t" name="cam_id">ID of camera, see ENUM MAV_CAM_ID</field>
                <field type="uint8_t" name="save_image">Boolean, true: image stream is saved as specified in fields below</field>
@@ -349,8 +368,8 @@
                <field type="uint8_t" name="jpeg_quality2">Compression quality for jpeg send format (lowest quality: 0, highest quality: 100)</field>
                <field type="uint8_t" name="keep_old_modus">Boolean, true: new image handle modus is added to previous (image is saved/sent more than once), false: only save/send with new configuration</field>
           </message>
-          <message id="163" name="SKYE_CAM_TAKE_SHOT">
-               <description></description>
+          <message id="164" name="SKYE_CAM_TAKE_SHOT">
+               <description/>
                <field type="uint8_t" name="target_system">System ID</field>
                <field type="uint8_t" name="cam_id">ID of camera, see ENUM MAV_CAM_ID</field>
                <field type="uint8_t" name="take_shot">Boolean, true: send recent image (save settings) to GS</field>

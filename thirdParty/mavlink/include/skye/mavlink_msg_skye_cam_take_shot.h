@@ -1,6 +1,6 @@
 // MESSAGE SKYE_CAM_TAKE_SHOT PACKING
 
-#define MAVLINK_MSG_ID_SKYE_CAM_TAKE_SHOT 163
+#define MAVLINK_MSG_ID_SKYE_CAM_TAKE_SHOT 164
 
 typedef struct __mavlink_skye_cam_take_shot_t
 {
@@ -10,7 +10,7 @@ typedef struct __mavlink_skye_cam_take_shot_t
 } mavlink_skye_cam_take_shot_t;
 
 #define MAVLINK_MSG_ID_SKYE_CAM_TAKE_SHOT_LEN 3
-#define MAVLINK_MSG_ID_163_LEN 3
+#define MAVLINK_MSG_ID_164_LEN 3
 
 
 

@@ -1,6 +1,6 @@
 // MESSAGE SKYE_CONTROLLER_OUTPUT PACKING
 
-#define MAVLINK_MSG_ID_SKYE_CONTROLLER_OUTPUT 159
+#define MAVLINK_MSG_ID_SKYE_CONTROLLER_OUTPUT 160
 
 typedef struct __mavlink_skye_controller_output_t
 {
@@ -14,7 +14,7 @@ typedef struct __mavlink_skye_controller_output_t
 } mavlink_skye_controller_output_t;
 
 #define MAVLINK_MSG_ID_SKYE_CONTROLLER_OUTPUT_LEN 16
-#define MAVLINK_MSG_ID_159_LEN 16
+#define MAVLINK_MSG_ID_160_LEN 16
 
 
 

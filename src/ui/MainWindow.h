@@ -80,6 +80,8 @@ This file is part of the QGROUNDCONTROL project
 #include "QGCMAVLinkInspector.h"
 #include "QGCMAVLinkLogPlayer.h"
 #include "MAVLinkDecoder.h"
+#include "UASSkyeBatteryInfoWidget.h"       // Beginn Code MA (15.03.2012)
+#include "UASSkyeBatteryPackWidget.h"       // Ende Code MA (15.03.2012)
 
 class QGCMapTool;
 class QGCMAVLinkMessageSender;
@@ -387,6 +389,8 @@ protected:
     QPointer<MAVLinkDecoder> mavlinkDecoder;
     QPointer<QDockWidget> mavlinkSenderWidget;
     QGCMAVLinkLogPlayer* logPlayer;
+
+    QPointer<QDockWidget> skyeBatteryInfoDockWidget;        // Beginn und Ende Code MA (15.03.2012)
 
     // Popup widgets
     JoystickWidget* joystickWidget;

@@ -24,53 +24,47 @@ static void mavlink_test_all(uint8_t system_id, uint8_t component_id, mavlink_me
 #include "../common/testsuite.h"
 
 
-static void mavlink_test_skye_status(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+static void mavlink_test_skye_battery_status(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
 {
 	mavlink_message_t msg;
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
-	mavlink_skye_status_t packet_in = {
-		963497464,
-	963497672,
-	963497880,
-	101.0,
-	129.0,
-	18275,
-	18379,
-	18483,
-	18587,
-	18691,
-	223,
+	mavlink_skye_battery_status_t packet_in = {
+		17235,
+	17339,
+	17443,
+	17547,
+	17651,
+	163,
+	230,
+	41,
 	};
-	mavlink_skye_status_t packet1, packet2;
+	mavlink_skye_battery_status_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
-        	packet1.onboard_control_sensors_present = packet_in.onboard_control_sensors_present;
-        	packet1.onboard_control_sensors_enabled = packet_in.onboard_control_sensors_enabled;
-        	packet1.onboard_control_sensors_operating = packet_in.onboard_control_sensors_operating;
-        	packet1.hull_pressure = packet_in.hull_pressure;
-        	packet1.hull_temperature = packet_in.hull_temperature;
-        	packet1.mainloop_load = packet_in.mainloop_load;
-        	packet1.voltage_battery = packet_in.voltage_battery;
+        	packet1.voltage_cell_1 = packet_in.voltage_cell_1;
+        	packet1.voltage_cell_2 = packet_in.voltage_cell_2;
+        	packet1.voltage_cell_3 = packet_in.voltage_cell_3;
+        	packet1.voltage_cell_4 = packet_in.voltage_cell_4;
         	packet1.current_battery = packet_in.current_battery;
-        	packet1.drop_rate_comm = packet_in.drop_rate_comm;
-        	packet1.errors_comm = packet_in.errors_comm;
+        	packet1.target_system = packet_in.target_system;
+        	packet1.accu_id = packet_in.accu_id;
         	packet1.battery_remaining = packet_in.battery_remaining;
         
         
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_status_encode(system_id, component_id, &msg, &packet1);
-	mavlink_msg_skye_status_decode(&msg, &packet2);
+	mavlink_msg_skye_battery_status_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_skye_battery_status_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_status_pack(system_id, component_id, &msg , packet1.onboard_control_sensors_present , packet1.onboard_control_sensors_enabled , packet1.onboard_control_sensors_operating , packet1.mainloop_load , packet1.voltage_battery , packet1.current_battery , packet1.battery_remaining , packet1.hull_pressure , packet1.hull_temperature , packet1.drop_rate_comm , packet1.errors_comm );
-	mavlink_msg_skye_status_decode(&msg, &packet2);
+	mavlink_msg_skye_battery_status_pack(system_id, component_id, &msg , packet1.target_system , packet1.accu_id , packet1.voltage_cell_1 , packet1.voltage_cell_2 , packet1.voltage_cell_3 , packet1.voltage_cell_4 , packet1.current_battery , packet1.battery_remaining );
+	mavlink_msg_skye_battery_status_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_status_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.onboard_control_sensors_present , packet1.onboard_control_sensors_enabled , packet1.onboard_control_sensors_operating , packet1.mainloop_load , packet1.voltage_battery , packet1.current_battery , packet1.battery_remaining , packet1.hull_pressure , packet1.hull_temperature , packet1.drop_rate_comm , packet1.errors_comm );
-	mavlink_msg_skye_status_decode(&msg, &packet2);
+	mavlink_msg_skye_battery_status_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.accu_id , packet1.voltage_cell_1 , packet1.voltage_cell_2 , packet1.voltage_cell_3 , packet1.voltage_cell_4 , packet1.current_battery , packet1.battery_remaining );
+	mavlink_msg_skye_battery_status_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
@@ -78,12 +72,12 @@ static void mavlink_test_skye_status(uint8_t system_id, uint8_t component_id, ma
         for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
         	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
         }
-	mavlink_msg_skye_status_decode(last_msg, &packet2);
+	mavlink_msg_skye_battery_status_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_status_send(MAVLINK_COMM_1 , packet1.onboard_control_sensors_present , packet1.onboard_control_sensors_enabled , packet1.onboard_control_sensors_operating , packet1.mainloop_load , packet1.voltage_battery , packet1.current_battery , packet1.battery_remaining , packet1.hull_pressure , packet1.hull_temperature , packet1.drop_rate_comm , packet1.errors_comm );
-	mavlink_msg_skye_status_decode(last_msg, &packet2);
+	mavlink_msg_skye_battery_status_send(MAVLINK_COMM_1 , packet1.target_system , packet1.accu_id , packet1.voltage_cell_1 , packet1.voltage_cell_2 , packet1.voltage_cell_3 , packet1.voltage_cell_4 , packet1.current_battery , packet1.battery_remaining );
+	mavlink_msg_skye_battery_status_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
@@ -809,7 +803,7 @@ static void mavlink_test_skye_cam_take_shot(uint8_t system_id, uint8_t component
 
 static void mavlink_test_skye(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
 {
-	mavlink_test_skye_status(system_id, component_id, last_msg);
+	mavlink_test_skye_battery_status(system_id, component_id, last_msg);
 	mavlink_test_skye_test_motors(system_id, component_id, last_msg);
 	mavlink_test_skye_direct_control(system_id, component_id, last_msg);
 	mavlink_test_skye_assisted_control(system_id, component_id, last_msg);

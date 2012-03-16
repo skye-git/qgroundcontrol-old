@@ -1,6 +1,6 @@
 // MESSAGE SKYE_MOTOR_SIGNAL PACKING
 
-#define MAVLINK_MSG_ID_SKYE_MOTOR_SIGNAL 157
+#define MAVLINK_MSG_ID_SKYE_MOTOR_SIGNAL 158
 
 typedef struct __mavlink_skye_motor_signal_t
 {
@@ -16,7 +16,7 @@ typedef struct __mavlink_skye_motor_signal_t
 } mavlink_skye_motor_signal_t;
 
 #define MAVLINK_MSG_ID_SKYE_MOTOR_SIGNAL_LEN 20
-#define MAVLINK_MSG_ID_157_LEN 20
+#define MAVLINK_MSG_ID_158_LEN 20
 
 
 

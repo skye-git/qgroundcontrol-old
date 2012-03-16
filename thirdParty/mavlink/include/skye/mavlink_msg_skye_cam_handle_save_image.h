@@ -1,6 +1,6 @@
 // MESSAGE SKYE_CAM_HANDLE_SAVE_IMAGE PACKING
 
-#define MAVLINK_MSG_ID_SKYE_CAM_HANDLE_SAVE_IMAGE 162
+#define MAVLINK_MSG_ID_SKYE_CAM_HANDLE_SAVE_IMAGE 163
 
 typedef struct __mavlink_skye_cam_handle_save_image_t
 {
@@ -22,7 +22,7 @@ typedef struct __mavlink_skye_cam_handle_save_image_t
 } mavlink_skye_cam_handle_save_image_t;
 
 #define MAVLINK_MSG_ID_SKYE_CAM_HANDLE_SAVE_IMAGE_LEN 53
-#define MAVLINK_MSG_ID_162_LEN 53
+#define MAVLINK_MSG_ID_163_LEN 53
 
 #define MAVLINK_MSG_SKYE_CAM_HANDLE_SAVE_IMAGE_FIELD_FRAME_NAME_LEN 8
 #define MAVLINK_MSG_SKYE_CAM_HANDLE_SAVE_IMAGE_FIELD_PATH_LEN 32

@@ -1,6 +1,6 @@
 // MESSAGE SKYE_SCALED_PRESSURE PACKING
 
-#define MAVLINK_MSG_ID_SKYE_SCALED_PRESSURE 156
+#define MAVLINK_MSG_ID_SKYE_SCALED_PRESSURE 157
 
 typedef struct __mavlink_skye_scaled_pressure_t
 {
@@ -25,7 +25,7 @@ typedef struct __mavlink_skye_scaled_pressure_t
 } mavlink_skye_scaled_pressure_t;
 
 #define MAVLINK_MSG_ID_SKYE_SCALED_PRESSURE_LEN 70
-#define MAVLINK_MSG_ID_156_LEN 70
+#define MAVLINK_MSG_ID_157_LEN 70
 
 
 

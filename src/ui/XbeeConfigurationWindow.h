@@ -7,9 +7,14 @@
 #include <QTimer>
 #include <QShowEvent>
 #include <QHideEvent>
-#include<QtGui\qcombobox.h>
-#include<QtGui\qlabel.h>
-#include<QtGui\qlayout.h>
+
+//#include <QtGui\qcombobox.h>
+//#include <QtGui\qlabel.h>
+//#include <QtGui\qlayout.h>
+#include <QComboBox>
+#include <QLabel>
+#include <QLayout>
+
 #include <LinkInterface.h>
 #include"XbeeLinkInterface.h"
 #include "../comm/HexSpinBox.h"

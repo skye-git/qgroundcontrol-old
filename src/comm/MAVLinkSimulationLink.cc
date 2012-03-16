@@ -59,7 +59,7 @@ MAVLinkSimulationLink::MAVLinkSimulationLink(QString readFile, QString writeFile
     readyBytes(0),
     timeOffset(0),
     time_boot(0),
-    roll(0),
+    roll(0),            // Attitude
     pitch(0),
     yaw(0),
     speedRoll(0),
@@ -71,6 +71,18 @@ MAVLinkSimulationLink::MAVLinkSimulationLink(QString readFile, QString writeFile
     speedX(0),
     speedY(0),
     speedZ(0),
+    thrustX(0),         // Direct Control
+    thrustY(0),
+    thrustZ(0),
+    momentX(0),
+    momentY(0),
+    momentZ(0),
+    transX(0),          // Assisted Control
+    transY(0),
+    transZ(0),
+    rotX(0),
+    rotY(0),
+    rotZ(0),
     thrust1(0),        //Testphase Control
     thrust2(0),
     thrust3(0),
@@ -146,20 +158,14 @@ MAVLinkSimulationLink::~MAVLinkSimulationLink()
 
 void MAVLinkSimulationLink::run()
 {
-
-
+    status.voltage_battery = 0;
+    status.errors_comm = 0;
 
     system.base_mode = MAV_MODE_PREFLIGHT;
     system.custom_mode = MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED;
 #ifdef MAVLINK_ENABLED_SKYE
-    statusSkye.voltage_battery = 0;
-    statusSkye.errors_comm = 0;
-
     system.type = MAV_TYPE_AIRSHIP;
 #else
-    status.voltage_battery = 0;
-    status.errors_comm = 0;
-
     system.custom_mode = MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED;
 #endif // MAVLINK ENABLED SKYE
     system.system_status = MAV_STATE_UNINIT;
@@ -630,19 +636,12 @@ void MAVLinkSimulationLink::mainloop()
 
 
 
-#ifdef MAVLINK_ENABLED_SKYE
-        statusSkye.voltage_battery = voltage * 1000; // millivolts
-        statusSkye.mainloop_load = 33 * detectionCounter % 1000;
-
-        // Pack message and get size of encoded byte string
-        messageSize = mavlink_msg_skye_status_encode(systemId, componentId, &msg, &statusSkye);
-#else
         status.voltage_battery = voltage * 1000; // millivolts
         status.load = 33 * detectionCounter % 1000;
 
         // Pack message and get size of encoded byte string
         messageSize = mavlink_msg_sys_status_encode(systemId, componentId, &msg, &status);
-#endif
+
         // Allocate buffer with packet data
         bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
         //add data into datastream
@@ -1004,12 +1003,8 @@ break;      // Ende Code MA (09.03.2012)
     }
     readyBufferMutex.unlock();
 
-#ifdef MAVLINK_ENABLED_SKYE
     // Update comm status
-    statusSkye.errors_comm = comm.packet_rx_drop_count;
-#else
     status.errors_comm = comm.packet_rx_drop_count;
-#endif // MAVLINK_ENABLED_SKYE
 }
 
 

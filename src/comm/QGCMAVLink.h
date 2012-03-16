@@ -49,6 +49,10 @@ This file is part of the QGROUNDCONTROL project
 #include <ardupilotmega.h>
 #endif
 
+#ifdef QGC_USE_SKYE_MESSAGES            // Beginn Code MA (16.03.2012)
+#include <skye.h>               // is allready included in mavlink.h, but why?
+#endif                                  // Ende Code MA (16.03.2012)
+
 
 #endif // QGCMAVLINK_H
 
