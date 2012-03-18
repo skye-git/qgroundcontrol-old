@@ -54,7 +54,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             mavlink_skye_battery_status_t battery;
             mavlink_msg_skye_battery_status_decode(&message, &battery);
 
-            //emit batteryPackChanged(const &battery);
+            emit batteryPackChanged(&battery);
 
         }
         break;

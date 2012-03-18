@@ -15,6 +15,7 @@ class UASSkyeBatteryPackWidget : public QWidget
 public:
     explicit UASSkyeBatteryPackWidget(QWidget *parent = 0, MAV_SKYE_BATTERY_PACK_ID pack = MAV_SKYE_BATTERY_PACK_ID_NONE);
     ~UASSkyeBatteryPackWidget();
+    void changeBatteryStatus(double voltage1, double voltage2, double voltage3, double voltage4, double current, int remaining);
 
 private:
     Ui::UASSkyeBatteryPackWidget *ui;

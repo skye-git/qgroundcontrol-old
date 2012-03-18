@@ -45,7 +45,9 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     uasId(0),
     uasMode(0),
     engineOn(false),
-    inputMode(QGC_INPUT_MODE_NONE)
+    inputMode(QGC_INPUT_MODE_NONE),
+    mouseTranslationEnabled(true),
+    mouseRotationEnabled(true)
 {
 #ifdef MAVLINK_ENABLED_SKYE
     ui.setupUi(this);
@@ -82,7 +84,8 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
 
     ui.gridLayout->setAlignment(Qt::AlignTop);
 
-    this->setStyleSheet("QPushButton { height: 40;}");
+    updateStyleSheet();
+
 #endif //MAVLINK_ENABLED_SKYE
 }
 
@@ -106,6 +109,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
     connect(ui.liftoffButton, SIGNAL(clicked()), uas, SLOT(launch()));
     connect(ui.landButton, SIGNAL(clicked()), uas, SLOT(home()));
     connect(ui.shutdownButton, SIGNAL(clicked()), uas, SLOT(shutdown()));
+    connect(this, SIGNAL(changedMode(int)), uas, SLOT(setMode(int)));
     //connect(ui.setHomeButton, SIGNAL(clicked()), uas, SLOT(setLocalOriginAtCurrentGPSPosition()));
     connect(uas, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
     connect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
@@ -173,7 +177,7 @@ void UASSkyeControlWidget::updateStatemachine()
 void UASSkyeControlWidget::updateMode(int uas,int baseMode)
 {
 #ifdef MAVLINK_ENABLED_SKYE
-    if ((this->uasId == uas) && (this->uasMode != baseMode))
+    if ((this->uasId == uas) && ((int)this->uasMode != baseMode))
     {
         if ((baseMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE))
             ui.directControlButton->setChecked(true);
@@ -195,7 +199,7 @@ void UASSkyeControlWidget::updateState(int state)
     case (int)MAV_STATE_ACTIVE:
         engineOn = true;
         ui.controlButton->setText(tr("DISARM SYSTEM"));
-        ui.controlButton->setStyleSheet("* { background-color: rgb(255,125,100) }");
+        ui.controlButton->setStyleSheet("* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DD0044, stop: 1 #AA0022); border-color: yellow; color: yellow }");
         ui.directControlButton->setDisabled(true);
         ui.assistedControlButton->setDisabled(true);
         ui.halfAutomaticControlButton->setDisabled(true);
@@ -204,7 +208,7 @@ void UASSkyeControlWidget::updateState(int state)
     case (int)MAV_STATE_STANDBY:
         engineOn = false;
         ui.controlButton->setText(tr("ARM SYSTEM"));
-        ui.controlButton->setStyleSheet("* { background-color: rgb(125,255,100) }");
+        ui.controlButton->setStyleSheet("* { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00DD44, stop: 1 #11AA22); }");
         ui.directControlButton->setEnabled(true);
         ui.assistedControlButton->setEnabled(true);
         ui.halfAutomaticControlButton->setEnabled(true);
@@ -240,7 +244,7 @@ void UASSkyeControlWidget::setDirectControlMode(bool checked)
         }
         else
         {
-            ui.lastActionLabel->setText("UAS is no SKYE!");
+            ui.lastActionLabel->setText("Active UAS is no SKYE!");
         }
 #endif  // MAVLINK_ENABLED_SKYE
     }
@@ -321,6 +325,7 @@ void UASSkyeControlWidget::setInputMouse(bool checked)
         emit changedInput(inputMode);
         ui.lastActionLabel->setText(tr("3dMouse activated!"));
     }
+    updateStyleSheet();
 #endif // MAVLINK_ENABLED_SKYE
 }
 
@@ -388,4 +393,56 @@ void UASSkyeControlWidget::cycleContextButton()
 
     }
 #endif // MAVLINK_ENABLED_SKYE
+}
+
+void UASSkyeControlWidget::updateStyleSheet()
+{
+    QString style = "";
+    style.append("QPushButton { height: 40; }");
+    if (ui.mouseButton->isChecked())
+    {
+        qDebug() << "IS CHECKED " << mouseTranslationEnabled << " " << mouseRotationEnabled;
+        if (mouseTranslationEnabled && mouseRotationEnabled)
+        {
+            style.append("QPushButton#mouseButton {image: url(:images/skye_images/input/3dx_spacenavigator_200x198_trans_rot.png);}");
+        }
+        if (mouseTranslationEnabled && !mouseRotationEnabled)
+        {
+            style.append("QPushButton#mouseButton {image: url(:images/skye_images/input/3dx_spacenavigator_200x198_trans.png);}");
+        }
+        if (!mouseTranslationEnabled && mouseRotationEnabled)
+        {
+            style.append("QPushButton#mouseButton {image: url(:images/skye_images/input/3dx_spacenavigator_200x198_rot.png);}");
+        }
+        if (!mouseTranslationEnabled && !mouseRotationEnabled)
+        {
+            style.append("QPushButton#mouseButton {image: url(:images/skye_images/input/3dx_spacenavigator_200x198.png); background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #AA0000, stop: 1 #FF0000);}");
+        }
+    }else{
+        style.append("QPushButton#mouseButton {image: url(:images/skye_images/input/3dx_spacenavigator_200x198.png);}");
+    }
+
+    style.append("QPushButton#touchButton {image: url(:images/skye_images/input/FingerPointing.png);}");
+    style.append("QPushButton#keyboardButton {image: url(:images/skye_images/input/keyboard-icon_64.png); }");
+    style.append("QPushButton:disabled {background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #BBBBBB, stop: 1 #444444); color: #333333 }");
+    this->setStyleSheet(style);
+}
+
+void UASSkyeControlWidget::changeMouseTranslationEnabled(bool transEnabled)
+{
+    if (mouseTranslationEnabled != transEnabled)
+    {
+        mouseTranslationEnabled = transEnabled;
+    }
+    updateStyleSheet();
+}
+
+void UASSkyeControlWidget::changeMouseRoatationEnabled(bool rotEnabled)
+{
+    qDebug() << "SLOT Rotation is reached..";
+    if (mouseRotationEnabled != rotEnabled)
+    {
+        mouseRotationEnabled = rotEnabled;
+    }
+    updateStyleSheet();
 }

@@ -112,6 +112,8 @@ MainWindow::MainWindow(QWidget *parent):
     autoReconnect(false),
     lowPowerMode(false),
     inputMode(UASSkyeControlWidget::QGC_INPUT_MODE_NONE),
+    mouseTranslationEnable(true),
+    mouseRotationEnable(true),
     keyXValue(0),
     keyYValue(0),
     keyZValue(0),
@@ -406,6 +408,8 @@ void MainWindow::buildCommonWidgets()
 
         UASSkyeControlWidget *uasSkyeControl = dynamic_cast<UASSkyeControlWidget*>(skyeControlDockWidget->widget());
         connect(uasSkyeControl, SIGNAL(changedInput(int)), this, SLOT(setInputMode(int)));
+        connect(this, SIGNAL(mouseTranslationEnabledChanged(bool)), uasSkyeControl, SLOT(changeMouseTranslationEnabled(bool)));
+        connect(this, SIGNAL(mouseRotationEnabledChanged(bool)), uasSkyeControl, SLOT(changeMouseRoatationEnabled(bool)));
         addTool(skyeControlDockWidget, tr("Skye Control"), Qt::LeftDockWidgetArea);
     }                                   // Ende Code MA (06.03.2012) --------------------------
 #endif // MAVLINK_ENABLED_SKYE
@@ -1814,6 +1818,13 @@ bool MainWindow::x11Event(XEvent *event)
 //                     {
 //                         MagellanEvent.MagellanData[i] = maxMagellanValue;
 //                     }
+                     // Cancel value if motion is disabled
+                     qDebug() << MagellanEvent.MagellanData[1];
+                     if ((i<3 && !mouseTranslationEnable) || (i>=3 && !mouseRotationEnable))
+                     {
+                         MagellanEvent.MagellanData[i] = 0;
+                     }
+                     qDebug() << MagellanEvent.MagellanData[1];
                      MagellanEvent.MagellanData[i] = (abs(MagellanEvent.MagellanData[i]) < maxMagellanValue) ? MagellanEvent.MagellanData[i] : (maxMagellanValue*MagellanEvent.MagellanData[i]/abs(MagellanEvent.MagellanData[i]));
                  }
                  emit valueMouseChanged(MagellanEvent.MagellanData[ MagellanZ ] / maxMagellanValue,
@@ -1824,11 +1835,33 @@ bool MainWindow::x11Event(XEvent *event)
                                         - MagellanEvent.MagellanData[ MagellanB ] / maxMagellanValue);
             return false;
             break;
+
+            case MagellanInputButtonPressEvent :
+                qDebug() << "MagellanInputButtonPressEvent called with button " << MagellanEvent.MagellanButton;
+                switch (MagellanEvent.MagellanButton)
+                {
+                case 1:
+                {
+                    mouseRotationEnable = !mouseRotationEnable;
+                    emit mouseRotationEnabledChanged(mouseRotationEnable);
+                    qDebug() << "Emitted Rotation " << (bool)mouseRotationEnable;
+                    break;
+                }
+                case 2:
+                {
+                    mouseTranslationEnable = !mouseTranslationEnable;
+                    emit mouseTranslationEnabledChanged(mouseTranslationEnable);
+                    qDebug() << "Emitted translation " << (bool)mouseTranslationEnable;
+                    break;
+                }
+                default:
+                    break;
             }
     default:
     return false;
     break;
     }
+   }
     #ifdef MAVLINK_ENABLED_SKYE
     }else
     {

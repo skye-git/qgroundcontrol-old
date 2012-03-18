@@ -5,6 +5,7 @@
 #include <QVBoxLayout>
 #include <QMap>
 #include "UASSkyeBatteryPackWidget.h"
+#include "UASInterface.h"
 
 namespace Ui {
     class UASSkyeBatteryInfoWidget;
@@ -19,8 +20,10 @@ public:
     ~UASSkyeBatteryInfoWidget();
 
 public slots:
+    /** @brief Set the system this widget controls */
+    void setActiveUAS(UASInterface* uas);
     /** @brief New values for battery pack **/
-    //changeBatteryPack(mavlink_skye_battery_status_t* battery);
+    void changeBatteryPack(mavlink_skye_battery_status_t* battery);
 
 private:
     Ui::UASSkyeBatteryInfoWidget *ui;
@@ -28,7 +31,7 @@ private:
 protected:
     QMap<int, UASSkyeBatteryPackWidget*> batteryPacks;
     QVBoxLayout* listLayout;
-//    UASSkyeBatteryPackWidget* uWidget;
+    int uasId;
 };
 
 #endif // UASSKYEBATTERYINFOWIDGET_H
