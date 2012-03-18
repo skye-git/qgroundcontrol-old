@@ -197,7 +197,7 @@ void UASSkyeControlWidget::updateState(int state)
     case (int)MAV_STATE_ACTIVE:
         engineOn = true;
         ui.controlButton->setText(tr("DISARM SYSTEM"));
-        ui.controlButton->setStyleSheet("* { background-color: rgb(255,125,100) }");
+        ui.controlButton->setStyleSheet("* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DD0044, stop: 1 #AA0022); border-color: yellow; color: yellow }");
         ui.directControlButton->setDisabled(true);
         ui.assistedControlButton->setDisabled(true);
         ui.halfAutomaticControlButton->setDisabled(true);
@@ -206,7 +206,7 @@ void UASSkyeControlWidget::updateState(int state)
     case (int)MAV_STATE_STANDBY:
         engineOn = false;
         ui.controlButton->setText(tr("ARM SYSTEM"));
-        ui.controlButton->setStyleSheet("* { background-color: rgb(125,255,100) }");
+        ui.controlButton->setStyleSheet("* { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00DD44, stop: 1 #11AA22); }");
         ui.directControlButton->setEnabled(true);
         ui.assistedControlButton->setEnabled(true);
         ui.halfAutomaticControlButton->setEnabled(true);
@@ -394,7 +394,11 @@ void UASSkyeControlWidget::cycleContextButton()
 
 void UASSkyeControlWidget::initStyleSheet()
 {
-    QString style = "QPushButton { height: 40; } QPushButton#mouseButton {image: url(:images/skye_images/input/3dx_spacenavigator_200x198.png);} QPushButton#touchButton {image: url(:images/skye_images/input/FingerPointing.png);} QPushButton#keyboardButton {image: url(:images/skye_images/input/keyboard-icon_64.png); }";
+    QString style = "";
+    style.append("QPushButton { height: 40; }");
+    style.append("QPushButton#mouseButton {image: url(:images/skye_images/input/3dx_spacenavigator_200x198.png);}");
+    style.append("QPushButton#touchButton {image: url(:images/skye_images/input/FingerPointing.png);}");
+    style.append("QPushButton#keyboardButton {image: url(:images/skye_images/input/keyboard-icon_64.png); }");
+    style.append("QPushButton:disabled {background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #BBBBBB, stop: 1 #444444); color: #333333 }");
     this->setStyleSheet(style);
-
 }
