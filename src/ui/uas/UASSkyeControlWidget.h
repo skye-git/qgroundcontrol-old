@@ -72,6 +72,10 @@ public slots:
     void updateState(int state);
     /** @brief Update internal state machine */
     void updateStatemachine();
+    /** @brief Update 3dMouse button image */
+    void changeMouseTranslationEnabled(bool transEnabled);
+    /** @brief Update 3dMouse button image */
+    void changeMouseRoatationEnabled(bool rotEnabled);
 
 signals:
     void changedMode(int);
@@ -100,10 +104,12 @@ signals:
         unsigned int uasMode; ///< Current uas mode
         bool engineOn;        ///< Engine state
         QGC_INPUT_MODE inputMode;        ///< Current device for input
+        bool mouseTranslationEnabled;       ///< True when translational motions enabled
+        bool mouseRotationEnabled;          ///< True when rotational motions enabled
 
     private:
-        /** @brief Set stylesheet for SkyeControlWidget */
-        void initStyleSheet();
+        /** @brief Update stylesheet for SkyeControlWidget */
+        void updateStyleSheet();
         Ui::uasSkyeControl ui;
         QButtonGroup *modeButtonGroup;
         QButtonGroup *inputButtonGroup;

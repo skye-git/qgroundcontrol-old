@@ -254,6 +254,10 @@ signals:
     *
     */
     void valueMouseChanged(double xValue, double yValue, double zValue, double aValue, double bValue, double cValue);   // Beginn und Ende Code MA (06.03.2012)
+    /** @brief Translational degrees of 3dMouse are activated/disactivated */                                           // Beginn Code MA (18.03.2012)
+    void mouseTranslationEnabledChanged(bool transEnabled);
+    /** @brief Rotational degrees of 3dMouse are activated/disactivated */
+    void mouseRotationEnabledChanged(bool rotEnabled);                                                                  // Ende Code MA (18.03.2012)
     /** @brief Emits new contol values for UAS given by keyboard in range [-1, 1] */
     void valueKeyboardChanged(double xValue, double yValue, double zValue, double rollValue, double pitchValue, double yawValue);   // Beginn und Ende Code MA (07.03.2012)
 public:
@@ -428,6 +432,8 @@ private:
     #ifdef MOUSE_ENABLED
     QProcess *process3dxDaemon;     ///< Process running 3dxDaemon 3dConnexion Mouse Driver
     bool x11Event(XEvent *event);
+    bool mouseTranslationEnable;    ///< True when translations of 3dMouse are enabled
+    bool mouseRotationEnable;       ///< True when rotations of 3dMouse are enabled
     #endif //MOUSE_ENABLED                          // Ende Code MA 06.03.2012 ------------
 
     void keyPressEvent(QKeyEvent *event);           // Beginn Code MA (07.03.2012)

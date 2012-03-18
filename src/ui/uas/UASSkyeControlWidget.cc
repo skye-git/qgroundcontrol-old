@@ -45,7 +45,9 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     uasId(0),
     uasMode(0),
     engineOn(false),
-    inputMode(QGC_INPUT_MODE_NONE)
+    inputMode(QGC_INPUT_MODE_NONE),
+    mouseTranslationEnabled(true),
+    mouseRotationEnabled(true)
 {
 #ifdef MAVLINK_ENABLED_SKYE
     ui.setupUi(this);
@@ -82,7 +84,7 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
 
     ui.gridLayout->setAlignment(Qt::AlignTop);
 
-    initStyleSheet();
+    updateStyleSheet();
 
 #endif //MAVLINK_ENABLED_SKYE
 }
@@ -323,6 +325,7 @@ void UASSkyeControlWidget::setInputMouse(bool checked)
         emit changedInput(inputMode);
         ui.lastActionLabel->setText(tr("3dMouse activated!"));
     }
+    updateStyleSheet();
 #endif // MAVLINK_ENABLED_SKYE
 }
 
@@ -392,13 +395,54 @@ void UASSkyeControlWidget::cycleContextButton()
 #endif // MAVLINK_ENABLED_SKYE
 }
 
-void UASSkyeControlWidget::initStyleSheet()
+void UASSkyeControlWidget::updateStyleSheet()
 {
     QString style = "";
     style.append("QPushButton { height: 40; }");
-    style.append("QPushButton#mouseButton {image: url(:images/skye_images/input/3dx_spacenavigator_200x198.png);}");
+    if (ui.mouseButton->isChecked())
+    {
+        qDebug() << "IS CHECKED " << mouseTranslationEnabled << " " << mouseRotationEnabled;
+        if (mouseTranslationEnabled && mouseRotationEnabled)
+        {
+            style.append("QPushButton#mouseButton {image: url(:images/skye_images/input/3dx_spacenavigator_200x198_trans_rot.png);}");
+        }
+        if (mouseTranslationEnabled && !mouseRotationEnabled)
+        {
+            style.append("QPushButton#mouseButton {image: url(:images/skye_images/input/3dx_spacenavigator_200x198_trans.png);}");
+        }
+        if (!mouseTranslationEnabled && mouseRotationEnabled)
+        {
+            style.append("QPushButton#mouseButton {image: url(:images/skye_images/input/3dx_spacenavigator_200x198_rot.png);}");
+        }
+        if (!mouseTranslationEnabled && !mouseRotationEnabled)
+        {
+            style.append("QPushButton#mouseButton {image: url(:images/skye_images/input/3dx_spacenavigator_200x198.png); background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #AA0000, stop: 1 #FF0000);}");
+        }
+    }else{
+        style.append("QPushButton#mouseButton {image: url(:images/skye_images/input/3dx_spacenavigator_200x198.png);}");
+    }
+
     style.append("QPushButton#touchButton {image: url(:images/skye_images/input/FingerPointing.png);}");
     style.append("QPushButton#keyboardButton {image: url(:images/skye_images/input/keyboard-icon_64.png); }");
     style.append("QPushButton:disabled {background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #BBBBBB, stop: 1 #444444); color: #333333 }");
     this->setStyleSheet(style);
+}
+
+void UASSkyeControlWidget::changeMouseTranslationEnabled(bool transEnabled)
+{
+    if (mouseTranslationEnabled != transEnabled)
+    {
+        mouseTranslationEnabled = transEnabled;
+    }
+    updateStyleSheet();
+}
+
+void UASSkyeControlWidget::changeMouseRoatationEnabled(bool rotEnabled)
+{
+    qDebug() << "SLOT Rotation is reached..";
+    if (mouseRotationEnabled != rotEnabled)
+    {
+        mouseRotationEnabled = rotEnabled;
+    }
+    updateStyleSheet();
 }
