@@ -89,7 +89,6 @@
         <file>images/style-outdoor.css</file>
         <file>images/patterns/lenna.jpg</file>
         <file>images/skye_images/LOGO_DEF.png</file>
-        <file>files/skye/skye.txt</file>
         <file>images/style-skye.css</file>
     </qresource>
     <qresource prefix="/general">

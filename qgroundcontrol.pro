@@ -305,7 +305,6 @@ HEADERS += src/MG.h \
     src/input/JoystickInput.h \
     src/ui/JoystickWidget.h \
     src/ui/TestphaseWidget.h \      #Beginn Ende Code AL (01.03.12) ------------------------------------
-    #src/ui/shapedclock.h \          #Beginn und Ende Code AL (15.03.12)------------
     src/ui/DebugConsole.h \
     src/ui/HDDisplay.h \
     src/ui/MAVLinkSettingsWidget.h \
@@ -381,7 +380,8 @@ HEADERS += src/MG.h \
     src/ui/QGCPluginHost.h \
     src/ui/firmwareupdate/QGCPX4FirmwareUpdate.h \
     src/ui/uas/UASSkyeBatteryInfoWidget.h \
-    src/ui/uas/UASSkyeBatteryPackWidget.h
+    src/ui/uas/UASSkyeBatteryPackWidget.h \
+    src/ui/map/QGCMapRing.h
 
 # Google Earth is only supported on Mac OS and Windows with Visual Studio Compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010::HEADERS += src/ui/map3D/QGCGoogleEarthView.h
@@ -458,7 +458,6 @@ SOURCES += src/main.cc \
     src/input/JoystickInput.cc \
     src/ui/JoystickWidget.cc \
     src/ui/TestphaseWidget.cc \         #Beginn Ende Code AL (01.03.12)
-    #src/ui/shapedclock.cc   \            #Beginn Ende Code AL (15.03.12)
     src/ui/DebugConsole.cc \
     src/ui/HDDisplay.cc \
     src/ui/MAVLinkSettingsWidget.cc \
@@ -530,7 +529,8 @@ SOURCES += src/main.cc \
     src/ui/QGCPluginHost.cc \
     src/ui/firmwareupdate/QGCPX4FirmwareUpdate.cc \
     src/ui/uas/UASSkyeBatteryInfoWidget.cpp \
-    src/ui/uas/UASSkyeBatteryPackWidget.cpp
+    src/ui/uas/UASSkyeBatteryPackWidget.cpp \
+    src/ui/map/QGCMapRing.cc
 
 # Enable Google Earth only on Mac OS and Windows with Visual Studio compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010::SOURCES += src/ui/map3D/QGCGoogleEarthView.cc

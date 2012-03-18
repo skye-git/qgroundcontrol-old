@@ -36,6 +36,8 @@ protected:
         emit visibilityChanged(false);
     }
 
+    void resizeEvent(QResizeEvent *event);//Beginn und Ende Code AL (18.03.12)
+
 private:
     Ui::QGCMapTool *ui;
 };
