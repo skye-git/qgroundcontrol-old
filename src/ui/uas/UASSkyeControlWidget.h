@@ -102,6 +102,8 @@ signals:
         QGC_INPUT_MODE inputMode;        ///< Current device for input
 
     private:
+        /** @brief Set stylesheet for SkyeControlWidget */
+        void initStyleSheet();
         Ui::uasSkyeControl ui;
         QButtonGroup *modeButtonGroup;
         QButtonGroup *inputButtonGroup;

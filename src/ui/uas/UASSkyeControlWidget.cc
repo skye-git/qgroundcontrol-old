@@ -82,7 +82,8 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
 
     ui.gridLayout->setAlignment(Qt::AlignTop);
 
-    this->setStyleSheet("QPushButton { height: 40;}");
+    initStyleSheet();
+
 #endif //MAVLINK_ENABLED_SKYE
 }
 
@@ -174,7 +175,7 @@ void UASSkyeControlWidget::updateStatemachine()
 void UASSkyeControlWidget::updateMode(int uas,int baseMode)
 {
 #ifdef MAVLINK_ENABLED_SKYE
-    if ((this->uasId == uas) && (this->uasMode != baseMode))
+    if ((this->uasId == uas) && ((int)this->uasMode != baseMode))
     {
         if ((baseMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE))
             ui.directControlButton->setChecked(true);
@@ -241,7 +242,7 @@ void UASSkyeControlWidget::setDirectControlMode(bool checked)
         }
         else
         {
-            ui.lastActionLabel->setText("UAS is no SKYE!");
+            ui.lastActionLabel->setText("Active UAS is no SKYE!");
         }
 #endif  // MAVLINK_ENABLED_SKYE
     }
@@ -389,4 +390,11 @@ void UASSkyeControlWidget::cycleContextButton()
 
     }
 #endif // MAVLINK_ENABLED_SKYE
+}
+
+void UASSkyeControlWidget::initStyleSheet()
+{
+    QString style = "QPushButton { height: 40; } QPushButton#mouseButton {image: url(:images/skye_images/input/3dx_spacenavigator_200x198.png);} QPushButton#touchButton {image: url(:images/skye_images/input/FingerPointing.png);} QPushButton#keyboardButton {image: url(:images/skye_images/input/keyboard-icon_64.png); }";
+    this->setStyleSheet(style);
+
 }
