@@ -390,5 +390,10 @@
                <field type="float" name="ground_y">Ground truth Y</field>
                <field type="float" name="ground_z">Ground truth Z</field>		-->
           </message>
+          <message id="166" name="SKYE_HOME_MAXON">
+              <description/>
+              <field type="uint8_t" name="target_system">System ID</field>
+              <field type="uint8_t" name="homing">Boolean, true: home maxon motors</field>
+         </message>
      </messages>
 </mavlink>

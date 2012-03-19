@@ -61,13 +61,11 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
         break;
         case MAVLINK_MSG_ID_SKYE_CAM_IMAGE_TRIGGERED:
         {
-            qDebug() << "IMAGE EMITTED * * * * * * * * * * * * *";
         // Copied from PxQuadMAV.cc
             // FIXME Kind of a hack to load data from disk
             mavlink_skye_cam_image_triggered_t img;
             mavlink_msg_skye_cam_image_triggered_decode(&message, &img);
             emit imageStarted(img.timestamp);
-            qDebug() << "IMAGE EMITTED * * * * * * * * * * * * *";
         }
         break;
         default:
@@ -225,5 +223,17 @@ void SkyeMAV::takeImageShot(MAV_CAM_ID cam)
     mavlink_message_t message;
     mavlink_msg_skye_cam_take_shot_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, cam, true);
     sendMessage(message);
+#endif // MAVLINK_ENABLED_SKYE
+}
+
+void SkyeMAV::sendHomingCommand()
+{
+#ifdef MAVLINK_ENABLED_SKYE
+    mavlink_message_t message;
+    uint8_t homing = 1;
+
+    mavlink_msg_skye_home_maxon_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, homing);
+    sendMessage(message);
+    qDebug() << __FILE__ << __LINE__ << ": SENT HOMING COMMAND MESSAGE";
 #endif // MAVLINK_ENABLED_SKYE
 }

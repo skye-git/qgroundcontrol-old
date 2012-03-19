@@ -165,6 +165,7 @@ protected:
     int orientation3;
     int orientation4;
     int battery_pack_id;    // Iterator for detailed battery message
+    int homing;                 //Value from HOME_MAXON message
 
     int time_boot;      ///< Time since boot in ms
     // Ende Code MA (09.03.2012) --------------------------

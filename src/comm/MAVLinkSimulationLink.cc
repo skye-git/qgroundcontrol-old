@@ -91,7 +91,8 @@ MAVLinkSimulationLink::MAVLinkSimulationLink(QString readFile, QString writeFile
     orientation2(0),
     orientation3(0),
     orientation4(0),
-    battery_pack_id(0)
+    battery_pack_id(0),
+    homing(0)
 {
     this->rate = rate;
     _isConnected = false;
@@ -594,6 +595,18 @@ void MAVLinkSimulationLink::mainloop()
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 
+//        qDebug() << "Sent battery status message...";
+
+        // RETURN HOME_MAXON MESSAGE
+        mavlink_skye_home_maxon_t homemaxon;
+        homemaxon.homing = homing;
+        mavlink_msg_skye_home_maxon_encode(systemId, MAV_COMP_ID_IMU, &msg, &homemaxon);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //add data into datastream
+        memcpy(stream+streampointer, buffer, bufferlength);
+        streampointer += bufferlength;
+
+        //qDebug() << "Sent HOME_MAXON message....";
 
         mavlink_skye_cam_image_triggered_t image;
         image.timestamp = (uint64_t)(battery_pack_id);
@@ -1021,6 +1034,14 @@ void MAVLinkSimulationLink::writeBytes(const char* data, qint64 size)
                 }
             }
             break;      // Ende Code MA (09.03.2012)
+            case MAVLINK_MSG_ID_SKYE_HOME_MAXON: {
+                mavlink_skye_home_maxon_t hm;
+                mavlink_msg_skye_home_maxon_decode(&msg, &hm);
+                if (hm.target_system == this->systemId) {
+                    homing = hm.homing;
+                }
+            }
+            break;      // Ende Code AL (19.03.2012)
             }
         }
         unsigned char v=data[i];

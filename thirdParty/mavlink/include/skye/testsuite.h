@@ -812,6 +812,7 @@ static void mavlink_test_skye_cam_image_triggered(uint8_t system_id, uint8_t com
 	963498504,
 	963498712,
 	963498920,
+	101,
 	};
 	mavlink_skye_cam_image_triggered_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -822,6 +823,7 @@ static void mavlink_test_skye_cam_image_triggered(uint8_t system_id, uint8_t com
         	packet1.lat = packet_in.lat;
         	packet1.lon = packet_in.lon;
         	packet1.alt = packet_in.alt;
+        	packet1.cam_id = packet_in.cam_id;
         
         
 
@@ -831,12 +833,12 @@ static void mavlink_test_skye_cam_image_triggered(uint8_t system_id, uint8_t com
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_cam_image_triggered_pack(system_id, component_id, &msg , packet1.timestamp , packet1.roll , packet1.pitch , packet1.yaw , packet1.lat , packet1.lon , packet1.alt );
+	mavlink_msg_skye_cam_image_triggered_pack(system_id, component_id, &msg , packet1.timestamp , packet1.cam_id , packet1.roll , packet1.pitch , packet1.yaw , packet1.lat , packet1.lon , packet1.alt );
 	mavlink_msg_skye_cam_image_triggered_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_cam_image_triggered_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.timestamp , packet1.roll , packet1.pitch , packet1.yaw , packet1.lat , packet1.lon , packet1.alt );
+	mavlink_msg_skye_cam_image_triggered_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.timestamp , packet1.cam_id , packet1.roll , packet1.pitch , packet1.yaw , packet1.lat , packet1.lon , packet1.alt );
 	mavlink_msg_skye_cam_image_triggered_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -849,8 +851,53 @@ static void mavlink_test_skye_cam_image_triggered(uint8_t system_id, uint8_t com
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_cam_image_triggered_send(MAVLINK_COMM_1 , packet1.timestamp , packet1.roll , packet1.pitch , packet1.yaw , packet1.lat , packet1.lon , packet1.alt );
+	mavlink_msg_skye_cam_image_triggered_send(MAVLINK_COMM_1 , packet1.timestamp , packet1.cam_id , packet1.roll , packet1.pitch , packet1.yaw , packet1.lat , packet1.lon , packet1.alt );
 	mavlink_msg_skye_cam_image_triggered_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+}
+
+static void mavlink_test_skye_home_maxon(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+{
+	mavlink_message_t msg;
+        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
+        uint16_t i;
+	mavlink_skye_home_maxon_t packet_in = {
+		5,
+	72,
+	};
+	mavlink_skye_home_maxon_t packet1, packet2;
+        memset(&packet1, 0, sizeof(packet1));
+        	packet1.target_system = packet_in.target_system;
+        	packet1.homing = packet_in.homing;
+        
+        
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_home_maxon_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_skye_home_maxon_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_home_maxon_pack(system_id, component_id, &msg , packet1.target_system , packet1.homing );
+	mavlink_msg_skye_home_maxon_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_home_maxon_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.homing );
+	mavlink_msg_skye_home_maxon_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+        mavlink_msg_to_send_buffer(buffer, &msg);
+        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
+        	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
+        }
+	mavlink_msg_skye_home_maxon_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+        
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_home_maxon_send(MAVLINK_COMM_1 , packet1.target_system , packet1.homing );
+	mavlink_msg_skye_home_maxon_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
@@ -870,6 +917,7 @@ static void mavlink_test_skye(uint8_t system_id, uint8_t component_id, mavlink_m
 	mavlink_test_skye_cam_handle_save_image(system_id, component_id, last_msg);
 	mavlink_test_skye_cam_take_shot(system_id, component_id, last_msg);
 	mavlink_test_skye_cam_image_triggered(system_id, component_id, last_msg);
+	mavlink_test_skye_home_maxon(system_id, component_id, last_msg);
 }
 
 #ifdef __cplusplus
