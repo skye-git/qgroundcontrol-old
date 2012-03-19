@@ -211,3 +211,17 @@ void SkyeMAV::sendAssistedControlCommands(double xVel, double yVel, double zVel,
 #endif // MAVLINK_ENABLED_SKYE
 }
 
+void SkyeMAV::sendHomingCommand()
+{
+#ifdef MAVLINK_ENABLED_SKYE
+
+
+    mavlink_message_t message;
+    uint8_t homing = 1;
+
+    mavlink_msg_skye_home_maxon_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, homing);
+    sendMessage(message);
+    qDebug() << __FILE__ << __LINE__ << ": SENT HOMING COMMAND MESSAGE";
+
+#endif // MAVLINK_ENABLED_SKYE
+}

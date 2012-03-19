@@ -24,10 +24,6 @@ public:
     explicit TestphaseWidget(QWidget *parent = 0);
     virtual ~TestphaseWidget();
 
-protected:
-    UASInterface* uas;
-    //QList<int> uasButtonList;
-
 public slots:
 
     void stopall();
@@ -41,6 +37,9 @@ public slots:
 signals:
     void valueTestphaseChanged(int Thrust1, int Thrust2, int Thrust3, int Thrust4, int Orientation1, int Orientation2, int Orientation3, int Orientation4);
     void initiatehoming();
+
+protected:
+    UASInterface* uas;
 
 
 private:

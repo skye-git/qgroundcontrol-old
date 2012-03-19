@@ -37,7 +37,6 @@ static void mavlink_test_skye_battery_status(uint8_t system_id, uint8_t componen
 	17651,
 	163,
 	230,
-	41,
 	};
 	mavlink_skye_battery_status_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -46,7 +45,6 @@ static void mavlink_test_skye_battery_status(uint8_t system_id, uint8_t componen
         	packet1.voltage_cell_3 = packet_in.voltage_cell_3;
         	packet1.voltage_cell_4 = packet_in.voltage_cell_4;
         	packet1.current_battery = packet_in.current_battery;
-        	packet1.target_system = packet_in.target_system;
         	packet1.accu_id = packet_in.accu_id;
         	packet1.battery_remaining = packet_in.battery_remaining;
         
@@ -58,12 +56,12 @@ static void mavlink_test_skye_battery_status(uint8_t system_id, uint8_t componen
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_battery_status_pack(system_id, component_id, &msg , packet1.target_system , packet1.accu_id , packet1.voltage_cell_1 , packet1.voltage_cell_2 , packet1.voltage_cell_3 , packet1.voltage_cell_4 , packet1.current_battery , packet1.battery_remaining );
+	mavlink_msg_skye_battery_status_pack(system_id, component_id, &msg , packet1.accu_id , packet1.voltage_cell_1 , packet1.voltage_cell_2 , packet1.voltage_cell_3 , packet1.voltage_cell_4 , packet1.current_battery , packet1.battery_remaining );
 	mavlink_msg_skye_battery_status_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_battery_status_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.accu_id , packet1.voltage_cell_1 , packet1.voltage_cell_2 , packet1.voltage_cell_3 , packet1.voltage_cell_4 , packet1.current_battery , packet1.battery_remaining );
+	mavlink_msg_skye_battery_status_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.accu_id , packet1.voltage_cell_1 , packet1.voltage_cell_2 , packet1.voltage_cell_3 , packet1.voltage_cell_4 , packet1.current_battery , packet1.battery_remaining );
 	mavlink_msg_skye_battery_status_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -76,7 +74,7 @@ static void mavlink_test_skye_battery_status(uint8_t system_id, uint8_t componen
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_battery_status_send(MAVLINK_COMM_1 , packet1.target_system , packet1.accu_id , packet1.voltage_cell_1 , packet1.voltage_cell_2 , packet1.voltage_cell_3 , packet1.voltage_cell_4 , packet1.current_battery , packet1.battery_remaining );
+	mavlink_msg_skye_battery_status_send(MAVLINK_COMM_1 , packet1.accu_id , packet1.voltage_cell_1 , packet1.voltage_cell_2 , packet1.voltage_cell_3 , packet1.voltage_cell_4 , packet1.current_battery , packet1.battery_remaining );
 	mavlink_msg_skye_battery_status_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
@@ -801,6 +799,51 @@ static void mavlink_test_skye_cam_take_shot(uint8_t system_id, uint8_t component
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
+static void mavlink_test_skye_home_maxon(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+{
+	mavlink_message_t msg;
+        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
+        uint16_t i;
+	mavlink_skye_home_maxon_t packet_in = {
+		5,
+	72,
+	};
+	mavlink_skye_home_maxon_t packet1, packet2;
+        memset(&packet1, 0, sizeof(packet1));
+        	packet1.target_system = packet_in.target_system;
+        	packet1.homing = packet_in.homing;
+        
+        
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_home_maxon_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_skye_home_maxon_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_home_maxon_pack(system_id, component_id, &msg , packet1.target_system , packet1.homing );
+	mavlink_msg_skye_home_maxon_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_home_maxon_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.homing );
+	mavlink_msg_skye_home_maxon_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+        mavlink_msg_to_send_buffer(buffer, &msg);
+        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
+        	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
+        }
+	mavlink_msg_skye_home_maxon_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+        
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_home_maxon_send(MAVLINK_COMM_1 , packet1.target_system , packet1.homing );
+	mavlink_msg_skye_home_maxon_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+}
+
 static void mavlink_test_skye(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
 {
 	mavlink_test_skye_battery_status(system_id, component_id, last_msg);
@@ -816,6 +859,7 @@ static void mavlink_test_skye(uint8_t system_id, uint8_t component_id, mavlink_m
 	mavlink_test_skye_cam_reconfigure_prosilica_settings(system_id, component_id, last_msg);
 	mavlink_test_skye_cam_handle_save_image(system_id, component_id, last_msg);
 	mavlink_test_skye_cam_take_shot(system_id, component_id, last_msg);
+	mavlink_test_skye_home_maxon(system_id, component_id, last_msg);
 }
 
 #ifdef __cplusplus

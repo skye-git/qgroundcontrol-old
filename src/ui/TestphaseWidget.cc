@@ -4,6 +4,7 @@
 #include "UAS.h"
 #include "UASManager.h"
 #include "QGC.h"
+#include "SkyeMAV.h"
 
 TestphaseWidget::TestphaseWidget(QWidget *parent):
     QDialog(parent),
@@ -16,21 +17,21 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
 
     qDebug()<< " AL:TestphaseWidgetConstructor Call";
 
-    //get active UAS
-    this->uas = UASManager::instance()->getActiveUAS();
 
-#ifdef MAVLINK_ENABLED_SKYE
-    if (uas->getUASID()!= 0)
+    this->uas = dynamic_cast<SkyeMAV*>(UASManager::instance()->getActiveUAS());
+
+    if(uas)
     {
-
-    connect(this, SIGNAL(valueTestphaseChanged(int, int, int, int, int, int, int, int)), uas, SLOT(setTestphaseCommandsByWidget(int, int, int, int, int, int, int, int)));
-    uas->setMode(MAV_MODE_TESTPHASE_DISARMED);
+        connect(this, SIGNAL(valueTestphaseChanged(int, int, int, int, int, int, int, int)), uas, SLOT(setTestphaseCommandsByWidget(int, int, int, int, int, int, int, int)));
+        connect(m_ui->homingButton, SIGNAL(clicked()), uas, SLOT(sendHomingCommand()));
+        uas->setMode(MAV_MODE_TESTPHASE_DISARMED);
+        qDebug()<< " AL:TestphaseWidget connect valueTestphaseChanged to setTestphaseCommandsByWidget";
     }
-#endif //MAVLINK_ENABLED_SKYE
+
+
 
 
     //connect Sliders, spinBoxes and dials
-
     connect(m_ui->SliderThrust1, SIGNAL(valueChanged(int)), m_ui->spinBoxThrust1, SLOT(setValue(int)));
     connect(m_ui->spinBoxThrust1, SIGNAL(valueChanged(int)), m_ui->SliderThrust1, SLOT(setValue(int)));
 
@@ -81,27 +82,35 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
 
 TestphaseWidget::~TestphaseWidget()
 {
-    uas->setMode(MAV_MODE_PREFLIGHT);
+    if(uas)
+    {
+        uas->setMode(MAV_MODE_PREFLIGHT);
+    }
     qDebug()<< " AL:TestphaseWidgetDestructor Call";
     delete m_ui;
 }
 
 void TestphaseWidget::somevalueChanged()
 {
-    //qDebug()<<"AL:in somevalueChanged"<<m_ui->SliderThrust1->value() << "AL emit valueTestphaseChanged should be called next.";
+    //qDebug()<<"AL:in somevalueChanged"<<m_ui->spinBoxOrientation1->value() << "AL emit valueTestphaseChanged should be called next.";
     emit valueTestphaseChanged(m_ui->SliderThrust1->value(), m_ui->SliderThrust2->value(), m_ui->SliderThrust3->value(), m_ui->SliderThrust4->value(), m_ui->spinBoxOrientation1->value(), m_ui->spinBoxOrientation2->value(), m_ui->spinBoxOrientation3->value(), m_ui->spinBoxOrientation4->value());
     //qDebug()<<"AL:emit should have been called now";
 }
 
 void TestphaseWidget::modeChanged(int mode_in)
 {
-    uas->setMode(mode_in);
+    if(uas)
+    {
+        uas->setMode(mode_in);
+    }
 }
 
 void TestphaseWidget::Testphaseclose()
 {
-
-    uas->setMode(MAV_MODE_PREFLIGHT);
+    if(uas)
+    {
+        uas->setMode(MAV_MODE_PREFLIGHT);
+    }
     this->close();
 }
 
@@ -134,14 +143,14 @@ void TestphaseWidget::cycleContextButton()
         if (!engineOn)
         {
             mav->armSystem();
-            m_ui->controlButton->setText(tr("ARM SYSTEM"));
-            m_ui->controlButton->setStyleSheet("* { background-color: rgb(125,255,100) }");
+            m_ui->controlButton->setText(tr("DISARMSYSTEM"));
+            m_ui->controlButton->setStyleSheet("* { background-color: rgb(255,125,100) }");
             uas->setMode(MAV_MODE_TESTPHASE_ARMED);
             engineOn=true;
         } else {
             mav->disarmSystem();
-            m_ui->controlButton->setText(tr("DISARMSYSTEM"));
-            m_ui->controlButton->setStyleSheet("* { background-color: rgb(255,125,100) }");
+            m_ui->controlButton->setText(tr("ARM SYSTEM"));
+            m_ui->controlButton->setStyleSheet("* { background-color: rgb(125,255,100) }");
             uas->setMode(MAV_MODE_TESTPHASE_DISARMED);
             engineOn=false;
         }

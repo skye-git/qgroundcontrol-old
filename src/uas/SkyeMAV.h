@@ -18,6 +18,8 @@ public slots:
     void setManualControlCommands6DoF(double x , double y , double z , double a , double b, double c);
     /** @brief Send the 8 DOF command (from Testphase Widget) to MAV */
     void setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 ); //AL (06.03.12)
+    /** Send Boolean to MAV, if motors should be homed*/
+    void sendHomingCommand();
 
 signals:
     /** @brief Emit new detailed accu info for one accu pack

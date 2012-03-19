@@ -112,8 +112,8 @@ MainWindow::MainWindow(QWidget *parent):
     autoReconnect(false),
     lowPowerMode(false),
     inputMode(UASSkyeControlWidget::QGC_INPUT_MODE_NONE),
-    mouseTranslationEnable(true),
-    mouseRotationEnable(true),
+    //mouseTranslationEnable(true),                         //uncomment, AL (19.03.12)
+    //mouseRotationEnable(true),                            //uncomment, AL "
     keyXValue(0),
     keyYValue(0),
     keyZValue(0),
@@ -201,6 +201,8 @@ MainWindow::MainWindow(QWidget *parent):
     emit initStatusChanged("Initializing joystick interface.");
     joystickWidget = 0;
     //joystick = new JoystickInput();                               // Modified Code MA (13.03.2012) ----- Disabled JoystickThread
+
+    testphaseWidget = 0;                                            //Start Ende Code AL (19.03.12)
 
     // Connect link
     if (autoReconnect)
@@ -1180,8 +1182,17 @@ void MainWindow::configure()
 
 void MainWindow::showTestphase()                    //Beginn Code AL (03.01.12)
 {
-    testphaseWidget = new TestphaseWidget(this);
+     if(!testphaseWidget)
+    {
+        testphaseWidget = new TestphaseWidget(this);
+    }
     testphaseWidget->show();
+    testphaseWidget->activateWindow();
+
+//    else
+//    {
+//        testphaseWidget->raise();
+//    }
 }                                                   //Ende Code AL (03.01.12)
 
 void MainWindow::showSettings()

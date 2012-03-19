@@ -374,5 +374,10 @@
                <field type="uint8_t" name="cam_id">ID of camera, see ENUM MAV_CAM_ID</field>
                <field type="uint8_t" name="take_shot">Boolean, true: send recent image (save settings) to GS</field>
           </message>
+          <message id="165" name="SKYE_HOME_MAXON">
+              <description/>
+              <field type="uint8_t" name="target_system">System ID</field>
+              <field type="uint8_t" name="homing">Boolean, true: home maxon motors</field>
+         </message>
      </messages>
 </mavlink>
