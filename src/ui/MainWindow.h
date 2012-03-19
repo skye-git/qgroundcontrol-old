@@ -48,7 +48,7 @@ This file is part of the QGROUNDCONTROL project
 #include "Linecharts.h"
 #include "UASInfoWidget.h"
 #include "WaypointList.h"
-#include "CameraView.h"
+//#include "CameraView.h"               // Not used Code MA (19.03.2012)
 #include "UASListWidget.h"
 #include "MAVLinkProtocol.h"
 #include "MAVLinkSimulationLink.h"

@@ -1,6 +1,6 @@
 // MESSAGE SKYE_HOME_MAXON PACKING
 
-#define MAVLINK_MSG_ID_SKYE_HOME_MAXON 165
+#define MAVLINK_MSG_ID_SKYE_HOME_MAXON 166
 
 typedef struct __mavlink_skye_home_maxon_t
 {
@@ -9,7 +9,7 @@ typedef struct __mavlink_skye_home_maxon_t
 } mavlink_skye_home_maxon_t;
 
 #define MAVLINK_MSG_ID_SKYE_HOME_MAXON_LEN 2
-#define MAVLINK_MSG_ID_165_LEN 2
+#define MAVLINK_MSG_ID_166_LEN 2
 
 
 

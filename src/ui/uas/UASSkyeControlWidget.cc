@@ -401,7 +401,7 @@ void UASSkyeControlWidget::updateStyleSheet()
     style.append("QPushButton { height: 40; }");
     if (ui.mouseButton->isChecked())
     {
-        qDebug() << "IS CHECKED " << mouseTranslationEnabled << " " << mouseRotationEnabled;
+        qDebug() << "3dMouse TRANSLATION is: " << mouseTranslationEnabled << ", ROTATION is: " << mouseRotationEnabled;
         if (mouseTranslationEnabled && mouseRotationEnabled)
         {
             style.append("QPushButton#mouseButton {image: url(:images/skye_images/input/3dx_spacenavigator_200x198_trans_rot.png);}");

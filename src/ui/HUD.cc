@@ -293,6 +293,7 @@ void HUD::setActiveUAS(UASInterface* uas)
         // Try to connect the image link
         UAS* u = dynamic_cast<UAS*>(uas);
         if (u) {
+            qDebug() << "Connecting image triggerer -----------                ---------------";
             connect(u, SIGNAL(imageStarted(quint64)), this, SLOT(startImage(quint64)));
             connect(u, SIGNAL(imageReady(UASInterface*)), this, SLOT(copyImage()));
         }
@@ -1335,7 +1336,7 @@ void HUD::setImageSize(int width, int height, int depth, int channels)
 void HUD::startImage(int imgid, int width, int height, int depth, int channels)
 {
     Q_UNUSED(imgid);
-    //qDebug() << "HUD: starting image (" << width << "x" << height << ", " << depth << "bits) with " << channels << "channels";
+//    qDebug() << "HUD: starting image (" << width << "x" << height << ", " << depth << "bits) with " << channels << "channels";
 
     // Copy previous image to screen if it hasn't been finished properly
     finishImage();
