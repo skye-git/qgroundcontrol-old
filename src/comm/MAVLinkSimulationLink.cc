@@ -594,7 +594,21 @@ void MAVLinkSimulationLink::mainloop()
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 
-//        qDebug() << "Sent battery status message...";
+
+        mavlink_skye_cam_image_triggered_t image;
+        image.timestamp = (uint64_t)(battery_pack_id);
+        image.lat = (473780.28137103+(x))*1E3;
+        image.lon = (85489.9892510421+(y))*1E3;
+        image.alt = (z+550.0)*1000.0;
+        image.roll = roll;
+        image.pitch = pitch;
+        image.yaw = yaw;
+        mavlink_msg_skye_cam_image_triggered_encode(systemId, MAV_COMP_ID_IMU, &msg, &image);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
+
 #endif
 
 

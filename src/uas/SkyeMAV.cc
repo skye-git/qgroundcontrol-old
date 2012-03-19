@@ -58,6 +58,17 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
 
         }
         break;
+        case MAVLINK_MSG_ID_SKYE_CAM_IMAGE_TRIGGERED:
+        {
+            qDebug() << "IMAGE EMITTED * * * * * * * * * * * * *";
+        // Copied from PxQuadMAV.cc
+            // FIXME Kind of a hack to load data from disk
+            mavlink_skye_cam_image_triggered_t img;
+            mavlink_msg_skye_cam_image_triggered_decode(&message, &img);
+            emit imageStarted(img.timestamp);
+            qDebug() << "IMAGE EMITTED * * * * * * * * * * * * *";
+        }
+        break;
         default:
         {
             // Let UAS handle the default message set

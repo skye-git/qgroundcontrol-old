@@ -201,7 +201,7 @@
           </enum>
      </enums>
      <messages>
-<!--          <message id="151" name="SKYE_STATUS">
+          <!--          <message id="151" name="SKYE_STATUS">
                <description>The general skye system state.</description>
                <field type="uint32_t" name="onboard_control_sensors_present">Bitmask showing which controllers an sensors are present. =0:not present, =1:present, Sensors: last bit 1: 3D gyro, 2: 3D acc, 4: 3D mag, 8: absolute pressure, 16: differential pressures, 32: GPS, 64: motor homing, 128: motor decoding (EPOS), Controllers: 256: attitude stabilization, 512: z/altitude control, 1024: x/y position control, 2048: motor outputs control</field>
                <field type="uint32_t" name="onboard_control_sensors_enabled">Bitmask showing which controllers an sensors are enabled. =0:not enabled, =1:enabled, same bit contribution as field before.
@@ -351,7 +351,7 @@
                <field type="uint8_t" name="cam_id">ID of camera, see ENUM MAV_CAM_ID (MAV_CAM_ID_PROSILICA)</field>
           </message>
           <message id="163" name="SKYE_CAM_HANDLE_SAVE_IMAGE">
-               <description/>
+               <description></description>
                <field type="uint8_t" name="target_system">System ID</field>
                <field type="uint8_t" name="cam_id">ID of camera, see ENUM MAV_CAM_ID</field>
                <field type="uint8_t" name="save_image">Boolean, true: image stream is saved as specified in fields below</field>
@@ -369,10 +369,26 @@
                <field type="uint8_t" name="keep_old_modus">Boolean, true: new image handle modus is added to previous (image is saved/sent more than once), false: only save/send with new configuration</field>
           </message>
           <message id="164" name="SKYE_CAM_TAKE_SHOT">
-               <description/>
+               <description></description>
                <field type="uint8_t" name="target_system">System ID</field>
                <field type="uint8_t" name="cam_id">ID of camera, see ENUM MAV_CAM_ID</field>
                <field type="uint8_t" name="take_shot">Boolean, true: send recent image (save settings) to GS</field>
+          </message>
+          <message id="165" name="SKYE_CAM_IMAGE_TRIGGERED">
+               <description></description>
+               <field type="uint64_t" name="timestamp">Timestamp</field>
+               <field type="uint8_t" name="cam_id">ID of camera, see ENUM MAV_CAM_ID</field>
+               <!--               <field type="uint32_t" name="seq">IMU seq</field>      -->
+               <field type="float" name="roll">Roll angle in rad</field>
+               <field type="float" name="pitch">Pitch angle in rad</field>
+               <field type="float" name="yaw">Yaw angle in rad</field>
+               <!--               <field type="float" name="local_z">Local frame Z coordinate (height over ground)</field>   -->
+               <field type="int32_t" name="lat">Latitude, expressed as * 1E7</field>
+               <field type="int32_t" name="lon">Longitude, expressed as * 1E7</field>
+               <field type="int32_t" name="alt">Altitude in meters, expressed as * 1000 (millimeters), above MSL</field>
+               <!--               <field type="float" name="ground_x">Ground truth X</field>			
+               <field type="float" name="ground_y">Ground truth Y</field>
+               <field type="float" name="ground_z">Ground truth Z</field>		-->
           </message>
      </messages>
 </mavlink>
