@@ -82,7 +82,7 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     connect(ui.touchButton, SIGNAL(toggled(bool)), this, SLOT(setInputTouch(bool)));
     connect(ui.keyboardButton, SIGNAL(toggled(bool)), this, SLOT(setInputKeyboard(bool)));
 
-    ui.gridLayout->setAlignment(Qt::AlignTop);
+    //ui.gridLayout->setAlignment(Qt::AlignTop);
 
     updateStyleSheet();
 
@@ -96,9 +96,9 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
     {
         UASInterface* oldUAS = UASManager::instance()->getUASForId(this->uasId);
 //        disconnect(ui.controlButton, SIGNAL(clicked()), oldUAS, SLOT(armSystem()));
-        disconnect(ui.liftoffButton, SIGNAL(clicked()), oldUAS, SLOT(launch()));
-        disconnect(ui.landButton, SIGNAL(clicked()), oldUAS, SLOT(home()));
-        disconnect(ui.shutdownButton, SIGNAL(clicked()), oldUAS, SLOT(shutdown()));
+//        disconnect(ui.liftoffButton, SIGNAL(clicked()), oldUAS, SLOT(launch()));
+//        disconnect(ui.landButton, SIGNAL(clicked()), oldUAS, SLOT(home()));
+//        disconnect(ui.shutdownButton, SIGNAL(clicked()), oldUAS, SLOT(shutdown()));
         //connect(ui.setHomeButton, SIGNAL(clicked()), uas, SLOT(setLocalOriginAtCurrentGPSPosition()));
         disconnect(oldUAS, SIGNAL(modeChanged(int,QString,QString)), this, SLOT(updateMode(int,QString,QString)));  // Mod Code MA (22.02.2012)
         disconnect(oldUAS, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));                               // Mod Code MA (22.02.2012)
@@ -106,9 +106,9 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
 
     // Connect user interface controls
     connect(ui.controlButton, SIGNAL(clicked()), this, SLOT(cycleContextButton()));
-    connect(ui.liftoffButton, SIGNAL(clicked()), uas, SLOT(launch()));
-    connect(ui.landButton, SIGNAL(clicked()), uas, SLOT(home()));
-    connect(ui.shutdownButton, SIGNAL(clicked()), uas, SLOT(shutdown()));
+//    connect(ui.liftoffButton, SIGNAL(clicked()), uas, SLOT(launch()));
+//    connect(ui.landButton, SIGNAL(clicked()), uas, SLOT(home()));
+//    connect(ui.shutdownButton, SIGNAL(clicked()), uas, SLOT(shutdown()));
     connect(this, SIGNAL(changedMode(int)), uas, SLOT(setMode(int)));
     //connect(ui.setHomeButton, SIGNAL(clicked()), uas, SLOT(setLocalOriginAtCurrentGPSPosition()));
     connect(uas, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
@@ -124,6 +124,10 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
     {
         updateMode(mav->getUASID(), mav->getUASMode());
         updateState(mav->getUASState());
+        connect(ui.bluefoxLeftButton, SIGNAL(clicked()), this, SLOT(triggerLeftBluefoxImageShot()));
+        connect(ui.bluefoxRightButton, SIGNAL(clicked()), this, SLOT(triggerRightBluefoxImageShot()));
+        connect(ui.prosilicaButton, SIGNAL(clicked()), this, SLOT(triggerProsilicaImageShot()));
+
     }
 
 
@@ -445,4 +449,22 @@ void UASSkyeControlWidget::changeMouseRoatationEnabled(bool rotEnabled)
         mouseRotationEnabled = rotEnabled;
     }
     updateStyleSheet();
+}
+
+void UASSkyeControlWidget::triggerLeftBluefoxImageShot()
+{
+    emit triggeredImageShot(MAV_CAM_ID_BLUEFOX_LEFT);
+    ui.lastActionLabel->setText("Left Bluefox image shot requested");
+}
+
+void UASSkyeControlWidget::triggerRightBluefoxImageShot()
+{
+    emit triggeredImageShot(MAV_CAM_ID_BLUEFOX_RIGHT);
+    ui.lastActionLabel->setText("Right Bluefox image shot requested");
+}
+
+void UASSkyeControlWidget::triggerProsilicaImageShot()
+{
+    emit triggeredImageShot(MAV_CAM_ID_PROSILICA);
+    ui.lastActionLabel->setText("Prosilica image shot requested");
 }

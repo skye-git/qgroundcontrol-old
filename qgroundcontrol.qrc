@@ -99,5 +99,6 @@
     </qresource>
     <qresource prefix="/general">
         <file alias="vera.ttf">images/Vera.ttf</file>
+        <file>images/skye_images/input/fotoapparat.png</file>
     </qresource>
 </RCC>

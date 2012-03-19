@@ -80,6 +80,7 @@ public slots:
 signals:
     void changedMode(int);
     void changedInput(int);
+    void triggeredImageShot(MAV_CAM_ID);
 
     protected slots:
 //        /** @brief Set the background color for the widget */
@@ -98,6 +99,13 @@ signals:
         void setInputTouch(bool checked);
         /** @brief Set Keyboard as active inpute device */
         void setInputKeyboard(bool checked);
+        /** @brief Trigger image shot with left Bluefox Camera */
+        void triggerLeftBluefoxImageShot();
+        /** @brief Trigger image shot with right Bluefox Camera */
+        void triggerRightBluefoxImageShot();
+        /** @brief Trigger image shot with Prosilica Camera */
+        void triggerProsilicaImageShot();
+
 
     protected:
         int uasId;              ///< Reference to the current uas

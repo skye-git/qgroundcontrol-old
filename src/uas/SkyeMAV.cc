@@ -19,6 +19,7 @@ manual3Orientation(0),
 manual4Orientation(0)
 {
 
+    this->setUASName("SKYE");
 }
 
 SkyeMAV::~SkyeMAV(void)
@@ -163,10 +164,6 @@ void SkyeMAV::sendTestphaseControlCommands(int Thrust1 , int Thrust2 , int Thrus
 #endif // MAVLINK_ENABLED_SKYE
 }
 
-
-
-
-
 //AL (06.03.12)
 
 void SkyeMAV::sendDirectControlCommands(double xThrust, double yThrust, double zThrust, double xMoment, double yMoment, double zMoment)
@@ -222,3 +219,11 @@ void SkyeMAV::sendAssistedControlCommands(double xVel, double yVel, double zVel,
 #endif // MAVLINK_ENABLED_SKYE
 }
 
+void SkyeMAV::takeImageShot(MAV_CAM_ID cam)
+{
+#ifdef MAVLINK_ENABLED_SKYE
+    mavlink_message_t message;
+    mavlink_msg_skye_cam_take_shot_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, cam, true);
+    sendMessage(message);
+#endif // MAVLINK_ENABLED_SKYE
+}
