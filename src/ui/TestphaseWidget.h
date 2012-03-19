@@ -31,6 +31,7 @@ protected:
 public slots:
 
     void stopall();
+    void setzero();
     void homing();
     void somevalueChanged();
     void modeChanged(int mode_in);
@@ -39,6 +40,7 @@ public slots:
 
 signals:
     void valueTestphaseChanged(int Thrust1, int Thrust2, int Thrust3, int Thrust4, int Orientation1, int Orientation2, int Orientation3, int Orientation4);
+    void initiatehoming();
 
 
 private:

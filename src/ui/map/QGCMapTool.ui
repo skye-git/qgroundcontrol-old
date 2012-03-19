@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>606</width>
+    <height>504</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,7 +33,76 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="QGCMapWidget" name="map" native="true"/>
+    <widget class="QGCMapWidget" name="map" native="true">
+     <widget class="QGCMapRing" name="Ring" native="true">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>20</y>
+        <width>331</width>
+        <height>271</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QDoubleSpinBox" name="doubleSpinBox_x">
+      <property name="geometry">
+       <rect>
+        <x>490</x>
+        <y>20</y>
+        <width>62</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <double>-200.000000000000000</double>
+      </property>
+      <property name="maximum">
+       <double>200.000000000000000</double>
+      </property>
+     </widget>
+     <widget class="QDoubleSpinBox" name="doubleSpinBox_y">
+      <property name="geometry">
+       <rect>
+        <x>490</x>
+        <y>60</y>
+        <width>62</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <double>-200.000000000000000</double>
+      </property>
+      <property name="maximum">
+       <double>200.000000000000000</double>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_x">
+      <property name="geometry">
+       <rect>
+        <x>470</x>
+        <y>20</y>
+        <width>16</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>x:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_y">
+      <property name="geometry">
+       <rect>
+        <x>470</x>
+        <y>60</y>
+        <width>16</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>y:</string>
+      </property>
+     </widget>
+    </widget>
    </item>
    <item row="0" column="1" rowspan="2">
     <widget class="QSlider" name="zoomSlider">
@@ -61,6 +130,12 @@
    <class>QGCMapWidget</class>
    <extends>QWidget</extends>
    <header>QGCMapWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QGCMapRing</class>
+   <extends>QWidget</extends>
+   <header>QGCMapRing.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

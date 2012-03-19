@@ -39,7 +39,7 @@ protected:
     /** @brief Send a Assisted Control Command to MAV: */
     void sendAssistedControlCommands(double xVel, double yVel, double zVel, double xRot, double yRot, double zRot);
     /** @brief Send a Testphase Control Command to MAV: */
-    void sendTestphaseControlCommands(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 );//AL (06.03.12)
+    void sendTestphaseControlCommands(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 );
 
 
     int manual1Thrust;          ///<Thrust for Motor 1 set by human pilot

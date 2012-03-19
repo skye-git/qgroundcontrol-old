@@ -283,7 +283,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="HomingButton">
+      <widget class="QPushButton" name="homingButton">
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -291,7 +291,20 @@
         </size>
        </property>
        <property name="text">
-        <string>Homing</string>
+        <string>homing</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="SetZeroButton">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>70</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>set zero</string>
        </property>
       </widget>
      </item>

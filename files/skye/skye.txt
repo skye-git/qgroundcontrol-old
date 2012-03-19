@@ -1,2 +1,0 @@
-/* almost empty stylesheet for skye*/
-QPushButton{background-color : red;}

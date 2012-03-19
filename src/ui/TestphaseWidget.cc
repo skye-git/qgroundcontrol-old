@@ -26,7 +26,7 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
     connect(this, SIGNAL(valueTestphaseChanged(int, int, int, int, int, int, int, int)), uas, SLOT(setTestphaseCommandsByWidget(int, int, int, int, int, int, int, int)));
     uas->setMode(MAV_MODE_TESTPHASE_DISARMED);
     }
-#endif //MAVLINK_ENABLED_SKye
+#endif //MAVLINK_ENABLED_SKYE
 
 
     //connect Sliders, spinBoxes and dials
@@ -56,11 +56,12 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
     connect(m_ui->spinBoxOrientation4, SIGNAL(valueChanged(int)), m_ui->dialOrientation4, SLOT(setValue(int)));
 
     //connect Pushbuttons
-    connect(m_ui->HomingButton, SIGNAL(clicked()),this,SLOT(homing()));
+    connect(m_ui->SetZeroButton, SIGNAL(clicked()),this,SLOT(setzero()));
     connect(m_ui->stopallButton, SIGNAL(clicked()),this, SLOT(stopall())); //Why connect to this?
+    connect(m_ui->homingButton, SIGNAL(clicked()),this,SLOT(homing()));
     connect(m_ui->controlButton, SIGNAL(clicked()), this, SLOT(cycleContextButton()));
     connect(m_ui->closeButton, SIGNAL(clicked()),this, SLOT(stopall()));
-    connect(m_ui->closeButton, SIGNAL(clicked()),this, SLOT(homing()));
+    connect(m_ui->closeButton, SIGNAL(clicked()),this, SLOT(setzero()));
     connect(m_ui->closeButton, SIGNAL(clicked()),this, SLOT(Testphaseclose()));
 
     //emit valueTestphaseChanged if some valueChanged
@@ -104,7 +105,7 @@ void TestphaseWidget::Testphaseclose()
     this->close();
 }
 
-void TestphaseWidget::homing()
+void TestphaseWidget::setzero()
 {
     m_ui->dialOrientation1->setValue(0);
     m_ui->dialOrientation2->setValue(0);
@@ -118,6 +119,10 @@ void TestphaseWidget::stopall()
     m_ui->SliderThrust2->setValue(0);
     m_ui->SliderThrust3->setValue(0);
     m_ui->SliderThrust4->setValue(0);
+}
+void TestphaseWidget::homing()
+{
+
 }
 
 void TestphaseWidget::cycleContextButton()

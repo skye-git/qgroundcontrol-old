@@ -86,7 +86,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
 }
 
 
-void SkyeMAV::setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4)//AL (06.03.12)
+void SkyeMAV::setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4)
 {
 #ifdef MAVLINK_ENABLED_SKYE
 
