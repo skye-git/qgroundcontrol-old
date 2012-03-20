@@ -31,8 +31,8 @@ void QGCMapRing::paintEvent(QPaintEvent *)
     painter.setBrush(ringColor);
 
     QPainterPath path;
-        path.moveTo(76,0);
-        path.arcTo(-76,-76,152,152,0,360);
+        path.moveTo(75,0);
+        path.arcTo(-75,-75,150,150,0,360);
         path.moveTo(70,0);
         path.arcTo(-70,-70,140,140,0,360);
 
@@ -54,9 +54,15 @@ void QGCMapRing::mousePressEvent(QMouseEvent *event)
 void QGCMapRing::resizeEvent(QResizeEvent * /* event */)
 {
     int side = qMin(width(), height());
-    QRegion maskedRegion(width() / 2 - side / 2, height() / 2 - side / 2, side,
-                         side, QRegion::Ellipse);
-    setMask(maskedRegion);
+    //QRegion maskedRegion(width() / 2 - side / 2, height() / 2 - side / 2, side, side, QRegion::Ellipse);
+
+    QRegion outerCircle(width()/2-side/2, height()/2-side/2,side,side, QRegion::Ellipse);
+    QRegion innerCircle(width()/2-side/3, height()/2-side/3, side*2/3,side*2/3,QRegion::Ellipse);
+    QRegion Ring = outerCircle.subtracted(innerCircle);
+
+
+    //setMask(maskedRegion);
+    setMask(Ring);
 }
 
 

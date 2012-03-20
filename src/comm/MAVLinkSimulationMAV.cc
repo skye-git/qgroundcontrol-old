@@ -66,7 +66,8 @@ MAVLinkSimulationMAV::MAVLinkSimulationMAV(MAVLinkSimulationLink *parent, int sy
      orientation1(0),
      orientation2(0),
      orientation3(0),
-     orientation4(0)
+     orientation4(0),
+     homing(0)
     // Ende Code MA (07.03.2012) --------------------------
 {
     // Please note: The waypoint planner is running
@@ -283,6 +284,14 @@ void MAVLinkSimulationMAV::mainloop()
         link->sendMAVLinkMessage(&msg);
         //qDebug() << "Return Testphase control message";
         //qDebug() << "testmotors.thrust_1"<< testmotors.thrust_1;
+
+        //RETURN HOME_MAXON COMMAND MESSAGE
+        mavlink_skye_home_maxon_t homemaxon;
+        homemaxon.homing = homing;
+        homemaxon.target_system = systemid;
+        mavlink_msg_skye_home_maxon_encode(systemid, MAV_COMP_ID_IMU, &msg, &homemaxon);
+        link->sendMAVLinkMessage(&msg);
+        //qDebug() <<"Retrun MAXON_HOME command message";
 
 #endif                                          // Ende Code MA (07.03.2012)  ----------------
 
@@ -582,16 +591,24 @@ void MAVLinkSimulationMAV::handleMessage(const mavlink_message_t& msg)
         mavlink_skye_test_motors_t tm;
         mavlink_msg_skye_test_motors_decode(&msg, &tm);
         if (tm.target_system == this->systemid) {
-             thrust1 = tm.thrust_1;        //Testphase Control
-             thrust2 = tm.thrust_2;
-             thrust3 = tm.thrust_3;
-             thrust4 = tm.thrust_4;
-             orientation1 = tm.direct_1;
-             orientation2 =tm.direct_2;
-             orientation3 = tm.direct_3;
-             orientation4 = tm.direct_4;
+               thrust1 = tm.thrust_1;        //Testphase Control
+               thrust2 = tm.thrust_2;
+               thrust3 = tm.thrust_3;
+               thrust4 = tm.thrust_4;
+               orientation1 = tm.direct_1;
+               orientation2 =tm.direct_2;
+               orientation3 = tm.direct_3;
+               orientation4 = tm.direct_4;
+           }
+        }   // Ende Code MA (07.03.2012)
+        break;
+        case MAVLINK_MSG_ID_SKYE_HOME_MAXON: {
+        mavlink_skye_home_maxon_t hm;
+        mavlink_msg_skye_home_maxon_decode(&msg, &hm);
+        if (hm.target_system == this->systemid) {
+                homing = hm.homing;
+            }
         }
-    }   // Ende Code MA (07.03.2012)
-    break;
-    }
+        break;
+        }
 }
