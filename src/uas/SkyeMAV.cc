@@ -68,6 +68,11 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             emit imageStarted(img.timestamp);
         }
         break;
+        case MAVLINK_MSG_ID_SKYE_HOME_MAXON:
+        {
+            // This message is only for sending...
+        }
+        break;
         default:
         {
             // Let UAS handle the default message set
