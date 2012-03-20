@@ -45,8 +45,6 @@ This file is part of the QGROUNDCONTROL project
 #include "CommConfigurationWindow.h"
 #include "QGCWaypointListMulti.h"
 #include "MainWindow.h"
-#include "JoystickWidget.h"
-#include "TestphaseWidget.h"            //Beginn und Ende Code AL (01.03.12)
 #include "GAudioOutput.h"
 #include "QGCToolWidget.h"
 #include "QGCMAVLinkLogPlayer.h"
@@ -203,6 +201,7 @@ MainWindow::MainWindow(QWidget *parent):
     //joystick = new JoystickInput();                               // Modified Code MA (13.03.2012) ----- Disabled JoystickThread
 
     testphaseWidget = 0;                                            //Start Ende Code AL (19.03.12)
+    skyeCameraReconfigureWidget = 0;                                //Beginn und Ende Code MA (20.03.2012)
 
     // Connect link
     if (autoReconnect)
@@ -1123,6 +1122,8 @@ void MainWindow::connectCommonActions()
 
     ui.actionTestphase->setVisible(true);                                           //Beginn Code AL (01.03.12)----------
     connect(ui.actionTestphase, SIGNAL(triggered()), this, SLOT(showTestphase()));  //Ende Code AL ----------------------
+    ui.actionCamera_Reconfigure->setVisible(true);                                           //Beginn Code MA (20.03.12)----------
+    connect(ui.actionCamera_Reconfigure, SIGNAL(triggered()), this, SLOT(showSkyeCamReconfig()));  //Ende Code MA ----------------------
 }
 
 void MainWindow::showHelp()
@@ -1194,6 +1195,21 @@ void MainWindow::showTestphase()                    //Beginn Code AL (03.01.12)
 //        testphaseWidget->raise();
 //    }
 }                                                   //Ende Code AL (03.01.12)
+
+void MainWindow::showSkyeCamReconfig()                    //Beginn Code MA (20.01.12)
+{
+     if(!skyeCameraReconfigureWidget)
+    {
+        skyeCameraReconfigureWidget = new SkyeCameraReconfigure(this);
+    }
+    skyeCameraReconfigureWidget->show();
+    skyeCameraReconfigureWidget->activateWindow();
+
+//    else
+//    {
+//        testphaseWidget->raise();
+//    }
+}                                                   //Ende Code MA (20.01.12)
 
 void MainWindow::showSettings()
 {

@@ -56,6 +56,7 @@ This file is part of the QGROUNDCONTROL project
 #include "HUD.h"
 #include "JoystickWidget.h"
 #include "TestphaseWidget.h"                //Beginn Ende Code AL (01.03.12)
+#include "SkyeCameraReconfigure.h"          //Beginn Ende Code MA (20.03.2012)
 #include "input/JoystickInput.h"
 #include "DebugConsole.h"
 #include "ParameterInterface.h"
@@ -142,6 +143,8 @@ public slots:
     void showSettings();
     /** @brief Show the TestphaseWidget */          //Beginn Code AL (01.03.12)------------------
     void showTestphase();                            //Ende Code AL--------------------
+    /** @brief Show the Camera Reconfigure Widget */          //Beginn Code MA (20.03.12)------------------
+    void showSkyeCamReconfig();                            //Ende Code MA--------------------
     /** @brief Add a communication link */
     void addLink();
     void addLink(LinkInterface* link);
@@ -399,6 +402,7 @@ protected:
     // Popup widgets
     JoystickWidget* joystickWidget;
     TestphaseWidget* testphaseWidget;       //Beginn Ende Code AL (01.03.12)
+    SkyeCameraReconfigure* skyeCameraReconfigureWidget;       //Beginn Ende Code MA (20.03.12)
 
     JoystickInput* joystick;
 
