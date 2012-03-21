@@ -1788,6 +1788,7 @@ QList<QAction*> MainWindow::listLinkMenuActions(void)
 
 void MainWindow::setInputMode(int inputMode)
 {
+#ifdef MAVLINK_ENABLED_SKYE
     switch (inputMode)
     {
     case 1:
@@ -1805,7 +1806,10 @@ void MainWindow::setInputMode(int inputMode)
             break;
     }
     statusBar()->showMessage("Set new Input mode", 20000);
-    qDebug() << "New Input: " << inputMode;
+//    qDebug() << "New Input: " << inputMode;
+#else
+    qDebug() << "Changing input mode only available for SKYE";
+#endif //MAVLINK_ENABLED_SKYE
 }
 
 #ifdef MOUSE_ENABLED                                // Beginn Code MA (06.03.2012) -----------
