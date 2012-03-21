@@ -551,15 +551,18 @@ static void mavlink_test_skye_cam_reconfigure_bluefox_settings(uint8_t system_id
 	45.0,
 	73.0,
 	101.0,
-	129.0,
+	18067,
+	18171,
 	18275,
 	18379,
-	18483,
-	18587,
-	89,
-	156,
-	"EFGHIJKLMNOPQRSTUVWXYZABCDEFGHI",
-	"KLMNOPQRSTUVWXYZABCDEFGHIJKLMNO",
+	77,
+	144,
+	"ABCDEFGHIJKLMNOPQRSTUVWXYZABCDE",
+	51,
+	"HIJKLMNOPQRSTUVWXYZABCDEFGHIJKL",
+	214,
+	25,
+	92,
 	159,
 	226,
 	37,
@@ -571,13 +574,9 @@ static void mavlink_test_skye_cam_reconfigure_bluefox_settings(uint8_t system_id
 	183,
 	250,
 	61,
-	128,
-	195,
-	6,
 	};
 	mavlink_skye_cam_reconfigure_bluefox_settings_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
-        	packet1.pixel_clock = packet_in.pixel_clock;
         	packet1.frame_rate = packet_in.frame_rate;
         	packet1.shutter_auto_min = packet_in.shutter_auto_min;
         	packet1.shutter_auto_max = packet_in.shutter_auto_max;
@@ -588,6 +587,7 @@ static void mavlink_test_skye_cam_reconfigure_bluefox_settings(uint8_t system_id
         	packet1.y_offset = packet_in.y_offset;
         	packet1.target_system = packet_in.target_system;
         	packet1.cam_id = packet_in.cam_id;
+        	packet1.pixel_clock = packet_in.pixel_clock;
         	packet1.binning_x = packet_in.binning_x;
         	packet1.binning_y = packet_in.binning_y;
         	packet1.color_coding = packet_in.color_coding;

@@ -4,7 +4,6 @@
 
 typedef struct __mavlink_skye_cam_reconfigure_bluefox_settings_t
 {
- float pixel_clock; ///< Pixel clock of image sensor [MHz]. See enum MAV_CAM_RECONFIG_PIXEL_CLOCK
  float frame_rate; ///< Camera speed (frames per second). Range: 1.0 to 240.0
  float shutter_auto_min; ///< Min shutter time [s] in auto mode. Range: 0.0 to 0.1
  float shutter_auto_max; ///< Max shutter time [s] in auto mode Range: 0.0 to 0.1
@@ -16,6 +15,7 @@ typedef struct __mavlink_skye_cam_reconfigure_bluefox_settings_t
  uint8_t target_system; ///< System ID
  uint8_t cam_id; ///< ID of camera, see ENUM MAV_CAM_ID
  char frame_id[32]; ///< ROS tf frame of reference, resolved with tf_prefix unless absolute.
+ uint8_t pixel_clock; ///< Pixel clock of image sensor [MHz]. See enum MAV_CAM_RECONFIG_PIXEL_CLOCK
  char camera_info_url[32]; ///< Camera calibration URL for this video_mode (uncalibrated if null). 
  uint8_t binning_x; ///< Number of pixels combined for horizontal binning, use device hints if zero. Range: 0 to 4
  uint8_t binning_y; ///< Number of pixels combined for vertical binning, use device hints if zero. Range: 0 to 4
@@ -33,8 +33,8 @@ typedef struct __mavlink_skye_cam_reconfigure_bluefox_settings_t
  uint8_t use_ros_time; ///< boolean. Timestamp Image and CameraInfo using ros::Time::now() 
 } mavlink_skye_cam_reconfigure_bluefox_settings_t;
 
-#define MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS_LEN 108
-#define MAVLINK_MSG_ID_161_LEN 108
+#define MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS_LEN 105
+#define MAVLINK_MSG_ID_161_LEN 105
 
 #define MAVLINK_MSG_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS_FIELD_FRAME_ID_LEN 32
 #define MAVLINK_MSG_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS_FIELD_CAMERA_INFO_URL_LEN 32
@@ -42,33 +42,33 @@ typedef struct __mavlink_skye_cam_reconfigure_bluefox_settings_t
 #define MAVLINK_MESSAGE_INFO_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS { \
 	"SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS", \
 	27, \
-	{  { "pixel_clock", NULL, MAVLINK_TYPE_FLOAT, 0, 0, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, pixel_clock) }, \
-         { "frame_rate", NULL, MAVLINK_TYPE_FLOAT, 0, 4, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, frame_rate) }, \
-         { "shutter_auto_min", NULL, MAVLINK_TYPE_FLOAT, 0, 8, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, shutter_auto_min) }, \
-         { "shutter_auto_max", NULL, MAVLINK_TYPE_FLOAT, 0, 12, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, shutter_auto_max) }, \
-         { "shutter", NULL, MAVLINK_TYPE_FLOAT, 0, 16, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, shutter) }, \
-         { "roi_width", NULL, MAVLINK_TYPE_UINT16_T, 0, 20, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, roi_width) }, \
-         { "roi_height", NULL, MAVLINK_TYPE_UINT16_T, 0, 22, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, roi_height) }, \
-         { "x_offset", NULL, MAVLINK_TYPE_UINT16_T, 0, 24, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, x_offset) }, \
-         { "y_offset", NULL, MAVLINK_TYPE_UINT16_T, 0, 26, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, y_offset) }, \
-         { "target_system", NULL, MAVLINK_TYPE_UINT8_T, 0, 28, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, target_system) }, \
-         { "cam_id", NULL, MAVLINK_TYPE_UINT8_T, 0, 29, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, cam_id) }, \
-         { "frame_id", NULL, MAVLINK_TYPE_CHAR, 32, 30, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, frame_id) }, \
-         { "camera_info_url", NULL, MAVLINK_TYPE_CHAR, 32, 62, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, camera_info_url) }, \
-         { "binning_x", NULL, MAVLINK_TYPE_UINT8_T, 0, 94, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, binning_x) }, \
-         { "binning_y", NULL, MAVLINK_TYPE_UINT8_T, 0, 95, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, binning_y) }, \
-         { "color_coding", NULL, MAVLINK_TYPE_UINT8_T, 0, 96, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, color_coding) }, \
-         { "bayer_method", NULL, MAVLINK_TYPE_UINT8_T, 0, 97, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, bayer_method) }, \
-         { "exposure", NULL, MAVLINK_TYPE_UINT8_T, 0, 98, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, exposure) }, \
-         { "shutter_auto", NULL, MAVLINK_TYPE_UINT8_T, 0, 99, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, shutter_auto) }, \
-         { "gain_auto", NULL, MAVLINK_TYPE_UINT8_T, 0, 100, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, gain_auto) }, \
-         { "gain_auto_min", NULL, MAVLINK_TYPE_UINT8_T, 0, 101, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, gain_auto_min) }, \
-         { "gain_auto_max", NULL, MAVLINK_TYPE_UINT8_T, 0, 102, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, gain_auto_max) }, \
-         { "gain", NULL, MAVLINK_TYPE_UINT8_T, 0, 103, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, gain) }, \
-         { "auto_control_speed", NULL, MAVLINK_TYPE_UINT8_T, 0, 104, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, auto_control_speed) }, \
-         { "auto_query_values", NULL, MAVLINK_TYPE_UINT8_T, 0, 105, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, auto_query_values) }, \
-         { "hdr_mode", NULL, MAVLINK_TYPE_UINT8_T, 0, 106, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, hdr_mode) }, \
-         { "use_ros_time", NULL, MAVLINK_TYPE_UINT8_T, 0, 107, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, use_ros_time) }, \
+	{  { "frame_rate", NULL, MAVLINK_TYPE_FLOAT, 0, 0, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, frame_rate) }, \
+         { "shutter_auto_min", NULL, MAVLINK_TYPE_FLOAT, 0, 4, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, shutter_auto_min) }, \
+         { "shutter_auto_max", NULL, MAVLINK_TYPE_FLOAT, 0, 8, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, shutter_auto_max) }, \
+         { "shutter", NULL, MAVLINK_TYPE_FLOAT, 0, 12, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, shutter) }, \
+         { "roi_width", NULL, MAVLINK_TYPE_UINT16_T, 0, 16, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, roi_width) }, \
+         { "roi_height", NULL, MAVLINK_TYPE_UINT16_T, 0, 18, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, roi_height) }, \
+         { "x_offset", NULL, MAVLINK_TYPE_UINT16_T, 0, 20, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, x_offset) }, \
+         { "y_offset", NULL, MAVLINK_TYPE_UINT16_T, 0, 22, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, y_offset) }, \
+         { "target_system", NULL, MAVLINK_TYPE_UINT8_T, 0, 24, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, target_system) }, \
+         { "cam_id", NULL, MAVLINK_TYPE_UINT8_T, 0, 25, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, cam_id) }, \
+         { "frame_id", NULL, MAVLINK_TYPE_CHAR, 32, 26, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, frame_id) }, \
+         { "pixel_clock", NULL, MAVLINK_TYPE_UINT8_T, 0, 58, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, pixel_clock) }, \
+         { "camera_info_url", NULL, MAVLINK_TYPE_CHAR, 32, 59, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, camera_info_url) }, \
+         { "binning_x", NULL, MAVLINK_TYPE_UINT8_T, 0, 91, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, binning_x) }, \
+         { "binning_y", NULL, MAVLINK_TYPE_UINT8_T, 0, 92, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, binning_y) }, \
+         { "color_coding", NULL, MAVLINK_TYPE_UINT8_T, 0, 93, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, color_coding) }, \
+         { "bayer_method", NULL, MAVLINK_TYPE_UINT8_T, 0, 94, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, bayer_method) }, \
+         { "exposure", NULL, MAVLINK_TYPE_UINT8_T, 0, 95, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, exposure) }, \
+         { "shutter_auto", NULL, MAVLINK_TYPE_UINT8_T, 0, 96, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, shutter_auto) }, \
+         { "gain_auto", NULL, MAVLINK_TYPE_UINT8_T, 0, 97, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, gain_auto) }, \
+         { "gain_auto_min", NULL, MAVLINK_TYPE_UINT8_T, 0, 98, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, gain_auto_min) }, \
+         { "gain_auto_max", NULL, MAVLINK_TYPE_UINT8_T, 0, 99, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, gain_auto_max) }, \
+         { "gain", NULL, MAVLINK_TYPE_UINT8_T, 0, 100, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, gain) }, \
+         { "auto_control_speed", NULL, MAVLINK_TYPE_UINT8_T, 0, 101, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, auto_control_speed) }, \
+         { "auto_query_values", NULL, MAVLINK_TYPE_UINT8_T, 0, 102, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, auto_query_values) }, \
+         { "hdr_mode", NULL, MAVLINK_TYPE_UINT8_T, 0, 103, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, hdr_mode) }, \
+         { "use_ros_time", NULL, MAVLINK_TYPE_UINT8_T, 0, 104, offsetof(mavlink_skye_cam_reconfigure_bluefox_settings_t, use_ros_time) }, \
          } \
 }
 
@@ -109,41 +109,40 @@ typedef struct __mavlink_skye_cam_reconfigure_bluefox_settings_t
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-						       uint8_t target_system, uint8_t cam_id, const char *frame_id, float pixel_clock, float frame_rate, const char *camera_info_url, uint8_t binning_x, uint8_t binning_y, uint16_t roi_width, uint16_t roi_height, uint16_t x_offset, uint16_t y_offset, uint8_t color_coding, uint8_t bayer_method, uint8_t exposure, uint8_t shutter_auto, float shutter_auto_min, float shutter_auto_max, float shutter, uint8_t gain_auto, uint8_t gain_auto_min, uint8_t gain_auto_max, uint8_t gain, uint8_t auto_control_speed, uint8_t auto_query_values, uint8_t hdr_mode, uint8_t use_ros_time)
+						       uint8_t target_system, uint8_t cam_id, const char *frame_id, uint8_t pixel_clock, float frame_rate, const char *camera_info_url, uint8_t binning_x, uint8_t binning_y, uint16_t roi_width, uint16_t roi_height, uint16_t x_offset, uint16_t y_offset, uint8_t color_coding, uint8_t bayer_method, uint8_t exposure, uint8_t shutter_auto, float shutter_auto_min, float shutter_auto_max, float shutter, uint8_t gain_auto, uint8_t gain_auto_min, uint8_t gain_auto_max, uint8_t gain, uint8_t auto_control_speed, uint8_t auto_query_values, uint8_t hdr_mode, uint8_t use_ros_time)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-	char buf[108];
-	_mav_put_float(buf, 0, pixel_clock);
-	_mav_put_float(buf, 4, frame_rate);
-	_mav_put_float(buf, 8, shutter_auto_min);
-	_mav_put_float(buf, 12, shutter_auto_max);
-	_mav_put_float(buf, 16, shutter);
-	_mav_put_uint16_t(buf, 20, roi_width);
-	_mav_put_uint16_t(buf, 22, roi_height);
-	_mav_put_uint16_t(buf, 24, x_offset);
-	_mav_put_uint16_t(buf, 26, y_offset);
-	_mav_put_uint8_t(buf, 28, target_system);
-	_mav_put_uint8_t(buf, 29, cam_id);
-	_mav_put_uint8_t(buf, 94, binning_x);
-	_mav_put_uint8_t(buf, 95, binning_y);
-	_mav_put_uint8_t(buf, 96, color_coding);
-	_mav_put_uint8_t(buf, 97, bayer_method);
-	_mav_put_uint8_t(buf, 98, exposure);
-	_mav_put_uint8_t(buf, 99, shutter_auto);
-	_mav_put_uint8_t(buf, 100, gain_auto);
-	_mav_put_uint8_t(buf, 101, gain_auto_min);
-	_mav_put_uint8_t(buf, 102, gain_auto_max);
-	_mav_put_uint8_t(buf, 103, gain);
-	_mav_put_uint8_t(buf, 104, auto_control_speed);
-	_mav_put_uint8_t(buf, 105, auto_query_values);
-	_mav_put_uint8_t(buf, 106, hdr_mode);
-	_mav_put_uint8_t(buf, 107, use_ros_time);
-	_mav_put_char_array(buf, 30, frame_id, 32);
-	_mav_put_char_array(buf, 62, camera_info_url, 32);
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, 108);
+	char buf[105];
+	_mav_put_float(buf, 0, frame_rate);
+	_mav_put_float(buf, 4, shutter_auto_min);
+	_mav_put_float(buf, 8, shutter_auto_max);
+	_mav_put_float(buf, 12, shutter);
+	_mav_put_uint16_t(buf, 16, roi_width);
+	_mav_put_uint16_t(buf, 18, roi_height);
+	_mav_put_uint16_t(buf, 20, x_offset);
+	_mav_put_uint16_t(buf, 22, y_offset);
+	_mav_put_uint8_t(buf, 24, target_system);
+	_mav_put_uint8_t(buf, 25, cam_id);
+	_mav_put_uint8_t(buf, 58, pixel_clock);
+	_mav_put_uint8_t(buf, 91, binning_x);
+	_mav_put_uint8_t(buf, 92, binning_y);
+	_mav_put_uint8_t(buf, 93, color_coding);
+	_mav_put_uint8_t(buf, 94, bayer_method);
+	_mav_put_uint8_t(buf, 95, exposure);
+	_mav_put_uint8_t(buf, 96, shutter_auto);
+	_mav_put_uint8_t(buf, 97, gain_auto);
+	_mav_put_uint8_t(buf, 98, gain_auto_min);
+	_mav_put_uint8_t(buf, 99, gain_auto_max);
+	_mav_put_uint8_t(buf, 100, gain);
+	_mav_put_uint8_t(buf, 101, auto_control_speed);
+	_mav_put_uint8_t(buf, 102, auto_query_values);
+	_mav_put_uint8_t(buf, 103, hdr_mode);
+	_mav_put_uint8_t(buf, 104, use_ros_time);
+	_mav_put_char_array(buf, 26, frame_id, 32);
+	_mav_put_char_array(buf, 59, camera_info_url, 32);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, 105);
 #else
 	mavlink_skye_cam_reconfigure_bluefox_settings_t packet;
-	packet.pixel_clock = pixel_clock;
 	packet.frame_rate = frame_rate;
 	packet.shutter_auto_min = shutter_auto_min;
 	packet.shutter_auto_max = shutter_auto_max;
@@ -154,6 +153,7 @@ static inline uint16_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_pack(ui
 	packet.y_offset = y_offset;
 	packet.target_system = target_system;
 	packet.cam_id = cam_id;
+	packet.pixel_clock = pixel_clock;
 	packet.binning_x = binning_x;
 	packet.binning_y = binning_y;
 	packet.color_coding = color_coding;
@@ -170,11 +170,11 @@ static inline uint16_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_pack(ui
 	packet.use_ros_time = use_ros_time;
 	mav_array_memcpy(packet.frame_id, frame_id, sizeof(char)*32);
 	mav_array_memcpy(packet.camera_info_url, camera_info_url, sizeof(char)*32);
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, 108);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, 105);
 #endif
 
 	msg->msgid = MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS;
-	return mavlink_finalize_message(msg, system_id, component_id, 108, 147);
+	return mavlink_finalize_message(msg, system_id, component_id, 105, 172);
 }
 
 /**
@@ -214,41 +214,40 @@ static inline uint16_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_pack(ui
  */
 static inline uint16_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
 							   mavlink_message_t* msg,
-						           uint8_t target_system,uint8_t cam_id,const char *frame_id,float pixel_clock,float frame_rate,const char *camera_info_url,uint8_t binning_x,uint8_t binning_y,uint16_t roi_width,uint16_t roi_height,uint16_t x_offset,uint16_t y_offset,uint8_t color_coding,uint8_t bayer_method,uint8_t exposure,uint8_t shutter_auto,float shutter_auto_min,float shutter_auto_max,float shutter,uint8_t gain_auto,uint8_t gain_auto_min,uint8_t gain_auto_max,uint8_t gain,uint8_t auto_control_speed,uint8_t auto_query_values,uint8_t hdr_mode,uint8_t use_ros_time)
+						           uint8_t target_system,uint8_t cam_id,const char *frame_id,uint8_t pixel_clock,float frame_rate,const char *camera_info_url,uint8_t binning_x,uint8_t binning_y,uint16_t roi_width,uint16_t roi_height,uint16_t x_offset,uint16_t y_offset,uint8_t color_coding,uint8_t bayer_method,uint8_t exposure,uint8_t shutter_auto,float shutter_auto_min,float shutter_auto_max,float shutter,uint8_t gain_auto,uint8_t gain_auto_min,uint8_t gain_auto_max,uint8_t gain,uint8_t auto_control_speed,uint8_t auto_query_values,uint8_t hdr_mode,uint8_t use_ros_time)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-	char buf[108];
-	_mav_put_float(buf, 0, pixel_clock);
-	_mav_put_float(buf, 4, frame_rate);
-	_mav_put_float(buf, 8, shutter_auto_min);
-	_mav_put_float(buf, 12, shutter_auto_max);
-	_mav_put_float(buf, 16, shutter);
-	_mav_put_uint16_t(buf, 20, roi_width);
-	_mav_put_uint16_t(buf, 22, roi_height);
-	_mav_put_uint16_t(buf, 24, x_offset);
-	_mav_put_uint16_t(buf, 26, y_offset);
-	_mav_put_uint8_t(buf, 28, target_system);
-	_mav_put_uint8_t(buf, 29, cam_id);
-	_mav_put_uint8_t(buf, 94, binning_x);
-	_mav_put_uint8_t(buf, 95, binning_y);
-	_mav_put_uint8_t(buf, 96, color_coding);
-	_mav_put_uint8_t(buf, 97, bayer_method);
-	_mav_put_uint8_t(buf, 98, exposure);
-	_mav_put_uint8_t(buf, 99, shutter_auto);
-	_mav_put_uint8_t(buf, 100, gain_auto);
-	_mav_put_uint8_t(buf, 101, gain_auto_min);
-	_mav_put_uint8_t(buf, 102, gain_auto_max);
-	_mav_put_uint8_t(buf, 103, gain);
-	_mav_put_uint8_t(buf, 104, auto_control_speed);
-	_mav_put_uint8_t(buf, 105, auto_query_values);
-	_mav_put_uint8_t(buf, 106, hdr_mode);
-	_mav_put_uint8_t(buf, 107, use_ros_time);
-	_mav_put_char_array(buf, 30, frame_id, 32);
-	_mav_put_char_array(buf, 62, camera_info_url, 32);
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, 108);
+	char buf[105];
+	_mav_put_float(buf, 0, frame_rate);
+	_mav_put_float(buf, 4, shutter_auto_min);
+	_mav_put_float(buf, 8, shutter_auto_max);
+	_mav_put_float(buf, 12, shutter);
+	_mav_put_uint16_t(buf, 16, roi_width);
+	_mav_put_uint16_t(buf, 18, roi_height);
+	_mav_put_uint16_t(buf, 20, x_offset);
+	_mav_put_uint16_t(buf, 22, y_offset);
+	_mav_put_uint8_t(buf, 24, target_system);
+	_mav_put_uint8_t(buf, 25, cam_id);
+	_mav_put_uint8_t(buf, 58, pixel_clock);
+	_mav_put_uint8_t(buf, 91, binning_x);
+	_mav_put_uint8_t(buf, 92, binning_y);
+	_mav_put_uint8_t(buf, 93, color_coding);
+	_mav_put_uint8_t(buf, 94, bayer_method);
+	_mav_put_uint8_t(buf, 95, exposure);
+	_mav_put_uint8_t(buf, 96, shutter_auto);
+	_mav_put_uint8_t(buf, 97, gain_auto);
+	_mav_put_uint8_t(buf, 98, gain_auto_min);
+	_mav_put_uint8_t(buf, 99, gain_auto_max);
+	_mav_put_uint8_t(buf, 100, gain);
+	_mav_put_uint8_t(buf, 101, auto_control_speed);
+	_mav_put_uint8_t(buf, 102, auto_query_values);
+	_mav_put_uint8_t(buf, 103, hdr_mode);
+	_mav_put_uint8_t(buf, 104, use_ros_time);
+	_mav_put_char_array(buf, 26, frame_id, 32);
+	_mav_put_char_array(buf, 59, camera_info_url, 32);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, 105);
 #else
 	mavlink_skye_cam_reconfigure_bluefox_settings_t packet;
-	packet.pixel_clock = pixel_clock;
 	packet.frame_rate = frame_rate;
 	packet.shutter_auto_min = shutter_auto_min;
 	packet.shutter_auto_max = shutter_auto_max;
@@ -259,6 +258,7 @@ static inline uint16_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_pack_ch
 	packet.y_offset = y_offset;
 	packet.target_system = target_system;
 	packet.cam_id = cam_id;
+	packet.pixel_clock = pixel_clock;
 	packet.binning_x = binning_x;
 	packet.binning_y = binning_y;
 	packet.color_coding = color_coding;
@@ -275,11 +275,11 @@ static inline uint16_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_pack_ch
 	packet.use_ros_time = use_ros_time;
 	mav_array_memcpy(packet.frame_id, frame_id, sizeof(char)*32);
 	mav_array_memcpy(packet.camera_info_url, camera_info_url, sizeof(char)*32);
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, 108);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, 105);
 #endif
 
 	msg->msgid = MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS;
-	return mavlink_finalize_message_chan(msg, system_id, component_id, chan, 108, 147);
+	return mavlink_finalize_message_chan(msg, system_id, component_id, chan, 105, 172);
 }
 
 /**
@@ -329,41 +329,40 @@ static inline uint16_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_encode(
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_skye_cam_reconfigure_bluefox_settings_send(mavlink_channel_t chan, uint8_t target_system, uint8_t cam_id, const char *frame_id, float pixel_clock, float frame_rate, const char *camera_info_url, uint8_t binning_x, uint8_t binning_y, uint16_t roi_width, uint16_t roi_height, uint16_t x_offset, uint16_t y_offset, uint8_t color_coding, uint8_t bayer_method, uint8_t exposure, uint8_t shutter_auto, float shutter_auto_min, float shutter_auto_max, float shutter, uint8_t gain_auto, uint8_t gain_auto_min, uint8_t gain_auto_max, uint8_t gain, uint8_t auto_control_speed, uint8_t auto_query_values, uint8_t hdr_mode, uint8_t use_ros_time)
+static inline void mavlink_msg_skye_cam_reconfigure_bluefox_settings_send(mavlink_channel_t chan, uint8_t target_system, uint8_t cam_id, const char *frame_id, uint8_t pixel_clock, float frame_rate, const char *camera_info_url, uint8_t binning_x, uint8_t binning_y, uint16_t roi_width, uint16_t roi_height, uint16_t x_offset, uint16_t y_offset, uint8_t color_coding, uint8_t bayer_method, uint8_t exposure, uint8_t shutter_auto, float shutter_auto_min, float shutter_auto_max, float shutter, uint8_t gain_auto, uint8_t gain_auto_min, uint8_t gain_auto_max, uint8_t gain, uint8_t auto_control_speed, uint8_t auto_query_values, uint8_t hdr_mode, uint8_t use_ros_time)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-	char buf[108];
-	_mav_put_float(buf, 0, pixel_clock);
-	_mav_put_float(buf, 4, frame_rate);
-	_mav_put_float(buf, 8, shutter_auto_min);
-	_mav_put_float(buf, 12, shutter_auto_max);
-	_mav_put_float(buf, 16, shutter);
-	_mav_put_uint16_t(buf, 20, roi_width);
-	_mav_put_uint16_t(buf, 22, roi_height);
-	_mav_put_uint16_t(buf, 24, x_offset);
-	_mav_put_uint16_t(buf, 26, y_offset);
-	_mav_put_uint8_t(buf, 28, target_system);
-	_mav_put_uint8_t(buf, 29, cam_id);
-	_mav_put_uint8_t(buf, 94, binning_x);
-	_mav_put_uint8_t(buf, 95, binning_y);
-	_mav_put_uint8_t(buf, 96, color_coding);
-	_mav_put_uint8_t(buf, 97, bayer_method);
-	_mav_put_uint8_t(buf, 98, exposure);
-	_mav_put_uint8_t(buf, 99, shutter_auto);
-	_mav_put_uint8_t(buf, 100, gain_auto);
-	_mav_put_uint8_t(buf, 101, gain_auto_min);
-	_mav_put_uint8_t(buf, 102, gain_auto_max);
-	_mav_put_uint8_t(buf, 103, gain);
-	_mav_put_uint8_t(buf, 104, auto_control_speed);
-	_mav_put_uint8_t(buf, 105, auto_query_values);
-	_mav_put_uint8_t(buf, 106, hdr_mode);
-	_mav_put_uint8_t(buf, 107, use_ros_time);
-	_mav_put_char_array(buf, 30, frame_id, 32);
-	_mav_put_char_array(buf, 62, camera_info_url, 32);
-	_mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS, buf, 108, 147);
+	char buf[105];
+	_mav_put_float(buf, 0, frame_rate);
+	_mav_put_float(buf, 4, shutter_auto_min);
+	_mav_put_float(buf, 8, shutter_auto_max);
+	_mav_put_float(buf, 12, shutter);
+	_mav_put_uint16_t(buf, 16, roi_width);
+	_mav_put_uint16_t(buf, 18, roi_height);
+	_mav_put_uint16_t(buf, 20, x_offset);
+	_mav_put_uint16_t(buf, 22, y_offset);
+	_mav_put_uint8_t(buf, 24, target_system);
+	_mav_put_uint8_t(buf, 25, cam_id);
+	_mav_put_uint8_t(buf, 58, pixel_clock);
+	_mav_put_uint8_t(buf, 91, binning_x);
+	_mav_put_uint8_t(buf, 92, binning_y);
+	_mav_put_uint8_t(buf, 93, color_coding);
+	_mav_put_uint8_t(buf, 94, bayer_method);
+	_mav_put_uint8_t(buf, 95, exposure);
+	_mav_put_uint8_t(buf, 96, shutter_auto);
+	_mav_put_uint8_t(buf, 97, gain_auto);
+	_mav_put_uint8_t(buf, 98, gain_auto_min);
+	_mav_put_uint8_t(buf, 99, gain_auto_max);
+	_mav_put_uint8_t(buf, 100, gain);
+	_mav_put_uint8_t(buf, 101, auto_control_speed);
+	_mav_put_uint8_t(buf, 102, auto_query_values);
+	_mav_put_uint8_t(buf, 103, hdr_mode);
+	_mav_put_uint8_t(buf, 104, use_ros_time);
+	_mav_put_char_array(buf, 26, frame_id, 32);
+	_mav_put_char_array(buf, 59, camera_info_url, 32);
+	_mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS, buf, 105, 172);
 #else
 	mavlink_skye_cam_reconfigure_bluefox_settings_t packet;
-	packet.pixel_clock = pixel_clock;
 	packet.frame_rate = frame_rate;
 	packet.shutter_auto_min = shutter_auto_min;
 	packet.shutter_auto_max = shutter_auto_max;
@@ -374,6 +373,7 @@ static inline void mavlink_msg_skye_cam_reconfigure_bluefox_settings_send(mavlin
 	packet.y_offset = y_offset;
 	packet.target_system = target_system;
 	packet.cam_id = cam_id;
+	packet.pixel_clock = pixel_clock;
 	packet.binning_x = binning_x;
 	packet.binning_y = binning_y;
 	packet.color_coding = color_coding;
@@ -390,7 +390,7 @@ static inline void mavlink_msg_skye_cam_reconfigure_bluefox_settings_send(mavlin
 	packet.use_ros_time = use_ros_time;
 	mav_array_memcpy(packet.frame_id, frame_id, sizeof(char)*32);
 	mav_array_memcpy(packet.camera_info_url, camera_info_url, sizeof(char)*32);
-	_mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS, (const char *)&packet, 108, 147);
+	_mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS, (const char *)&packet, 105, 172);
 #endif
 }
 
@@ -406,7 +406,7 @@ static inline void mavlink_msg_skye_cam_reconfigure_bluefox_settings_send(mavlin
  */
 static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_target_system(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  28);
+	return _MAV_RETURN_uint8_t(msg,  24);
 }
 
 /**
@@ -416,7 +416,7 @@ static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_targ
  */
 static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_cam_id(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  29);
+	return _MAV_RETURN_uint8_t(msg,  25);
 }
 
 /**
@@ -426,7 +426,7 @@ static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_cam_
  */
 static inline uint16_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_frame_id(const mavlink_message_t* msg, char *frame_id)
 {
-	return _MAV_RETURN_char_array(msg, frame_id, 32,  30);
+	return _MAV_RETURN_char_array(msg, frame_id, 32,  26);
 }
 
 /**
@@ -434,9 +434,9 @@ static inline uint16_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_fra
  *
  * @return Pixel clock of image sensor [MHz]. See enum MAV_CAM_RECONFIG_PIXEL_CLOCK
  */
-static inline float mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_pixel_clock(const mavlink_message_t* msg)
+static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_pixel_clock(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_float(msg,  0);
+	return _MAV_RETURN_uint8_t(msg,  58);
 }
 
 /**
@@ -446,7 +446,7 @@ static inline float mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_pixel_
  */
 static inline float mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_frame_rate(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_float(msg,  4);
+	return _MAV_RETURN_float(msg,  0);
 }
 
 /**
@@ -456,7 +456,7 @@ static inline float mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_frame_
  */
 static inline uint16_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_camera_info_url(const mavlink_message_t* msg, char *camera_info_url)
 {
-	return _MAV_RETURN_char_array(msg, camera_info_url, 32,  62);
+	return _MAV_RETURN_char_array(msg, camera_info_url, 32,  59);
 }
 
 /**
@@ -466,7 +466,7 @@ static inline uint16_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_cam
  */
 static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_binning_x(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  94);
+	return _MAV_RETURN_uint8_t(msg,  91);
 }
 
 /**
@@ -476,7 +476,7 @@ static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_binn
  */
 static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_binning_y(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  95);
+	return _MAV_RETURN_uint8_t(msg,  92);
 }
 
 /**
@@ -486,7 +486,7 @@ static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_binn
  */
 static inline uint16_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_roi_width(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint16_t(msg,  20);
+	return _MAV_RETURN_uint16_t(msg,  16);
 }
 
 /**
@@ -496,7 +496,7 @@ static inline uint16_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_roi
  */
 static inline uint16_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_roi_height(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint16_t(msg,  22);
+	return _MAV_RETURN_uint16_t(msg,  18);
 }
 
 /**
@@ -506,7 +506,7 @@ static inline uint16_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_roi
  */
 static inline uint16_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_x_offset(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint16_t(msg,  24);
+	return _MAV_RETURN_uint16_t(msg,  20);
 }
 
 /**
@@ -516,7 +516,7 @@ static inline uint16_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_x_o
  */
 static inline uint16_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_y_offset(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint16_t(msg,  26);
+	return _MAV_RETURN_uint16_t(msg,  22);
 }
 
 /**
@@ -526,7 +526,7 @@ static inline uint16_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_y_o
  */
 static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_color_coding(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  96);
+	return _MAV_RETURN_uint8_t(msg,  93);
 }
 
 /**
@@ -536,7 +536,7 @@ static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_colo
  */
 static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_bayer_method(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  97);
+	return _MAV_RETURN_uint8_t(msg,  94);
 }
 
 /**
@@ -546,7 +546,7 @@ static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_baye
  */
 static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_exposure(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  98);
+	return _MAV_RETURN_uint8_t(msg,  95);
 }
 
 /**
@@ -556,7 +556,7 @@ static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_expo
  */
 static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_shutter_auto(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  99);
+	return _MAV_RETURN_uint8_t(msg,  96);
 }
 
 /**
@@ -566,7 +566,7 @@ static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_shut
  */
 static inline float mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_shutter_auto_min(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_float(msg,  8);
+	return _MAV_RETURN_float(msg,  4);
 }
 
 /**
@@ -576,7 +576,7 @@ static inline float mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_shutte
  */
 static inline float mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_shutter_auto_max(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_float(msg,  12);
+	return _MAV_RETURN_float(msg,  8);
 }
 
 /**
@@ -586,7 +586,7 @@ static inline float mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_shutte
  */
 static inline float mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_shutter(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_float(msg,  16);
+	return _MAV_RETURN_float(msg,  12);
 }
 
 /**
@@ -596,7 +596,7 @@ static inline float mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_shutte
  */
 static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_gain_auto(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  100);
+	return _MAV_RETURN_uint8_t(msg,  97);
 }
 
 /**
@@ -606,7 +606,7 @@ static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_gain
  */
 static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_gain_auto_min(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  101);
+	return _MAV_RETURN_uint8_t(msg,  98);
 }
 
 /**
@@ -616,7 +616,7 @@ static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_gain
  */
 static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_gain_auto_max(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  102);
+	return _MAV_RETURN_uint8_t(msg,  99);
 }
 
 /**
@@ -626,7 +626,7 @@ static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_gain
  */
 static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_gain(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  103);
+	return _MAV_RETURN_uint8_t(msg,  100);
 }
 
 /**
@@ -636,7 +636,7 @@ static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_gain
  */
 static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_auto_control_speed(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  104);
+	return _MAV_RETURN_uint8_t(msg,  101);
 }
 
 /**
@@ -646,7 +646,7 @@ static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_auto
  */
 static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_auto_query_values(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  105);
+	return _MAV_RETURN_uint8_t(msg,  102);
 }
 
 /**
@@ -656,7 +656,7 @@ static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_auto
  */
 static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_hdr_mode(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  106);
+	return _MAV_RETURN_uint8_t(msg,  103);
 }
 
 /**
@@ -666,7 +666,7 @@ static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_hdr_
  */
 static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_use_ros_time(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  107);
+	return _MAV_RETURN_uint8_t(msg,  104);
 }
 
 /**
@@ -678,7 +678,6 @@ static inline uint8_t mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_use_
 static inline void mavlink_msg_skye_cam_reconfigure_bluefox_settings_decode(const mavlink_message_t* msg, mavlink_skye_cam_reconfigure_bluefox_settings_t* skye_cam_reconfigure_bluefox_settings)
 {
 #if MAVLINK_NEED_BYTE_SWAP
-	skye_cam_reconfigure_bluefox_settings->pixel_clock = mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_pixel_clock(msg);
 	skye_cam_reconfigure_bluefox_settings->frame_rate = mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_frame_rate(msg);
 	skye_cam_reconfigure_bluefox_settings->shutter_auto_min = mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_shutter_auto_min(msg);
 	skye_cam_reconfigure_bluefox_settings->shutter_auto_max = mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_shutter_auto_max(msg);
@@ -690,6 +689,7 @@ static inline void mavlink_msg_skye_cam_reconfigure_bluefox_settings_decode(cons
 	skye_cam_reconfigure_bluefox_settings->target_system = mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_target_system(msg);
 	skye_cam_reconfigure_bluefox_settings->cam_id = mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_cam_id(msg);
 	mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_frame_id(msg, skye_cam_reconfigure_bluefox_settings->frame_id);
+	skye_cam_reconfigure_bluefox_settings->pixel_clock = mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_pixel_clock(msg);
 	mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_camera_info_url(msg, skye_cam_reconfigure_bluefox_settings->camera_info_url);
 	skye_cam_reconfigure_bluefox_settings->binning_x = mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_binning_x(msg);
 	skye_cam_reconfigure_bluefox_settings->binning_y = mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_binning_y(msg);
@@ -706,6 +706,6 @@ static inline void mavlink_msg_skye_cam_reconfigure_bluefox_settings_decode(cons
 	skye_cam_reconfigure_bluefox_settings->hdr_mode = mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_hdr_mode(msg);
 	skye_cam_reconfigure_bluefox_settings->use_ros_time = mavlink_msg_skye_cam_reconfigure_bluefox_settings_get_use_ros_time(msg);
 #else
-	memcpy(skye_cam_reconfigure_bluefox_settings, _MAV_PAYLOAD(msg), 108);
+	memcpy(skye_cam_reconfigure_bluefox_settings, _MAV_PAYLOAD(msg), 105);
 #endif
 }

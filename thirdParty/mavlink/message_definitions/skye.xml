@@ -320,7 +320,7 @@
                <!--               <field type="char[32]" name="guid">Serial number of camera, suffix BLUEFOX_ + 8 dec digits (use first camera if null)</field> -->
                <field type="uint8_t" name="cam_id">ID of camera, see ENUM MAV_CAM_ID</field>
                <field type="char[32]" name="frame_id">ROS tf frame of reference, resolved with tf_prefix unless absolute.</field>
-               <field type="float" name="pixel_clock">Pixel clock of image sensor [MHz]. See enum MAV_CAM_RECONFIG_PIXEL_CLOCK</field>
+               <field type="uint8_t" name="pixel_clock">Pixel clock of image sensor [MHz]. See enum MAV_CAM_RECONFIG_PIXEL_CLOCK</field>
                <field type="float" name="frame_rate">Camera speed (frames per second). Range: 1.0 to 240.0</field>
                <field type="char[32]" name="camera_info_url">Camera calibration URL for this video_mode (uncalibrated if null). </field>
                <field type="uint8_t" name="binning_x">Number of pixels combined for horizontal binning, use device hints if zero. Range: 0 to 4</field>
