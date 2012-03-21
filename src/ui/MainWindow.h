@@ -241,6 +241,11 @@ public slots:
 
     /** @brief Set input device to control uav */
     void setInputMode(int inputMode);
+#ifdef MOUSE_ENABLED                                        // Beginn Code MA (21.03.2012)
+    /** @brief Start 3DxWare driver for 3dMouse (3dConnexion) and initialize */
+    void start3dMouse();
+#endif // MOUSE_ENABLED                                     // Ende Code MA (21.03.2012)
+
 
 signals:
     void initStatusChanged(const QString& message);
@@ -438,6 +443,7 @@ private:
     bool x11Event(XEvent *event);
     bool mouseTranslationEnable;    ///< True when translations of 3dMouse are enabled
     bool mouseRotationEnable;       ///< True when rotations of 3dMouse are enabled
+    bool mouseInitialized;              ///< True when 3dMouse initialized successfully
     #endif //MOUSE_ENABLED                          // Ende Code MA 06.03.2012 ------------
 
     void keyPressEvent(QKeyEvent *event);           // Beginn Code MA (07.03.2012)

@@ -110,8 +110,11 @@ MainWindow::MainWindow(QWidget *parent):
     autoReconnect(false),
     lowPowerMode(false),
     inputMode(UASSkyeControlWidget::QGC_INPUT_MODE_NONE),
-    //mouseTranslationEnable(true),                         //uncomment, AL (19.03.12)
-    //mouseRotationEnable(true),                            //uncomment, AL "
+    #ifdef MOUSE_ENABLED                                        // Beginn Code MA
+    mouseTranslationEnable(true),
+    mouseRotationEnable(true),
+    mouseInitialized(false),
+    #endif                                                      // Ende Code MA (21.03.2012)
     keyXValue(0),
     keyYValue(0),
     keyZValue(0),
@@ -254,16 +257,9 @@ MainWindow::MainWindow(QWidget *parent):
     windowNameUpdateTimer.start(15000);
     emit initStatusChanged("Done.");
 
-#ifdef MOUSE_ENABLED                // Beginn Code MA (08.03.2012)
-    // man visudo --> then you can omit giving password (did not work..)
-    qDebug() << "Starting 3DxWare Daemon for 3dConnexion 3dMouse";
-    QString processProgramm = "gksudo";
-    QStringList processArguments;
-    processArguments << "/etc/3DxWare/daemon/3dxsrv -d usb";
-   // QProcess process3dxDaemon;
-    process3dxDaemon = new QProcess();
-    process3dxDaemon->start(processProgramm, processArguments);
-#endif // MOUSE_ENABLED             // Ende Code MA (08.03.2012)
+#ifdef MOUSE_ENABLED                    // Beginn Code MA (21.03.2012)
+    start3dMouse();
+#endif // MOUSE_ENABLED                 // Ende Code MA
 
     show();
 }
@@ -1812,10 +1808,47 @@ void MainWindow::setInputMode(int inputMode)
 #endif //MAVLINK_ENABLED_SKYE
 }
 
-#ifdef MOUSE_ENABLED                                // Beginn Code MA (06.03.2012) -----------
+#ifdef MOUSE_ENABLED            // Beginn Code MA (21.03.2012)
+void MainWindow::start3dMouse()
+{
+    // man visudo --> then you can omit giving password (did not work..)
+    qDebug() << "Starting 3DxWare Daemon for 3dConnexion 3dMouse";
+    QString processProgramm = "gksudo";
+    QStringList processArguments;
+    processArguments << "/etc/3DxWare/daemon/3dxsrv -d usb";
+   // QProcess process3dxDaemon;
+    process3dxDaemon = new QProcess();
+    process3dxDaemon->start(processProgramm, processArguments);
+    process3dxDaemon->waitForFinished();
+    {
+        qDebug() << "... continuing without 3DxWare. May not be initialized properly!";
+        qDebug() << "Try in terminal as user root:" << processArguments.last();
+    }
+
+    Display *display = QX11Info::display();
+    if(!display)
+    {
+        qDebug() << "Cannot open display!" << endl;
+    }
+    if ( !MagellanInit( display, winId() ) )
+      {
+           qDebug() << "No 3dXWare driver is running!";
+           return;
+      }
+    else
+    {
+        mouseInitialized = true;
+    }
+}                               // Ende Code MA (21.03.2012)
+
+                                // Beginn Code MA (06.03.2012) -----------
 bool MainWindow::x11Event(XEvent *event)
 {
-    qDebug("XEvent occured...");
+//    qDebug("XEvent occured...");
+    if (!mouseInitialized)
+    {
+        return false;
+    }
 #ifdef MAVLINK_ENABLED_SKYE
     if (inputMode == UASSkyeControlWidget::QGC_INPUT_MODE_MOUSE)
     {
@@ -1828,11 +1861,7 @@ bool MainWindow::x11Event(XEvent *event)
     {
         qDebug() << "Cannot open display!" << endl;
     }
-    if ( !MagellanInit( display, winId() ) )
-      {
-           qDebug() << "No 3dXWare driver is running!";
-           return false;
-      };
+
    switch (event->type)
    {
     case ClientMessage:
