@@ -109,6 +109,10 @@ public:
 
 private:
     Ui::SkyeCameraReconfigure *ui;
+    MAV_CAM_ID activeCamId;             ///< Id of current chosen cam
+
+private slots:
+    void activeCameraChanged(QString camName);
 
 protected:
     /** @brief Look for available cameras */

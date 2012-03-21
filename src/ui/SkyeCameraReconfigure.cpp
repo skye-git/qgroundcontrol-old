@@ -14,12 +14,15 @@
 
 SkyeCameraReconfigure::SkyeCameraReconfigure(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::SkyeCameraReconfigure)
+    ui(new Ui::SkyeCameraReconfigure),
+    activeCamId(MAV_CAM_ID_PROSILICA)
 {
     ui->setupUi(this);
     ui->scrollAreaWidgetContents->setLayout(ui->groupBoxVerticalLayout);
+    connect(ui->cameraComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(activeCameraChanged(QString)));
     updateAvailableCameras();
-    createWidgetsForMessage(MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS);
+
+    //createWidgetsForMessage(MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS);
 
 }
 
@@ -45,6 +48,34 @@ void SkyeCameraReconfigure::updateAvailableCameras()
 
 }
 
+void SkyeCameraReconfigure::activeCameraChanged(QString camName)
+{
+    // Check whether camera has changed
+    QMetaObject metaObject = SkyeCameraReconfigure::staticMetaObject;
+    QMetaEnum metaEnum = metaObject.enumerator( metaObject.indexOfEnumerator("MAV_CAM_ID") );
+    if (metaEnum.key(activeCamId) != camName)
+    {
+
+        deleteOldWidgets();
+
+        if (camName == "MAV_CAM_ID_PROSILICA")
+        {
+            activeCamId = MAV_CAM_ID_PROSILICA;
+            createWidgetsForMessage(MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_PROSILICA_SETTINGS);
+        }
+        else if (camName == "MAV_CAM_ID_BLUEFOX_LEFT" )
+        {
+            activeCamId = MAV_CAM_ID_BLUEFOX_LEFT;
+            createWidgetsForMessage(MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS);
+        }
+        else if (camName == "MAV_CAM_ID_BLUEFOX_RIGHT" )
+        {
+            activeCamId = MAV_CAM_ID_BLUEFOX_RIGHT;
+            createWidgetsForMessage(MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS);
+        }
+    }
+}
+
 void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
 {
     object = QMap<unsigned int, QWidget*>();
@@ -53,10 +84,10 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
     memcpy(messageInfo, msg, sizeof(mavlink_message_info_t)*256);
     for (unsigned int i = 0; i < messageInfo[msgId].num_fields; ++i)
     {
-        if ( messageInfo[msgId].fields[i].name != "target_system" )
+        QString name;
+        name = messageInfo[msgId].fields[i].name;
+        if ( name != "target_system" && name != "cam_id")
         {
-            QString name;
-            name = messageInfo[msgId].fields[i].name;
             QWidget* widget = new QWidget();
             QLabel* labelWidget = new QLabel(name, widget);
             QHBoxLayout* hBox = new QHBoxLayout(widget);
