@@ -518,7 +518,9 @@ void UASView::selectAirframe()
                 << "Predator"
                 << "Coaxial"
                 << "Pteryx"
-                << "Asctec Firefly";
+                << "Asctec Firefly"
+                << "bla"
+                << "Skye";
 
         bool ok;
         QString item = QInputDialog::getItem(this, tr("Select Airframe for %1").arg(uas->getUASName()),
