@@ -1789,6 +1789,10 @@ void MainWindow::setInputMode(int inputMode)
     {
     case 1:
             this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_MOUSE;
+            if ( !mouseInitialized )
+            {
+                start3dMouse();
+            }
             break;
     case 2:
             this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_TOUCH;
