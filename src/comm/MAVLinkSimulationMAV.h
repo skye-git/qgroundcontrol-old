@@ -80,6 +80,7 @@ protected:
     int orientation2;
     int orientation3;
     int orientation4;
+    int homing;
     // Ende Code MA (07.03.2012) --------------------------
 
 
