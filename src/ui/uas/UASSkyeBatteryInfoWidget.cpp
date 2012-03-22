@@ -38,7 +38,6 @@ UASSkyeBatteryInfoWidget::~UASSkyeBatteryInfoWidget()
 
 void UASSkyeBatteryInfoWidget::setActiveUAS(UASInterface *uas)
 {
-    qDebug() << "KREBS KREBS";
     if (this->uasId != 0)
     {
         // Disconnect old UAS
@@ -55,7 +54,7 @@ void UASSkyeBatteryInfoWidget::setActiveUAS(UASInterface *uas)
 
 void UASSkyeBatteryInfoWidget::changeBatteryPack(mavlink_skye_battery_status_t* battery)
 {
-    qDebug()<<"Message SKYE_BATTERY_STATUS received";
+//    qDebug()<<"Message SKYE_BATTERY_STATUS received";
     MAV_SKYE_BATTERY_PACK_ID packId = (MAV_SKYE_BATTERY_PACK_ID)battery->accu_id;
     double voltage1 = (double)battery->voltage_cell_1/1000;
     double voltage2 = (double)battery->voltage_cell_2/1000;
