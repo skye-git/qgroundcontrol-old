@@ -1819,11 +1819,11 @@ void MainWindow::start3dMouse()
    // QProcess process3dxDaemon;
     process3dxDaemon = new QProcess();
     process3dxDaemon->start(processProgramm, processArguments);
-    process3dxDaemon->waitForFinished();
-    {
-        qDebug() << "... continuing without 3DxWare. May not be initialized properly!";
-        qDebug() << "Try in terminal as user root:" << processArguments.last();
-    }
+//    process3dxDaemon->waitForFinished();
+//    {
+//        qDebug() << "... continuing without 3DxWare. May not be initialized properly!";
+//        qDebug() << "Try in terminal as user root:" << processArguments.last();
+//    }
 
     Display *display = QX11Info::display();
     if(!display)
@@ -1837,6 +1837,7 @@ void MainWindow::start3dMouse()
       }
     else
     {
+        qDebug() << "Initialized 3dMouse";
         mouseInitialized = true;
     }
 }                               // Ende Code MA (21.03.2012)
@@ -1847,8 +1848,10 @@ bool MainWindow::x11Event(XEvent *event)
 //    qDebug("XEvent occured...");
     if (!mouseInitialized)
     {
+        qDebug() << "Cancelled handling X11event for 3dMouse";
         return false;
     }
+    qDebug() << "Following X11event";
 #ifdef MAVLINK_ENABLED_SKYE
     if (inputMode == UASSkyeControlWidget::QGC_INPUT_MODE_MOUSE)
     {
