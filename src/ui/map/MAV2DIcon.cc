@@ -244,6 +244,53 @@ void MAV2DIcon::drawAirframePolygon(int airframe, QPainter& painter, int radius,
             painter.rotate(-yawRotate);
         }
         break;
+    case UASInterface::QGC_AIRFRAME_SKYE:           // Beginn Code MA (22.03.2012)
+        {
+        // AIRSHIP SKYE
+        float iconSize = radius*0.9f;
+        const float yawDeg = ((yaw/M_PI)*180.0f)+180.0f;
+        int yawRotate = static_cast<int>(yawDeg) % 360;
+
+        painter.rotate(yawRotate);
+
+        //// qDebug() << "ICON SIZE:" << radius;
+
+        QPointF front(0, 0.2);
+        front = front *iconSize;
+//        QPointF left(-0.2, 0);
+//        left = left * iconSize;
+//        QPointF right(0.2, 0.0);
+//        right *= iconSize;
+//        QPointF back(0, -0.2);
+//        back *= iconSize;
+        QPointF middle(-0.5, -0.5);
+        middle *= iconSize;
+
+//        QPolygonF poly(0);
+
+//        QPixmap skyePixmap = QPixmap(":images/skye_images/mav/skye.png");
+
+        //painter.setBrush(QBrush(skyePixmap));
+        QPen iconPen(Qt::black);
+        iconPen.setWidthF(1.0f);
+        painter.setPen(iconPen);
+        QImage img(":images/skye_images/mav/skye.png");
+
+painter.drawImage(middle,img);
+//        painter.drawPolygon(poly);
+
+//        painter.drawEllipse(left, radius/4/2, radius/4/2);
+//        painter.drawEllipse(right, radius/4/2, radius/4/2);
+//        painter.drawEllipse(back, radius/4/2, radius/4/2);
+        //painter.drawEllipse(middle, radius/4, radius/4);
+
+//        painter.drawEllipse(middle,radius,radius);
+
+        painter.setBrush(Qt::red);
+        painter.drawEllipse(front, radius/4/2, radius/4/2);
+        painter.rotate(-yawRotate);
+        }
+        break;                                              // Ende Code MA (22.03.2012)
     case UASInterface::QGC_AIRFRAME_GENERIC:
     default: {
             // GENERIC

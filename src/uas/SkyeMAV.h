@@ -11,7 +11,20 @@ class SkyeMAV : public UAS
 public:
     SkyeMAV(MAVLinkProtocol* mavlink, int id);
     ~SkyeMAV();
+
+    /** @brief Get the airframe */
+    int getAirframe() const
+    {
+        return airframe;
+    }
+
 public slots:
+    /** @brief Set the specific airframe type */
+    void setAirframe(int airframe)
+    {
+        this->airframe = airframe;
+        emit systemSpecsChanged(uasId);
+    }
     /** @brief Receive a MAVLink message from this MAV */
     void receiveMessage(LinkInterface* link, mavlink_message_t message);
     /** @brief Send the 6 DOF command (from 3d Mouse) to MAV */
@@ -45,6 +58,7 @@ protected:
     /** @brief Send a Testphase Control Command to MAV: */
     void sendTestphaseControlCommands(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 );
 
+    int airframe;                   ///< The airframe type
 
     int manual1Thrust;          ///<Thrust for Motor 1 set by human pilot
     int manual2Thrust;          ///<Thrust for Motor 2 set by human pilot

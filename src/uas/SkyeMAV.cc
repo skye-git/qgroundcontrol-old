@@ -3,6 +3,7 @@
 
 SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
 UAS(mavlink, id),
+airframe(QGC_AIRFRAME_SKYE),
 manualXThrust(0),
 manualYThrust(0),
 manualZThrust(0),

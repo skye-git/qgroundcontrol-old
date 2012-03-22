@@ -299,11 +299,11 @@ void UAS::receiveMessage(LinkInterface* link, mavlink_message_t message)
 			emit valueChanged(uasId, name.arg("system_status"), "-", state.system_status, time);
 			
             // Set new type if it has changed
-            if (this->type != state.type)
+            if ((this->type != state.type) || airframe == 0)        // Modified Code MA (22.03.2012)
             {
                 this->type = state.type;
-                if (airframe == 0)
-                {
+//                if (airframe == 0)                                // Modified Code MA (22.03.2012)
+//                {
                     switch (type)
                     {
                     case MAV_TYPE_FIXED_WING:
@@ -315,13 +315,18 @@ void UAS::receiveMessage(LinkInterface* link, mavlink_message_t message)
                     case MAV_TYPE_HEXAROTOR:
                         setAirframe(UASInterface::QGC_AIRFRAME_HEXCOPTER);
                         break;
+                    case MAV_TYPE_AIRSHIP:                              // Code MA (22.03.2012)
+                        setAirframe(UASInterface::QGC_AIRFRAME_SKYE);
+                        break;
                     default:
                         // Do nothing
                         break;
                     }
-                }
+//                }                                                 // Modified Code MA (22.03.2012)
+                    this->setSystemType(type);                      // Modified Code MA (22.03.2012)
                 this->autopilot = state.autopilot;
                 emit systemTypeSet(this, type);
+
             }
 
             bool currentlyArmed = state.base_mode & MAV_MODE_FLAG_DECODE_POSITION_SAFETY;
@@ -2071,8 +2076,14 @@ void UAS::setSystemType(int systemType)
         case MAV_TYPE_FIXED_WING:
             airframe = QGC_AIRFRAME_EASYSTAR;
             break;
+        case MAV_TYPE_HEXAROTOR:
+            airframe = QGC_AIRFRAME_HEXCOPTER;
+            break;
         case MAV_TYPE_QUADROTOR:
             airframe = QGC_AIRFRAME_MIKROKOPTER;
+            break;
+        case MAV_TYPE_AIRSHIP:                              // Code MA (22.03.2012)
+            airframe = QGC_AIRFRAME_SKYE;
             break;
         }
     }

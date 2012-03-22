@@ -15,6 +15,7 @@ public:
         MAV_ICON_QUADROTOR,
         MAV_ICON_COAXIAL,
         MAV_ICON_HELICOPTER,
+        MAV_ICON_SKYE                       // Code MA (22.03.2012)
     } MAV_ICON_TYPE;
 
     //!
