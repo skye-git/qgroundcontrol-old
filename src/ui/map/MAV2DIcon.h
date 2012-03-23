@@ -2,6 +2,7 @@
 #define MAV2DICON_H
 
 #include <QGraphicsItem>
+#include <QPixmap>
 
 #include "UASInterface.h"
 #include "opmapcontrol.h"
@@ -56,7 +57,7 @@ public:
     }
 
     void drawIcon();
-    static void drawAirframePolygon(int airframe, QPainter& painter, int radius, QColor& iconColor, float yaw);
+    static void drawAirframePolygon(int airframe, QPainter& painter, int radius, QColor& iconColor, float yaw);   // Mode Code MA (was static)
 
 protected:
     float yaw;      ///< Yaw angle of the MAV
@@ -68,6 +69,7 @@ protected:
     int uasid;      ///< ID of tracked system
     QSize size;
 
+    QPixmap picCam;  ///< QPixmap for Camera on Map         // Code MA (22.03.2012)
 };
 
 #endif // MAV2DICON_H
