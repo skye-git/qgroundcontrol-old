@@ -293,7 +293,6 @@ void HUD::setActiveUAS(UASInterface* uas)
         // Try to connect the image link
         UAS* u = dynamic_cast<UAS*>(uas);
         if (u) {
-            qDebug() << "Connecting image triggerer -----------                ---------------";
             connect(u, SIGNAL(imageStarted(quint64)), this, SLOT(startImage(quint64)));
             connect(u, SIGNAL(imageReady(UASInterface*)), this, SLOT(copyImage()));
         }

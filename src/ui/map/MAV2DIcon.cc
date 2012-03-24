@@ -17,6 +17,7 @@ MAV2DIcon::MAV2DIcon(mapcontrol::MapGraphicItem* map,mapcontrol::OPMapWidget* pa
 {
     size = QSize(radius, radius);
     pic = QPixmap(size);
+    picCam = QPixmap(2*radius, 2*radius);                     // Beginn und Ende Code MA
     drawIcon();
 }
 
@@ -31,6 +32,7 @@ MAV2DIcon::MAV2DIcon(mapcontrol::MapGraphicItem* map, mapcontrol::OPMapWidget* p
 {
     size = QSize(radius, radius);
     pic = QPixmap(size);
+    picCam = QPixmap(2*radius, 2*radius);                     // Beginn und Ende Code MA
     drawIcon();
     SetUAVPos(internals::PointLatLng(lat, lon), alt, color);
 }
@@ -68,6 +70,8 @@ void MAV2DIcon::drawIcon()
 {
     pic.fill(Qt::transparent);
     QPainter painter(&pic);
+    picCam.fill(Qt::transparent);                           // Beginn Code MA
+    QPainter painterCam(&picCam);                           // Ende Code MA
     painter.setRenderHint(QPainter::TextAntialiasing);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setRenderHint(QPainter::HighQualityAntialiasing);
@@ -244,6 +248,46 @@ void MAV2DIcon::drawAirframePolygon(int airframe, QPainter& painter, int radius,
             painter.rotate(-yawRotate);
         }
         break;
+    case UASInterface::QGC_AIRFRAME_SKYE:           // Beginn Code MA (22.03.2012)
+        {
+        // AIRSHIP SKYE
+        float iconSize = radius*0.9f;
+        const float yawDeg = ((yaw/M_PI)*180.0f)+180.0f;
+        int yawRotate = static_cast<int>(yawDeg) % 360;
+
+        painter.rotate(yawRotate);
+
+        QPointF middle(-0.5, -0.5);
+        middle *= radius;
+        QImage img(":images/skye_images/mav/skye.png");
+        painter.drawImage(middle,img);
+
+        painter.rotate(-yawRotate);
+
+        ////////////////////////////////////////////////////// FIXME //////////////////////////
+
+//        painterCam.setRenderHint(QPainter::TextAntialiasing);
+//        painterCam.setRenderHint(QPainter::Antialiasing);
+//        painterCam.setRenderHint(QPainter::HighQualityAntialiasing);
+
+//        painterCam.rotate(yawRotate);
+
+//        QPolygonF polyCam(3);
+//        polyCam.replace(0, QPointF(-0.4*iconSize, 0.4*iconSize));
+//        polyCam.replace(1, QPointF(0.0*iconSize, 0.0*iconSize));
+//        polyCam.replace(2, QPointF(0.4*iconSize, 2.0*iconSize));
+
+//        painterCam.setBrush(QBrush(iconColor));
+//        QPen iconPenCam(Qt::black);
+//        iconPenCam.setWidthF(1.0f);
+//        painterCam.setPen(iconPenCam);
+
+//        painterCam.drawPolygon(polyCam);
+
+//        painterCam.rotate(-yawRotate);
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        }
+        break;                                              // Ende Code MA (22.03.2012)
     case UASInterface::QGC_AIRFRAME_GENERIC:
     default: {
             // GENERIC

@@ -96,6 +96,7 @@
         <file>images/skye_images/input/3dx_spacenavigator_200x198_rot.png</file>
         <file>images/skye_images/input/3dx_spacenavigator_200x198_trans.png</file>
         <file>images/skye_images/input/3dx_spacenavigator_200x198_trans_rot.png</file>
+        <file>images/skye_images/mav/skye.png</file>
     </qresource>
     <qresource prefix="/general">
         <file alias="vera.ttf">images/Vera.ttf</file>

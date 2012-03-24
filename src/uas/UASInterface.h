@@ -149,7 +149,8 @@ public:
         QGC_AIRFRAME_COAXIAL,
         QGC_AIRFRAME_PTERYX,
         QGC_AIRFRAME_TRICOPTER,
-        QGC_AIRFRAME_HEXCOPTER
+        QGC_AIRFRAME_HEXCOPTER,
+        QGC_AIRFRAME_SKYE                   // Code MA (22.03.2012)
     };
 
     /**
