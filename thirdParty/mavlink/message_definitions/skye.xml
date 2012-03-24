@@ -299,10 +299,10 @@
           <message id="159" name="SKYE_MOTOR_MEASSURED_POSITION">
                <description>The meassured orientation of the motors, (Homing position: 0, 360deg: 36000)</description>
                <field type="uint32_t" name="time_usec">Timestamp (since UNIX epoch or microseconds since system boot)</field>
-               <field type="uint16_t" name="thrust1_raw">Meassureed orientation motor 1 (Homing position: 0, 360deg: 36000)</field>
-               <field type="uint16_t" name="thrust2_raw">Meassureed orientation motor 1 (Homing position: 0, 360deg: 36000)</field>
-               <field type="uint16_t" name="thrust3_raw">Meassureed orientation motor 1 (Homing position: 0, 360deg: 36000)</field>
-               <field type="uint16_t" name="thrust4_raw">Meassureed orientation motor 1 (Homing position: 0, 360deg: 36000)</field>
+               <field type="uint16_t" name="pos1_raw">Meassureed orientation motor 1 (Homing position: 0, 360deg: 36000)</field>
+               <field type="uint16_t" name="pos2_raw">Meassureed orientation motor 1 (Homing position: 0, 360deg: 36000)</field>
+               <field type="uint16_t" name="pos3_raw">Meassureed orientation motor 1 (Homing position: 0, 360deg: 36000)</field>
+               <field type="uint16_t" name="pos4_raw">Meassureed orientation motor 1 (Homing position: 0, 360deg: 36000)</field>
           </message>
           <message id="160" name="SKYE_CONTROLLER_OUTPUT">
                <description>Output of controller (Input for actuation chain)</description>
