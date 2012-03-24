@@ -193,13 +193,12 @@ QPushButton {
 	padding-right: 5px;
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #232228, stop: 1 #020208);
 }
+
 QPushButton[text="stop all"]{
     background-color: red;
     border-radius:13px;
 }
-/*QPushButton[text='stop all']{
-    background-color: red;
-}*/
+
 
 QPushButton:checked {
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #404040, stop: 1 #808080);

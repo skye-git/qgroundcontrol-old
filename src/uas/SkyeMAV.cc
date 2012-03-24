@@ -4,12 +4,6 @@
 SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
 UAS(mavlink, id),
 airframe(QGC_AIRFRAME_SKYE),
-manualXThrust(0),
-manualYThrust(0),
-manualZThrust(0),
-manualXMoment(0),
-manualYMoment(0),
-manualZMoment(0),
 manual1Thrust(0),
 manual2Thrust(0),
 manual3Thrust(0),
@@ -17,7 +11,19 @@ manual4Thrust(0),
 manual1Orientation(0),
 manual2Orientation(0),
 manual3Orientation(0),
-manual4Orientation(0)
+manual4Orientation(0),
+manualXThrust(0),
+manualYThrust(0),
+manualZThrust(0),
+manualXMoment(0),
+manualYMoment(0),
+manualZMoment(0),
+manualXVel(0),
+manualYVel(0),
+manualZVel(0),
+manualXRot(0),
+manualYRot(0),
+manualZRot(0)
 {
 
     this->setUASName("SKYE");

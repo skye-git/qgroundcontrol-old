@@ -23,6 +23,11 @@ protected:
     void mousePressEvent(QMouseEvent *event);
     void resizeEvent(QResizeEvent *);
 
+//private:
+//    int sidescaling;
+//    int outerradius;
+//    int innerradius;
+
 //    void mousePressEvent(QMouseEvent *event);
 };
 
