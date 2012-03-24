@@ -8,7 +8,7 @@
 #include <qbytearray.h>
 #include <list>
 #include "XbeeLinkInterface.h"
-#include <xbee.h>
+#include <xbee.h> ///-----------------------------existiert nicht!!!!!
 #include "CallConv.h"
 
 class XbeeLink : public XbeeLinkInterface 

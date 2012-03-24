@@ -18,7 +18,7 @@ void QGCMapRing::paintEvent(QPaintEvent *)
 {
 
 
-    QColor ringColor(127, 0, 127);
+    QColor ringColor(0, 0, 127);
 
     int side = qMin(width(), height());
 
