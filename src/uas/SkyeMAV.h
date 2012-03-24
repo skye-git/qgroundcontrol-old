@@ -17,6 +17,8 @@ public:
     {
         return airframe;
     }
+    /** @brief Provide encapsulated mavlink image */
+    QImage getImage();
 
 public slots:
     /** @brief Set the specific airframe type */

@@ -252,8 +252,12 @@ void MAVLinkSimulationLink::mainloop()
     // Timers
     static unsigned int rate1hzCounter = 1;
     static unsigned int rate10hzCounter = 1;
+    static unsigned int rate20hzCounter = 1;
     static unsigned int rate50hzCounter = 1;
     static unsigned int circleCounter = 0;
+
+    // Image transmition sequence number
+    static uint16_t seqnr = 0;
 
     // Vary values
 
@@ -728,8 +732,55 @@ void MAVLinkSimulationLink::mainloop()
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 
+
+        mavlink_msg_data_transmission_handshake_pack(systemId, componentId, &msg, DATA_TYPE_RAW_IMAGE, 1012, 46, 22, 4, 253, 0);
+        // Allocate buffer with packet data
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //qDebug() << "CRC:" << msg.ck_a << msg.ck_b;
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
+
+
         rate1hzCounter = 1;
+        seqnr = 0;
     }
+
+    // 20 HZ TASKS
+    if (rate20hzCounter == 1000 / rate / 20) {
+        seqnr++;
+        switch (seqnr)
+        {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        {
+            uint8_t data[253];
+            for (int pix=0; pix<253; pix++)
+            {
+                data[pix] = (uint8_t)(pix*seqnr/4);
+            }
+            // SEND ENCAPSULATED IMAGE
+            mavlink_msg_encapsulated_data_pack(systemId, MAV_COMP_ID_CAMERA, &msg, seqnr, data);
+            // Allocate buffer with packet data
+            bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+            qDebug() << "Send package sequence" << seqnr << ":" << data;
+            //add data into datastream
+            memcpy(stream+streampointer,buffer, bufferlength);
+            streampointer += bufferlength;
+        }
+        break;
+        default:
+            break;
+        }
+    }
+
+
+
+
+
+
 
     // FULL RATE TASKS
     // Default is 50 H
@@ -744,6 +795,7 @@ void MAVLinkSimulationLink::mainloop()
     // Increment counters after full main loop
     rate1hzCounter++;
     rate10hzCounter++;
+    rate20hzCounter++;
     rate50hzCounter++;
 }
 

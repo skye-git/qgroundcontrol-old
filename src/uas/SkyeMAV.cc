@@ -75,6 +75,57 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             emit imageStarted(img.timestamp);
         }
         break;
+        case MAVLINK_MSG_ID_DATA_TRANSMISSION_HANDSHAKE:
+        {
+            qDebug() << "RECIEVED ACK TO GET IMAGE";
+            mavlink_data_transmission_handshake_t p;
+            mavlink_msg_data_transmission_handshake_decode(&message, &p);
+            imageSize = p.size;
+            imagePackets = p.packets;
+            imagePayload = p.payload;
+            imageQuality = p.jpg_quality;
+            imageType = p.type;
+            imageWidth = p.width;
+            imageHeight = p.height;
+            imageStart = QGC::groundTimeMilliseconds();
+        }
+            break;
+
+        case MAVLINK_MSG_ID_ENCAPSULATED_DATA:
+        {
+            mavlink_encapsulated_data_t img;
+            mavlink_msg_encapsulated_data_decode(&message, &img);
+            int seq = img.seqnr;
+            int pos = seq * imagePayload;
+
+            // Check if we have a valid transaction
+            if (imagePackets == 0)
+            {
+                // NO VALID TRANSACTION - ABORT
+                // Restart statemachine
+                imagePacketsArrived = 0;
+            }
+
+            for (int i = 0; i < imagePayload; ++i)
+            {
+                if (pos <= imageSize) {
+                    imageRecBuffer[pos] = img.data[i];
+                }
+                ++pos;
+            }
+
+            ++imagePacketsArrived;
+
+            // emit signal if all packets arrived
+            if ((imagePacketsArrived >= imagePackets))
+            {
+                // Restart statemachine
+                imagePacketsArrived = 0;
+                emit imageReady(this);
+                qDebug() << "imageReady emitted. all packets arrived";
+            }
+        }
+        break;
         case MAVLINK_MSG_ID_SKYE_HOME_MAXON:
         {
             // This message is only for sending...
@@ -236,6 +287,62 @@ void SkyeMAV::takeImageShot(MAV_CAM_ID cam)
     mavlink_msg_skye_cam_take_shot_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, cam, true);
     sendMessage(message);
 #endif // MAVLINK_ENABLED_SKYE
+}
+
+QImage SkyeMAV::getImage()          // Function copied from UAS.cc (pixhawk)
+{
+#ifdef MAVLINK_ENABLED_SKYE
+
+    qDebug() << "IMAGE TYPE:" << imageType;
+
+    // RAW greyscale
+    if (imageType == MAVLINK_DATA_STREAM_IMG_RAW8U)
+    {
+        // TODO FIXME
+        int imgColors = 255;//imageSize/(imageWidth*imageHeight);
+        //const int headerSize = 15;
+
+        // Construct PGM header
+        QString header("P5\n%1 %2\n%3\n");
+        header = header.arg(imageWidth).arg(imageHeight).arg(imgColors);
+
+        QByteArray tmpImage(header.toStdString().c_str(), header.toStdString().size());
+        tmpImage.append(imageRecBuffer);
+
+        //qDebug() << "IMAGE SIZE:" << tmpImage.size() << "HEADER SIZE: (15):" << header.size() << "HEADER: " << header;
+
+        if (imageRecBuffer.isNull())
+        {
+            qDebug()<< "could not convertToPGM()";
+            return QImage();
+        }
+
+        if (!image.loadFromData(tmpImage, "PGM"))
+        {
+            qDebug()<< "could not create extracted image";
+            return QImage();
+        }
+
+    }
+    // BMP with header
+    else if (imageType == MAVLINK_DATA_STREAM_IMG_BMP ||
+             imageType == MAVLINK_DATA_STREAM_IMG_JPEG ||
+             imageType == MAVLINK_DATA_STREAM_IMG_PGM ||
+             imageType == MAVLINK_DATA_STREAM_IMG_PNG)
+    {
+        if (!image.loadFromData(imageRecBuffer))
+        {
+            qDebug() << "Loading data from image buffer failed!";
+        }
+    }
+    // Restart statemachine
+    imagePacketsArrived = 0;
+    //imageRecBuffer.clear();
+    return image;
+#else
+    return QImage();
+#endif
+
 }
 
 void SkyeMAV::sendHomingCommand()
