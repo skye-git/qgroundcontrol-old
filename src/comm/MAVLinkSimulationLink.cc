@@ -749,6 +749,7 @@ void MAVLinkSimulationLink::mainloop()
     // 20 HZ TASKS
     if (rate20hzCounter == 1000 / rate / 20) {
         seqnr++;
+        qDebug() << "Send blabla sequence" << seqnr;
         switch (seqnr)
         {
         case 1:
@@ -774,12 +775,8 @@ void MAVLinkSimulationLink::mainloop()
         default:
             break;
         }
+        rate20hzCounter = 1;
     }
-
-
-
-
-
 
 
     // FULL RATE TASKS

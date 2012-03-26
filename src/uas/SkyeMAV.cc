@@ -25,7 +25,7 @@ manualXRot(0),
 manualYRot(0),
 manualZRot(0)
 {
-
+    imagePacketsArrived = 0;
     this->setUASName("SKYE");
 }
 
@@ -93,6 +93,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
 
         case MAVLINK_MSG_ID_ENCAPSULATED_DATA:
         {
+            qDebug() << "RECIEVED ENCAPSULATED IMAGE, imagePackets:" << imagePackets << "imagePacketsArrived:" << imagePacketsArrived;
             mavlink_encapsulated_data_t img;
             mavlink_msg_encapsulated_data_decode(&message, &img);
             int seq = img.seqnr;
@@ -122,7 +123,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
                 // Restart statemachine
                 imagePacketsArrived = 0;
                 emit imageReady(this);
-                qDebug() << "imageReady emitted. all packets arrived";
+                qDebug() << "SKYE imageReady emitted. all packets arrived";
             }
         }
         break;

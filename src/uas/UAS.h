@@ -657,6 +657,7 @@ signals:
     void loadChanged(UASInterface* uas, double load);
     /** @brief Propagate a heartbeat received from the system */
     //void heartbeat(UASInterface* uas); // Defined in UASInterface already
+    /** @brief A new campera image is ready in file system */
     void imageStarted(quint64 timestamp);
     /** @brief A new camera image has arrived */
     void imageReady(UASInterface* uas);

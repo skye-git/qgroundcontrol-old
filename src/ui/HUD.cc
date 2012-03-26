@@ -154,7 +154,7 @@ HUD::HUD(int width, int height, QWidget* parent)
 
     // Resize to correct size and fill with image
     resize(this->width(), this->height());
-    //glDrawPixels(glImage.width(), glImage.height(), GL_RGBA, GL_UNSIGNED_BYTE, glImage.bits());
+    glDrawPixels(glImage.width(), glImage.height(), GL_RGBA, GL_UNSIGNED_BYTE, glImage.bits()); // Mod Code MA
 
     // Set size once
     //setFixedSize(fill.size());
@@ -295,6 +295,7 @@ void HUD::setActiveUAS(UASInterface* uas)
         if (u) {
             connect(u, SIGNAL(imageStarted(quint64)), this, SLOT(startImage(quint64)));
             connect(u, SIGNAL(imageReady(UASInterface*)), this, SLOT(copyImage()));
+            qDebug() << "imageReady connected to HUD";
         }
 
         // Set new UAS
@@ -1469,7 +1470,12 @@ void HUD::copyImage()
         UAS* u = dynamic_cast<UAS*>(this->uas);
         if (u)
         {
+            qDebug() << "HUD::copyImage() getImage from uas" << u->getUASName() << ".. PAINT IT"; // << u->getImage();
             this->glImage = QGLWidget::convertToGLFormat(u->getImage());
         }
+    }
+    else
+    {
+        qDebug() << "HUD widget is not visible. Image not copied.";
     }
 }

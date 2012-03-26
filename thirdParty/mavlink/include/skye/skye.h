@@ -170,6 +170,18 @@ enum MAV_CAM_IMAGE_FORMAT
 };
 #endif
 
+/** @brief Content Types for data transmission handshake */
+#ifndef HAVE_ENUM_DATA_TYPES
+#define HAVE_ENUM_DATA_TYPES
+enum DATA_TYPES
+{
+	DATA_TYPE_JPEG_IMAGE=1, /*  | */
+	DATA_TYPE_RAW_IMAGE=2, /*  | */
+	DATA_TYPE_KINECT=3, /*  | */
+	DATA_TYPES_ENUM_END=4, /*  | */
+};
+#endif
+
 /** @brief ID for each accu pack for detailed battery information */
 #ifndef HAVE_ENUM_MAV_SKYE_BATTERY_PACK_ID
 #define HAVE_ENUM_MAV_SKYE_BATTERY_PACK_ID
