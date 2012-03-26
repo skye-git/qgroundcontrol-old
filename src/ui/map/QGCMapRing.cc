@@ -1,5 +1,8 @@
 #include <QtGui>
 #include <cmath>
+#include "UAS.h"
+#include "UASManager.h"
+#include "SkyeMAV.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265359
@@ -12,9 +15,17 @@ QGCMapRing::QGCMapRing(QWidget *parent) :
     QWidget(parent, Qt::FramelessWindowHint | Qt::WindowSystemMenuHint)
 {
         setPalette((Qt::transparent));
+        setVisible(false);//!!!!!
+        countingup = false;
+        stepsize = 1.1;
+        side = qMin(width(), height());
+        QTimer *timer = new QTimer(this);
+        connect(timer, SIGNAL(timeout()),this, SLOT(emitValues()));
+        timer->start(100);
 //        sidescaling = 200;
 //        outerradius = 75;
 //        innerradius = 70;
+
 }
 
 void QGCMapRing::paintEvent(QPaintEvent *)
@@ -41,7 +52,7 @@ void QGCMapRing::paintEvent(QPaintEvent *)
 
 //    painter.drawPath(path);
 
-    QColor ringColor(0, 0, 127);
+
 
     int side = qMin(width(), height());
 
@@ -50,16 +61,34 @@ void QGCMapRing::paintEvent(QPaintEvent *)
     painter.translate(width() / 2, height() / 2);
     painter.scale(side / 200.0, side / 200.0);
 
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(ringColor);
+    QColor ringColor(0, 0, 127);
+    QRadialGradient grad(0,0,180,-75,0);
+        grad.setColorAt(0.0, Qt::white);
+//        grad.setColorAt(0.1, Qt::green);
+        grad.setColorAt(0.99, ringColor);
+    QBrush brush(grad);
+    painter.setPen(Qt::gray);
+    painter.setBrush(brush);
 
     QPainterPath path;
+
+    //Ring
         path.moveTo(80,0);
         path.arcTo(-80,-80,160,160,0,360);
         path.moveTo(70,0);
         path.arcTo(-70,-70,140,140,0,360);
 
+     //Buttons
+        path.moveTo(88,73);
+        path.arcTo(58,58,30,30,0,360);
+
+
+        path.moveTo(88,-73);
+        path.arcTo(58,-88,30,30,0,360);
+
+
         painter.drawPath(path);
+
 
 
 }
@@ -67,23 +96,68 @@ void QGCMapRing::paintEvent(QPaintEvent *)
 void QGCMapRing::mousePressEvent(QMouseEvent *event)
 {
     QPointF point = event->pos() - rect().center();
-    double x = point.x();
-    double y = point.y();
-    emit xValuechanged(x);
-    emit yValuechanged(y);
+
+    if((point.x() > 0.58*side/2) && (point.y() > 0.58*side/2))
+        z = 0.1;
+    else if((point.x() > 0.58*side/2) && (point.y() < -0.58*side/2))
+        z = -0.1;
+    else
+    {
+        double theta = std::atan2(-point.x(), -point.y());
+        x = cos(theta)*0.1;
+        y = -sin(theta)*0.1;
+    }
+
+    countingup = true;
+    emitValues();
 }
 
+void QGCMapRing::mouseReleaseEvent(QMouseEvent *event)
+{
+    countingup = false;
+    x = 0;
+    y = 0;
+    z = 0;
+    emit xValuechanged(x);
+    emit yValuechanged(y);
+    emit zValuechanged(z);
+    emit valueTouchInputChanged(x,y,z,0,0,0);
+}
+
+void QGCMapRing::emitValues()
+{
+    if(countingup)
+    {
+        emit xValuechanged(x);
+        emit yValuechanged(y);
+        emit zValuechanged(z);
+        emit valueTouchInputChanged(x,y,z,0,0,0);
+        if(std::fabs(x*stepsize) <= 1 && std::fabs(y*stepsize) <= 1 && std::fabs(z*stepsize) <= 1)
+        {
+            x=x*stepsize;
+            y=y*stepsize;
+            z=z*stepsize;
+        }
+    }
+}
 
 void QGCMapRing::resizeEvent(QResizeEvent * /* event */)
 {
-    int side = qMin(width(), height());
+    //int side = qMin(width(), height());
+    side = qMin(width(), height());
 
-    QRegion outerCircle(width()/2-side/2*0.8, height()/2-side/2*0.8, side*0.8, side*0.8, QRegion::Ellipse);
-    QRegion innerCircle(width()/2-side/2*0.7, height()/2-side/2*0.7, side*0.7, side*0.7, QRegion::Ellipse);
+    QRegion outerCircle(width()/2-side/2*0.81, height()/2-side/2*0.81, side*0.81, side*0.81, QRegion::Ellipse);
+    QRegion innerCircle(width()/2-side/2*0.69, height()/2-side/2*0.69, side*0.69, side*0.69, QRegion::Ellipse);
     QRegion Ring = outerCircle.subtracted(innerCircle);
 
+    QRegion lowerButton(width()/2+side/2*0.58, height()/2+side/2*0.58, side/2*0.3, side/2*0.3, QRegion::Ellipse);
+    QRegion upperButton(width()/2+side/2*0.58, height()/2-side/2*0.88, side/2*0.3, side/2*0.3, QRegion::Ellipse);
+    QRegion Buttons = lowerButton.united(upperButton);
 
-    setMask(Ring);
+    QRegion unitedRegion = Ring.united(Buttons);
+
+
+    setMask(unitedRegion);
 
 
 //      QRegion outerCircle(width()/2-outerradius, height()/2-outerradius,2*outerradius,2*outerradius, QRegion::Ellipse);

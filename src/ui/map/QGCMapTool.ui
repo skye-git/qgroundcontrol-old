@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" rowstretch="100,1">
+  <layout class="QGridLayout" name="gridLayout" rowstretch="100,0">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -32,78 +32,6 @@
    <property name="verticalSpacing">
     <number>0</number>
    </property>
-   <item row="0" column="0">
-    <widget class="QGCMapWidget" name="map" native="true">
-     <widget class="QGCMapRing" name="Ring" native="true">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>331</width>
-        <height>271</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QDoubleSpinBox" name="doubleSpinBox_x">
-      <property name="geometry">
-       <rect>
-        <x>490</x>
-        <y>20</y>
-        <width>62</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="minimum">
-       <double>-200.000000000000000</double>
-      </property>
-      <property name="maximum">
-       <double>200.000000000000000</double>
-      </property>
-     </widget>
-     <widget class="QDoubleSpinBox" name="doubleSpinBox_y">
-      <property name="geometry">
-       <rect>
-        <x>490</x>
-        <y>60</y>
-        <width>62</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="minimum">
-       <double>-200.000000000000000</double>
-      </property>
-      <property name="maximum">
-       <double>200.000000000000000</double>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_x">
-      <property name="geometry">
-       <rect>
-        <x>470</x>
-        <y>20</y>
-        <width>16</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>x:</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_y">
-      <property name="geometry">
-       <rect>
-        <x>470</x>
-        <y>60</y>
-        <width>16</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>y:</string>
-      </property>
-     </widget>
-    </widget>
-   </item>
    <item row="0" column="1" rowspan="2">
     <widget class="QSlider" name="zoomSlider">
      <property name="maximum">
@@ -116,6 +44,107 @@
    </item>
    <item row="1" column="0">
     <widget class="QGCMapToolBar" name="toolBar" native="true"/>
+   </item>
+   <item row="0" column="0">
+    <widget class="QGCMapWidget" name="map" native="true">
+     <widget class="QGCMapRing" name="Ring" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>331</width>
+        <height>271</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QWidget" name="horizontalLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>450</x>
+        <y>70</y>
+        <width>104</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLabel" name="label_x">
+         <property name="text">
+          <string>x:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_x">
+         <property name="minimum">
+          <double>-200.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>200.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="horizontalLayoutWidget_2">
+      <property name="geometry">
+       <rect>
+        <x>450</x>
+        <y>110</y>
+        <width>102</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLabel" name="label_y">
+         <property name="text">
+          <string>y:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_y">
+         <property name="minimum">
+          <double>-200.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>200.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="horizontalLayoutWidget_3">
+      <property name="geometry">
+       <rect>
+        <x>450</x>
+        <y>150</y>
+        <width>101</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QLabel" name="label_z">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="text">
+          <string>z:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_z">
+         <property name="minimum">
+          <double>-99.900000000000006</double>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
    </item>
   </layout>
  </widget>
