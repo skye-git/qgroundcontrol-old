@@ -1469,11 +1469,11 @@ void HUD::copyImage()
 {
     if (isVisible())
     {
-        qDebug() << "HUD::copyImage()";
+//        qDebug() << "HUD::copyImage()";
         SkyeMAV* u = dynamic_cast<SkyeMAV*>(this->uas);
         if (u)
         {
-            qDebug() << "HUD::copyImage() getImage from uas" << u->getUASName() << ".. PAINT IT"; // << u->getImage();
+//            qDebug() << "HUD::copyImage() getImage from uas" << u->getUASName() << ".. PAINT IT!"; // << u->getImage();
             this->glImage = QGLWidget::convertToGLFormat(u->getImage());
         }
     }

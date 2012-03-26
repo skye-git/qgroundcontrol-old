@@ -259,6 +259,9 @@ void MAVLinkSimulationLink::mainloop()
     // Image transmition sequence number
     static uint16_t seqnr = 0;
 
+//    static QByteArray tmpImage;
+//    static QFile tmpFile(":images/skye_images/LOGO_DEF.png");
+
     // Vary values
 
     // VOLTAGE
@@ -732,12 +735,12 @@ void MAVLinkSimulationLink::mainloop()
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 
-        uint8_t type = MAVLINK_DATA_STREAM_IMG_RAW8U;
-        uint16_t width = 46;
-        uint16_t height = 22;
-        uint32_t size = width*height;
+        uint8_t type = MAVLINK_DATA_STREAM_IMG_RAW8U;  //MAVLINK_DATA_STREAM_IMG_RAW8U;
         uint8_t payload = 253;
-        uint8_t packets = size/payload;
+        uint16_t width = 66;    // 92 //463
+        uint16_t height = 44; // 44 //464
+        uint32_t size = width*height;
+        uint8_t packets = floor(size/payload)+1;
         uint8_t jpg_quality = 0;
         mavlink_msg_data_transmission_handshake_pack(systemId, componentId, &msg, type, size, width, height, packets, payload, jpg_quality);
         // Allocate buffer with packet data
@@ -755,31 +758,32 @@ void MAVLinkSimulationLink::mainloop()
     // 20 HZ TASKS
     if (rate20hzCounter == 1000 / rate / 20) {
         seqnr++;
-        switch (seqnr)
-        {
-        case 1:
-        case 2:
-        case 3:
-        case 4:
+        if (seqnr <= 16)
         {
             uint8_t data[253];
+
+//            if (seqnr == 1);
+//            {
+//                tmpImage.clear();
+//                tmpImage.append(tmpFile.readAll());
+//            }
+
+
             for (int pix=0; pix<253; pix++)
             {
-                data[pix] = (uint8_t)(pix*seqnr/4)*sin(time_boot);
+//                data[pix] = tmpImage.remove(0,1).toUInt();
+                data[pix] = (uint8_t)(pix*seqnr/4)*sin(time_boot*pix/10);
             }
             // SEND ENCAPSULATED IMAGE
             mavlink_msg_encapsulated_data_pack(systemId, MAV_COMP_ID_CAMERA, &msg, seqnr, data);
             // Allocate buffer with packet data
             bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-            qDebug() << "Send package sequence" << seqnr << ":" << data;
+//            qDebug() << "Send package sequence" << seqnr << ":" << data;
             //add data into datastream
             memcpy(stream+streampointer,buffer, bufferlength);
             streampointer += bufferlength;
         }
-        break;
-        default:
-            break;
-        }
+
         rate20hzCounter = 1;
     }
 

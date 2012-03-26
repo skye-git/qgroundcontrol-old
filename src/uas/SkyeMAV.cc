@@ -116,7 +116,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
 
             ++imagePacketsArrived;
 
-            qDebug() << "RECIEVED ENCAPSULATED IMAGE, imagePackets:" << imagePackets << "imagePacketsArrived:" << imagePacketsArrived;
+//            qDebug() << "RECIEVED ENCAPSULATED IMAGE, imagePackets:" << imagePackets << "imagePacketsArrived:" << imagePacketsArrived;
 
             // emit signal if all packets arrived
             if ((imagePacketsArrived >= imagePackets))
@@ -124,7 +124,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
                 // Restart statemachine
                 imagePacketsArrived = 0;
                 emit imageReady(this);
-                qDebug() << "SKYE imageReady emitted. all packets arrived";
+//                qDebug() << "SKYE imageReady emitted. all packets arrived";
             }
         }
         break;
@@ -295,7 +295,7 @@ QImage SkyeMAV::getImage()          // Function copied from UAS.cc (pixhawk)
 {
 #ifdef MAVLINK_ENABLED_SKYE
 
-    qDebug() << "IMAGE TYPE:" << imageType;
+//    qDebug() << "IMAGE TYPE:" << imageType;
 
     // RAW greyscale
     if (imageType == MAVLINK_DATA_STREAM_IMG_RAW8U)
@@ -311,15 +311,16 @@ QImage SkyeMAV::getImage()          // Function copied from UAS.cc (pixhawk)
         QByteArray tmpImage(header.toStdString().c_str(), header.toStdString().size());
         tmpImage.append(imageRecBuffer);
 
-        qDebug() << "IMAGE SIZE:" << tmpImage.size() << "HEADER SIZE: (15):" << header.size() << "HEADER: " << header;
+//        qDebug() << "IMAGE SIZE:" << tmpImage.size() << "HEADER SIZE: (15):" << header.size() << "HEADER: " << header;
 
         if (imageRecBuffer.isNull())
         {
             qDebug()<< "could not convertToPGM()";
             return QImage();
         }
-
-        if (!image.loadFromData(tmpImage, "PGM"))
+//        qDebug() << "imageRecBuffer (QByteArray):" << imageRecBuffer.toUInt(NULL, 8);
+//        qDebug() << "tmpImage (QByteArray):" << tmpImage;
+        if (!image.loadFromData(tmpImage, "PGM"))   // PGM: Portable Graymap
         {
             qDebug()<< "could not create extracted image";
             return QImage();
@@ -334,7 +335,7 @@ QImage SkyeMAV::getImage()          // Function copied from UAS.cc (pixhawk)
     {
         if (!image.loadFromData(imageRecBuffer))
         {
-            qDebug() << "Loading data from image buffer failed!";
+            qDebug() << "Loading data from skye image buffer failed!";
         }
     }
     // Restart statemachine
