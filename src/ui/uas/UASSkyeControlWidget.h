@@ -75,7 +75,7 @@ public slots:
     /** @brief Update 3dMouse button image */
     void changeMouseTranslationEnabled(bool transEnabled);
     /** @brief Update 3dMouse button image */
-    void changeMouseRoatationEnabled(bool rotEnabled);
+    void changeMouseRotationEnabled(bool rotEnabled);
 
 signals:
     void changedMode(int);

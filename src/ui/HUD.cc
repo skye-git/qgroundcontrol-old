@@ -41,7 +41,10 @@ This file is part of the QGROUNDCONTROL project
 #include <limits>
 
 #include "UASManager.h"
-#include "UAS.h"
+#include "UAS.h"            // Beginn Code MA (26.03.2012)
+#ifdef MAVLINK_ENABLED_SKYE
+#include "SkyeMAV.h"
+#endif                      // Ende Code MA
 #include "HUD.h"
 #include "MG.h"
 #include "QGC.h"
@@ -1467,7 +1470,7 @@ void HUD::copyImage()
     if (isVisible())
     {
         qDebug() << "HUD::copyImage()";
-        UAS* u = dynamic_cast<UAS*>(this->uas);
+        SkyeMAV* u = dynamic_cast<SkyeMAV*>(this->uas);
         if (u)
         {
             qDebug() << "HUD::copyImage() getImage from uas" << u->getUASName() << ".. PAINT IT"; // << u->getImage();

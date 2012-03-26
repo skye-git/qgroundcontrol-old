@@ -732,8 +732,14 @@ void MAVLinkSimulationLink::mainloop()
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 
-
-        mavlink_msg_data_transmission_handshake_pack(systemId, componentId, &msg, DATA_TYPE_RAW_IMAGE, 1012, 46, 22, 4, 253, 0);
+        uint8_t type = MAVLINK_DATA_STREAM_IMG_RAW8U;
+        uint16_t width = 46;
+        uint16_t height = 22;
+        uint32_t size = width*height;
+        uint8_t payload = 253;
+        uint8_t packets = size/payload;
+        uint8_t jpg_quality = 0;
+        mavlink_msg_data_transmission_handshake_pack(systemId, componentId, &msg, type, size, width, height, packets, payload, jpg_quality);
         // Allocate buffer with packet data
         bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
         //qDebug() << "CRC:" << msg.ck_a << msg.ck_b;
@@ -749,7 +755,6 @@ void MAVLinkSimulationLink::mainloop()
     // 20 HZ TASKS
     if (rate20hzCounter == 1000 / rate / 20) {
         seqnr++;
-        qDebug() << "Send blabla sequence" << seqnr;
         switch (seqnr)
         {
         case 1:
@@ -760,7 +765,7 @@ void MAVLinkSimulationLink::mainloop()
             uint8_t data[253];
             for (int pix=0; pix<253; pix++)
             {
-                data[pix] = (uint8_t)(pix*seqnr/4);
+                data[pix] = (uint8_t)(pix*seqnr/4)*sin(time_boot);
             }
             // SEND ENCAPSULATED IMAGE
             mavlink_msg_encapsulated_data_pack(systemId, MAV_COMP_ID_CAMERA, &msg, seqnr, data);

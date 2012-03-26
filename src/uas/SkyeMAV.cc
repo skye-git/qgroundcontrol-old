@@ -93,7 +93,6 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
 
         case MAVLINK_MSG_ID_ENCAPSULATED_DATA:
         {
-            qDebug() << "RECIEVED ENCAPSULATED IMAGE, imagePackets:" << imagePackets << "imagePacketsArrived:" << imagePacketsArrived;
             mavlink_encapsulated_data_t img;
             mavlink_msg_encapsulated_data_decode(&message, &img);
             int seq = img.seqnr;
@@ -116,6 +115,8 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             }
 
             ++imagePacketsArrived;
+
+            qDebug() << "RECIEVED ENCAPSULATED IMAGE, imagePackets:" << imagePackets << "imagePacketsArrived:" << imagePacketsArrived;
 
             // emit signal if all packets arrived
             if ((imagePacketsArrived >= imagePackets))
@@ -310,7 +311,7 @@ QImage SkyeMAV::getImage()          // Function copied from UAS.cc (pixhawk)
         QByteArray tmpImage(header.toStdString().c_str(), header.toStdString().size());
         tmpImage.append(imageRecBuffer);
 
-        //qDebug() << "IMAGE SIZE:" << tmpImage.size() << "HEADER SIZE: (15):" << header.size() << "HEADER: " << header;
+        qDebug() << "IMAGE SIZE:" << tmpImage.size() << "HEADER SIZE: (15):" << header.size() << "HEADER: " << header;
 
         if (imageRecBuffer.isNull())
         {
