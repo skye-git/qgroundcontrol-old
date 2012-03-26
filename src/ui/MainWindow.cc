@@ -1296,6 +1296,7 @@ void MainWindow::setActiveUAS(UASInterface* uas)
     if(tmp) {
         connect(this, SIGNAL(valueMouseChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
         connect(this, SIGNAL(valueKeyboardChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
+        connect(this->mapWidget, SIGNAL(valueTouchInputChanged(double, double, double, double, double, double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));// Beginn und Ende Code AL (26.03.12)
     }
 #endif // MAVLINK_ENABLED_SKYE      // Ende Code MA (27.02.2012) ---------------------------
 }
@@ -1639,12 +1640,12 @@ void MainWindow::loadViewState()
             centerStack->setCurrentWidget(mapWidget);
             controlDockWidget->hide();
             listDockWidget->show();
-            waypointsDockWidget->show();
+            waypointsDockWidget->hide();
             infoDockWidget->hide();
             debugConsoleDockWidget->show();
-            logPlayerDockWidget->show();
+            logPlayerDockWidget->hide();
             parametersDockWidget->hide();
-            hsiDockWidget->show();
+            hsiDockWidget->hide();
             headDown1DockWidget->hide();
             headDown2DockWidget->hide();
             rcViewDockWidget->hide();
@@ -1795,12 +1796,15 @@ void MainWindow::setInputMode(int inputMode)
                 start3dMouse();
             }
             #endif
+            mapWidget->setRingvisible(false);
             break;
     case 2:
             this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_TOUCH;
+            mapWidget->setRingvisible(true);
             break;
     case 3:
             this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_KEYBOARD;
+            mapWidget->setRingvisible(false);
             break;
     default:
             this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_NONE;

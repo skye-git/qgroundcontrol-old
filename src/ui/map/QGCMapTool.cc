@@ -18,8 +18,10 @@ QGCMapTool::QGCMapTool(QWidget *parent) :
     connect(ui->zoomSlider, SIGNAL(valueChanged(int)), ui->map, SLOT(SetZoom(int)));
     connect(ui->map, SIGNAL(zoomChanged(int)), this, SLOT(setZoom(int)));
 
-    connect(ui->Ring, SIGNAL(xValuechanged(double)), ui->doubleSpinBox_x, SLOT(setValue(double)));//Code AL (18.03.12)
-    connect(ui->Ring, SIGNAL(yValuechanged(double)), ui->doubleSpinBox_y, SLOT(setValue(double)));//Ende
+    connect(ui->Ring, SIGNAL(xValuechanged(double)), ui->doubleSpinBox_x, SLOT(setValue(double)));//Code AL (25.03.12)
+    connect(ui->Ring, SIGNAL(yValuechanged(double)), ui->doubleSpinBox_y, SLOT(setValue(double)));
+    connect(ui->Ring, SIGNAL(zValuechanged(double)), ui->doubleSpinBox_z, SLOT(setValue(double)));
+    connect(ui->Ring, SIGNAL(valueTouchInputChanged(double,double,double,double,double,double)),this,SIGNAL(valueTouchInputChanged(double,double,double,double,double,double)));//Ende
 }
 
 void QGCMapTool::setZoom(int zoom)
@@ -29,6 +31,11 @@ void QGCMapTool::setZoom(int zoom)
         ui->zoomSlider->setValue(zoom);
     }
 }
+
+void QGCMapTool::setRingvisible(bool visib) // Beginn Code AL (26.03.12)
+{
+    ui->Ring->setVisible(visib);
+}                                           // Ende Code AL
 
 QGCMapTool::~QGCMapTool()
 {

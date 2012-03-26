@@ -19,9 +19,11 @@ public:
 public slots:
     /** @brief Update slider zoom from map change */
     void setZoom(int zoom);
+    void setRingvisible(bool visib); //Beginn/Ende Code AL (26.03.12)
 
 signals:
     void visibilityChanged(bool visible);
+    void valueTouchInputChanged(double,double,double,double,double,double);
 
 protected:
     void showEvent(QShowEvent* event)
