@@ -359,3 +359,9 @@ void SkyeMAV::sendHomingCommand()
     qDebug() << __FILE__ << __LINE__ << ": SENT HOMING COMMAND MESSAGE";
 #endif // MAVLINK_ENABLED_SKYE
 }
+
+void SkyeMAV::sendBluefoxReconfigureCommand(mavlink_skye_cam_reconfigure_bluefox_settings_t* bluefox)
+{
+    qDebug() << "FIXME: send bluefox reconfig";
+
+}

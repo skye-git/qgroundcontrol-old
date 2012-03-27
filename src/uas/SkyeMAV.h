@@ -3,6 +3,7 @@
 
 
 #include "UAS.h"
+#include "BluefoxReconfigure.h"
 
 class SkyeMAV : public UAS
 {
@@ -11,6 +12,7 @@ class SkyeMAV : public UAS
 public:
     SkyeMAV(MAVLinkProtocol* mavlink, int id);
     ~SkyeMAV();
+
 
     /** @brief Get the airframe */
     int getAirframe() const
@@ -37,6 +39,8 @@ public slots:
     void takeImageShot(MAV_CAM_ID cam);
     /** Send Boolean to MAV, if motors should be homed*/
     void sendHomingCommand();
+    /** Send configurations for bluefox camera*/
+    void sendBluefoxReconfigureCommand(mavlink_skye_cam_reconfigure_bluefox_settings_t* bluefox);
 
 signals:
     /** @brief Emit new detailed accu info for one accu pack
