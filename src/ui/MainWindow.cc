@@ -1904,7 +1904,7 @@ bool MainWindow::x11Event(XEvent *event)
                                         MagellanEvent.MagellanData[ MagellanX ] / maxMagellanValue,
                                         - MagellanEvent.MagellanData[ MagellanY ] / maxMagellanValue,
                                         MagellanEvent.MagellanData[ MagellanC ] / maxMagellanValue,
-                                        - MagellanEvent.MagellanData[ MagellanA ] / maxMagellanValue,
+                                        MagellanEvent.MagellanData[ MagellanA ] / maxMagellanValue,
                                         - MagellanEvent.MagellanData[ MagellanB ] / maxMagellanValue);
             return false;
             break;
