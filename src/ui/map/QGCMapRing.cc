@@ -17,11 +17,11 @@ QGCMapRing::QGCMapRing(QWidget *parent) :
         setPalette((Qt::transparent));
         setVisible(false);//!!!!!
         countingup = false;
-        stepsize = 1.1;
+        stepsize = multiplicator= 1.1;
         side = qMin(width(), height());
         QTimer *timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()),this, SLOT(emitValues()));
-        timer->start(100);
+        timer->start(100); //every 0.1 seconds emitValues is calles
 //        sidescaling = 200;
 //        outerradius = 75;
 //        innerradius = 70;
@@ -98,26 +98,46 @@ void QGCMapRing::mousePressEvent(QMouseEvent *event)
     QPointF point = event->pos() - rect().center();
 
     if((point.x() > 0.58*side/2) && (point.y() > 0.58*side/2))
-        z = 0.1;
+        z_0 = 0.1;
     else if((point.x() > 0.58*side/2) && (point.y() < -0.58*side/2))
-        z = -0.1;
+        z_0 = -0.1;
     else
     {
         double theta = std::atan2(-point.x(), -point.y());
-        x = cos(theta)*0.1;
-        y = -sin(theta)*0.1;
+        x_0 = cos(theta)*0.1;
+        y_0 = -sin(theta)*0.1;
     }
 
     countingup = true;
     emitValues();
 }
 
+void QGCMapRing::mouseMoveEvent(QMouseEvent *event)
+{
+    QPointF point = event->pos() - rect().center();
+    double theta = std::atan2(-point.x(), -point.y());
+    //double factor = std::pow(std::pow(x,2)+std::pow(y,2), 0.5);
+    x_0 = cos(theta)*0.1;
+    y_0 = -sin(theta)*0.1;
+
+
+    x = x_0*multiplicator;
+    y = y_0*multiplicator;
+    z = z_0*multiplicator;
+    emitValues();
+}
+
+
 void QGCMapRing::mouseReleaseEvent(QMouseEvent *event)
 {
     countingup = false;
+    x_0 = 0;
+    y_0 = 0;
+    z_0 = 0;
     x = 0;
     y = 0;
     z = 0;
+    multiplicator = stepsize;
     emit xValuechanged(x);
     emit yValuechanged(y);
     emit zValuechanged(z);
@@ -132,12 +152,13 @@ void QGCMapRing::emitValues()
         emit yValuechanged(y);
         emit zValuechanged(z);
         emit valueTouchInputChanged(x,y,z,0,0,0);
-        if(std::fabs(x*stepsize) <= 1 && std::fabs(y*stepsize) <= 1 && std::fabs(z*stepsize) <= 1)
+        if(multiplicator*stepsize < 10)
         {
-            x=x*stepsize;
-            y=y*stepsize;
-            z=z*stepsize;
+            multiplicator = multiplicator*stepsize;
         }
+        x = x_0*multiplicator;
+        y = y_0*multiplicator;
+        z = z_0*multiplicator;
     }
 }
 
