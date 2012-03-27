@@ -133,6 +133,12 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             // This message is only for sending...
         }
         break;
+        case MAVLINK_MSG_ID_SKYE_SCALED_PRESSURE:
+        {
+            // Save scaled pressure
+        }
+        break;
+
         default:
         {
             // Let UAS handle the default message set
