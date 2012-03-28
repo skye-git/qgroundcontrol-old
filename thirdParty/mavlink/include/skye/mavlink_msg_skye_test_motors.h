@@ -4,10 +4,10 @@
 
 typedef struct __mavlink_skye_test_motors_t
 {
- int16_t direct_1; ///< Direction of direction motor 1, in 10qc [-360deg: -17614, 360deg: 17614] 
- int16_t direct_2; ///< Direction of direction motor 2, in 10qc [-360deg: -17614, 360deg: 17614] 
- int16_t direct_3; ///< Direction of direction motor 3, in 10qc [-360deg: -17614, 360deg: 17614] 
- int16_t direct_4; ///< Direction of direction motor 4, in 10qc [-360deg: -17614, 360deg: 17614] 
+ int16_t direct_1; ///< Direction of direction motor 1, in 0.1 degrees [-360deg: -3600, 360deg: 3600] 
+ int16_t direct_2; ///< Direction of direction motor 2, in 0.1 degrees [-360deg: -3600, 360deg: 3600] 
+ int16_t direct_3; ///< Direction of direction motor 3, in 0.1 degrees [-360deg: -3600, 360deg: 3600] 
+ int16_t direct_4; ///< Direction of direction motor 4, in 0.1 degrees [-360deg: -3600, 360deg: 3600] 
  uint8_t target_system; ///< System ID
  uint8_t thrust_1; ///< Thrust of motor 1, range [0,200]
  uint8_t thrust_2; ///< Thrust of motor 2, range [0,200]
@@ -47,10 +47,10 @@ typedef struct __mavlink_skye_test_motors_t
  * @param thrust_2 Thrust of motor 2, range [0,200]
  * @param thrust_3 Thrust of motor 3, range [0,200]
  * @param thrust_4 Thrust of motor 4, range [0,200]
- * @param direct_1 Direction of direction motor 1, in 10qc [-360deg: -17614, 360deg: 17614] 
- * @param direct_2 Direction of direction motor 2, in 10qc [-360deg: -17614, 360deg: 17614] 
- * @param direct_3 Direction of direction motor 3, in 10qc [-360deg: -17614, 360deg: 17614] 
- * @param direct_4 Direction of direction motor 4, in 10qc [-360deg: -17614, 360deg: 17614] 
+ * @param direct_1 Direction of direction motor 1, in 0.1 degrees [-360deg: -3600, 360deg: 3600] 
+ * @param direct_2 Direction of direction motor 2, in 0.1 degrees [-360deg: -3600, 360deg: 3600] 
+ * @param direct_3 Direction of direction motor 3, in 0.1 degrees [-360deg: -3600, 360deg: 3600] 
+ * @param direct_4 Direction of direction motor 4, in 0.1 degrees [-360deg: -3600, 360deg: 3600] 
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_skye_test_motors_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
@@ -99,10 +99,10 @@ static inline uint16_t mavlink_msg_skye_test_motors_pack(uint8_t system_id, uint
  * @param thrust_2 Thrust of motor 2, range [0,200]
  * @param thrust_3 Thrust of motor 3, range [0,200]
  * @param thrust_4 Thrust of motor 4, range [0,200]
- * @param direct_1 Direction of direction motor 1, in 10qc [-360deg: -17614, 360deg: 17614] 
- * @param direct_2 Direction of direction motor 2, in 10qc [-360deg: -17614, 360deg: 17614] 
- * @param direct_3 Direction of direction motor 3, in 10qc [-360deg: -17614, 360deg: 17614] 
- * @param direct_4 Direction of direction motor 4, in 10qc [-360deg: -17614, 360deg: 17614] 
+ * @param direct_1 Direction of direction motor 1, in 0.1 degrees [-360deg: -3600, 360deg: 3600] 
+ * @param direct_2 Direction of direction motor 2, in 0.1 degrees [-360deg: -3600, 360deg: 3600] 
+ * @param direct_3 Direction of direction motor 3, in 0.1 degrees [-360deg: -3600, 360deg: 3600] 
+ * @param direct_4 Direction of direction motor 4, in 0.1 degrees [-360deg: -3600, 360deg: 3600] 
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_skye_test_motors_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
@@ -163,10 +163,10 @@ static inline uint16_t mavlink_msg_skye_test_motors_encode(uint8_t system_id, ui
  * @param thrust_2 Thrust of motor 2, range [0,200]
  * @param thrust_3 Thrust of motor 3, range [0,200]
  * @param thrust_4 Thrust of motor 4, range [0,200]
- * @param direct_1 Direction of direction motor 1, in 10qc [-360deg: -17614, 360deg: 17614] 
- * @param direct_2 Direction of direction motor 2, in 10qc [-360deg: -17614, 360deg: 17614] 
- * @param direct_3 Direction of direction motor 3, in 10qc [-360deg: -17614, 360deg: 17614] 
- * @param direct_4 Direction of direction motor 4, in 10qc [-360deg: -17614, 360deg: 17614] 
+ * @param direct_1 Direction of direction motor 1, in 0.1 degrees [-360deg: -3600, 360deg: 3600] 
+ * @param direct_2 Direction of direction motor 2, in 0.1 degrees [-360deg: -3600, 360deg: 3600] 
+ * @param direct_3 Direction of direction motor 3, in 0.1 degrees [-360deg: -3600, 360deg: 3600] 
+ * @param direct_4 Direction of direction motor 4, in 0.1 degrees [-360deg: -3600, 360deg: 3600] 
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
@@ -259,7 +259,7 @@ static inline uint8_t mavlink_msg_skye_test_motors_get_thrust_4(const mavlink_me
 /**
  * @brief Get field direct_1 from skye_test_motors message
  *
- * @return Direction of direction motor 1, in 10qc [-360deg: -17614, 360deg: 17614] 
+ * @return Direction of direction motor 1, in 0.1 degrees [-360deg: -3600, 360deg: 3600] 
  */
 static inline int16_t mavlink_msg_skye_test_motors_get_direct_1(const mavlink_message_t* msg)
 {
@@ -269,7 +269,7 @@ static inline int16_t mavlink_msg_skye_test_motors_get_direct_1(const mavlink_me
 /**
  * @brief Get field direct_2 from skye_test_motors message
  *
- * @return Direction of direction motor 2, in 10qc [-360deg: -17614, 360deg: 17614] 
+ * @return Direction of direction motor 2, in 0.1 degrees [-360deg: -3600, 360deg: 3600] 
  */
 static inline int16_t mavlink_msg_skye_test_motors_get_direct_2(const mavlink_message_t* msg)
 {
@@ -279,7 +279,7 @@ static inline int16_t mavlink_msg_skye_test_motors_get_direct_2(const mavlink_me
 /**
  * @brief Get field direct_3 from skye_test_motors message
  *
- * @return Direction of direction motor 3, in 10qc [-360deg: -17614, 360deg: 17614] 
+ * @return Direction of direction motor 3, in 0.1 degrees [-360deg: -3600, 360deg: 3600] 
  */
 static inline int16_t mavlink_msg_skye_test_motors_get_direct_3(const mavlink_message_t* msg)
 {
@@ -289,7 +289,7 @@ static inline int16_t mavlink_msg_skye_test_motors_get_direct_3(const mavlink_me
 /**
  * @brief Get field direct_4 from skye_test_motors message
  *
- * @return Direction of direction motor 4, in 10qc [-360deg: -17614, 360deg: 17614] 
+ * @return Direction of direction motor 4, in 0.1 degrees [-360deg: -3600, 360deg: 3600] 
  */
 static inline int16_t mavlink_msg_skye_test_motors_get_direct_4(const mavlink_message_t* msg)
 {

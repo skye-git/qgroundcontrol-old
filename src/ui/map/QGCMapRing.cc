@@ -18,6 +18,7 @@ QGCMapRing::QGCMapRing(QWidget *parent) :
         setVisible(false);//!!!!!
         countingup = false;
         stepsize = multiplicator= 1.1;
+        x_0 = y_0 = z_0 = x = y = z = 0;
         side = qMin(width(), height());
         QTimer *timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()),this, SLOT(emitValues()));
@@ -61,7 +62,7 @@ void QGCMapRing::paintEvent(QPaintEvent *)
     painter.translate(width() / 2, height() / 2);
     painter.scale(side / 200.0, side / 200.0);
 
-    QColor ringColor(0, 0, 127);
+    QColor ringColor(0, 0, 127,150);
     QRadialGradient grad(0,0,180,-75,0);
         grad.setColorAt(0.0, Qt::white);
 //        grad.setColorAt(0.1, Qt::green);
@@ -115,15 +116,26 @@ void QGCMapRing::mousePressEvent(QMouseEvent *event)
 void QGCMapRing::mouseMoveEvent(QMouseEvent *event)
 {
     QPointF point = event->pos() - rect().center();
-    double theta = std::atan2(-point.x(), -point.y());
-    //double factor = std::pow(std::pow(x,2)+std::pow(y,2), 0.5);
-    x_0 = cos(theta)*0.1;
-    y_0 = -sin(theta)*0.1;
 
+    if(((point.x() > 0.58*side/2) && (point.y() > 0.58*side/2)) && (x_0 == 0 && y_0 == 0))
+        z_0 = 0.1;
+    else if(((point.x() > 0.58*side/2) && (point.y() < -0.58*side/2)) && (x_0 == 0 && y_0 == 0))
+        z_0 = -0.1;
+    else if(z_0 ==0)
+    {
+        double theta = std::atan2(-point.x(), -point.y());
+        x_0 = cos(theta)*0.1;
+        y_0 = -sin(theta)*0.1;
+    }
+
+//    double theta = std::atan2(-point.x(), -point.y());
+//    x_0 = cos(theta)*0.1;
+//    y_0 = -sin(theta)*0.1;
 
     x = x_0*multiplicator;
     y = y_0*multiplicator;
     z = z_0*multiplicator;
+
     emitValues();
 }
 

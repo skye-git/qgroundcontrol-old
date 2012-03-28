@@ -5,10 +5,10 @@
 typedef struct __mavlink_skye_motor_signal_t
 {
  uint32_t time_usec; ///< Timestamp (since UNIX epoch or microseconds since system boot)
- int16_t position1_raw; ///< Orientation output position motor 1, in 10qc [-360deg: -17614, 360deg: 17614]
- int16_t position2_raw; ///< Orientation output position motor 2, in 10qc [-360deg: -17614, 360deg: 17614]
- int16_t position3_raw; ///< Orientation output position motor 3, in 10qc [-360deg: -17614, 360deg: 17614]
- int16_t position4_raw; ///< Orientation output position motor 4, in 10qc [-360deg: -17614, 360deg: 17614]
+ int16_t position1_raw; ///< Orientation output position motor 1, in 0.1 degrees [-360deg: -3600, 360deg: 3600]
+ int16_t position2_raw; ///< Orientation output position motor 2, in 0.1 degrees [-360deg: -3600, 360deg: 3600]
+ int16_t position3_raw; ///< Orientation output position motor 3, in 0.1 degrees [-360deg: -3600, 360deg: 3600]]
+ int16_t position4_raw; ///< Orientation output position motor 4, in 0.1 degrees [-360deg: -3600, 360deg: 3600]
  uint8_t thrust1_raw; ///< Thrust output thruster 1, range [0,200]
  uint8_t thrust2_raw; ///< Thrust output thruster 2, range [0,200]
  uint8_t thrust3_raw; ///< Thrust output thruster 3, range [0,200]
@@ -47,10 +47,10 @@ typedef struct __mavlink_skye_motor_signal_t
  * @param thrust2_raw Thrust output thruster 2, range [0,200]
  * @param thrust3_raw Thrust output thruster 3, range [0,200]
  * @param thrust4_raw Thrust output thruster 4, range [0,200]
- * @param position1_raw Orientation output position motor 1, in 10qc [-360deg: -17614, 360deg: 17614]
- * @param position2_raw Orientation output position motor 2, in 10qc [-360deg: -17614, 360deg: 17614]
- * @param position3_raw Orientation output position motor 3, in 10qc [-360deg: -17614, 360deg: 17614]
- * @param position4_raw Orientation output position motor 4, in 10qc [-360deg: -17614, 360deg: 17614]
+ * @param position1_raw Orientation output position motor 1, in 0.1 degrees [-360deg: -3600, 360deg: 3600]
+ * @param position2_raw Orientation output position motor 2, in 0.1 degrees [-360deg: -3600, 360deg: 3600]
+ * @param position3_raw Orientation output position motor 3, in 0.1 degrees [-360deg: -3600, 360deg: 3600]]
+ * @param position4_raw Orientation output position motor 4, in 0.1 degrees [-360deg: -3600, 360deg: 3600]
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_skye_motor_signal_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
@@ -99,10 +99,10 @@ static inline uint16_t mavlink_msg_skye_motor_signal_pack(uint8_t system_id, uin
  * @param thrust2_raw Thrust output thruster 2, range [0,200]
  * @param thrust3_raw Thrust output thruster 3, range [0,200]
  * @param thrust4_raw Thrust output thruster 4, range [0,200]
- * @param position1_raw Orientation output position motor 1, in 10qc [-360deg: -17614, 360deg: 17614]
- * @param position2_raw Orientation output position motor 2, in 10qc [-360deg: -17614, 360deg: 17614]
- * @param position3_raw Orientation output position motor 3, in 10qc [-360deg: -17614, 360deg: 17614]
- * @param position4_raw Orientation output position motor 4, in 10qc [-360deg: -17614, 360deg: 17614]
+ * @param position1_raw Orientation output position motor 1, in 0.1 degrees [-360deg: -3600, 360deg: 3600]
+ * @param position2_raw Orientation output position motor 2, in 0.1 degrees [-360deg: -3600, 360deg: 3600]
+ * @param position3_raw Orientation output position motor 3, in 0.1 degrees [-360deg: -3600, 360deg: 3600]]
+ * @param position4_raw Orientation output position motor 4, in 0.1 degrees [-360deg: -3600, 360deg: 3600]
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_skye_motor_signal_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
@@ -163,10 +163,10 @@ static inline uint16_t mavlink_msg_skye_motor_signal_encode(uint8_t system_id, u
  * @param thrust2_raw Thrust output thruster 2, range [0,200]
  * @param thrust3_raw Thrust output thruster 3, range [0,200]
  * @param thrust4_raw Thrust output thruster 4, range [0,200]
- * @param position1_raw Orientation output position motor 1, in 10qc [-360deg: -17614, 360deg: 17614]
- * @param position2_raw Orientation output position motor 2, in 10qc [-360deg: -17614, 360deg: 17614]
- * @param position3_raw Orientation output position motor 3, in 10qc [-360deg: -17614, 360deg: 17614]
- * @param position4_raw Orientation output position motor 4, in 10qc [-360deg: -17614, 360deg: 17614]
+ * @param position1_raw Orientation output position motor 1, in 0.1 degrees [-360deg: -3600, 360deg: 3600]
+ * @param position2_raw Orientation output position motor 2, in 0.1 degrees [-360deg: -3600, 360deg: 3600]
+ * @param position3_raw Orientation output position motor 3, in 0.1 degrees [-360deg: -3600, 360deg: 3600]]
+ * @param position4_raw Orientation output position motor 4, in 0.1 degrees [-360deg: -3600, 360deg: 3600]
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
@@ -259,7 +259,7 @@ static inline uint8_t mavlink_msg_skye_motor_signal_get_thrust4_raw(const mavlin
 /**
  * @brief Get field position1_raw from skye_motor_signal message
  *
- * @return Orientation output position motor 1, in 10qc [-360deg: -17614, 360deg: 17614]
+ * @return Orientation output position motor 1, in 0.1 degrees [-360deg: -3600, 360deg: 3600]
  */
 static inline int16_t mavlink_msg_skye_motor_signal_get_position1_raw(const mavlink_message_t* msg)
 {
@@ -269,7 +269,7 @@ static inline int16_t mavlink_msg_skye_motor_signal_get_position1_raw(const mavl
 /**
  * @brief Get field position2_raw from skye_motor_signal message
  *
- * @return Orientation output position motor 2, in 10qc [-360deg: -17614, 360deg: 17614]
+ * @return Orientation output position motor 2, in 0.1 degrees [-360deg: -3600, 360deg: 3600]
  */
 static inline int16_t mavlink_msg_skye_motor_signal_get_position2_raw(const mavlink_message_t* msg)
 {
@@ -279,7 +279,7 @@ static inline int16_t mavlink_msg_skye_motor_signal_get_position2_raw(const mavl
 /**
  * @brief Get field position3_raw from skye_motor_signal message
  *
- * @return Orientation output position motor 3, in 10qc [-360deg: -17614, 360deg: 17614]
+ * @return Orientation output position motor 3, in 0.1 degrees [-360deg: -3600, 360deg: 3600]]
  */
 static inline int16_t mavlink_msg_skye_motor_signal_get_position3_raw(const mavlink_message_t* msg)
 {
@@ -289,7 +289,7 @@ static inline int16_t mavlink_msg_skye_motor_signal_get_position3_raw(const mavl
 /**
  * @brief Get field position4_raw from skye_motor_signal message
  *
- * @return Orientation output position motor 4, in 10qc [-360deg: -17614, 360deg: 17614]
+ * @return Orientation output position motor 4, in 0.1 degrees [-360deg: -3600, 360deg: 3600]
  */
 static inline int16_t mavlink_msg_skye_motor_signal_get_position4_raw(const mavlink_message_t* msg)
 {
