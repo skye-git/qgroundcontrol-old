@@ -454,6 +454,7 @@ private:
     bool mouseTranslationEnable;    ///< True when translations of 3dMouse are enabled
     bool mouseRotationEnable;       ///< True when rotations of 3dMouse are enabled
     bool mouseInitialized;          ///< True when 3dMouse initialized successfully
+    QTimer *mouseTimer;             ///< Timer calling 3dMouse
     int mouseFilterSize;         ///< Size of moving average filter of skye
     double *mouseRawValues;        ///< Array containing last few mouse values
     double newMouseXValue;          ///< New mouse value read from 3dMouse device

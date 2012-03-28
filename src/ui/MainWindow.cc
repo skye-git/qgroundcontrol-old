@@ -1835,57 +1835,70 @@ void MainWindow::setInputMode(int inputMode)
 #ifdef MOUSE_ENABLED            // Beginn Code MA (21.03.2012)
 void MainWindow::start3dMouse()
 {
-    // man visudo --> then you can omit giving password (success not guarantied..)
-    qDebug() << "Starting 3DxWare Daemon for 3dConnexion 3dMouse";
-    QString processProgramm = "gksudo";
-    QStringList processArguments;
-    processArguments << "/etc/3DxWare/daemon/3dxsrv -d usb";
-    process3dxDaemon = new QProcess();
-    process3dxDaemon->start(processProgramm, processArguments);
-//    process3dxDaemon->waitForFinished();
-//    {
-//        qDebug() << "... continuing without 3DxWare. May not be initialized properly!";
-//        qDebug() << "Try in terminal as user root:" << processArguments.last();
-//    }
-
-    Display *display = QX11Info::display();
-    if(!display)
+    if (!mouseInitialized)
     {
-        qDebug() << "Cannot open display!" << endl;
+        // man visudo --> then you can omit giving password (success not guarantied..)
+        qDebug() << "Starting 3DxWare Daemon for 3dConnexion 3dMouse";
+        QString processProgramm = "gksudo";
+        QStringList processArguments;
+        processArguments << "/etc/3DxWare/daemon/3dxsrv -d usb";
+        process3dxDaemon = new QProcess();
+        process3dxDaemon->start(processProgramm, processArguments);
+    //    process3dxDaemon->waitForFinished();
+    //    {
+    //        qDebug() << "... continuing without 3DxWare. May not be initialized properly!";
+    //        qDebug() << "Try in terminal as user root:" << processArguments.last();
+    //    }
+
+        Display *display = QX11Info::display();
+        if(!display)
+        {
+            qDebug() << "Cannot open display!" << endl;
+        }
+        if ( !MagellanInit( display, winId() ) )
+        {
+            qDebug() << "No 3dXWare driver is running!";
+            return;
+        }
+        else
+        {
+            qDebug() << "Initialized 3dMouse";
+            mouseInitialized = true;
+            mouseTimer = new QTimer(this);
+            connect(mouseTimer, SIGNAL(timeout()),this, SLOT(filterMouseValues()));
+            mouseTimer->start(20); //every 0.02 seconds emitValues is called
+
+            if (mouseRawValues == NULL)
+            {
+                qDebug() << "Allocate space for filter values all six DoF of 3dMouse";
+                // Allocate space for all six DoF of 3dMouse
+                if (mouseFilterSize<1)
+                {
+                    mouseFilterSize = 1;
+                }
+
+                mouseRawValues = new double[6*mouseFilterSize];
+                for (int i=0; i<6; i++)
+                    for (int k=0; k<mouseFilterSize; k++)
+                        mouseRawValues[i*mouseFilterSize+k] = 0;
+                newMouseXValue = 0;
+                newMouseYValue = 0;
+                newMouseZValue = 0;
+                newMouseAValue = 0;
+                newMouseBValue = 0;
+                newMouseCValue = 0;
+                mouseXValueFiltered = 0;
+                mouseYValueFiltered = 0;
+                mouseZValueFiltered = 0;
+                mouseAValueFiltered = 0;
+                mouseBValueFiltered = 0;
+                mouseCValueFiltered = 0;
+            }
+        }
     }
-    if ( !MagellanInit( display, winId() ) )
-      {
-           qDebug() << "No 3dXWare driver is running!";
-           return;
-      }
     else
     {
-        qDebug() << "Initialized 3dMouse";
-        mouseInitialized = true;
-        QTimer *timer = new QTimer(this);
-        connect(timer, SIGNAL(timeout()),this, SLOT(filterMouseValues()));
-        timer->start(20); //every 0.02 seconds emitValues is calles
-
-        if (mouseRawValues == 0)
-        {
-            // Allocate space for all six DoF of 3dMouse
-            mouseRawValues = new double[6*mouseFilterSize];
-            for (int i=0; i<6; i++)
-                for (int k=0; k<mouseFilterSize; k++)
-                    mouseRawValues[i*mouseFilterSize+k] = 0;
-            newMouseXValue = 0;
-            newMouseYValue = 0;
-            newMouseZValue = 0;
-            newMouseAValue = 0;
-            newMouseBValue = 0;
-            newMouseCValue = 0;
-            mouseXValueFiltered = 0;
-            mouseYValueFiltered = 0;
-            mouseZValueFiltered = 0;
-            mouseAValueFiltered = 0;
-            mouseBValueFiltered = 0;
-            mouseCValueFiltered = 0;
-        }
+        qDebug() << "3dMouse already initialized..";
     }
 }                               // Ende Code MA (21.03.2012)
 
@@ -1997,9 +2010,12 @@ void MainWindow::filterMouseValues()
     // Shift stored input values
     for (int i=0; i<6; i++)
     {
-        for (int k=(mouseFilterSize-1); k>0; k--)
+        if (mouseFilterSize > 1)
         {
-            mouseRawValues[i*mouseFilterSize+k] = mouseRawValues[i*mouseFilterSize+k - 1];
+            for (int k=(mouseFilterSize-1); k>0; k--)
+            {
+                mouseRawValues[i*mouseFilterSize+k] = mouseRawValues[i*mouseFilterSize+k - 1];
+            }
         }
     }
     mouseRawValues[0*mouseFilterSize] = newMouseXValue;
@@ -2015,9 +2031,10 @@ void MainWindow::filterMouseValues()
         double sum = 0;
         for (int k=0; k<mouseFilterSize; k++)
         {
+            qDebug() << "i = " << i << ", k =" << k;
             sum += mouseRawValues[i*mouseFilterSize+k];
         }
-        qDebug() << "MAF: Axis:" << i << "Sum value: " << sum;
+//        qDebug() << "MAF: Axis:" << i << "Sum value: " << sum;
         switch (i)
         {
         case 0:
@@ -2054,6 +2071,15 @@ void MainWindow::filterMouseValues()
             qDebug() << "Moving Average Filter failed!";
             break;
         }
+        // Scale to norm = 1
+//        double normTrans = sqrt((mouseXValueFiltered*mouseXValueFiltered) + (mouseYValueFiltered*mouseYValueFiltered) + (mouseZValueFiltered*mouseZValueFiltered));
+//        mouseXValueFiltered = mouseXValueFiltered/normTrans;
+//        mouseYValueFiltered = mouseYValueFiltered/normTrans;
+//        mouseZValueFiltered = mouseZValueFiltered/normTrans;
+//        double normRot = sqrt((mouseAValueFiltered*mouseAValueFiltered) + (mouseBValueFiltered*mouseBValueFiltered) + (mouseCValueFiltered*mouseCValueFiltered));
+//        mouseAValueFiltered = mouseAValueFiltered/normRot;
+//        mouseBValueFiltered = mouseBValueFiltered/normRot;
+//        mouseCValueFiltered = mouseCValueFiltered/normRot;
     }
     emitMouseValues();
     }
