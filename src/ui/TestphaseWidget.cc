@@ -12,9 +12,12 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
     engineOn(false),
     m_ui(new Ui::TestphaseWidget)
 {
-    //m_ui->setAttribute(Qt::WA_DeleteOnClose, true);//why no member named 'setAttribute'
-    m_ui->setupUi(this);
 
+    m_ui->setupUi(this);
+    //setAttribute(Qt::WA_DeleteOnClose);//The system crashes everytime one tries to reopen the Testphase Widget once it was closed if this attribute is set.
+                                        //This is because, the pointer testphase in mainwindow.cc points to somewhere, and somewhere.show crashes.
+
+    setWindowFlags(Qt::FramelessWindowHint);
     qDebug()<< " AL:TestphaseWidgetConstructor Call";
 
 
@@ -59,7 +62,7 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
     //connect Pushbuttons
     connect(m_ui->SetZeroButton, SIGNAL(clicked()),this,SLOT(setzero()));
     connect(m_ui->stopallButton, SIGNAL(clicked()),this, SLOT(stopall())); //Why connect to this?
-    connect(m_ui->homingButton, SIGNAL(clicked()),this,SLOT(homing()));
+//    connect(m_ui->homingButton, SIGNAL(clicked()),this,SLOT(homing()));
     connect(m_ui->controlButton, SIGNAL(clicked()), this, SLOT(cycleContextButton()));
     connect(m_ui->closeButton, SIGNAL(clicked()),this, SLOT(stopall()));
     connect(m_ui->closeButton, SIGNAL(clicked()),this, SLOT(setzero()));
@@ -90,6 +93,30 @@ TestphaseWidget::~TestphaseWidget()
     delete m_ui;
 }
 
+//bool TestphaseWidget::close()
+//{
+//    if(uas)
+//    {
+//        uas->setMode(MAV_MODE_PREFLIGHT);
+//    }
+//    engineOn=false;
+//    this->hide();
+//    qDebug()<< " AL:TestphaseWidgetclose";
+
+//    return true;
+//}
+//void TestphaseWidget::closeEvent(QCloseEvent *event)
+//{
+//    if(uas)
+//    {
+//        uas->setMode(MAV_MODE_PREFLIGHT);
+//    }
+//    engineOn=false;
+//    qDebug()<< " AL:TestphaseWidgetclose";
+//    event->accept();
+//}
+
+
 void TestphaseWidget::somevalueChanged()
 {
     //qDebug()<<"AL:in somevalueChanged"<<m_ui->spinBoxOrientation1->value() << "AL emit valueTestphaseChanged should be called next.";
@@ -111,6 +138,7 @@ void TestphaseWidget::Testphaseclose()
     {
         uas->setMode(MAV_MODE_PREFLIGHT);
     }
+    engineOn=false;
     this->close();
 }
 
@@ -129,10 +157,10 @@ void TestphaseWidget::stopall()
     m_ui->SliderThrust3->setValue(0);
     m_ui->SliderThrust4->setValue(0);
 }
-void TestphaseWidget::homing()
-{
+//void TestphaseWidget::homing()
+//{
 
-}
+//}
 
 void TestphaseWidget::cycleContextButton()
 {

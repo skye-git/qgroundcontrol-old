@@ -25,6 +25,7 @@ public slots:
 protected:
     void paintEvent(QPaintEvent *event);
     void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent * event);
     void mouseReleaseEvent(QMouseEvent *event);
     void resizeEvent(QResizeEvent *);
     //UASInterface* uas;
@@ -32,6 +33,10 @@ protected:
 private:
     bool countingup;
     double stepsize;
+    double multiplicator;
+    double x_0;
+    double y_0;
+    double z_0;
     double x;
     double y;
     double z;
