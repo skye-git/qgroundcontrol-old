@@ -4,10 +4,10 @@
 
 typedef struct __mavlink_skye_test_motors_t
 {
- int32_t direct_1; ///< Direction of direction motor 1, 360 degrees equal 38'000
- int32_t direct_2; ///< Direction of direction motor 2, 360 degrees equal 38'000
- int32_t direct_3; ///< Direction of direction motor 3, 360 degrees equal 38'000
- int32_t direct_4; ///< Direction of direction motor 4, 360 degrees equal 38'000
+ int16_t direct_1; ///< Direction of direction motor 1, in 10qc [-360deg: -17614, 360deg: 17614] 
+ int16_t direct_2; ///< Direction of direction motor 2, in 10qc [-360deg: -17614, 360deg: 17614] 
+ int16_t direct_3; ///< Direction of direction motor 3, in 10qc [-360deg: -17614, 360deg: 17614] 
+ int16_t direct_4; ///< Direction of direction motor 4, in 10qc [-360deg: -17614, 360deg: 17614] 
  uint8_t target_system; ///< System ID
  uint8_t thrust_1; ///< Thrust of motor 1, range [0,200]
  uint8_t thrust_2; ///< Thrust of motor 2, range [0,200]
@@ -15,23 +15,23 @@ typedef struct __mavlink_skye_test_motors_t
  uint8_t thrust_4; ///< Thrust of motor 4, range [0,200]
 } mavlink_skye_test_motors_t;
 
-#define MAVLINK_MSG_ID_SKYE_TEST_MOTORS_LEN 21
-#define MAVLINK_MSG_ID_153_LEN 21
+#define MAVLINK_MSG_ID_SKYE_TEST_MOTORS_LEN 13
+#define MAVLINK_MSG_ID_153_LEN 13
 
 
 
 #define MAVLINK_MESSAGE_INFO_SKYE_TEST_MOTORS { \
 	"SKYE_TEST_MOTORS", \
 	9, \
-	{  { "direct_1", NULL, MAVLINK_TYPE_INT32_T, 0, 0, offsetof(mavlink_skye_test_motors_t, direct_1) }, \
-         { "direct_2", NULL, MAVLINK_TYPE_INT32_T, 0, 4, offsetof(mavlink_skye_test_motors_t, direct_2) }, \
-         { "direct_3", NULL, MAVLINK_TYPE_INT32_T, 0, 8, offsetof(mavlink_skye_test_motors_t, direct_3) }, \
-         { "direct_4", NULL, MAVLINK_TYPE_INT32_T, 0, 12, offsetof(mavlink_skye_test_motors_t, direct_4) }, \
-         { "target_system", NULL, MAVLINK_TYPE_UINT8_T, 0, 16, offsetof(mavlink_skye_test_motors_t, target_system) }, \
-         { "thrust_1", NULL, MAVLINK_TYPE_UINT8_T, 0, 17, offsetof(mavlink_skye_test_motors_t, thrust_1) }, \
-         { "thrust_2", NULL, MAVLINK_TYPE_UINT8_T, 0, 18, offsetof(mavlink_skye_test_motors_t, thrust_2) }, \
-         { "thrust_3", NULL, MAVLINK_TYPE_UINT8_T, 0, 19, offsetof(mavlink_skye_test_motors_t, thrust_3) }, \
-         { "thrust_4", NULL, MAVLINK_TYPE_UINT8_T, 0, 20, offsetof(mavlink_skye_test_motors_t, thrust_4) }, \
+	{  { "direct_1", NULL, MAVLINK_TYPE_INT16_T, 0, 0, offsetof(mavlink_skye_test_motors_t, direct_1) }, \
+         { "direct_2", NULL, MAVLINK_TYPE_INT16_T, 0, 2, offsetof(mavlink_skye_test_motors_t, direct_2) }, \
+         { "direct_3", NULL, MAVLINK_TYPE_INT16_T, 0, 4, offsetof(mavlink_skye_test_motors_t, direct_3) }, \
+         { "direct_4", NULL, MAVLINK_TYPE_INT16_T, 0, 6, offsetof(mavlink_skye_test_motors_t, direct_4) }, \
+         { "target_system", NULL, MAVLINK_TYPE_UINT8_T, 0, 8, offsetof(mavlink_skye_test_motors_t, target_system) }, \
+         { "thrust_1", NULL, MAVLINK_TYPE_UINT8_T, 0, 9, offsetof(mavlink_skye_test_motors_t, thrust_1) }, \
+         { "thrust_2", NULL, MAVLINK_TYPE_UINT8_T, 0, 10, offsetof(mavlink_skye_test_motors_t, thrust_2) }, \
+         { "thrust_3", NULL, MAVLINK_TYPE_UINT8_T, 0, 11, offsetof(mavlink_skye_test_motors_t, thrust_3) }, \
+         { "thrust_4", NULL, MAVLINK_TYPE_UINT8_T, 0, 12, offsetof(mavlink_skye_test_motors_t, thrust_4) }, \
          } \
 }
 
@@ -47,28 +47,28 @@ typedef struct __mavlink_skye_test_motors_t
  * @param thrust_2 Thrust of motor 2, range [0,200]
  * @param thrust_3 Thrust of motor 3, range [0,200]
  * @param thrust_4 Thrust of motor 4, range [0,200]
- * @param direct_1 Direction of direction motor 1, 360 degrees equal 38'000
- * @param direct_2 Direction of direction motor 2, 360 degrees equal 38'000
- * @param direct_3 Direction of direction motor 3, 360 degrees equal 38'000
- * @param direct_4 Direction of direction motor 4, 360 degrees equal 38'000
+ * @param direct_1 Direction of direction motor 1, in 10qc [-360deg: -17614, 360deg: 17614] 
+ * @param direct_2 Direction of direction motor 2, in 10qc [-360deg: -17614, 360deg: 17614] 
+ * @param direct_3 Direction of direction motor 3, in 10qc [-360deg: -17614, 360deg: 17614] 
+ * @param direct_4 Direction of direction motor 4, in 10qc [-360deg: -17614, 360deg: 17614] 
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_skye_test_motors_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-						       uint8_t target_system, uint8_t thrust_1, uint8_t thrust_2, uint8_t thrust_3, uint8_t thrust_4, int32_t direct_1, int32_t direct_2, int32_t direct_3, int32_t direct_4)
+						       uint8_t target_system, uint8_t thrust_1, uint8_t thrust_2, uint8_t thrust_3, uint8_t thrust_4, int16_t direct_1, int16_t direct_2, int16_t direct_3, int16_t direct_4)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-	char buf[21];
-	_mav_put_int32_t(buf, 0, direct_1);
-	_mav_put_int32_t(buf, 4, direct_2);
-	_mav_put_int32_t(buf, 8, direct_3);
-	_mav_put_int32_t(buf, 12, direct_4);
-	_mav_put_uint8_t(buf, 16, target_system);
-	_mav_put_uint8_t(buf, 17, thrust_1);
-	_mav_put_uint8_t(buf, 18, thrust_2);
-	_mav_put_uint8_t(buf, 19, thrust_3);
-	_mav_put_uint8_t(buf, 20, thrust_4);
+	char buf[13];
+	_mav_put_int16_t(buf, 0, direct_1);
+	_mav_put_int16_t(buf, 2, direct_2);
+	_mav_put_int16_t(buf, 4, direct_3);
+	_mav_put_int16_t(buf, 6, direct_4);
+	_mav_put_uint8_t(buf, 8, target_system);
+	_mav_put_uint8_t(buf, 9, thrust_1);
+	_mav_put_uint8_t(buf, 10, thrust_2);
+	_mav_put_uint8_t(buf, 11, thrust_3);
+	_mav_put_uint8_t(buf, 12, thrust_4);
 
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, 21);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, 13);
 #else
 	mavlink_skye_test_motors_t packet;
 	packet.direct_1 = direct_1;
@@ -81,11 +81,11 @@ static inline uint16_t mavlink_msg_skye_test_motors_pack(uint8_t system_id, uint
 	packet.thrust_3 = thrust_3;
 	packet.thrust_4 = thrust_4;
 
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, 21);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, 13);
 #endif
 
 	msg->msgid = MAVLINK_MSG_ID_SKYE_TEST_MOTORS;
-	return mavlink_finalize_message(msg, system_id, component_id, 21, 177);
+	return mavlink_finalize_message(msg, system_id, component_id, 13, 204);
 }
 
 /**
@@ -99,29 +99,29 @@ static inline uint16_t mavlink_msg_skye_test_motors_pack(uint8_t system_id, uint
  * @param thrust_2 Thrust of motor 2, range [0,200]
  * @param thrust_3 Thrust of motor 3, range [0,200]
  * @param thrust_4 Thrust of motor 4, range [0,200]
- * @param direct_1 Direction of direction motor 1, 360 degrees equal 38'000
- * @param direct_2 Direction of direction motor 2, 360 degrees equal 38'000
- * @param direct_3 Direction of direction motor 3, 360 degrees equal 38'000
- * @param direct_4 Direction of direction motor 4, 360 degrees equal 38'000
+ * @param direct_1 Direction of direction motor 1, in 10qc [-360deg: -17614, 360deg: 17614] 
+ * @param direct_2 Direction of direction motor 2, in 10qc [-360deg: -17614, 360deg: 17614] 
+ * @param direct_3 Direction of direction motor 3, in 10qc [-360deg: -17614, 360deg: 17614] 
+ * @param direct_4 Direction of direction motor 4, in 10qc [-360deg: -17614, 360deg: 17614] 
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_skye_test_motors_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
 							   mavlink_message_t* msg,
-						           uint8_t target_system,uint8_t thrust_1,uint8_t thrust_2,uint8_t thrust_3,uint8_t thrust_4,int32_t direct_1,int32_t direct_2,int32_t direct_3,int32_t direct_4)
+						           uint8_t target_system,uint8_t thrust_1,uint8_t thrust_2,uint8_t thrust_3,uint8_t thrust_4,int16_t direct_1,int16_t direct_2,int16_t direct_3,int16_t direct_4)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-	char buf[21];
-	_mav_put_int32_t(buf, 0, direct_1);
-	_mav_put_int32_t(buf, 4, direct_2);
-	_mav_put_int32_t(buf, 8, direct_3);
-	_mav_put_int32_t(buf, 12, direct_4);
-	_mav_put_uint8_t(buf, 16, target_system);
-	_mav_put_uint8_t(buf, 17, thrust_1);
-	_mav_put_uint8_t(buf, 18, thrust_2);
-	_mav_put_uint8_t(buf, 19, thrust_3);
-	_mav_put_uint8_t(buf, 20, thrust_4);
+	char buf[13];
+	_mav_put_int16_t(buf, 0, direct_1);
+	_mav_put_int16_t(buf, 2, direct_2);
+	_mav_put_int16_t(buf, 4, direct_3);
+	_mav_put_int16_t(buf, 6, direct_4);
+	_mav_put_uint8_t(buf, 8, target_system);
+	_mav_put_uint8_t(buf, 9, thrust_1);
+	_mav_put_uint8_t(buf, 10, thrust_2);
+	_mav_put_uint8_t(buf, 11, thrust_3);
+	_mav_put_uint8_t(buf, 12, thrust_4);
 
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, 21);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, 13);
 #else
 	mavlink_skye_test_motors_t packet;
 	packet.direct_1 = direct_1;
@@ -134,11 +134,11 @@ static inline uint16_t mavlink_msg_skye_test_motors_pack_chan(uint8_t system_id,
 	packet.thrust_3 = thrust_3;
 	packet.thrust_4 = thrust_4;
 
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, 21);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, 13);
 #endif
 
 	msg->msgid = MAVLINK_MSG_ID_SKYE_TEST_MOTORS;
-	return mavlink_finalize_message_chan(msg, system_id, component_id, chan, 21, 177);
+	return mavlink_finalize_message_chan(msg, system_id, component_id, chan, 13, 204);
 }
 
 /**
@@ -163,28 +163,28 @@ static inline uint16_t mavlink_msg_skye_test_motors_encode(uint8_t system_id, ui
  * @param thrust_2 Thrust of motor 2, range [0,200]
  * @param thrust_3 Thrust of motor 3, range [0,200]
  * @param thrust_4 Thrust of motor 4, range [0,200]
- * @param direct_1 Direction of direction motor 1, 360 degrees equal 38'000
- * @param direct_2 Direction of direction motor 2, 360 degrees equal 38'000
- * @param direct_3 Direction of direction motor 3, 360 degrees equal 38'000
- * @param direct_4 Direction of direction motor 4, 360 degrees equal 38'000
+ * @param direct_1 Direction of direction motor 1, in 10qc [-360deg: -17614, 360deg: 17614] 
+ * @param direct_2 Direction of direction motor 2, in 10qc [-360deg: -17614, 360deg: 17614] 
+ * @param direct_3 Direction of direction motor 3, in 10qc [-360deg: -17614, 360deg: 17614] 
+ * @param direct_4 Direction of direction motor 4, in 10qc [-360deg: -17614, 360deg: 17614] 
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_skye_test_motors_send(mavlink_channel_t chan, uint8_t target_system, uint8_t thrust_1, uint8_t thrust_2, uint8_t thrust_3, uint8_t thrust_4, int32_t direct_1, int32_t direct_2, int32_t direct_3, int32_t direct_4)
+static inline void mavlink_msg_skye_test_motors_send(mavlink_channel_t chan, uint8_t target_system, uint8_t thrust_1, uint8_t thrust_2, uint8_t thrust_3, uint8_t thrust_4, int16_t direct_1, int16_t direct_2, int16_t direct_3, int16_t direct_4)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-	char buf[21];
-	_mav_put_int32_t(buf, 0, direct_1);
-	_mav_put_int32_t(buf, 4, direct_2);
-	_mav_put_int32_t(buf, 8, direct_3);
-	_mav_put_int32_t(buf, 12, direct_4);
-	_mav_put_uint8_t(buf, 16, target_system);
-	_mav_put_uint8_t(buf, 17, thrust_1);
-	_mav_put_uint8_t(buf, 18, thrust_2);
-	_mav_put_uint8_t(buf, 19, thrust_3);
-	_mav_put_uint8_t(buf, 20, thrust_4);
+	char buf[13];
+	_mav_put_int16_t(buf, 0, direct_1);
+	_mav_put_int16_t(buf, 2, direct_2);
+	_mav_put_int16_t(buf, 4, direct_3);
+	_mav_put_int16_t(buf, 6, direct_4);
+	_mav_put_uint8_t(buf, 8, target_system);
+	_mav_put_uint8_t(buf, 9, thrust_1);
+	_mav_put_uint8_t(buf, 10, thrust_2);
+	_mav_put_uint8_t(buf, 11, thrust_3);
+	_mav_put_uint8_t(buf, 12, thrust_4);
 
-	_mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_SKYE_TEST_MOTORS, buf, 21, 177);
+	_mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_SKYE_TEST_MOTORS, buf, 13, 204);
 #else
 	mavlink_skye_test_motors_t packet;
 	packet.direct_1 = direct_1;
@@ -197,7 +197,7 @@ static inline void mavlink_msg_skye_test_motors_send(mavlink_channel_t chan, uin
 	packet.thrust_3 = thrust_3;
 	packet.thrust_4 = thrust_4;
 
-	_mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_SKYE_TEST_MOTORS, (const char *)&packet, 21, 177);
+	_mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_SKYE_TEST_MOTORS, (const char *)&packet, 13, 204);
 #endif
 }
 
@@ -213,7 +213,7 @@ static inline void mavlink_msg_skye_test_motors_send(mavlink_channel_t chan, uin
  */
 static inline uint8_t mavlink_msg_skye_test_motors_get_target_system(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  16);
+	return _MAV_RETURN_uint8_t(msg,  8);
 }
 
 /**
@@ -223,7 +223,7 @@ static inline uint8_t mavlink_msg_skye_test_motors_get_target_system(const mavli
  */
 static inline uint8_t mavlink_msg_skye_test_motors_get_thrust_1(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  17);
+	return _MAV_RETURN_uint8_t(msg,  9);
 }
 
 /**
@@ -233,7 +233,7 @@ static inline uint8_t mavlink_msg_skye_test_motors_get_thrust_1(const mavlink_me
  */
 static inline uint8_t mavlink_msg_skye_test_motors_get_thrust_2(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  18);
+	return _MAV_RETURN_uint8_t(msg,  10);
 }
 
 /**
@@ -243,7 +243,7 @@ static inline uint8_t mavlink_msg_skye_test_motors_get_thrust_2(const mavlink_me
  */
 static inline uint8_t mavlink_msg_skye_test_motors_get_thrust_3(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  19);
+	return _MAV_RETURN_uint8_t(msg,  11);
 }
 
 /**
@@ -253,47 +253,47 @@ static inline uint8_t mavlink_msg_skye_test_motors_get_thrust_3(const mavlink_me
  */
 static inline uint8_t mavlink_msg_skye_test_motors_get_thrust_4(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  20);
+	return _MAV_RETURN_uint8_t(msg,  12);
 }
 
 /**
  * @brief Get field direct_1 from skye_test_motors message
  *
- * @return Direction of direction motor 1, 360 degrees equal 38'000
+ * @return Direction of direction motor 1, in 10qc [-360deg: -17614, 360deg: 17614] 
  */
-static inline int32_t mavlink_msg_skye_test_motors_get_direct_1(const mavlink_message_t* msg)
+static inline int16_t mavlink_msg_skye_test_motors_get_direct_1(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_int32_t(msg,  0);
+	return _MAV_RETURN_int16_t(msg,  0);
 }
 
 /**
  * @brief Get field direct_2 from skye_test_motors message
  *
- * @return Direction of direction motor 2, 360 degrees equal 38'000
+ * @return Direction of direction motor 2, in 10qc [-360deg: -17614, 360deg: 17614] 
  */
-static inline int32_t mavlink_msg_skye_test_motors_get_direct_2(const mavlink_message_t* msg)
+static inline int16_t mavlink_msg_skye_test_motors_get_direct_2(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_int32_t(msg,  4);
+	return _MAV_RETURN_int16_t(msg,  2);
 }
 
 /**
  * @brief Get field direct_3 from skye_test_motors message
  *
- * @return Direction of direction motor 3, 360 degrees equal 38'000
+ * @return Direction of direction motor 3, in 10qc [-360deg: -17614, 360deg: 17614] 
  */
-static inline int32_t mavlink_msg_skye_test_motors_get_direct_3(const mavlink_message_t* msg)
+static inline int16_t mavlink_msg_skye_test_motors_get_direct_3(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_int32_t(msg,  8);
+	return _MAV_RETURN_int16_t(msg,  4);
 }
 
 /**
  * @brief Get field direct_4 from skye_test_motors message
  *
- * @return Direction of direction motor 4, 360 degrees equal 38'000
+ * @return Direction of direction motor 4, in 10qc [-360deg: -17614, 360deg: 17614] 
  */
-static inline int32_t mavlink_msg_skye_test_motors_get_direct_4(const mavlink_message_t* msg)
+static inline int16_t mavlink_msg_skye_test_motors_get_direct_4(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_int32_t(msg,  12);
+	return _MAV_RETURN_int16_t(msg,  6);
 }
 
 /**
@@ -315,6 +315,6 @@ static inline void mavlink_msg_skye_test_motors_decode(const mavlink_message_t* 
 	skye_test_motors->thrust_3 = mavlink_msg_skye_test_motors_get_thrust_3(msg);
 	skye_test_motors->thrust_4 = mavlink_msg_skye_test_motors_get_thrust_4(msg);
 #else
-	memcpy(skye_test_motors, _MAV_PAYLOAD(msg), 21);
+	memcpy(skye_test_motors, _MAV_PAYLOAD(msg), 13);
 #endif
 }

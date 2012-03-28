@@ -237,10 +237,10 @@
                <field type="uint8_t" name="thrust_2">Thrust of motor 2, range [0,200]</field>
                <field type="uint8_t" name="thrust_3">Thrust of motor 3, range [0,200]</field>
                <field type="uint8_t" name="thrust_4">Thrust of motor 4, range [0,200]</field>
-               <field type="int32_t" name="direct_1">Direction of direction motor 1, 360 degrees equal 38'000</field>
-               <field type="int32_t" name="direct_2">Direction of direction motor 2, 360 degrees equal 38'000</field>
-               <field type="int32_t" name="direct_3">Direction of direction motor 3, 360 degrees equal 38'000</field>
-               <field type="int32_t" name="direct_4">Direction of direction motor 4, 360 degrees equal 38'000</field>
+               <field type="int16_t" name="direct_1">Direction of direction motor 1, in 10qc [-360deg: -17614, 360deg: 17614] </field>
+               <field type="int16_t" name="direct_2">Direction of direction motor 2, in 10qc [-360deg: -17614, 360deg: 17614] </field>
+               <field type="int16_t" name="direct_3">Direction of direction motor 3, in 10qc [-360deg: -17614, 360deg: 17614] </field>
+               <field type="int16_t" name="direct_4">Direction of direction motor 4, in 10qc [-360deg: -17614, 360deg: 17614] </field>
           </message>
           <message id="154" name="SKYE_DIRECT_CONTROL">
                <description>Control six degrees of freedom in Body Frame. This type of control is intended to use if there is no attitude feedback in the control. Requested mode: "MAV_MODE_DIRECT_CONTROL_ARMED"</description>
@@ -271,7 +271,7 @@
                <field type="float" name="rotation_z">Yaw, range [-1,1]</field>
           </message>
           <message id="157" name="SKYE_SCALED_PRESSURE">
-               <description>The pressure readings for the typical setup of one absolute and differential pressure sensor. The units are as specified in each field.</description>
+               <description>The pressure readings for the typical setup of one absolute and differential pressure sensor. The units are as specified in each field. For accurate analysis needed by at least 6Hz.</description>
                <field type="uint32_t" name="time_boot_ms">Timestamp (microseconds since UNIX epoch or microseconds since system boot)</field>
                <field type="float" name="press_abs1">Absolute pressure (hectopascal)</field>
                <field type="float" name="press_diff11">Differential pressure 1 (hectopascal)</field>
@@ -294,14 +294,23 @@
           <message id="158" name="SKYE_MOTOR_SIGNAL">
                <description>The values transmitted to the motor nodes. FIXME: IDICATE FIELD'S SCALING/DIMENSION</description>
                <field type="uint32_t" name="time_usec">Timestamp (since UNIX epoch or microseconds since system boot)</field>
-               <field type="uint16_t" name="thrust1_raw">Thrust output thruster 1 FIXME: VALUES</field>
-               <field type="uint16_t" name="thrust2_raw">Thrust output thruster 2 FIXME: VALUES</field>
-               <field type="uint16_t" name="thrust3_raw">Thrust output thruster 3 FIXME: VALUES</field>
-               <field type="uint16_t" name="thrust4_raw">Thrust output thruster 4 FIXME: VALUES</field>
-               <field type="uint16_t" name="position1_raw">Orientation output position motor 1 FIXME: VALUES</field>
-               <field type="uint16_t" name="position2_raw">Orientation output position motor 2 FIXME: VALUES</field>
-               <field type="uint16_t" name="position3_raw">Orientation output position motor 3 FIXME: VALUES</field>
-               <field type="uint16_t" name="position4_raw">Orientation output position motor 4 FIXME: VALUES</field>
+               <field type="uint16_t" name="thrust1_raw">Thrust output thruster 1, range [0,200]</field>
+               <field type="uint16_t" name="thrust2_raw">Thrust output thruster 2, range [0,200]</field>
+               <field type="uint16_t" name="thrust3_raw">Thrust output thruster 3, range [0,200]</field>
+               <field type="uint16_t" name="thrust4_raw">Thrust output thruster 4, range [0,200]</field>
+               <field type="uint16_t" name="position1_raw">Orientation output position motor 1, in 10qc [-360deg: -17614, 360deg: 17614]</field>
+               <field type="uint16_t" name="position2_raw">Orientation output position motor 2, in 10qc [-360deg: -17614, 360deg: 17614]</field>
+               <field type="uint16_t" name="position3_raw">Orientation output position motor 3, in 10qc [-360deg: -17614, 360deg: 17614]</field>
+               <field type="uint16_t" name="position4_raw">Orientation output position motor 4, in 10qc [-360deg: -17614, 360deg: 17614]</field>
+
+               <field type="uint8_t" name="thrust_1">Thrust of motor 1, range [0,200]</field>
+               <field type="uint8_t" name="thrust_2">Thrust of motor 2, range [0,200]</field>
+               <field type="uint8_t" name="thrust_3">Thrust of motor 3, range [0,200]</field>
+               <field type="uint8_t" name="thrust_4">Thrust of motor 4, range [0,200]</field>
+               <field type="int16_t" name="direct_1">Direction of direction motor 1, in 10qc [-360deg: -17614, 360deg: 17614] </field>
+               <field type="int16_t" name="direct_2">Direction of direction motor 2, in 10qc [-360deg: -17614, 360deg: 17614] </field>
+               <field type="int16_t" name="direct_3">Direction of direction motor 3, in 10qc [-360deg: -17614, 360deg: 17614] </field>
+               <field type="int16_t" name="direct_4">Direction of direction motor 4, in 10qc [-360deg: -17614, 360deg: 17614] </field>
           </message>
           <message id="159" name="SKYE_MOTOR_MEASSURED_POSITION">
                <description>The meassured orientation of the motors, (Homing position: 0, 360deg: 36000)</description>
@@ -314,12 +323,12 @@
           <message id="160" name="SKYE_CONTROLLER_OUTPUT">
                <description>Output of controller (Input for actuation chain)</description>
                <field type="uint32_t" name="time_usec">Timestamp (since UNIX epoch or microseconds since system boot)</field>
-               <field type="uint16_t" name="force_x">Signal given from controller to actuation chain FIXME: VALUES</field>
-               <field type="uint16_t" name="force_y">Signal given from controller to actuation chain FIXME: VALUES</field>
-               <field type="uint16_t" name="force_z">Signal given from controller to actuation chain FIXME: VALUES</field>
-               <field type="uint16_t" name="moment_x">Signal given from controller to actuation chain FIXME: VALUES</field>
-               <field type="uint16_t" name="moment_y">Signal given from controller to actuation chain FIXME: VALUES</field>
-               <field type="uint16_t" name="moment_z">Signal given from controller to actuation chain FIXME: VALUES</field>
+               <field type="int16_t" name="force_x">Signal given from controller to actuation chain, 0.01 Newton</field>
+               <field type="int16_t" name="force_y">Signal given from controller to actuation chain, 0.01 Newton</field>
+               <field type="int16_t" name="force_z">Signal given from controller to actuation chain, 0.01 Newton</field>
+               <field type="int16_t" name="moment_x">Signal given from controller to actuation chain, 0.01 Newtonmeter</field>
+               <field type="int16_t" name="moment_y">Signal given from controller to actuation chain, 0.01 Newtonmeter</field>
+               <field type="int16_t" name="moment_z">Signal given from controller to actuation chain, 0.01 Newtonmeter</field>
           </message>
           <message id="161" name="SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS">
                <description>Message to change all the parameters present in ROS Reconfigure GUI bluefox node</description>

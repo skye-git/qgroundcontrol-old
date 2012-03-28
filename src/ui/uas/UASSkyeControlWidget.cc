@@ -100,7 +100,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
 //        disconnect(ui.landButton, SIGNAL(clicked()), oldUAS, SLOT(home()));
 //        disconnect(ui.shutdownButton, SIGNAL(clicked()), oldUAS, SLOT(shutdown()));
         //connect(ui.setHomeButton, SIGNAL(clicked()), uas, SLOT(setLocalOriginAtCurrentGPSPosition()));
-        disconnect(oldUAS, SIGNAL(modeChanged(int,QString,QString)), this, SLOT(updateMode(int,QString,QString)));  // Mod Code MA (22.02.2012)
+        disconnect(oldUAS, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));                          // Mod Code MA (22.02.2012)
         disconnect(oldUAS, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));                               // Mod Code MA (22.02.2012)
     }
 
