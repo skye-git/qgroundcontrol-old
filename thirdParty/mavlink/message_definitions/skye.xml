@@ -292,7 +292,7 @@
                <field type="int16_t" name="temperature">Temperature measurement (0.01 degrees celsius)</field>
           </message>
           <message id="158" name="SKYE_MOTOR_SIGNAL">
-               <description>The values transmitted to the motor nodes. FIXME: IDICATE FIELD'S SCALING/DIMENSION</description>
+               <description>The values transmitted to the motor nodes.</description>
                <field type="uint32_t" name="time_usec">Timestamp (since UNIX epoch or microseconds since system boot)</field>
                <field type="uint8_t" name="thrust1_raw">Thrust output thruster 1, range [0,200]</field>
                <field type="uint8_t" name="thrust2_raw">Thrust output thruster 2, range [0,200]</field>
@@ -304,12 +304,12 @@
                <field type="int16_t" name="position4_raw">Orientation output position motor 4, in 10qc [-360deg: -17614, 360deg: 17614]</field>
           </message>
           <message id="159" name="SKYE_MOTOR_MEASSURED_POSITION">
-               <description>The meassured orientation of the motors, (Homing position: 0, 360deg: 36000)</description>
+               <description>The meassured orientation of the motors</description>
                <field type="uint32_t" name="time_usec">Timestamp (since UNIX epoch or microseconds since system boot)</field>
-               <field type="uint16_t" name="pos1_raw">Meassureed orientation motor 1 (Homing position: 0, 360deg: 36000)</field>
-               <field type="uint16_t" name="pos2_raw">Meassureed orientation motor 1 (Homing position: 0, 360deg: 36000)</field>
-               <field type="uint16_t" name="pos3_raw">Meassureed orientation motor 1 (Homing position: 0, 360deg: 36000)</field>
-               <field type="uint16_t" name="pos4_raw">Meassureed orientation motor 1 (Homing position: 0, 360deg: 36000)</field>
+               <field type="int16_t" name="pos1_raw">Meassureed orientation motor 1, in 10qc [360deg: 17614]</field>
+               <field type="int16_t" name="pos2_raw">Meassureed orientation motor 1, in 10qc [360deg: 17614]</field>
+               <field type="int16_t" name="pos3_raw">Meassureed orientation motor 1, in 10qc [360deg: 17614]</field>
+               <field type="int16_t" name="pos4_raw">Meassureed orientation motor 1, in 10qc [360deg: 17614]</field>
           </message>
           <message id="160" name="SKYE_CONTROLLER_OUTPUT">
                <description>Output of controller (Input for actuation chain)</description>
