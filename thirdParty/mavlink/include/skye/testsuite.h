@@ -387,38 +387,22 @@ static void mavlink_test_skye_motor_signal(uint8_t system_id, uint8_t component_
 	17547,
 	17651,
 	17755,
-	17859,
-	17963,
-	18067,
-	18171,
-	18275,
-	18379,
-	18483,
-	18587,
-	89,
-	156,
-	223,
-	34,
+	41,
+	108,
+	175,
+	242,
 	};
 	mavlink_skye_motor_signal_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
         	packet1.time_usec = packet_in.time_usec;
-        	packet1.thrust1_raw = packet_in.thrust1_raw;
-        	packet1.thrust2_raw = packet_in.thrust2_raw;
-        	packet1.thrust3_raw = packet_in.thrust3_raw;
-        	packet1.thrust4_raw = packet_in.thrust4_raw;
         	packet1.position1_raw = packet_in.position1_raw;
         	packet1.position2_raw = packet_in.position2_raw;
         	packet1.position3_raw = packet_in.position3_raw;
         	packet1.position4_raw = packet_in.position4_raw;
-        	packet1.direct_1 = packet_in.direct_1;
-        	packet1.direct_2 = packet_in.direct_2;
-        	packet1.direct_3 = packet_in.direct_3;
-        	packet1.direct_4 = packet_in.direct_4;
-        	packet1.thrust_1 = packet_in.thrust_1;
-        	packet1.thrust_2 = packet_in.thrust_2;
-        	packet1.thrust_3 = packet_in.thrust_3;
-        	packet1.thrust_4 = packet_in.thrust_4;
+        	packet1.thrust1_raw = packet_in.thrust1_raw;
+        	packet1.thrust2_raw = packet_in.thrust2_raw;
+        	packet1.thrust3_raw = packet_in.thrust3_raw;
+        	packet1.thrust4_raw = packet_in.thrust4_raw;
         
         
 
@@ -428,12 +412,12 @@ static void mavlink_test_skye_motor_signal(uint8_t system_id, uint8_t component_
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_motor_signal_pack(system_id, component_id, &msg , packet1.time_usec , packet1.thrust1_raw , packet1.thrust2_raw , packet1.thrust3_raw , packet1.thrust4_raw , packet1.position1_raw , packet1.position2_raw , packet1.position3_raw , packet1.position4_raw , packet1.thrust_1 , packet1.thrust_2 , packet1.thrust_3 , packet1.thrust_4 , packet1.direct_1 , packet1.direct_2 , packet1.direct_3 , packet1.direct_4 );
+	mavlink_msg_skye_motor_signal_pack(system_id, component_id, &msg , packet1.time_usec , packet1.thrust1_raw , packet1.thrust2_raw , packet1.thrust3_raw , packet1.thrust4_raw , packet1.position1_raw , packet1.position2_raw , packet1.position3_raw , packet1.position4_raw );
 	mavlink_msg_skye_motor_signal_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_motor_signal_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.time_usec , packet1.thrust1_raw , packet1.thrust2_raw , packet1.thrust3_raw , packet1.thrust4_raw , packet1.position1_raw , packet1.position2_raw , packet1.position3_raw , packet1.position4_raw , packet1.thrust_1 , packet1.thrust_2 , packet1.thrust_3 , packet1.thrust_4 , packet1.direct_1 , packet1.direct_2 , packet1.direct_3 , packet1.direct_4 );
+	mavlink_msg_skye_motor_signal_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.time_usec , packet1.thrust1_raw , packet1.thrust2_raw , packet1.thrust3_raw , packet1.thrust4_raw , packet1.position1_raw , packet1.position2_raw , packet1.position3_raw , packet1.position4_raw );
 	mavlink_msg_skye_motor_signal_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -446,7 +430,7 @@ static void mavlink_test_skye_motor_signal(uint8_t system_id, uint8_t component_
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_motor_signal_send(MAVLINK_COMM_1 , packet1.time_usec , packet1.thrust1_raw , packet1.thrust2_raw , packet1.thrust3_raw , packet1.thrust4_raw , packet1.position1_raw , packet1.position2_raw , packet1.position3_raw , packet1.position4_raw , packet1.thrust_1 , packet1.thrust_2 , packet1.thrust_3 , packet1.thrust_4 , packet1.direct_1 , packet1.direct_2 , packet1.direct_3 , packet1.direct_4 );
+	mavlink_msg_skye_motor_signal_send(MAVLINK_COMM_1 , packet1.time_usec , packet1.thrust1_raw , packet1.thrust2_raw , packet1.thrust3_raw , packet1.thrust4_raw , packet1.position1_raw , packet1.position2_raw , packet1.position3_raw , packet1.position4_raw );
 	mavlink_msg_skye_motor_signal_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
