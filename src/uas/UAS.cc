@@ -1099,6 +1099,7 @@ void UAS::receiveMessage(LinkInterface* link, mavlink_message_t message)
         case MAVLINK_MSG_ID_DEBUG:
         case MAVLINK_MSG_ID_NAMED_VALUE_FLOAT:
         case MAVLINK_MSG_ID_NAMED_VALUE_INT:
+        case MAVLINK_MSG_ID_ATTITUDE_QUATERNION:                // Code Added MA (12.03.2012)
             break;
         default:
         {

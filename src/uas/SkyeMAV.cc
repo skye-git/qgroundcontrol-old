@@ -42,29 +42,12 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
         if (!link) return;
         switch (message.msgid)
         {
-        case MAVLINK_MSG_ID_SKYE_DIRECT_CONTROL:
-        {
-            // TO DO: This is no receiving message, but one to send!!!
-            break;
-        }
-        case MAVLINK_MSG_ID_SKYE_ASSISTED_CONTROL:
-        {
-            // TO DO: This is no receiving message, but one to send!!!
-            break;
-        }
-        case MAVLINK_MSG_ID_SKYE_TEST_MOTORS:
-        {
-            // TO DO: This is no receiving message, but one to send!!!
-            break;
-        }
-
         case MAVLINK_MSG_ID_SKYE_BATTERY_STATUS:
         {
             mavlink_skye_battery_status_t battery;
             mavlink_msg_skye_battery_status_decode(&message, &battery);
 
             emit batteryPackChanged(&battery);
-
         }
         break;
         case MAVLINK_MSG_ID_SKYE_CAM_IMAGE_TRIGGERED:
@@ -129,16 +112,24 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             }
         }
         break;
-        case MAVLINK_MSG_ID_SKYE_HOME_MAXON:
-        {
-            // This message is only for sending...
-        }
-        break;
         case MAVLINK_MSG_ID_SKYE_SCALED_PRESSURE:
         {
             // Save scaled pressure
         }
-        break;
+        // Ignore these messages
+        case MAVLINK_MSG_ID_SKYE_TEST_MOTORS:
+        case MAVLINK_MSG_ID_SKYE_DIRECT_CONTROL:
+        case MAVLINK_MSG_ID_SKYE_ASSISTED_CONTROL:
+        case MAVLINK_MSG_ID_SKYE_ASSISTED_RC_CONTROL:
+        case MAVLINK_MSG_ID_SKYE_MOTOR_SIGNAL:
+        case MAVLINK_MSG_ID_SKYE_MOTOR_MEASSURED_POSITION:
+        case MAVLINK_MSG_ID_SKYE_CONTROLLER_OUTPUT:
+        case MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS:
+        case MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_PROSILICA_SETTINGS:
+        case MAVLINK_MSG_ID_SKYE_CAM_HANDLE_SAVE_IMAGE:
+        case MAVLINK_MSG_ID_SKYE_CAM_TAKE_SHOT:
+        case MAVLINK_MSG_ID_SKYE_HOME_MAXON:
+            break;
 
         default:
         {
