@@ -171,7 +171,7 @@ void SkyeMAV::setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrus
 void SkyeMAV::setManualControlCommands6DoF(double x , double y , double z , double a , double b, double c)
 {
 #ifdef MAVLINK_ENABLED_SKYE
-    qDebug() << "Recent Mode: " << mode << ": " << getShortModeTextFor(mode);
+//    qDebug() << "Recent Mode: " << mode << ": " << getShortModeTextFor(mode);
 
     //if (mode & MAV_MODE_FLAG_DECODE_POSITION_SAFETY)
     {

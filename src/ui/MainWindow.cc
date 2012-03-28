@@ -114,6 +114,20 @@ MainWindow::MainWindow(QWidget *parent):
     mouseTranslationEnable(true),
     mouseRotationEnable(true),
     mouseInitialized(false),
+    mouseFilterSize(5),
+    mouseRawValues(NULL),
+    newMouseXValue(0),
+    newMouseYValue(0),
+    newMouseZValue(0),
+    newMouseAValue(0),
+    newMouseBValue(0),
+    newMouseCValue(0),
+    mouseXValueFiltered(0),
+    mouseYValueFiltered(0),
+    mouseZValueFiltered(0),
+    mouseAValueFiltered(0),
+    mouseBValueFiltered(0),
+    mouseCValueFiltered(0),
     #endif                                                      // Ende Code MA (21.03.2012)
     keyXValue(0),
     keyYValue(0),
@@ -1821,12 +1835,11 @@ void MainWindow::setInputMode(int inputMode)
 #ifdef MOUSE_ENABLED            // Beginn Code MA (21.03.2012)
 void MainWindow::start3dMouse()
 {
-    // man visudo --> then you can omit giving password (did not work..)
+    // man visudo --> then you can omit giving password (success not guarantied..)
     qDebug() << "Starting 3DxWare Daemon for 3dConnexion 3dMouse";
     QString processProgramm = "gksudo";
     QStringList processArguments;
     processArguments << "/etc/3DxWare/daemon/3dxsrv -d usb";
-   // QProcess process3dxDaemon;
     process3dxDaemon = new QProcess();
     process3dxDaemon->start(processProgramm, processArguments);
 //    process3dxDaemon->waitForFinished();
@@ -1849,6 +1862,30 @@ void MainWindow::start3dMouse()
     {
         qDebug() << "Initialized 3dMouse";
         mouseInitialized = true;
+        QTimer *timer = new QTimer(this);
+        connect(timer, SIGNAL(timeout()),this, SLOT(filterMouseValues()));
+        timer->start(20); //every 0.02 seconds emitValues is calles
+
+        if (mouseRawValues == 0)
+        {
+            // Allocate space for all six DoF of 3dMouse
+            mouseRawValues = new double[6*mouseFilterSize];
+            for (int i=0; i<6; i++)
+                for (int k=0; k<mouseFilterSize; k++)
+                    mouseRawValues[i*mouseFilterSize+k] = 0;
+            newMouseXValue = 0;
+            newMouseYValue = 0;
+            newMouseZValue = 0;
+            newMouseAValue = 0;
+            newMouseBValue = 0;
+            newMouseCValue = 0;
+            mouseXValueFiltered = 0;
+            mouseYValueFiltered = 0;
+            mouseZValueFiltered = 0;
+            mouseAValueFiltered = 0;
+            mouseBValueFiltered = 0;
+            mouseCValueFiltered = 0;
+        }
     }
 }                               // Ende Code MA (21.03.2012)
 
@@ -1900,12 +1937,20 @@ bool MainWindow::x11Event(XEvent *event)
                      qDebug() << MagellanEvent.MagellanData[1];
                      MagellanEvent.MagellanData[i] = (abs(MagellanEvent.MagellanData[i]) < maxMagellanValue) ? MagellanEvent.MagellanData[i] : (maxMagellanValue*MagellanEvent.MagellanData[i]/abs(MagellanEvent.MagellanData[i]));
                  }
-                 emit valueMouseChanged(MagellanEvent.MagellanData[ MagellanZ ] / maxMagellanValue,
-                                        MagellanEvent.MagellanData[ MagellanX ] / maxMagellanValue,
-                                        - MagellanEvent.MagellanData[ MagellanY ] / maxMagellanValue,
-                                        MagellanEvent.MagellanData[ MagellanC ] / maxMagellanValue,
-                                        MagellanEvent.MagellanData[ MagellanA ] / maxMagellanValue,
-                                        - MagellanEvent.MagellanData[ MagellanB ] / maxMagellanValue);
+//                 emit valueMouseChanged(MagellanEvent.MagellanData[ MagellanZ ] / maxMagellanValue,
+//                                        MagellanEvent.MagellanData[ MagellanX ] / maxMagellanValue,
+//                                        - MagellanEvent.MagellanData[ MagellanY ] / maxMagellanValue,
+//                                        MagellanEvent.MagellanData[ MagellanC ] / maxMagellanValue,
+//                                        MagellanEvent.MagellanData[ MagellanA ] / maxMagellanValue,
+//                                        - MagellanEvent.MagellanData[ MagellanB ] / maxMagellanValue);
+
+                 newMouseXValue = MagellanEvent.MagellanData[ MagellanZ ] / maxMagellanValue;
+                 newMouseYValue = MagellanEvent.MagellanData[ MagellanX ] / maxMagellanValue;
+                 newMouseZValue = - MagellanEvent.MagellanData[ MagellanY ] / maxMagellanValue;
+                 newMouseAValue = MagellanEvent.MagellanData[ MagellanC ] / maxMagellanValue;
+                 newMouseBValue = MagellanEvent.MagellanData[ MagellanA ] / maxMagellanValue;
+                 newMouseCValue = - MagellanEvent.MagellanData[ MagellanB ] / maxMagellanValue;
+
             return false;
             break;
 
@@ -1924,7 +1969,7 @@ bool MainWindow::x11Event(XEvent *event)
                 {
                     mouseTranslationEnable = !mouseTranslationEnable;
                     emit mouseTranslationEnabledChanged(mouseTranslationEnable);
-                    qDebug() << "Emitted translation " << (bool)mouseTranslationEnable;
+                    qDebug() << "Emitted translation" << (bool)mouseTranslationEnable;
                     break;
                 }
                 default:
@@ -1945,6 +1990,86 @@ bool MainWindow::x11Event(XEvent *event)
     return false;   // Event will not be destroyed
 
 }
+
+void MainWindow::filterMouseValues()
+{
+    if (inputMode == UASSkyeControlWidget::QGC_INPUT_MODE_MOUSE){
+    // Shift stored input values
+    for (int i=0; i<6; i++)
+    {
+        for (int k=(mouseFilterSize-1); k>0; k--)
+        {
+            mouseRawValues[i*mouseFilterSize+k] = mouseRawValues[i*mouseFilterSize+k - 1];
+        }
+    }
+    mouseRawValues[0*mouseFilterSize] = newMouseXValue;
+    mouseRawValues[1*mouseFilterSize] = newMouseYValue;
+    mouseRawValues[2*mouseFilterSize] = newMouseZValue;
+    mouseRawValues[3*mouseFilterSize] = newMouseAValue;
+    mouseRawValues[4*mouseFilterSize] = newMouseBValue;
+    mouseRawValues[5*mouseFilterSize] = newMouseCValue;
+
+    // Moving Average Filter
+    for (int i=0; i<6; i++)
+    {
+        double sum = 0;
+        for (int k=0; k<mouseFilterSize; k++)
+        {
+            sum += mouseRawValues[i*mouseFilterSize+k];
+        }
+        qDebug() << "MAF: Axis:" << i << "Sum value: " << sum;
+        switch (i)
+        {
+        case 0:
+                {
+                mouseXValueFiltered = sum/mouseFilterSize;
+                break;
+                }
+        case 1:
+                {
+                mouseYValueFiltered = sum/mouseFilterSize;
+                break;
+                }
+        case 2:
+                {
+                mouseZValueFiltered = sum/mouseFilterSize;
+                break;
+                }
+        case 3:
+                {
+                mouseAValueFiltered = sum/mouseFilterSize;
+                break;
+                }
+        case 4:
+                {
+                mouseBValueFiltered = sum/mouseFilterSize;
+                break;
+                }
+        case 5:
+                {
+                mouseCValueFiltered = sum/mouseFilterSize;
+                break;
+                }
+        default:
+            qDebug() << "Moving Average Filter failed!";
+            break;
+        }
+    }
+    emitMouseValues();
+    }
+}
+
+void MainWindow::emitMouseValues()
+{
+    emit valueMouseChanged(mouseXValueFiltered,
+                      mouseYValueFiltered,
+                      mouseZValueFiltered,
+                      mouseAValueFiltered,
+                      mouseBValueFiltered,
+                      mouseCValueFiltered
+                      );
+}
+
 #endif // MOUSE_ENABLED                                     // Ende Code MA (06.03.2012) ------
 
 void MainWindow::keyPressEvent(QKeyEvent *event)            // Beginn Code MA (07.03.2012) ---------

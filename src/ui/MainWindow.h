@@ -128,6 +128,11 @@ public:
 
     QList<QAction*> listLinkMenuActions(void);
 
+#ifdef MOUSE_ENABLED
+    /** @brief Moving average filter for mouse values */
+    void filterMouseValues(double newX, double newY, double newZ, double newA, double newB, double newC);
+#endif
+
 public slots:
 
     /** @brief Shows a status message on the bottom status bar */
@@ -244,6 +249,10 @@ public slots:
 #ifdef MOUSE_ENABLED                                        // Beginn Code MA (21.03.2012)
     /** @brief Start 3DxWare driver for 3dMouse (3dConnexion) and initialize */
     void start3dMouse();
+    /** @brief Get current mouse value and filter signal */
+    void filterMouseValues();
+    /** @brief Emit mouse values */
+    void emitMouseValues();
 #endif // MOUSE_ENABLED                                     // Ende Code MA (21.03.2012)
 
 
@@ -440,10 +449,25 @@ private:
     // Event handler for 3dConnexion 3DMouse        //  Beginn Code MA 06.03.2012 ----------
     #ifdef MOUSE_ENABLED
     QProcess *process3dxDaemon;     ///< Process running 3dxDaemon 3dConnexion Mouse Driver
+    /** @brief Reimplementation of X11Event to handle 3dMouse Events (magellan) */
     bool x11Event(XEvent *event);
     bool mouseTranslationEnable;    ///< True when translations of 3dMouse are enabled
     bool mouseRotationEnable;       ///< True when rotations of 3dMouse are enabled
-    bool mouseInitialized;              ///< True when 3dMouse initialized successfully
+    bool mouseInitialized;          ///< True when 3dMouse initialized successfully
+    int mouseFilterSize;         ///< Size of moving average filter of skye
+    double *mouseRawValues;        ///< Array containing last few mouse values
+    double newMouseXValue;          ///< New mouse value read from 3dMouse device
+    double newMouseYValue;          ///< New mouse value read from 3dMouse device
+    double newMouseZValue;          ///< New mouse value read from 3dMouse device
+    double newMouseAValue;          ///< New mouse value read from 3dMouse device
+    double newMouseBValue;          ///< New mouse value read from 3dMouse device
+    double newMouseCValue;          ///< New mouse value read from 3dMouse device
+    double mouseXValueFiltered;     ///< Filtered mouse value
+    double mouseYValueFiltered;     ///< Filtered mouse value
+    double mouseZValueFiltered;     ///< Filtered mouse value
+    double mouseAValueFiltered;     ///< Filtered mouse value
+    double mouseBValueFiltered;     ///< Filtered mouse value
+    double mouseCValueFiltered;     ///< Filtered mouse value
     #endif //MOUSE_ENABLED                          // Ende Code MA 06.03.2012 ------------
 
     void keyPressEvent(QKeyEvent *event);           // Beginn Code MA (07.03.2012)
