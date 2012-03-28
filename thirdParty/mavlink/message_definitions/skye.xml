@@ -237,10 +237,10 @@
                <field type="uint8_t" name="thrust_2">Thrust of motor 2, range [0,200]</field>
                <field type="uint8_t" name="thrust_3">Thrust of motor 3, range [0,200]</field>
                <field type="uint8_t" name="thrust_4">Thrust of motor 4, range [0,200]</field>
-               <field type="int16_t" name="direct_1">Direction of direction motor 1, in 10qc [-360deg: -17614, 360deg: 17614] </field>
-               <field type="int16_t" name="direct_2">Direction of direction motor 2, in 10qc [-360deg: -17614, 360deg: 17614] </field>
-               <field type="int16_t" name="direct_3">Direction of direction motor 3, in 10qc [-360deg: -17614, 360deg: 17614] </field>
-               <field type="int16_t" name="direct_4">Direction of direction motor 4, in 10qc [-360deg: -17614, 360deg: 17614] </field>
+               <field type="int16_t" name="direct_1">Direction of direction motor 1, in 0.1 degrees [-360deg: -3600, 360deg: 3600] </field>
+               <field type="int16_t" name="direct_2">Direction of direction motor 2, in 0.1 degrees [-360deg: -3600, 360deg: 3600] </field>
+               <field type="int16_t" name="direct_3">Direction of direction motor 3, in 0.1 degrees [-360deg: -3600, 360deg: 3600] </field>
+               <field type="int16_t" name="direct_4">Direction of direction motor 4, in 0.1 degrees [-360deg: -3600, 360deg: 3600] </field>
           </message>
           <message id="154" name="SKYE_DIRECT_CONTROL">
                <description>Control six degrees of freedom in Body Frame. This type of control is intended to use if there is no attitude feedback in the control. Requested mode: "MAV_MODE_DIRECT_CONTROL_ARMED"</description>
@@ -298,10 +298,10 @@
                <field type="uint8_t" name="thrust2_raw">Thrust output thruster 2, range [0,200]</field>
                <field type="uint8_t" name="thrust3_raw">Thrust output thruster 3, range [0,200]</field>
                <field type="uint8_t" name="thrust4_raw">Thrust output thruster 4, range [0,200]</field>
-               <field type="int16_t" name="position1_raw">Orientation output position motor 1, in 10qc [-360deg: -17614, 360deg: 17614]</field>
-               <field type="int16_t" name="position2_raw">Orientation output position motor 2, in 10qc [-360deg: -17614, 360deg: 17614]</field>
-               <field type="int16_t" name="position3_raw">Orientation output position motor 3, in 10qc [-360deg: -17614, 360deg: 17614]</field>
-               <field type="int16_t" name="position4_raw">Orientation output position motor 4, in 10qc [-360deg: -17614, 360deg: 17614]</field>
+               <field type="int16_t" name="position1_raw">Orientation output position motor 1, in 0.1 degrees [-360deg: -3600, 360deg: 3600]</field>
+               <field type="int16_t" name="position2_raw">Orientation output position motor 2, in 0.1 degrees [-360deg: -3600, 360deg: 3600]</field>
+               <field type="int16_t" name="position3_raw">Orientation output position motor 3, in 0.1 degrees [-360deg: -3600, 360deg: 3600]]</field>
+               <field type="int16_t" name="position4_raw">Orientation output position motor 4, in 0.1 degrees [-360deg: -3600, 360deg: 3600]</field>
           </message>
           <message id="159" name="SKYE_MOTOR_MEASSURED_POSITION">
                <description>The meassured orientation of the motors</description>

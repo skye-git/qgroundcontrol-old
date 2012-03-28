@@ -17,7 +17,8 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
     //setAttribute(Qt::WA_DeleteOnClose);//The system crashes everytime one tries to reopen the Testphase Widget once it was closed if this attribute is set.
                                         //This is because, the pointer testphase in mainwindow.cc points to somewhere, and somewhere.show crashes.
 
-    setWindowFlags(Qt::FramelessWindowHint);
+    //setWindowFlags(Qt::FramelessWindowHint);
+    setWindowFlags(Qt::WindowStaysOnTopHint);
     qDebug()<< " AL:TestphaseWidgetConstructor Call";
 
 

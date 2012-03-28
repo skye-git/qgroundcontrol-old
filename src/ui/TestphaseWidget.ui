@@ -47,27 +47,27 @@
       <item>
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>Orientation1</string>
+         <string>Orientation1 in 0.1 deg.</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QDial" name="dialOrientation1">
         <property name="minimum">
-         <number>-76000</number>
+         <number>-10800</number>
         </property>
         <property name="maximum">
-         <number>76000</number>
+         <number>10800</number>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QSpinBox" name="spinBoxOrientation1">
         <property name="minimum">
-         <number>-76000</number>
+         <number>-10800</number>
         </property>
         <property name="maximum">
-         <number>76000</number>
+         <number>10800</number>
         </property>
        </widget>
       </item>
@@ -107,27 +107,27 @@
       <item>
        <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>Orientation2</string>
+         <string>Orientation2 in 0.1 deg.</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QDial" name="dialOrientation2">
         <property name="minimum">
-         <number>-76000</number>
+         <number>-10800</number>
         </property>
         <property name="maximum">
-         <number>76000</number>
+         <number>10800</number>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QSpinBox" name="spinBoxOrientation2">
         <property name="minimum">
-         <number>-76000</number>
+         <number>-10800</number>
         </property>
         <property name="maximum">
-         <number>76000</number>
+         <number>10800</number>
         </property>
        </widget>
       </item>
@@ -167,27 +167,27 @@
       <item>
        <widget class="QLabel" name="label_6">
         <property name="text">
-         <string>Orientation3</string>
+         <string>Orientation3 in 0.1 deg.</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QDial" name="dialOrientation3">
         <property name="minimum">
-         <number>-76000</number>
+         <number>-10800</number>
         </property>
         <property name="maximum">
-         <number>76000</number>
+         <number>10800</number>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QSpinBox" name="spinBoxOrientation3">
         <property name="minimum">
-         <number>-76000</number>
+         <number>-10800</number>
         </property>
         <property name="maximum">
-         <number>76000</number>
+         <number>10800</number>
         </property>
        </widget>
       </item>
@@ -227,27 +227,27 @@
       <item>
        <widget class="QLabel" name="label_8">
         <property name="text">
-         <string>Orientation4</string>
+         <string>Orientation4 in 0.1 deg.</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QDial" name="dialOrientation4">
         <property name="minimum">
-         <number>-76000</number>
+         <number>-10800</number>
         </property>
         <property name="maximum">
-         <number>76000</number>
+         <number>10800</number>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QSpinBox" name="spinBoxOrientation4">
         <property name="minimum">
-         <number>-76000</number>
+         <number>-10800</number>
         </property>
         <property name="maximum">
-         <number>76000</number>
+         <number>10800</number>
         </property>
        </widget>
       </item>
