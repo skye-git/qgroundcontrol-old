@@ -1,7 +1,6 @@
 #ifndef SKYEMAV_H
 #define SKYEMAV_H
 
-
 #include "UAS.h"
 #include "BluefoxReconfigure.h"
 
@@ -53,7 +52,7 @@ signals:
      *          percent Estimated remaining battery, -1 when not estimated
     **/
     void batteryPackChanged(mavlink_skye_battery_status_t* battery);
-
+    void reportUDPLinkFailed(QString errorStr);
 
 
 protected:

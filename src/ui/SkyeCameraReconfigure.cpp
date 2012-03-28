@@ -55,6 +55,7 @@ void SkyeCameraReconfigure::setUAS(UASInterface* uas)
     if (mav)
     {
         connect(this, SIGNAL(sendBluefoxSettings(mavlink_skye_cam_reconfigure_bluefox_settings_t*)), mav, SLOT(sendBluefoxReconfigureCommand(mavlink_skye_cam_reconfigure_bluefox_settings_t*)));
+        connect(mav, SIGNAL(reportUDPLinkFailed(QString)), ui->lastActionLabel, SLOT(setText(QString)));
         ui->lastActionLabel->setText(tr("Connected to ") + uas->getUASName());
         uasId = uas->getUASID();
     }
@@ -120,32 +121,32 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
     {
         QString name;
         name = messageInfo[msgId].fields[i].name;
+        qDebug() << name << " is name of this field";
+        QHBoxLayout* hBox = new QHBoxLayout();
 
-        QWidget* widget = new QWidget();
-//        widget->setMaximumHeight(25);
-        object.insert(i, widget);
-
-        if ( name != "target_system" && name != "cam_id")   
+        if ( name == "target_system" || name == "cam_id")
         {
-            QLabel* labelWidget = new QLabel(name, widget);
-            QHBoxLayout* hBox = new QHBoxLayout(widget);
+            // Do nothing
+            qDebug() << "but here we don't create any input widget..";
+            QWidget* widget = new QWidget();
+            object.insert(i, widget);
+        }
+        else
+        {
+            QLabel* labelWidget = new QLabel(name);
             hBox->addWidget(labelWidget);
-            hBox->setMargin(0);
-            ui->groupBoxVerticalLayout->addWidget(object.value(i));
+
             switch (messageInfo[msgId].fields[i].type)
             {
             // Type of field is uint8
             case MAVLINK_TYPE_UINT8_T:
             {
                 bool widgetAdded = false;
-
-                qDebug() << name << " is name of this field";
-
                 if (!widgetAdded && name == "pixel_clock")
                 {
                     widgetAdded = true;
-                    QComboBox* valueWidget = new QComboBox(widget);
-
+                    QComboBox* valueWidget = new QComboBox();
+                    object.insert(i, valueWidget);
 //                    QStringList ret;
                     QMetaObject metaObject = BluefoxReconfigure::staticMetaObject;
                     QMetaEnum metaEnum = metaObject.enumerator( metaObject.indexOfEnumerator("MAV_CAM_RECONFIG_PIXEL_CLOCK") );
@@ -162,7 +163,8 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
                 if (!widgetAdded && name == "color_coding")
                 {
                     widgetAdded = true;
-                    QComboBox* valueWidget = new QComboBox(widget);
+                    QComboBox* valueWidget = new QComboBox();
+                    object.insert(i, valueWidget);
 
                     QMetaObject metaObject = BluefoxReconfigure::staticMetaObject;
                     QMetaEnum metaEnum = metaObject.enumerator( metaObject.indexOfEnumerator("MAV_CAM_RECONFIG_COLOR_CODING") );
@@ -178,7 +180,8 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
                 if (!widgetAdded && name == "bayer_method")
                 {
                     widgetAdded = true;
-                    QComboBox* valueWidget = new QComboBox(widget);
+                    QComboBox* valueWidget = new QComboBox();
+                    object.insert(i, valueWidget);
 
                     QMetaObject metaObject = BluefoxReconfigure::staticMetaObject;
                     QMetaEnum metaEnum = metaObject.enumerator( metaObject.indexOfEnumerator("MAV_CAM_RECONFIG_BAYER_METHOD") );
@@ -194,7 +197,8 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
                 if (!widgetAdded && name == "auto_control_speed")
                 {
                     widgetAdded = true;
-                    QComboBox* valueWidget = new QComboBox(widget);
+                    QComboBox* valueWidget = new QComboBox();
+                    object.insert(i, valueWidget);
 
                     QMetaObject metaObject = BluefoxReconfigure::staticMetaObject;
                     QMetaEnum metaEnum = metaObject.enumerator( metaObject.indexOfEnumerator("MAV_CAM_RECONFIG_AUTO_CONTROL_SPEED") );
@@ -210,7 +214,8 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
                 if (!widgetAdded && name == "hdr_mode")
                 {
                     widgetAdded = true;
-                    QComboBox* valueWidget = new QComboBox(widget);
+                    QComboBox* valueWidget = new QComboBox();
+                    object.insert(i, valueWidget);
 
                     QMetaObject metaObject = BluefoxReconfigure::staticMetaObject;
                     QMetaEnum metaEnum = metaObject.enumerator( metaObject.indexOfEnumerator("MAV_CAM_RECONFIG_HDR_MODE") );
@@ -228,7 +233,8 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
                 if ( booleanList.contains(name) )
                 {
                     widgetAdded = true;
-                    QCheckBox* valueWidget = new QCheckBox(widget);
+                    QCheckBox* valueWidget = new QCheckBox();
+                    object.insert(i, valueWidget);
                     valueWidget->setText(name);
                     hBox->addWidget(valueWidget);
                 }
@@ -237,7 +243,8 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
                 {
                     widgetAdded = true;
                     //qDebug() << "Type is UINT8_T";
-                    QSpinBox* valueWidget = new QSpinBox(widget);
+                    QSpinBox* valueWidget = new QSpinBox();
+                    object.insert(i, valueWidget);
                     valueWidget->setRange(0,255);
                     hBox->addWidget(valueWidget);
 
@@ -255,7 +262,8 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
 
             case MAVLINK_TYPE_UINT16_T:
             {
-                QSpinBox* valueWidget = new QSpinBox(widget);
+                QSpinBox* valueWidget = new QSpinBox();
+                object.insert(i, valueWidget);
                 valueWidget->setRange(0,65535);
                 hBox->addWidget(valueWidget);
 
@@ -269,15 +277,18 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
             // Type of field is char
             case MAVLINK_TYPE_CHAR:
             {
-                QLineEdit* valueWidget = new QLineEdit(widget);
+                QLineEdit* valueWidget = new QLineEdit();
+                object.insert(i, valueWidget);
                 hBox->addWidget(valueWidget);
+                qDebug() << "THE NEW QLineEdit WAS NAMED: " << valueWidget->accessibleName();
                 break;
             }
 
             // Type of field is float
             case MAVLINK_TYPE_FLOAT:
             {
-                QDoubleSpinBox* valueWidget = new QDoubleSpinBox(widget);
+                QDoubleSpinBox* valueWidget = new QDoubleSpinBox();
+                object.insert(i, valueWidget);
                 hBox->addWidget(valueWidget);
 
                 if ( name.contains("shutter"))
@@ -287,23 +298,27 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
                 break;
             }
 
-
             default:   // unknown type
             {
-                QLabel* valueWidget = new QLabel("Unknown Type", widget);
+                QLabel* valueWidget = new QLabel("Unknown Type");
+                object.insert(i, valueWidget);
                 hBox->addWidget(valueWidget);
                 break;
             }
             }
-            QList<QWidget *> childWidgets = widget->findChildren<QWidget *>();
-//            qDebug() << "We found " << childWidgets.count() << " children..";
-            foreach (QWidget* child , childWidgets)
+
+            hBox->setMargin(0);
+            ui->groupBoxVerticalLayout->addLayout(hBox);
+
+
+        }
+        qDebug() << "We created" << object.count() << "entries..";
+        foreach (QWidget* child, object)
+        {
+            if (dynamic_cast<QLabel*>(child) == 0)
             {
-                if (dynamic_cast<QLabel*>(child) == 0)
-                {
-                    child->setMaximumWidth(200);
-                    hBox->setAlignment(child, Qt::AlignRight);
-                }
+                child->setMaximumWidth(200);
+                hBox->setAlignment(child, Qt::AlignRight);
             }
         }
     }
@@ -325,24 +340,24 @@ void SkyeCameraReconfigure::accept()
     {
         mavlink_message_info_t msg[256] = MAVLINK_MESSAGE_INFO;
         memcpy(messageInfo, msg, sizeof(mavlink_message_info_t)*256);
-        for (unsigned int i = 0; i < messageInfo[msgId].num_fields; ++i)
+
+        switch (msgId)
         {
-            QWidget *w = new QWidget;
-            object.value(i, w);
-            const QString valueWidgetName("valueWidget");
-            QWidget *valueWidget = (w->findChild<QWidget*>(valueWidgetName));
-
-            QString name;
-            name = messageInfo[msgId].fields[i].name;
-
-            switch (msgId)
+        case MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS:
+        {
+            mavlink_skye_cam_reconfigure_bluefox_settings_t bluefox;
+            for (unsigned int i = 0; i < messageInfo[msgId].num_fields; ++i)
             {
-            case MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS:
-            {
-                mavlink_skye_cam_reconfigure_bluefox_settings_t bluefox;
+                QWidget *valueWidget = object.value(i);
+
+                qDebug() << i << "............" << messageInfo[msgId].fields[i].type << messageInfo[msgId].fields[i].name;
+
+                QString name;
+                name = messageInfo[msgId].fields[i].name;
+
                 if ( name == "target_system" )
                 {
-                    bluefox.target_system = uasId;
+                    bluefox.target_system = (uint8_t)uasId;
                 }
                 if ( name == "cam_id" )
                 {
@@ -358,11 +373,13 @@ void SkyeCameraReconfigure::accept()
                 if ( name == "pixel_clock")
                 {
                     QComboBox* valWgt = dynamic_cast<QComboBox*>(valueWidget);
+                    if (!valWgt) qDebug() << "Sorry, this is no QComboBox"; else
                     bluefox.pixel_clock = (uint8_t)valWgt->currentIndex();
                 }
                 if ( name == "frame_rate")
                 {
                     QDoubleSpinBox* valWgt = dynamic_cast<QDoubleSpinBox*>(valueWidget);
+                    if (!valWgt) qDebug() << "Sorry, this is no QDoubleSpinBox"; else
                     bluefox.frame_rate = (float)valWgt->value();
                 }
                 if ( name == "camera_info_url")
@@ -475,19 +492,19 @@ void SkyeCameraReconfigure::accept()
 
                 if (i+1 == messageInfo[msgId].num_fields)
                 {
-                    ui->lastActionLabel->setText("Accepted data for Bluefox");
+                    ui->lastActionLabel->setText("Sent data to Bluefox");
                     emit sendBluefoxSettings(&bluefox);
                 }
 
-            }break;
+        }
+        }break;
 
-            case MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_PROSILICA_SETTINGS:
-            {
-                ui->lastActionLabel->setText("Code not ready for Prosilica yet");
-            }break;
-            default:
-            break;
-            }
+        case MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_PROSILICA_SETTINGS:
+        {
+            ui->lastActionLabel->setText("Code not ready for Prosilica yet");
+        }break;
+        default:
+        break;
         }
     }
     else

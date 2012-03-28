@@ -1,5 +1,6 @@
 #include <QDebug>
 #include "SkyeMAV.h"
+#include "UDPLink.h"
 
 SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
 UAS(mavlink, id),
@@ -368,6 +369,23 @@ void SkyeMAV::sendHomingCommand()
 
 void SkyeMAV::sendBluefoxReconfigureCommand(mavlink_skye_cam_reconfigure_bluefox_settings_t* bluefox)
 {
-    qDebug() << "FIXME: send bluefox reconfig";
-
+    int sentViaUDP = 0;
+    foreach (LinkInterface* link, *links)
+    {
+        if ( dynamic_cast<UDPLink*>(link) )
+        {
+        mavlink_message_t message;
+        mavlink_msg_skye_cam_reconfigure_bluefox_settings_encode(mavlink->getSystemId(), mavlink->getComponentId(), &message, bluefox);
+        sendMessage(link, message);
+        sentViaUDP++;
+        qDebug() << "Sent Bluefox Reconfigure Command to" << name << "via UDPlink";
+        }
+    }
+    if (!sentViaUDP)
+    {
+        qDebug() << "Sending via UDP failed";
+        emit reportUDPLinkFailed("Sending via UDP failed. Not connected.");
+    }
 }
+
+
