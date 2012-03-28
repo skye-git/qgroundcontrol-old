@@ -95,22 +95,13 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
     if (this->uasId!= 0)
     {
         UASInterface* oldUAS = UASManager::instance()->getUASForId(this->uasId);
-//        disconnect(ui.controlButton, SIGNAL(clicked()), oldUAS, SLOT(armSystem()));
-//        disconnect(ui.liftoffButton, SIGNAL(clicked()), oldUAS, SLOT(launch()));
-//        disconnect(ui.landButton, SIGNAL(clicked()), oldUAS, SLOT(home()));
-//        disconnect(ui.shutdownButton, SIGNAL(clicked()), oldUAS, SLOT(shutdown()));
-        //connect(ui.setHomeButton, SIGNAL(clicked()), uas, SLOT(setLocalOriginAtCurrentGPSPosition()));
-        disconnect(oldUAS, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));                          // Mod Code MA (22.02.2012)
-        disconnect(oldUAS, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));                               // Mod Code MA (22.02.2012)
+        disconnect(this, SIGNAL(changedMode(int)), oldUAS, SLOT(setMode(int)));
+        disconnect(oldUAS, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
+        disconnect(oldUAS, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
     }
 
     // Connect user interface controls
     connect(ui.controlButton, SIGNAL(clicked()), this, SLOT(cycleContextButton()));
-//    connect(ui.liftoffButton, SIGNAL(clicked()), uas, SLOT(launch()));
-//    connect(ui.landButton, SIGNAL(clicked()), uas, SLOT(home()));
-//    connect(ui.shutdownButton, SIGNAL(clicked()), uas, SLOT(shutdown()));
-    connect(this, SIGNAL(changedMode(int)), uas, SLOT(setMode(int)));
-    //connect(ui.setHomeButton, SIGNAL(clicked()), uas, SLOT(setLocalOriginAtCurrentGPSPosition()));
     connect(uas, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
     connect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
 
