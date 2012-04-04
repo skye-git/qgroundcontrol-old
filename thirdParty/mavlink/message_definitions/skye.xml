@@ -314,12 +314,12 @@
           <message id="160" name="SKYE_CONTROLLER_OUTPUT">
                <description>Output of controller (Input for actuation chain)</description>
                <field type="uint32_t" name="time_usec">Timestamp (since UNIX epoch or microseconds since system boot)</field>
-               <field type="int16_t" name="force_x">Signal given from controller to actuation chain, 0.01 Newton</field>
-               <field type="int16_t" name="force_y">Signal given from controller to actuation chain, 0.01 Newton</field>
-               <field type="int16_t" name="force_z">Signal given from controller to actuation chain, 0.01 Newton</field>
-               <field type="int16_t" name="moment_x">Signal given from controller to actuation chain, 0.01 Newtonmeter</field>
-               <field type="int16_t" name="moment_y">Signal given from controller to actuation chain, 0.01 Newtonmeter</field>
-               <field type="int16_t" name="moment_z">Signal given from controller to actuation chain, 0.01 Newtonmeter</field>
+               <field type="float" name="force_x">Signal given from controller to actuation chain, 1 Newton</field>
+               <field type="float" name="force_y">Signal given from controller to actuation chain, 1 Newton</field>
+               <field type="float" name="force_z">Signal given from controller to actuation chain, 1 Newton</field>
+               <field type="float" name="moment_x">Signal given from controller to actuation chain, 1 Newtonmeter</field>
+               <field type="float" name="moment_y">Signal given from controller to actuation chain, 1 Newtonmeter</field>
+               <field type="float" name="moment_z">Signal given from controller to actuation chain, 1 Newtonmeter</field>
           </message>
           <message id="161" name="SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS">
                <description>Message to change all the parameters present in ROS Reconfigure GUI bluefox node</description>

@@ -493,12 +493,12 @@ static void mavlink_test_skye_controller_output(uint8_t system_id, uint8_t compo
         uint16_t i;
 	mavlink_skye_controller_output_t packet_in = {
 		963497464,
-	17443,
-	17547,
-	17651,
-	17755,
-	17859,
-	17963,
+	45.0,
+	73.0,
+	101.0,
+	129.0,
+	157.0,
+	185.0,
 	};
 	mavlink_skye_controller_output_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
