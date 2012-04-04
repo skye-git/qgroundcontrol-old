@@ -52,21 +52,21 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
 #ifdef MAVLINK_ENABLED_SKYE
     ui.setupUi(this);
 
-    // Group buttons to enable exclusiv checkable
-    modeButtonGroup = new QButtonGroup;
+    // Uncheck and group buttons to enable exclusiv checkable
     ui.directControlButton->setChecked(uasMode & MAV_MODE_DIRECT_CONTROL_DISARMED);
     ui.assistedControlButton->setChecked(uasMode & MAV_MODE_ASSISTED_CONTROL_DISARMED);
     ui.halfAutomaticControlButton->setChecked(uasMode & MAV_MODE_HALF_AUTOMATIC_DISARMED);
     ui.fullAutomaticControlButton->setChecked(uasMode & MAV_MODE_FULL_AUTOMATIC_DISARMED);
+    modeButtonGroup = new QButtonGroup;
     modeButtonGroup->addButton(ui.directControlButton);
     modeButtonGroup->addButton(ui.assistedControlButton);
     modeButtonGroup->addButton((ui.halfAutomaticControlButton));
     modeButtonGroup->addButton((ui.fullAutomaticControlButton));
 
-    inputButtonGroup = new QButtonGroup;
     ui.mouseButton->setChecked(inputMode == QGC_INPUT_MODE_MOUSE);
     ui.touchButton->setChecked(inputMode == QGC_INPUT_MODE_TOUCH);
     ui.keyboardButton->setChecked(inputMode == QGC_INPUT_MODE_KEYBOARD);
+    inputButtonGroup = new QButtonGroup;
     inputButtonGroup->addButton(ui.mouseButton);
     inputButtonGroup->addButton((ui.touchButton));
     inputButtonGroup->addButton((ui.keyboardButton));
@@ -95,30 +95,39 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
     if (this->uasId!= 0)
     {
         UASInterface* oldUAS = UASManager::instance()->getUASForId(this->uasId);
-        disconnect(this, SIGNAL(changedMode(int)), oldUAS, SLOT(setMode(int)));
-        disconnect(oldUAS, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
-        disconnect(oldUAS, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
+        ui.lastActionLabel->setText("Disconnected from " + oldUAS->getUASName());
+        this->uasId = 0;
+        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(oldUAS);
+        if (mav)
+        {
+            disconnect(this, SIGNAL(changedMode(int)), mav, SLOT(setMode(int)));
+            disconnect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
+            disconnect(mav, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
+
+            disconnect(ui.bluefoxLeftButton, SIGNAL(clicked()), this, SLOT(triggerLeftBluefoxImageShot()));
+            disconnect(ui.bluefoxRightButton, SIGNAL(clicked()), this, SLOT(triggerRightBluefoxImageShot()));
+            disconnect(ui.prosilicaButton, SIGNAL(clicked()), this, SLOT(triggerProsilicaImageShot()));
+        }
     }
 
-    // Connect user interface controls
-    connect(ui.controlButton, SIGNAL(clicked()), this, SLOT(cycleContextButton()));
-    connect(uas, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
-    connect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
 
-    ui.controlStatusLabel->setText(tr("Connected to ") + uas->getUASName());
-
-    this->uasId= uas->getUASID();
-    //setBackgroundColor(uas->getColor());
-
-    SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
+    SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uas);
     if (mav)
     {
+        ui.controlStatusLabel->setText(tr("Connected to ") + mav->getUASName());
+        this->uasId = mav->getUASID();
+
         updateMode(mav->getUASID(), mav->getUASMode());
         updateState(mav->getUASState());
+
+        // Connect user interface controls
+        connect(ui.controlButton, SIGNAL(clicked()), this, SLOT(cycleContextButton()));
+        connect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
+        connect(mav, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
+
         connect(ui.bluefoxLeftButton, SIGNAL(clicked()), this, SLOT(triggerLeftBluefoxImageShot()));
         connect(ui.bluefoxRightButton, SIGNAL(clicked()), this, SLOT(triggerRightBluefoxImageShot()));
         connect(ui.prosilicaButton, SIGNAL(clicked()), this, SLOT(triggerProsilicaImageShot()));
-
     }
 
 
@@ -172,16 +181,42 @@ void UASSkyeControlWidget::updateStatemachine()
 void UASSkyeControlWidget::updateMode(int uas,int baseMode)
 {
 #ifdef MAVLINK_ENABLED_SKYE
-    if ((this->uasId == uas) && ((int)this->uasMode != baseMode))
+    if ((uasId == uas) && ((int)uasMode != baseMode))
     {
-        if ((baseMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE))
+        uasMode = (unsigned int)baseMode;
+        switch (uasMode)
+        {
+        case MAV_MODE_PREFLIGHT:
+        {
+            uncheckAllModeButtons();
+        }break;
+        case MAV_MODE_DIRECT_CONTROL_DISARMED:
+        case MAV_MODE_DIRECT_CONTROL_ARMED:
+        {
             ui.directControlButton->setChecked(true);
-        if ((baseMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE))
+        }break;
+        case MAV_MODE_ASSISTED_CONTROL_DISARMED:
+        case MAV_MODE_ASSISTED_CONTROL_ARMED:
+        {
             ui.assistedControlButton->setChecked(true);
-        if  ((baseMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_GUIDED) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE))
+        }break;
+        case MAV_MODE_HALF_AUTOMATIC_DISARMED:
+        case MAV_MODE_HALF_AUTOMATIC_ARMED:
+        {
             ui.halfAutomaticControlButton->setChecked(true);
-        if  ((baseMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_GUIDED) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_AUTO) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE))
+        }break;
+        case MAV_MODE_FULL_AUTOMATIC_DISARMED:
+        case MAV_MODE_FULL_AUTOMATIC_ARMED:
+        {
             ui.fullAutomaticControlButton->setChecked(true);
+        }break;
+        default:
+        {
+            uncheckAllModeButtons();
+        }break;
+        }
+
+
     }
 #endif // MAVLINK_ENABLED_SKYE
 }
@@ -374,8 +409,14 @@ void UASSkyeControlWidget::cycleContextButton()
     {
         if (!engineOn)
         {
-            mav->armSystem();
-            ui.lastActionLabel->setText(QString("Enabled motors on %1").arg(mav->getUASName()));
+            if (uasMode)
+            {
+                mav->armSystem();
+                ui.lastActionLabel->setText(QString("Enabled motors on %1").arg(mav->getUASName()));
+            } else {
+                ui.lastActionLabel->setText("Set mode before!");
+            }
+
         } else {
             mav->disarmSystem();
             ui.lastActionLabel->setText(QString("Disabled motors on %1").arg(mav->getUASName()));
@@ -457,4 +498,16 @@ void UASSkyeControlWidget::triggerProsilicaImageShot()
 {
     emit triggeredImageShot(MAV_CAM_ID_PROSILICA);
     ui.lastActionLabel->setText("Prosilica image shot requested");
+}
+
+void UASSkyeControlWidget::uncheckAllModeButtons()
+{
+    modeButtonGroup->setExclusive(false);
+    QAbstractButton* checkedButton = modeButtonGroup->checkedButton();
+    if (checkedButton)
+    {
+        checkedButton->toggle();
+        ui.lastActionLabel->setText("No mode set!");
+    }
+    modeButtonGroup->setExclusive(true);
 }

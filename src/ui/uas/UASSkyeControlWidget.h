@@ -118,6 +118,8 @@ signals:
     private:
         /** @brief Update stylesheet for SkyeControlWidget */
         void updateStyleSheet();
+        /** @brief Uncheck all mode buttons when mode is default */
+        void uncheckAllModeButtons();
         Ui::uasSkyeControl ui;
         QButtonGroup *modeButtonGroup;
         QButtonGroup *inputButtonGroup;
