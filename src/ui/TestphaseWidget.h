@@ -8,7 +8,9 @@
 #define TESTPHASEWIDGET_H
 
 #include <QtGui/QDialog>
+#include <QTimer>
 #include "UASInterface.h"
+
 //#include "TestphaseInput.h"//not yet implemented
 
 namespace Ui
@@ -29,7 +31,7 @@ public slots:
     void stopall();
     void setzero();
 //    void homing();
-    void somevalueChanged();
+    void emitValues();
     void modeChanged(int mode_in);
     void Testphaseclose();
     void cycleContextButton();
@@ -46,6 +48,7 @@ protected:
 
 private:
     bool engineOn;
+    QTimer *mouseTimer;
     Ui::TestphaseWidget *m_ui;
 
 };
