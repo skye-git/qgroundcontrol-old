@@ -290,10 +290,11 @@ MainWindow::~MainWindow()
 //        simulationLink->deleteLater();
 //        simulationLink = NULL;
 //    }
+
     if (joystick)
     {
-        delete joystick;
-        joystick = NULL;
+//        delete joystick;
+//        joystick = NULL;
     }
 
     // Get and delete all dockwidgets and contained
