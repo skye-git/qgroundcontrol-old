@@ -17,8 +17,8 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
     //setAttribute(Qt::WA_DeleteOnClose);//The system crashes everytime one tries to reopen the Testphase Widget once it was closed if this attribute is set.
                                         //This is because, the pointer testphase in mainwindow.cc points to somewhere, and somewhere.show crashes.
 
-    //setWindowFlags(Qt::FramelessWindowHint);
-    setWindowFlags(Qt::WindowStaysOnTopHint);
+//    setWindowFlags(Qt::FramelessWindowHint);
+//    setWindowFlags(Qt::WindowStaysOnTopHint);
     qDebug()<< " AL:TestphaseWidgetConstructor Call";
 
 
@@ -69,15 +69,22 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
     connect(m_ui->closeButton, SIGNAL(clicked()),this, SLOT(setzero()));
     connect(m_ui->closeButton, SIGNAL(clicked()),this, SLOT(Testphaseclose()));
 
-    //emit valueTestphaseChanged if some valueChanged
-    connect(m_ui->SliderThrust1, SIGNAL(valueChanged(int)),this, SLOT(somevalueChanged()));
-    connect(m_ui->SliderThrust2, SIGNAL(valueChanged(int)),this, SLOT(somevalueChanged()));
-    connect(m_ui->SliderThrust3, SIGNAL(valueChanged(int)),this, SLOT(somevalueChanged()));
-    connect(m_ui->SliderThrust4, SIGNAL(valueChanged(int)),this, SLOT(somevalueChanged()));
-    connect(m_ui->dialOrientation1, SIGNAL(valueChanged(int)),this, SLOT(somevalueChanged()));
-    connect(m_ui->dialOrientation2, SIGNAL(valueChanged(int)),this, SLOT(somevalueChanged()));
-    connect(m_ui->dialOrientation3, SIGNAL(valueChanged(int)),this, SLOT(somevalueChanged()));
-    connect(m_ui->dialOrientation4, SIGNAL(valueChanged(int)),this, SLOT(somevalueChanged()));
+//    //emit valueTestphaseChanged if some valueChanged
+//    connect(m_ui->SliderThrust1, SIGNAL(valueChanged(int)),this, SLOT(emitValues()));
+//    connect(m_ui->SliderThrust2, SIGNAL(valueChanged(int)),this, SLOT(emitValues()));
+//    connect(m_ui->SliderThrust3, SIGNAL(valueChanged(int)),this, SLOT(emitValues()));
+//    connect(m_ui->SliderThrust4, SIGNAL(valueChanged(int)),this, SLOT(emitValues()));
+//    connect(m_ui->dialOrientation1, SIGNAL(valueChanged(int)),this, SLOT(emitValues()));
+//    connect(m_ui->dialOrientation2, SIGNAL(valueChanged(int)),this, SLOT(emitValues()));
+//    connect(m_ui->dialOrientation3, SIGNAL(valueChanged(int)),this, SLOT(emitValues()));
+//    connect(m_ui->dialOrientation4, SIGNAL(valueChanged(int)),this, SLOT(emitValues()));
+
+    // Start Timer
+    mouseTimer = new QTimer(this);
+    connect(mouseTimer, SIGNAL(timeout()),this, SLOT(emitValues()));
+    mouseTimer->start(200); //5Hz emitValues is called
+
+
 
     // Display the widget
     this->window()->setWindowTitle(tr("Testphase"));
@@ -118,11 +125,11 @@ TestphaseWidget::~TestphaseWidget()
 //}
 
 
-void TestphaseWidget::somevalueChanged()
+void TestphaseWidget::emitValues()
 {
-    //qDebug()<<"AL:in somevalueChanged"<<m_ui->spinBoxOrientation1->value() << "AL emit valueTestphaseChanged should be called next.";
+    //qDebug()<<"AL:in emitValues"<<m_ui->spinBoxOrientation1->value() << "AL emit valueTestphaseChanged should be called next.";
     emit valueTestphaseChanged(m_ui->SliderThrust1->value(), m_ui->SliderThrust2->value(), m_ui->SliderThrust3->value(), m_ui->SliderThrust4->value(), m_ui->spinBoxOrientation1->value(), m_ui->spinBoxOrientation2->value(), m_ui->spinBoxOrientation3->value(), m_ui->spinBoxOrientation4->value());
-    //qDebug()<<"AL:emit should have been called now";
+    qDebug()<<"AL:emit should have been called now. Thrust for Motor1 is"<< m_ui->SliderThrust1->value();
 }
 
 void TestphaseWidget::modeChanged(int mode_in)
