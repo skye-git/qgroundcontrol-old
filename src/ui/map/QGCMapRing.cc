@@ -22,7 +22,7 @@ QGCMapRing::QGCMapRing(QWidget *parent) :
         side = qMin(width(), height());
         QTimer *timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()),this, SLOT(emitValues()));
-        timer->start(100); //every 0.1 seconds emitValues is calles
+        timer->start(200); //every 0.2 seconds emitValues is calles
 //        sidescaling = 200;
 //        outerradius = 75;
 //        innerradius = 70;
