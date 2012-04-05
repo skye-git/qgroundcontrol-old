@@ -20,6 +20,8 @@ public:
     }
     /** @brief Provide encapsulated mavlink image */
     QImage getImage();
+    /** @brief Get mode */
+    uint8_t getMode();
 
 public slots:
     /** @brief Set the specific airframe type */

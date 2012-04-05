@@ -379,4 +379,7 @@ void SkyeMAV::sendBluefoxReconfigureCommand(mavlink_skye_cam_reconfigure_bluefox
     }
 }
 
-
+uint8_t SkyeMAV::getMode()
+{
+    return this->mode;
+}
