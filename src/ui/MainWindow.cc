@@ -1838,18 +1838,18 @@ void MainWindow::start3dMouse()
 {
     if (!mouseInitialized)
     {
-        // man visudo --> then you can omit giving password (success not guarantied..)
-        qDebug() << "Starting 3DxWare Daemon for 3dConnexion 3dMouse";
-        QString processProgramm = "gksudo";
-        QStringList processArguments;
-        processArguments << "/etc/3DxWare/daemon/3dxsrv -d usb";
-        process3dxDaemon = new QProcess();
-        process3dxDaemon->start(processProgramm, processArguments);
-    //    process3dxDaemon->waitForFinished();
-    //    {
-    //        qDebug() << "... continuing without 3DxWare. May not be initialized properly!";
-    //        qDebug() << "Try in terminal as user root:" << processArguments.last();
-    //    }
+//        // man visudo --> then you can omit giving password (success not guarantied..)
+//        qDebug() << "Starting 3DxWare Daemon for 3dConnexion 3dMouse";
+//        QString processProgramm = "gksudo";
+//        QStringList processArguments;
+//        processArguments << "/etc/3DxWare/daemon/3dxsrv -d usb";
+//        process3dxDaemon = new QProcess();
+//        process3dxDaemon->start(processProgramm, processArguments);
+//    //    process3dxDaemon->waitForFinished();
+//    //    {
+//    //        qDebug() << "... continuing without 3DxWare. May not be initialized properly!";
+//    //        qDebug() << "Try in terminal as user root:" << processArguments.last();
+//    //    }
 
         Display *display = QX11Info::display();
         if(!display)
@@ -1867,7 +1867,7 @@ void MainWindow::start3dMouse()
             mouseInitialized = true;
             mouseTimer = new QTimer(this);
             connect(mouseTimer, SIGNAL(timeout()),this, SLOT(filterMouseValues()));
-            mouseTimer->start(20); //every 0.02 seconds emitValues is called
+            mouseTimer->start(200); //5Hz emitValues is called
 
             if (mouseRawValues == NULL)
             {
