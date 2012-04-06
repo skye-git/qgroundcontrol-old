@@ -901,6 +901,118 @@ static void mavlink_test_skye_home_maxon(uint8_t system_id, uint8_t component_id
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
+static void mavlink_test_skye_thread_counts(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+{
+	mavlink_message_t msg;
+        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
+        uint16_t i;
+	mavlink_skye_thread_counts_t packet_in = {
+		93372036854775807ULL,
+	93372036854776311ULL,
+	93372036854776815ULL,
+	93372036854777319ULL,
+	93372036854777823ULL,
+	93372036854778327ULL,
+	963499960,
+	161,
+	};
+	mavlink_skye_thread_counts_t packet1, packet2;
+        memset(&packet1, 0, sizeof(packet1));
+        	packet1.heartbeatloop_count = packet_in.heartbeatloop_count;
+        	packet1.receiveloop_count = packet_in.receiveloop_count;
+        	packet1.telemetryloop_count = packet_in.telemetryloop_count;
+        	packet1.gyroaccloop_count = packet_in.gyroaccloop_count;
+        	packet1.controlloop_count = packet_in.controlloop_count;
+        	packet1.stateestimation_count = packet_in.stateestimation_count;
+        	packet1.time_usec = packet_in.time_usec;
+        	packet1.running_threads = packet_in.running_threads;
+        
+        
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_thread_counts_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_skye_thread_counts_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_thread_counts_pack(system_id, component_id, &msg , packet1.time_usec , packet1.running_threads , packet1.heartbeatloop_count , packet1.receiveloop_count , packet1.telemetryloop_count , packet1.gyroaccloop_count , packet1.controlloop_count , packet1.stateestimation_count );
+	mavlink_msg_skye_thread_counts_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_thread_counts_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.time_usec , packet1.running_threads , packet1.heartbeatloop_count , packet1.receiveloop_count , packet1.telemetryloop_count , packet1.gyroaccloop_count , packet1.controlloop_count , packet1.stateestimation_count );
+	mavlink_msg_skye_thread_counts_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+        mavlink_msg_to_send_buffer(buffer, &msg);
+        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
+        	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
+        }
+	mavlink_msg_skye_thread_counts_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+        
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_thread_counts_send(MAVLINK_COMM_1 , packet1.time_usec , packet1.running_threads , packet1.heartbeatloop_count , packet1.receiveloop_count , packet1.telemetryloop_count , packet1.gyroaccloop_count , packet1.controlloop_count , packet1.stateestimation_count );
+	mavlink_msg_skye_thread_counts_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+}
+
+static void mavlink_test_skye_thread_usleep(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+{
+	mavlink_message_t msg;
+        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
+        uint16_t i;
+	mavlink_skye_thread_usleep_t packet_in = {
+		93372036854775807LL,
+	93372036854776311LL,
+	93372036854776815LL,
+	93372036854777319LL,
+	93372036854777823LL,
+	93372036854778327LL,
+	963499960,
+	};
+	mavlink_skye_thread_usleep_t packet1, packet2;
+        memset(&packet1, 0, sizeof(packet1));
+        	packet1.heartbeatloop_usleep = packet_in.heartbeatloop_usleep;
+        	packet1.receiveloop_timestamp = packet_in.receiveloop_timestamp;
+        	packet1.telemetryloop_usleep = packet_in.telemetryloop_usleep;
+        	packet1.gyroaccloop_usleep = packet_in.gyroaccloop_usleep;
+        	packet1.controlloop_usleep = packet_in.controlloop_usleep;
+        	packet1.stateestimation_usleep = packet_in.stateestimation_usleep;
+        	packet1.time_usec = packet_in.time_usec;
+        
+        
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_thread_usleep_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_skye_thread_usleep_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_thread_usleep_pack(system_id, component_id, &msg , packet1.time_usec , packet1.heartbeatloop_usleep , packet1.receiveloop_timestamp , packet1.telemetryloop_usleep , packet1.gyroaccloop_usleep , packet1.controlloop_usleep , packet1.stateestimation_usleep );
+	mavlink_msg_skye_thread_usleep_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_thread_usleep_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.time_usec , packet1.heartbeatloop_usleep , packet1.receiveloop_timestamp , packet1.telemetryloop_usleep , packet1.gyroaccloop_usleep , packet1.controlloop_usleep , packet1.stateestimation_usleep );
+	mavlink_msg_skye_thread_usleep_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+        mavlink_msg_to_send_buffer(buffer, &msg);
+        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
+        	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
+        }
+	mavlink_msg_skye_thread_usleep_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+        
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_thread_usleep_send(MAVLINK_COMM_1 , packet1.time_usec , packet1.heartbeatloop_usleep , packet1.receiveloop_timestamp , packet1.telemetryloop_usleep , packet1.gyroaccloop_usleep , packet1.controlloop_usleep , packet1.stateestimation_usleep );
+	mavlink_msg_skye_thread_usleep_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+}
+
 static void mavlink_test_data_transmission_handshake(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
 {
 	mavlink_message_t msg;
@@ -1018,6 +1130,8 @@ static void mavlink_test_skye(uint8_t system_id, uint8_t component_id, mavlink_m
 	mavlink_test_skye_cam_take_shot(system_id, component_id, last_msg);
 	mavlink_test_skye_cam_image_triggered(system_id, component_id, last_msg);
 	mavlink_test_skye_home_maxon(system_id, component_id, last_msg);
+	mavlink_test_skye_thread_counts(system_id, component_id, last_msg);
+	mavlink_test_skye_thread_usleep(system_id, component_id, last_msg);
 	mavlink_test_data_transmission_handshake(system_id, component_id, last_msg);
 	mavlink_test_encapsulated_data(system_id, component_id, last_msg);
 }

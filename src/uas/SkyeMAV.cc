@@ -129,6 +129,8 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
         case MAVLINK_MSG_ID_SKYE_CAM_HANDLE_SAVE_IMAGE:
         case MAVLINK_MSG_ID_SKYE_CAM_TAKE_SHOT:
         case MAVLINK_MSG_ID_SKYE_HOME_MAXON:
+        case MAVLINK_MSG_ID_SKYE_THREAD_COUNTS:
+        case MAVLINK_MSG_ID_SKYE_THREAD_USLEEP:
             break;
 
         default:

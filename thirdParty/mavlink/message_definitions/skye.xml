@@ -402,6 +402,27 @@
               <field type="uint8_t" name="target_system">System ID</field>
               <field type="uint8_t" name="homing">Boolean, true: home maxon motors</field>
          </message>
+         <message id="167" name="SKYE_THREAD_COUNTS">
+               <description>Info about running threads on autopilot</description>
+               <field type="uint32_t" name="time_usec">Timestamp (since UNIX epoch or microseconds since system boot)</field>
+               <field type="uint8_t" name="running_threads">Number of running threads</field>
+               <field type="uint64_t" name="heartbeatloop_count">Counter of heartbeatloop</field>
+               <field type="uint64_t" name="receiveloop_count">Counter of receiveloop</field>
+               <field type="uint64_t" name="telemetryloop_count">Counter of telemetryloop</field>
+               <field type="uint64_t" name="gyroaccloop_count">Counter of gyroaccloop</field>
+               <field type="uint64_t" name="controlloop_count">Counter of controlloop</field>
+               <field type="uint64_t" name="stateestimation_count">Counter of stateestimation</field>
+          </message>
+         <message id="168" name="SKYE_THREAD_USLEEP">
+               <description>Info about running threads on autopilot</description>
+               <field type="uint32_t" name="time_usec">Timestamp (since UNIX epoch or microseconds since system boot)</field>
+               <field type="int64_t" name="heartbeatloop_usleep">Microseconds heartbeatloop is sleeping</field>
+               <field type="int64_t" name="receiveloop_timestamp">Microseconds receiveloop is sleeping</field>
+               <field type="int64_t" name="telemetryloop_usleep">Microseconds telemetryloop is sleeping</field>
+               <field type="int64_t" name="gyroaccloop_usleep">Microseconds gyroaccloop is sleeping</field>
+               <field type="int64_t" name="controlloop_usleep">Microseconds controlloop is sleeping</field>
+               <field type="int64_t" name="stateestimation_usleep">Microseconds stateestimation loop is sleeping</field>
+          </message>
 <!-- DATA_TRANSMISSION_HANDSHAKE and ENCAPSULATED_DATA copied from pixhawk.xml -->
           <message id="193" name="DATA_TRANSMISSION_HANDSHAKE">
                <field type="uint8_t" name="type">type of requested/acknowledged data (as defined in ENUM DATA_TYPES in mavlink/include/mavlink_types.h)</field>
