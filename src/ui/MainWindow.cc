@@ -1303,9 +1303,14 @@ void MainWindow::setActiveUAS(UASInterface* uas)
     if (!ui.menuUnmanned_System->isEnabled()) ui.menuUnmanned_System->setEnabled(true);
 
 #ifdef MAVLINK_ENABLED_SKYE         // Begin Code MA (06.03.2012) [similar JoystickInput] -------------
-    // Connect 3d-Mouse Input to (skye) Mavlink messages
+    // Connect input to (skye) Mavlink messages
     SkyeMAV* tmp = 0;
-    // TODO: Disconnect old uas
+    tmp = dynamic_cast<SkyeMAV*>(UASManager::instance()->getActiveUAS());
+    if (tmp) {
+        disconnect(this, SIGNAL(valueMouseChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
+        disconnect(this, SIGNAL(valueKeyboardChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
+        disconnect(this->mapWidget, SIGNAL(valueTouchInputChanged(double, double, double, double, double, double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));// Beginn und Ende Code AL (26.03.12)
+    }
 
     tmp = dynamic_cast<SkyeMAV*>(uas);
     if(tmp) {

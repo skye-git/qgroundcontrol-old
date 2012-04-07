@@ -20,7 +20,7 @@ QGCMapRing::QGCMapRing(QWidget *parent) :
         stepsize = multiplicator= 1.1;
         x_0 = y_0 = z_0 = x = y = z = 0;
         side = qMin(width(), height());
-        QTimer *timer = new QTimer(this);
+        timer = new QTimer();
         connect(timer, SIGNAL(timeout()),this, SLOT(emitValues()));
         timer->start(200); //every 0.2 seconds emitValues is calles
 //        sidescaling = 200;
@@ -110,7 +110,7 @@ void QGCMapRing::mousePressEvent(QMouseEvent *event)
     }
 
     countingup = true;
-    emitValues();
+    // emitValues();        // Code Modified MA (07.04.2012)
 }
 
 void QGCMapRing::mouseMoveEvent(QMouseEvent *event)
@@ -136,7 +136,7 @@ void QGCMapRing::mouseMoveEvent(QMouseEvent *event)
     y = y_0*multiplicator;
     z = z_0*multiplicator;
 
-    emitValues();
+    // emitValues();        // Too high frequency! // Code Modified MA (07.04.2012)
 }
 
 

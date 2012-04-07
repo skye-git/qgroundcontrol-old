@@ -44,6 +44,7 @@ private:
 //    int sidescaling;
 //    int outerradius;
 //    int innerradius;
+    QTimer *timer;
 
 };
 
