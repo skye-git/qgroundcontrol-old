@@ -163,7 +163,8 @@ void QGCMapRing::emitValues()
         emit xValuechanged(x);
         emit yValuechanged(y);
         emit zValuechanged(z);
-        emit valueTouchInputChanged(x,y,z,0,0,0);
+        emit valueTouchInputChanged(x,y,z,0,0,0);//richtig
+//        emit valueTouchInputChanged(0,0,0,x,y,z);//Momente übertragen
         if(multiplicator*stepsize < 10)
         {
             multiplicator = multiplicator*stepsize;
