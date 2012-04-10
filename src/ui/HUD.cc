@@ -49,6 +49,13 @@ This file is part of the QGROUNDCONTROL project
 #include "MG.h"
 #include "QGC.h"
 
+#include <QtGui>        //Beginn Code AL (09.03.12)
+#include <cmath>
+
+#ifndef M_PI
+#define M_PI 3.14159265359
+#endif                   //Ende Code AL
+
 // Fix for some platforms, e.g. windows
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE  0x809D
@@ -92,6 +99,7 @@ HUD::HUD(int width, int height, QWidget* parent)
       criticalColor(Qt::red),
       infoColor(QColor(20, 200, 20)),
       fuelColor(criticalColor),
+      touchColor(QColor(0, 0, 127,200)),
       warningBlinkRate(5),
       refreshTimer(new QTimer(this)),
       noCamera(true),
@@ -126,7 +134,17 @@ HUD::HUD(int width, int height, QWidget* parent)
       videoEnabled(false),
       xImageFactor(1.0),
       yImageFactor(1.0),
-      imageRequested(false)
+      imageRequested(false),
+      mousePressedPosition(0,0),//Beginn Code AL (09.04.12)
+      dragPosition(0,0),
+      diffVector(0,0),
+      knobisactive(false),
+      knobcircleisactive(false),
+      alpha(0),
+      beta(0),
+      psiVel(0),
+      thetaVel(0),
+      phiVel(0)//Ende Code AL
 {
     // Set auto fill to false
     setAutoFillBackground(false);
@@ -708,8 +726,12 @@ void HUD::paintHUD()
             painter.begin(this);
             painter.setRenderHint(QPainter::Antialiasing, true);
             painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
-            painter.translate((this->vwidth/2.0+xCenterOffset)*scalingFactor, (this->vheight/2.0+yCenterOffset)*scalingFactor);
-
+            //painter.translate((this->vwidth/2.0+xCenterOffset)*scalingFactor, (this->vheight/2.0+yCenterOffset)*scalingFactor);
+            //Beginn Code AL (09.04.12)
+            painterszerox = (this->vwidth/2.0+xCenterOffset)*scalingFactor;
+            painterszeroy = (this->vheight/2.0+yCenterOffset)*scalingFactor;
+            painter.translate(painterszerox, painterszeroy);
+            //Ende Code AL
 
 
             // COORDINATE FRAME IS NOW (0,0) at CENTER OF WIDGET
@@ -825,6 +847,13 @@ void HUD::paintHUD()
             if (waypointName != "") paintText(waypointName, defaultColor, 2.0f, (-vwidth/3.0) + 10, +vheight/3.0 + 15, &painter);
 
             // MOVING PARTS
+
+            //Beginn Code AL (09.04.12)
+            //KNOB
+            drawKnob(diffVector.x(), diffVector.y(), 10.0f, &painter);
+            drawKnobCircle(0,0,30.0f, &painter);
+            //qDebug() << "drawKnob has just been called";
+            // Ende Code AL
 
 
             painter.translate(refToScreenX(yawTrans), 0);
@@ -1237,6 +1266,63 @@ void HUD::drawChangeIndicatorGauge(float xRef, float yRef, float radius, float e
     drawPolygon(p, painter);
 }
 
+void HUD::drawKnob(float xRef, float yRef, float radius, QPainter* painter)
+{
+    // Draw the circle
+    QPen circlePen(Qt::SolidLine);
+    circlePen.setStyle(Qt::SolidLine);
+    circlePen.setWidth(refLineWidthToPen(0.5f));
+    circlePen.setColor(defaultColor);
+
+    QRadialGradient grad(0,0,180,-75,0);
+        grad.setColorAt(0.0, Qt::white);
+//        grad.setColorAt(0.1, Qt::green);
+        grad.setColorAt(0.99, touchColor);
+        QBrush brush(grad);
+
+    painter->setBrush(brush);
+    painter->setPen(circlePen);
+    if(knobisactive)
+    {
+        painter->setBrush(brush);
+        drawCircle(xRef, yRef, radius, 200.0f, 170.0f, 1.0f, touchColor, painter);
+    }
+    else
+    {
+        painter->setBrush(Qt::NoBrush);
+        drawCircle(0, 0, radius, 200.0f, 170.0f, 1.0f, touchColor, painter);
+    }
+}
+
+void HUD::drawKnobCircle(float xRef, float yRef, float radius, QPainter *painter)
+{
+    // Draw the circle
+    QPen circlePen(Qt::SolidLine);
+    circlePen.setStyle(Qt::SolidLine);
+    circlePen.setWidth(refLineWidthToPen(0.5f));
+    circlePen.setColor(defaultColor);
+
+    QRadialGradient grad(0,0,180,-75,0);
+        grad.setColorAt(0.0, Qt::white);
+//        grad.setColorAt(0.1, Qt::green);
+        grad.setColorAt(0.99, touchColor);
+        QBrush brush(grad);
+
+
+    painter->setPen(circlePen);
+    if(knobcircleisactive)
+    {
+        painter->save();
+        painter->rotate(beta/M_PI*180);
+        painter->setBrush(brush);
+        drawCircle(radius, yRef, radius/8, 200.0f, 170.0f, 1.0f, touchColor, painter);
+        painter->restore();
+    }
+    painter->setBrush(Qt::NoBrush);
+    drawCircle(xRef, yRef, radius, 200.0f, 170.0f, 1.0f, touchColor, painter);
+}
+
+
 void HUD::drawLine(float refX1, float refY1, float refX2, float refY2, float width, const QColor& color, QPainter* painter)
 {
     QPen pen(Qt::SolidLine);
@@ -1481,4 +1567,73 @@ void HUD::copyImage()
     {
         qDebug() << "HUD widget is not visible. Image not copied.";
     }
+}
+
+void HUD::mousePressEvent(QMouseEvent *event)
+{
+    if(event->button() == Qt::LeftButton){
+        dragPosition = mousePressedPosition = event->posF();
+        qDebug() <<"dragPosition "<< dragPosition.x() <<" mousePressedPosition " << mousePressedPosition.y();
+
+        if(std::abs(event->x()-painterszerox)/scalingFactor < 15 && std::abs(event->y()-painterszeroy)/scalingFactor <15)
+            knobisactive = true;
+        else
+        {
+            knobcircleisactive = true;
+            alpha = std::atan2((dragPosition.y()-painterszeroy), (dragPosition.x()-painterszerox));
+            //qDebug() << "alpha = "<< alpha/M_PI*180;
+            beta = std::atan2((mousePressedPosition.y()-painterszeroy), (mousePressedPosition.x()-painterszerox));
+            //qDebug() << "beta = "<< beta/M_PI*180;
+        }
+
+        event->accept();
+    }
+}
+
+void HUD::mouseMoveEvent(QMouseEvent *event)
+{
+    if(event->buttons() & Qt::LeftButton) {
+        mousePressedPosition = event->posF();
+
+        if(knobisactive)
+        {
+            diffVector = (mousePressedPosition - dragPosition)/scalingFactor;
+            //qDebug() << diffVector.x() <<" : xPosition" << diffVector.y() << " : yPosition";
+            thetaVel = -diffVector.y()/30;
+            psiVel = diffVector.x()/30;
+        }
+
+        else if(knobcircleisactive)
+        {
+            beta = std::atan2((mousePressedPosition.y()-painterszeroy), (mousePressedPosition.x()-painterszerox));
+            //qDebug() << "beta = "<< beta/M_PI*180;
+            phiVel = (alpha+beta)/M_PI*180/30;
+            //qDebug() << "phiVel = "<<phiVel;
+        }
+
+        if(phiVel < 1 && (std::pow(thetaVel,2)+std::pow(psiVel,2)) < 1)
+            event->accept();
+        else
+            event->ignore();
+    }
+}
+
+void HUD::mouseReleaseEvent(QMouseEvent *event)
+{
+
+    mousePressedPosition.rx() = 0;
+    mousePressedPosition.ry() = 0;
+    dragPosition.rx() = 0;
+    dragPosition.ry() = 0;
+    diffVector.rx() = 0;
+    diffVector.ry() = 0;
+    alpha = 0;
+    beta = 0;
+    psiVel = 0;
+    thetaVel = 0;
+    phiVel = 0;
+    knobisactive = false;
+    knobcircleisactive = false;
+
+    event->accept();
 }
