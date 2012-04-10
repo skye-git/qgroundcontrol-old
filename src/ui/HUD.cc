@@ -137,6 +137,7 @@ HUD::HUD(int width, int height, QWidget* parent)
       mousePressedPosition(0,0),//Beginn Code AL (09.04.12)
       dragPosition(0,0),
       diffVector(0,0),
+      touchInputvisib(false),
       knobisactive(false),
       knobcircleisactive(false),
       alpha(0),
@@ -857,9 +858,12 @@ void HUD::paintHUD()
 
             //Beginn Code AL (09.04.12)
             //KNOB
-            drawKnob(diffVector.x(), diffVector.y(), 10.0f, &painter);
-            drawKnobCircle(0,0,30.0f, &painter);
-            //qDebug() << "drawKnob has just been called";
+            if(touchInputvisib)
+            {
+                drawKnob(diffVector.x(), diffVector.y(), 10.0f, &painter);
+                drawKnobCircle(0,0,30.0f, &painter);
+                //qDebug() << "drawKnob has just been called";
+            }
             // Ende Code AL
 
 
@@ -1582,9 +1586,14 @@ void HUD::copyImage()
     }
 }
 
+void HUD::setKnobndKnobRingvisible(bool visib)
+{
+    touchInputvisib = visib;
+}
+
 void HUD::emitValues()
 {
-    if(knobisactive || knobcircleisactive)
+    if((knobisactive || knobcircleisactive) && touchInputvisib)
     {
         emit valueTouchInputChanged(0, 0, 0, phiVel, thetaVel, psiVel);
         qDebug() << "HUD.cc emitValues called with: phiVel: "<< phiVel << " thetaVel: " << thetaVel << " psiVel :" << psiVel;
@@ -1665,6 +1674,9 @@ void HUD::mouseMoveEvent(QMouseEvent *event)
                 event->ignore();
         }
 
+        else
+            event->ignore();
+
 
 
     }
@@ -1686,8 +1698,11 @@ void HUD::mouseReleaseEvent(QMouseEvent *event)
     thetaVel = 0;
     phiVel = 0;
 
-    emit valueTouchInputChanged(0, 0, 0, phiVel, thetaVel, psiVel);
-    qDebug() << "HUD.cc mouseReleaseEvent calls valueTouchInputChanged with: phiVel: "<< phiVel << " thetaVel: " << thetaVel << " psiVel :" << psiVel;
+    if(touchInputvisib)
+    {
+        emit valueTouchInputChanged(0, 0, 0, phiVel, thetaVel, psiVel);
+        qDebug() << "HUD.cc mouseReleaseEvent calls valueTouchInputChanged with: phiVel: "<< phiVel << " thetaVel: " << thetaVel << " psiVel :" << psiVel;
+    }
 
     knobisactive = false;
     knobcircleisactive = false;

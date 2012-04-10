@@ -277,6 +277,9 @@ signals:
     void mouseRotationEnabledChanged(bool rotEnabled);                                                                  // Ende Code MA (18.03.2012)
     /** @brief Emits new contol values for UAS given by keyboard in range [-1, 1] */
     void valueKeyboardChanged(double xValue, double yValue, double zValue, double rollValue, double pitchValue, double yawValue);   // Beginn und Ende Code MA (07.03.2012)
+    /** @brief Emits bool whether TouchInput Interface is shown or not */
+    void emitTouchInputVisibility(bool);                                                                                 // Beginn und Ende code AL(10.04.2012)
+
 public:
     QGCMAVLinkLogPlayer* getLogPlayer()
     {

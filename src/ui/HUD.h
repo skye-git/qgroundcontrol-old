@@ -94,6 +94,7 @@ public slots:
     void enableVideo(bool enabled);
     /** @brief Copy an image from the current active UAS */
     void copyImage();
+    void setKnobndKnobRingvisible(bool visib); //Beginn/Ende Code AL (10.04.12)
 
 
 protected slots:
@@ -158,6 +159,7 @@ protected:
     QPointF dragPosition;
     QPointF diffVector;
 
+    bool touchInputvisib;
     bool knobisactive;
     bool knobcircleisactive;
     double painterszerox;

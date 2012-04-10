@@ -548,6 +548,9 @@ void MainWindow::buildCommonWidgets()
         headUpDockWidget->setWidget( new HUD(320, 240, this));
         headUpDockWidget->setObjectName("HEAD_UP_DISPLAY_DOCK_WIDGET");
         addTool(headUpDockWidget, tr("Head Up Display"), Qt::RightDockWidgetArea);
+
+        HUD *headUpDockWidgetHelper = dynamic_cast<HUD*>(headUpDockWidget->widget());                                       //Beginn Ende Code AL (10.04.12)
+        connect(this, SIGNAL(emitTouchInputVisibility(bool)), headUpDockWidgetHelper, SLOT(setKnobndKnobRingvisible(bool))); //Beginn Ende Code AL (10.04.12)
     }
 
     if (!video1DockWidget)
@@ -1313,7 +1316,9 @@ void MainWindow::setActiveUAS(UASInterface* uas)
         connect(this, SIGNAL(valueKeyboardChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
         connect(this->mapWidget, SIGNAL(valueTouchInputChanged(double, double, double, double, double, double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));// Beginn und Ende Code AL (26.03.12)
         connect(this->hudWidget, SIGNAL(valueTouchInputChanged(double, double, double, double, double, double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));// Beginn und Ende Code AL (10.04.12)
-        connect(this->headUpDockWidget, SIGNAL(valueTouchInputChanged(double, double, double, double, double, double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));// Beginn und Ende Code AL (10.04.12)
+
+        HUD *headUpDockWidgetHelper = dynamic_cast<HUD*>(headUpDockWidget->widget());                                                                                                                       //Beginn Ende Code AL (10.04.12)
+        connect(headUpDockWidgetHelper, SIGNAL(valueTouchInputChanged(double, double, double, double, double, double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));// Beginn und Ende Code AL (10.04.12)
     }
 #endif // MAVLINK_ENABLED_SKYE      // Ende Code MA (27.02.2012) ---------------------------
 }
@@ -1803,6 +1808,7 @@ QList<QAction*> MainWindow::listLinkMenuActions(void)
 void MainWindow::setInputMode(int inputMode)
 {
 #ifdef MAVLINK_ENABLED_SKYE
+
     switch (inputMode)
     {
     case 1:
@@ -1814,14 +1820,21 @@ void MainWindow::setInputMode(int inputMode)
             }
             #endif
             mapWidget->setRingvisible(false);
+            hudWidget->setKnobndKnobRingvisible(false);
+            //headUpDockWidget->setKnobndKnobRingvisible(false);
+            emit emitTouchInputVisibility(false);
             break;
     case 2:
             this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_TOUCH;
             mapWidget->setRingvisible(true);
+            hudWidget->setKnobndKnobRingvisible(true);
+            emit emitTouchInputVisibility(true);
             break;
     case 3:
             this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_KEYBOARD;
             mapWidget->setRingvisible(false);
+            hudWidget->setKnobndKnobRingvisible(false);
+            emit emitTouchInputVisibility(false);
             break;
     default:
             this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_NONE;
