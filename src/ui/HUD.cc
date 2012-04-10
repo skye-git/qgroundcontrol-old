@@ -134,7 +134,6 @@ HUD::HUD(int width, int height, QWidget* parent)
       videoEnabled(false),
       xImageFactor(1.0),
       yImageFactor(1.0),
-      imageRequested(false),
       mousePressedPosition(0,0),//Beginn Code AL (09.04.12)
       dragPosition(0,0),
       diffVector(0,0),
@@ -144,7 +143,8 @@ HUD::HUD(int width, int height, QWidget* parent)
       beta(0),
       psiVel(0),
       thetaVel(0),
-      phiVel(0)//Ende Code AL
+      phiVel(0),//Ende Code AL
+      imageRequested(false)
 {
     // Set auto fill to false
     setAutoFillBackground(false);
@@ -172,6 +172,13 @@ HUD::HUD(int width, int height, QWidget* parent)
     // Refresh timer
     refreshTimer->setInterval(updateInterval);
     connect(refreshTimer, SIGNAL(timeout()), this, SLOT(paintHUD()));
+
+    //Beginn Code AL (10.04.12)
+    // Emit timer
+    QTimer *emittimer = new QTimer(this);
+    connect(emittimer, SIGNAL(timeout()),this, SLOT(emitValues()));
+    emittimer->start(200); //every 0.2 seconds emitValues is called
+    //Ende Code AL
 
     // Resize to correct size and fill with image
     resize(this->width(), this->height());
@@ -1317,6 +1324,12 @@ void HUD::drawKnobCircle(float xRef, float yRef, float radius, QPainter *painter
         painter->setBrush(brush);
         drawCircle(radius, yRef, radius/8, 200.0f, 170.0f, 1.0f, touchColor, painter);
         painter->restore();
+
+        painter->save();
+        painter->rotate(alpha/M_PI*180);
+        painter->setBrush(Qt::NoBrush);
+        drawCircle(radius, yRef, radius/8, 200.0f, 170.0f, 1.0f, touchColor, painter);
+        painter->restore();
     }
     painter->setBrush(Qt::NoBrush);
     drawCircle(xRef, yRef, radius, 200.0f, 170.0f, 1.0f, touchColor, painter);
@@ -1569,6 +1582,15 @@ void HUD::copyImage()
     }
 }
 
+void HUD::emitValues()
+{
+    if(knobisactive || knobcircleisactive)
+    {
+        emit valueTouchInputChanged(0, 0, 0, phiVel, thetaVel, psiVel);
+        qDebug() << "HUD.cc emitValues called with: phiVel: "<< phiVel << " thetaVel: " << thetaVel << " psiVel :" << psiVel;
+    }
+}
+
 void HUD::mousePressEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::LeftButton){
@@ -1597,24 +1619,54 @@ void HUD::mouseMoveEvent(QMouseEvent *event)
 
         if(knobisactive)
         {
-            diffVector = (mousePressedPosition - dragPosition)/scalingFactor;
-            //qDebug() << diffVector.x() <<" : xPosition" << diffVector.y() << " : yPosition";
-            thetaVel = -diffVector.y()/30;
-            psiVel = diffVector.x()/30;
+            QPointF diffVector_desired = (mousePressedPosition - dragPosition)/scalingFactor;
+            //qDebug() << diffVector_desired.x() <<" : xPosition" << diffVector_desired.y() << " : yPosition";
+            double thetaVel_desired = -diffVector_desired.y()/30;
+            double psiVel_desired = diffVector_desired.x()/30;
+
+            if((std::pow(thetaVel,2)+std::pow(psiVel,2)) < 1)
+            {
+                event->accept();
+                diffVector = diffVector_desired;
+                thetaVel = thetaVel_desired;
+                psiVel  = psiVel_desired;
+            }
+            else
+            {
+//                event->accept();
+//                double scalingFactor = 30 / std::sqrt(std::pow(diffVector_desired.x(), 2) + std::pow(diffVector_desired.y(), 2));
+//                diffVector = diffVector_desired * scalingFactor;
+//                thetaVel = -diffVector.y()/30;
+//                psiVel = diffVector.x()/30;
+//                //event->ignore();
+                event->accept();
+                double angle_desired = std::atan2((mousePressedPosition.y()-painterszeroy), (mousePressedPosition.x()-painterszerox));
+                thetaVel = -std::sin(angle_desired);
+                psiVel = std::cos(angle_desired);
+                diffVector.rx() = psiVel*30;
+                diffVector.ry() = -thetaVel*30;
+            }
         }
 
         else if(knobcircleisactive)
         {
-            beta = std::atan2((mousePressedPosition.y()-painterszeroy), (mousePressedPosition.x()-painterszerox));
-            //qDebug() << "beta = "<< beta/M_PI*180;
-            phiVel = (alpha+beta)/M_PI*180/30;
-            //qDebug() << "phiVel = "<<phiVel;
+            double beta_desired = std::atan2((mousePressedPosition.y()-painterszeroy), (mousePressedPosition.x()-painterszerox));
+            //qDebug() << "beta_desired = "<< beta_desired/M_PI*180;
+            double phiVel_desired = (-alpha + beta_desired)/M_PI*180/90;
+            //qDebug() << "phiVel_desired = "<<phiVel_desired;
+
+            if(std::abs(phiVel_desired) < 1)
+            {
+                event->accept();
+                beta = beta_desired;
+                phiVel = phiVel_desired;
+            }
+            else
+                event->ignore();
         }
 
-        if(phiVel < 1 && (std::pow(thetaVel,2)+std::pow(psiVel,2)) < 1)
-            event->accept();
-        else
-            event->ignore();
+
+
     }
 }
 
@@ -1627,11 +1679,16 @@ void HUD::mouseReleaseEvent(QMouseEvent *event)
     dragPosition.ry() = 0;
     diffVector.rx() = 0;
     diffVector.ry() = 0;
+
     alpha = 0;
     beta = 0;
     psiVel = 0;
     thetaVel = 0;
     phiVel = 0;
+
+    emit valueTouchInputChanged(0, 0, 0, phiVel, thetaVel, psiVel);
+    qDebug() << "HUD.cc mouseReleaseEvent calls valueTouchInputChanged with: phiVel: "<< phiVel << " thetaVel: " << thetaVel << " psiVel :" << psiVel;
+
     knobisactive = false;
     knobcircleisactive = false;
 
