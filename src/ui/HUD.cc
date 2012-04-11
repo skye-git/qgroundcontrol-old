@@ -49,6 +49,13 @@ This file is part of the QGROUNDCONTROL project
 #include "MG.h"
 #include "QGC.h"
 
+#include <QtGui>        //Beginn Code AL (09.03.12)
+#include <cmath>
+
+#ifndef M_PI
+#define M_PI 3.14159265359
+#endif                   //Ende Code AL
+
 // Fix for some platforms, e.g. windows
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE  0x809D
@@ -92,6 +99,7 @@ HUD::HUD(int width, int height, QWidget* parent)
       criticalColor(Qt::red),
       infoColor(QColor(20, 200, 20)),
       fuelColor(criticalColor),
+      touchColor(QColor(0, 0, 127,200)),
       warningBlinkRate(5),
       refreshTimer(new QTimer(this)),
       noCamera(true),
@@ -126,6 +134,17 @@ HUD::HUD(int width, int height, QWidget* parent)
       videoEnabled(false),
       xImageFactor(1.0),
       yImageFactor(1.0),
+      mousePressedPosition(0,0),//Beginn Code AL (09.04.12)
+      dragPosition(0,0),
+      diffVector(0,0),
+      touchInputvisib(false),
+      knobisactive(false),
+      knobcircleisactive(false),
+      alpha(0),
+      beta(0),
+      yawTouchInput(0),
+      pitchTouchInput(0),
+      rollTouchInput(0),//Ende Code AL
       imageRequested(false)
 {
     // Set auto fill to false
@@ -708,8 +727,12 @@ void HUD::paintHUD()
             painter.begin(this);
             painter.setRenderHint(QPainter::Antialiasing, true);
             painter.setRenderHint(QPainter::HighQualityAntialiasing, true);
-            painter.translate((this->vwidth/2.0+xCenterOffset)*scalingFactor, (this->vheight/2.0+yCenterOffset)*scalingFactor);
-
+            //painter.translate((this->vwidth/2.0+xCenterOffset)*scalingFactor, (this->vheight/2.0+yCenterOffset)*scalingFactor);
+            //Beginn Code AL (09.04.12)
+            painterszerox = (this->vwidth/2.0+xCenterOffset)*scalingFactor;
+            painterszeroy = (this->vheight/2.0+yCenterOffset)*scalingFactor;
+            painter.translate(painterszerox, painterszeroy);
+            //Ende Code AL
 
 
             // COORDINATE FRAME IS NOW (0,0) at CENTER OF WIDGET
@@ -825,6 +848,16 @@ void HUD::paintHUD()
             if (waypointName != "") paintText(waypointName, defaultColor, 2.0f, (-vwidth/3.0) + 10, +vheight/3.0 + 15, &painter);
 
             // MOVING PARTS
+
+            //Beginn Code AL (09.04.12)
+            //KNOB
+            if(touchInputvisib)
+            {
+                drawKnob(diffVector.x(), diffVector.y(), 10.0f, &painter);
+                drawKnobCircle(0,0,30.0f, &painter);
+                //qDebug() << "drawKnob has just been called";
+            }
+            // Ende Code AL
 
 
             painter.translate(refToScreenX(yawTrans), 0);
@@ -1237,6 +1270,69 @@ void HUD::drawChangeIndicatorGauge(float xRef, float yRef, float radius, float e
     drawPolygon(p, painter);
 }
 
+void HUD::drawKnob(float xRef, float yRef, float radius, QPainter* painter)
+{
+    // Draw the circle
+    QPen circlePen(Qt::SolidLine);
+    circlePen.setStyle(Qt::SolidLine);
+    circlePen.setWidth(refLineWidthToPen(0.5f));
+    circlePen.setColor(defaultColor);
+
+    QRadialGradient grad(0,0,180,-75,0);
+        grad.setColorAt(0.0, Qt::white);
+//        grad.setColorAt(0.1, Qt::green);
+        grad.setColorAt(0.99, touchColor);
+        QBrush brush(grad);
+
+    painter->setBrush(brush);
+    painter->setPen(circlePen);
+    if(knobisactive)
+    {
+        painter->setBrush(brush);
+        drawCircle(xRef, yRef, radius, 200.0f, 170.0f, 1.0f, touchColor, painter);
+    }
+    else
+    {
+        painter->setBrush(Qt::NoBrush);
+        drawCircle(0, 0, radius, 200.0f, 170.0f, 1.0f, touchColor, painter);
+    }
+}
+
+void HUD::drawKnobCircle(float xRef, float yRef, float radius, QPainter *painter)
+{
+    // Draw the circle
+    QPen circlePen(Qt::SolidLine);
+    circlePen.setStyle(Qt::SolidLine);
+    circlePen.setWidth(refLineWidthToPen(0.5f));
+    circlePen.setColor(defaultColor);
+
+    QRadialGradient grad(0,0,180,-75,0);
+        grad.setColorAt(0.0, Qt::white);
+//        grad.setColorAt(0.1, Qt::green);
+        grad.setColorAt(0.99, touchColor);
+        QBrush brush(grad);
+
+
+    painter->setPen(circlePen);
+    if(knobcircleisactive)
+    {
+        painter->save();
+        painter->rotate(beta/M_PI*180);
+        painter->setBrush(brush);
+        drawCircle(radius, yRef, radius/8, 200.0f, 170.0f, 1.0f, touchColor, painter);
+        painter->restore();
+
+        painter->save();
+        painter->rotate(alpha/M_PI*180);
+        painter->setBrush(Qt::NoBrush);
+        drawCircle(radius, yRef, radius/8, 200.0f, 170.0f, 1.0f, touchColor, painter);
+        painter->restore();
+    }
+    painter->setBrush(Qt::NoBrush);
+    drawCircle(xRef, yRef, radius, 200.0f, 170.0f, 1.0f, touchColor, painter);
+}
+
+
 void HUD::drawLine(float refX1, float refY1, float refX2, float refY2, float width, const QColor& color, QPainter* painter)
 {
     QPen pen(Qt::SolidLine);
@@ -1481,4 +1577,120 @@ void HUD::copyImage()
     {
         qDebug() << "HUD widget is not visible. Image not copied.";
     }
+}
+
+void HUD::setKnobndKnobRingvisible(bool visib)
+{
+    touchInputvisib = visib;
+}
+
+
+void HUD::mousePressEvent(QMouseEvent *event)
+{
+    if(event->button() == Qt::LeftButton){
+        dragPosition = mousePressedPosition = event->posF();
+        qDebug() <<"dragPosition "<< dragPosition.x() <<" mousePressedPosition " << mousePressedPosition.y();
+
+        if(std::abs(event->x()-painterszerox)/scalingFactor < 15 && std::abs(event->y()-painterszeroy)/scalingFactor <15)
+            knobisactive = true;
+        else
+        {
+            knobcircleisactive = true;
+            alpha = std::atan2((dragPosition.y()-painterszeroy), (dragPosition.x()-painterszerox));
+            //qDebug() << "alpha = "<< alpha/M_PI*180;
+            beta = std::atan2((mousePressedPosition.y()-painterszeroy), (mousePressedPosition.x()-painterszerox));
+            //qDebug() << "beta = "<< beta/M_PI*180;
+        }
+
+        event->accept();
+    }
+}
+
+void HUD::mouseMoveEvent(QMouseEvent *event)
+{
+    if(event->buttons() & Qt::LeftButton) {
+        mousePressedPosition = event->posF();
+
+        if(knobisactive)
+        {
+            QPointF diffVector_desired = (mousePressedPosition - dragPosition)/scalingFactor;
+            //qDebug() << diffVector_desired.x() <<" : xPosition" << diffVector_desired.y() << " : yPosition";
+            double pitchTouchInput_desired = -diffVector_desired.y()/30;
+            double yawTouchInput_desired = diffVector_desired.x()/30;
+
+            if((std::pow(pitchTouchInput,2)+std::pow(yawTouchInput,2)) < 1)
+            {
+                event->accept();
+                diffVector = diffVector_desired;
+                pitchTouchInput = pitchTouchInput_desired;
+                yawTouchInput  = yawTouchInput_desired;
+            }
+            else
+            {
+//                event->accept();
+//                double scalingFactor = 30 / std::sqrt(std::pow(diffVector_desired.x(), 2) + std::pow(diffVector_desired.y(), 2));
+//                diffVector = diffVector_desired * scalingFactor;
+//                pitchTouchInput = -diffVector.y()/30;
+//                yawTouchInput = diffVector.x()/30;
+//                //event->ignore();
+                event->accept();
+                double angle_desired = std::atan2((mousePressedPosition.y()-painterszeroy), (mousePressedPosition.x()-painterszerox));
+                pitchTouchInput = -std::sin(angle_desired);
+                yawTouchInput = std::cos(angle_desired);
+                diffVector.rx() = yawTouchInput*30;
+                diffVector.ry() = -pitchTouchInput*30;
+            }
+        }
+
+        else if(knobcircleisactive)
+        {
+            double beta_desired = std::atan2((mousePressedPosition.y()-painterszeroy), (mousePressedPosition.x()-painterszerox));
+            //qDebug() << "beta_desired = "<< beta_desired/M_PI*180;
+            double rollTouchInput_desired = (-alpha + beta_desired)/M_PI*180/90;
+            //qDebug() << "rollTouchInput_desired = "<<rollTouchInput_desired;
+
+            if(std::abs(rollTouchInput_desired) < 1)
+            {
+                event->accept();
+                beta = beta_desired;
+                rollTouchInput = rollTouchInput_desired;
+            }
+            else
+                event->ignore();
+        }
+
+        else
+            event->ignore();
+
+
+       emit valueTouchInputChangedHUD(rollTouchInput, pitchTouchInput, yawTouchInput);
+    }
+}
+
+void HUD::mouseReleaseEvent(QMouseEvent *event)
+{
+
+    mousePressedPosition.rx() = 0;
+    mousePressedPosition.ry() = 0;
+    dragPosition.rx() = 0;
+    dragPosition.ry() = 0;
+    diffVector.rx() = 0;
+    diffVector.ry() = 0;
+
+    alpha = 0;
+    beta = 0;
+    yawTouchInput = 0;
+    pitchTouchInput = 0;
+    rollTouchInput = 0;
+
+    if(touchInputvisib)
+    {
+        emit valueTouchInputChangedHUD(rollTouchInput, pitchTouchInput, yawTouchInput);
+        qDebug() << "HUD.cc mouseReleaseEvent calls valueTouchInputChangedHUD with: rollTouchInput: "<< rollTouchInput << " pitchTouchInput: " << pitchTouchInput << " yawTouchInput :" << yawTouchInput;
+    }
+
+    knobisactive = false;
+    knobcircleisactive = false;
+
+    event->accept();
 }

@@ -20,9 +20,9 @@ QGCMapRing::QGCMapRing(QWidget *parent) :
         stepsize = multiplicator= 1.1;
         x_0 = y_0 = z_0 = x = y = z = 0;
         side = qMin(width(), height());
-        timer = new QTimer();
-        connect(timer, SIGNAL(timeout()),this, SLOT(emitValues()));
-        timer->start(200); //every 0.2 seconds emitValues is calles
+        countingupTimer = new QTimer(this);
+        connect(countingupTimer, SIGNAL(timeout()),this, SLOT(increaseMultiplicator()));
+        countingupTimer->start(200); //every 0.2 seconds emitValues is calles
 //        sidescaling = 200;
 //        outerradius = 75;
 //        innerradius = 70;
@@ -110,7 +110,12 @@ void QGCMapRing::mousePressEvent(QMouseEvent *event)
     }
 
     countingup = true;
-    // emitValues();        // Code Modified MA (07.04.2012)
+
+    //emitValues();
+    emit xValuechanged(x);
+    emit yValuechanged(y);
+    emit zValuechanged(z);
+    emit valueMapRingChanged(x,y,z);
 }
 
 void QGCMapRing::mouseMoveEvent(QMouseEvent *event)
@@ -132,11 +137,17 @@ void QGCMapRing::mouseMoveEvent(QMouseEvent *event)
 //    x_0 = cos(theta)*0.1;
 //    y_0 = -sin(theta)*0.1;
 
+
     x = x_0*multiplicator;
     y = y_0*multiplicator;
     z = z_0*multiplicator;
 
-    // emitValues();        // Too high frequency! // Code Modified MA (07.04.2012)
+    //caused counter to count up faster if Mouse was moved
+//    emitValues();
+    emit xValuechanged(x);
+    emit yValuechanged(y);
+    emit zValuechanged(z);
+    emit valueMapRingChanged(x,y,z);
 }
 
 
@@ -153,25 +164,35 @@ void QGCMapRing::mouseReleaseEvent(QMouseEvent *event)
     emit xValuechanged(x);
     emit yValuechanged(y);
     emit zValuechanged(z);
-    emit valueTouchInputChanged(x,y,z,0,0,0);
+    emit valueMapRingChanged(x,y,z);
 }
 
-void QGCMapRing::emitValues()
+//void QGCMapRing::emitValues()
+//{
+//    if(countingup)
+//    {
+//        emit xValuechanged(x);
+//        emit yValuechanged(y);
+//        emit zValuechanged(z);
+//        emit valueMapRingChanged(x,y,z);//richtig
+//    }
+//}
+
+void QGCMapRing::increaseMultiplicator()
 {
-    if(countingup)
+
+    if(multiplicator*stepsize < 10 && countingup)
     {
-        emit xValuechanged(x);
-        emit yValuechanged(y);
-        emit zValuechanged(z);
-        emit valueTouchInputChanged(x,y,z,0,0,0);
-        if(multiplicator*stepsize < 10)
-        {
-            multiplicator = multiplicator*stepsize;
-        }
-        x = x_0*multiplicator;
-        y = y_0*multiplicator;
-        z = z_0*multiplicator;
+        multiplicator = multiplicator*stepsize;
     }
+    x = x_0*multiplicator;
+    y = y_0*multiplicator;
+    z = z_0*multiplicator;
+
+    emit xValuechanged(x);
+    emit yValuechanged(y);
+    emit zValuechanged(z);
+    emit valueMapRingChanged(x,y,z);
 }
 
 void QGCMapRing::resizeEvent(QResizeEvent * /* event */)

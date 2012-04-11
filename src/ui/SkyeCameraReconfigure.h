@@ -5,6 +5,7 @@
 #include <QMap>
 #include <QLayout>
 #include <QVBoxLayout>
+#include <QLabel>
 #include "QGCMAVLink.h"
 #include "UASInterface.h"
 
@@ -23,6 +24,8 @@ public:
 public slots:
     /** @brief Apply current widgets valus to camera */
     void accept();
+    /** @brief Update widget values for bluefox */
+    void updateBluefoxSettings(mavlink_skye_cam_reconfigure_bluefox_settings_t* bluefox);
 
 private:
     Ui::SkyeCameraReconfigure *ui;
@@ -49,7 +52,8 @@ protected:
     void deleteOldWidgets();
 
     mavlink_message_info_t messageInfo[256];
-    QMap<unsigned int, QWidget*> object;
+    QMap<unsigned int, QWidget*> valueMap;
+    QMap<unsigned int, QLabel*> labelMap;
 
 
 };

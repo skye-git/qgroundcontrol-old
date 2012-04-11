@@ -116,6 +116,14 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
         {
             // Save scaled pressure
         }
+        case MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS:
+        {
+        mavlink_skye_cam_reconfigure_bluefox_settings_t bluefox;
+        mavlink_msg_skye_cam_reconfigure_bluefox_settings_decode(&message, &bluefox);
+
+        emit bluefoxSettingsChanged(&bluefox);
+
+        }
         // Ignore these messages
         case MAVLINK_MSG_ID_SKYE_TEST_MOTORS:
         case MAVLINK_MSG_ID_SKYE_DIRECT_CONTROL:
@@ -124,9 +132,8 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
         case MAVLINK_MSG_ID_SKYE_MOTOR_SIGNAL:
         case MAVLINK_MSG_ID_SKYE_MOTOR_MEASSURED_POSITION:
         case MAVLINK_MSG_ID_SKYE_CONTROLLER_OUTPUT:
-        case MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS:
         case MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_PROSILICA_SETTINGS:
-        case MAVLINK_MSG_ID_SKYE_CAM_HANDLE_SAVE_IMAGE:
+        case MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_IMAGE_HANDLER:
         case MAVLINK_MSG_ID_SKYE_CAM_TAKE_SHOT:
         case MAVLINK_MSG_ID_SKYE_HOME_MAXON:
         case MAVLINK_MSG_ID_SKYE_THREAD_COUNTS:

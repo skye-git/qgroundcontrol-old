@@ -357,8 +357,8 @@
                <field type="uint8_t" name="target_system">System ID</field>
                <field type="uint8_t" name="cam_id">ID of camera, see ENUM MAV_CAM_ID (MAV_CAM_ID_PROSILICA)</field>
           </message>
-          <message id="163" name="SKYE_CAM_HANDLE_SAVE_IMAGE">
-               <description></description>
+          <message id="163" name="SKYE_CAM_RECONFIGURE_IMAGE_HANDLER">
+               <description>Set parameters of image handler which stores images on HDD and steams them via wifi</description>
                <field type="uint8_t" name="target_system">System ID</field>
                <field type="uint8_t" name="cam_id">ID of camera, see ENUM MAV_CAM_ID</field>
                <field type="uint8_t" name="save_image">Boolean, true: image stream is saved as specified in fields below</field>
@@ -376,13 +376,13 @@
                <field type="uint8_t" name="keep_old_modus">Boolean, true: new image handle modus is added to previous (image is saved/sent more than once), false: only save/send with new configuration</field>
           </message>
           <message id="164" name="SKYE_CAM_TAKE_SHOT">
-               <description></description>
+               <description>Take a single shot and store the image via ROS on groundstation</description>
                <field type="uint8_t" name="target_system">System ID</field>
                <field type="uint8_t" name="cam_id">ID of camera, see ENUM MAV_CAM_ID</field>
                <field type="uint8_t" name="take_shot">Boolean, true: send recent image (save settings) to GS</field>
           </message>
           <message id="165" name="SKYE_CAM_IMAGE_TRIGGERED">
-               <description></description>
+               <description>This message indicates that there is a new image in default path that can be displayed in QGC. Use this message only if you do NOT transmitte the image via the mavlink protocol (ENCAPSULED_DATA)</description>
                <field type="uint64_t" name="timestamp">Timestamp</field>
                <field type="uint8_t" name="cam_id">ID of camera, see ENUM MAV_CAM_ID</field>
                <!--               <field type="uint32_t" name="seq">IMU seq</field>      -->
@@ -423,8 +423,19 @@
                <field type="int64_t" name="controlloop_usleep">Microseconds controlloop is sleeping</field>
                <field type="int64_t" name="stateestimation_usleep">Microseconds stateestimation loop is sleeping</field>
           </message>
+          <message id="169" name="SKYE_REQUEST_CAM_RECONFIGURE_SETTINGS">
+               <description>Request to transmit the current camera reconfigure settings of camera specified by cam_id</description>
+               <field type="uint8_t" name="target_system">System ID</field>
+               <field type="uint8_t" name="cam_id">ID of camera, see ENUM MAV_CAM_ID</field>
+          </message>
+          <message id="170" name="SKYE_REQUEST_CAM_RECONFIGURE_HANDLER">
+               <description>Request to transmit the current image handler settings of camera specified by cam_id</description>
+               <field type="uint8_t" name="target_system">System ID</field>
+               <field type="uint8_t" name="cam_id">ID of camera, see ENUM MAV_CAM_ID</field>
+          </message>
 <!-- DATA_TRANSMISSION_HANDSHAKE and ENCAPSULATED_DATA copied from pixhawk.xml -->
           <message id="193" name="DATA_TRANSMISSION_HANDSHAKE">
+               <description>Tell QGC that a new image will be transmitted as ENCAPSULATED_DATA</description>
                <field type="uint8_t" name="type">type of requested/acknowledged data (as defined in ENUM DATA_TYPES in mavlink/include/mavlink_types.h)</field>
                <field type="uint32_t" name="size">total data size in bytes (set on ACK only)</field>
                <field type="uint16_t" name="width">Width of a matrix or image</field>
@@ -434,6 +445,7 @@
                <field type="uint8_t" name="jpg_quality">JPEG quality out of [1,100]</field>
           </message>
           <message id="194" name="ENCAPSULATED_DATA">
+               <description>Split image into mavlink packages to send it in the data array</description>
                <field type="uint16_t" name="seqnr">sequence number (starting with 0 on every transmission)</field>
                <field type="uint8_t[253]" name="data">image data bytes</field>
           </message>

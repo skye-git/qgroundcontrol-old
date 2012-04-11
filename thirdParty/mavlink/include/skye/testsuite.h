@@ -681,12 +681,12 @@ static void mavlink_test_skye_cam_reconfigure_prosilica_settings(uint8_t system_
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
-static void mavlink_test_skye_cam_handle_save_image(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+static void mavlink_test_skye_cam_reconfigure_image_handler(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
 {
 	mavlink_message_t msg;
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
-	mavlink_skye_cam_handle_save_image_t packet_in = {
+	mavlink_skye_cam_reconfigure_image_handler_t packet_in = {
 		5,
 	72,
 	139,
@@ -703,7 +703,7 @@ static void mavlink_test_skye_cam_handle_save_image(uint8_t system_id, uint8_t c
 	94,
 	161,
 	};
-	mavlink_skye_cam_handle_save_image_t packet1, packet2;
+	mavlink_skye_cam_reconfigure_image_handler_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
         	packet1.target_system = packet_in.target_system;
         	packet1.cam_id = packet_in.cam_id;
@@ -724,18 +724,18 @@ static void mavlink_test_skye_cam_handle_save_image(uint8_t system_id, uint8_t c
         
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_cam_handle_save_image_encode(system_id, component_id, &msg, &packet1);
-	mavlink_msg_skye_cam_handle_save_image_decode(&msg, &packet2);
+	mavlink_msg_skye_cam_reconfigure_image_handler_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_skye_cam_reconfigure_image_handler_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_cam_handle_save_image_pack(system_id, component_id, &msg , packet1.target_system , packet1.cam_id , packet1.save_image , packet1.save_percent , packet1.format , packet1.png_level , packet1.jpeg_quality , packet1.frame_name , packet1.path , packet1.send_image , packet1.send_percent , packet1.format2 , packet1.png_level2 , packet1.jpeg_quality2 , packet1.keep_old_modus );
-	mavlink_msg_skye_cam_handle_save_image_decode(&msg, &packet2);
+	mavlink_msg_skye_cam_reconfigure_image_handler_pack(system_id, component_id, &msg , packet1.target_system , packet1.cam_id , packet1.save_image , packet1.save_percent , packet1.format , packet1.png_level , packet1.jpeg_quality , packet1.frame_name , packet1.path , packet1.send_image , packet1.send_percent , packet1.format2 , packet1.png_level2 , packet1.jpeg_quality2 , packet1.keep_old_modus );
+	mavlink_msg_skye_cam_reconfigure_image_handler_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_cam_handle_save_image_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.cam_id , packet1.save_image , packet1.save_percent , packet1.format , packet1.png_level , packet1.jpeg_quality , packet1.frame_name , packet1.path , packet1.send_image , packet1.send_percent , packet1.format2 , packet1.png_level2 , packet1.jpeg_quality2 , packet1.keep_old_modus );
-	mavlink_msg_skye_cam_handle_save_image_decode(&msg, &packet2);
+	mavlink_msg_skye_cam_reconfigure_image_handler_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.cam_id , packet1.save_image , packet1.save_percent , packet1.format , packet1.png_level , packet1.jpeg_quality , packet1.frame_name , packet1.path , packet1.send_image , packet1.send_percent , packet1.format2 , packet1.png_level2 , packet1.jpeg_quality2 , packet1.keep_old_modus );
+	mavlink_msg_skye_cam_reconfigure_image_handler_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
@@ -743,12 +743,12 @@ static void mavlink_test_skye_cam_handle_save_image(uint8_t system_id, uint8_t c
         for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
         	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
         }
-	mavlink_msg_skye_cam_handle_save_image_decode(last_msg, &packet2);
+	mavlink_msg_skye_cam_reconfigure_image_handler_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_cam_handle_save_image_send(MAVLINK_COMM_1 , packet1.target_system , packet1.cam_id , packet1.save_image , packet1.save_percent , packet1.format , packet1.png_level , packet1.jpeg_quality , packet1.frame_name , packet1.path , packet1.send_image , packet1.send_percent , packet1.format2 , packet1.png_level2 , packet1.jpeg_quality2 , packet1.keep_old_modus );
-	mavlink_msg_skye_cam_handle_save_image_decode(last_msg, &packet2);
+	mavlink_msg_skye_cam_reconfigure_image_handler_send(MAVLINK_COMM_1 , packet1.target_system , packet1.cam_id , packet1.save_image , packet1.save_percent , packet1.format , packet1.png_level , packet1.jpeg_quality , packet1.frame_name , packet1.path , packet1.send_image , packet1.send_percent , packet1.format2 , packet1.png_level2 , packet1.jpeg_quality2 , packet1.keep_old_modus );
+	mavlink_msg_skye_cam_reconfigure_image_handler_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
@@ -1013,6 +1013,96 @@ static void mavlink_test_skye_thread_usleep(uint8_t system_id, uint8_t component
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
+static void mavlink_test_skye_request_cam_reconfigure_settings(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+{
+	mavlink_message_t msg;
+        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
+        uint16_t i;
+	mavlink_skye_request_cam_reconfigure_settings_t packet_in = {
+		5,
+	72,
+	};
+	mavlink_skye_request_cam_reconfigure_settings_t packet1, packet2;
+        memset(&packet1, 0, sizeof(packet1));
+        	packet1.target_system = packet_in.target_system;
+        	packet1.cam_id = packet_in.cam_id;
+        
+        
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_request_cam_reconfigure_settings_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_skye_request_cam_reconfigure_settings_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_request_cam_reconfigure_settings_pack(system_id, component_id, &msg , packet1.target_system , packet1.cam_id );
+	mavlink_msg_skye_request_cam_reconfigure_settings_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_request_cam_reconfigure_settings_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.cam_id );
+	mavlink_msg_skye_request_cam_reconfigure_settings_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+        mavlink_msg_to_send_buffer(buffer, &msg);
+        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
+        	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
+        }
+	mavlink_msg_skye_request_cam_reconfigure_settings_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+        
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_request_cam_reconfigure_settings_send(MAVLINK_COMM_1 , packet1.target_system , packet1.cam_id );
+	mavlink_msg_skye_request_cam_reconfigure_settings_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+}
+
+static void mavlink_test_skye_request_cam_reconfigure_handler(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+{
+	mavlink_message_t msg;
+        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
+        uint16_t i;
+	mavlink_skye_request_cam_reconfigure_handler_t packet_in = {
+		5,
+	72,
+	};
+	mavlink_skye_request_cam_reconfigure_handler_t packet1, packet2;
+        memset(&packet1, 0, sizeof(packet1));
+        	packet1.target_system = packet_in.target_system;
+        	packet1.cam_id = packet_in.cam_id;
+        
+        
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_request_cam_reconfigure_handler_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_skye_request_cam_reconfigure_handler_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_request_cam_reconfigure_handler_pack(system_id, component_id, &msg , packet1.target_system , packet1.cam_id );
+	mavlink_msg_skye_request_cam_reconfigure_handler_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_request_cam_reconfigure_handler_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.cam_id );
+	mavlink_msg_skye_request_cam_reconfigure_handler_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+        mavlink_msg_to_send_buffer(buffer, &msg);
+        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
+        	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
+        }
+	mavlink_msg_skye_request_cam_reconfigure_handler_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+        
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_skye_request_cam_reconfigure_handler_send(MAVLINK_COMM_1 , packet1.target_system , packet1.cam_id );
+	mavlink_msg_skye_request_cam_reconfigure_handler_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+}
+
 static void mavlink_test_data_transmission_handshake(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
 {
 	mavlink_message_t msg;
@@ -1126,12 +1216,14 @@ static void mavlink_test_skye(uint8_t system_id, uint8_t component_id, mavlink_m
 	mavlink_test_skye_controller_output(system_id, component_id, last_msg);
 	mavlink_test_skye_cam_reconfigure_bluefox_settings(system_id, component_id, last_msg);
 	mavlink_test_skye_cam_reconfigure_prosilica_settings(system_id, component_id, last_msg);
-	mavlink_test_skye_cam_handle_save_image(system_id, component_id, last_msg);
+	mavlink_test_skye_cam_reconfigure_image_handler(system_id, component_id, last_msg);
 	mavlink_test_skye_cam_take_shot(system_id, component_id, last_msg);
 	mavlink_test_skye_cam_image_triggered(system_id, component_id, last_msg);
 	mavlink_test_skye_home_maxon(system_id, component_id, last_msg);
 	mavlink_test_skye_thread_counts(system_id, component_id, last_msg);
 	mavlink_test_skye_thread_usleep(system_id, component_id, last_msg);
+	mavlink_test_skye_request_cam_reconfigure_settings(system_id, component_id, last_msg);
+	mavlink_test_skye_request_cam_reconfigure_handler(system_id, component_id, last_msg);
 	mavlink_test_data_transmission_handshake(system_id, component_id, last_msg);
 	mavlink_test_encapsulated_data(system_id, component_id, last_msg);
 }

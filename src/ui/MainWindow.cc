@@ -114,7 +114,7 @@ MainWindow::MainWindow(QWidget *parent):
     mouseTranslationEnable(true),
     mouseRotationEnable(true),
     mouseInitialized(false),
-    mouseFilterSize(5),
+    mouseFilterSize(1),
     mouseRawValues(NULL),
     newMouseXValue(0),
     newMouseYValue(0),
@@ -133,7 +133,14 @@ MainWindow::MainWindow(QWidget *parent):
     keyYValue(0),
     keyZValue(0),
     keyPitchValue(0),
-    keyYawValue(0)
+    keyYawValue(0),
+    keyRollValue(0),
+    touchXValue(0),
+    touchYValue(0),
+    touchZValue(0),
+    touchRollValue(0),
+    touchPitchValue(0),
+    touchYawValue(0)
 {
     hide();
     emit initStatusChanged("Loading UI Settings..");
@@ -270,6 +277,9 @@ MainWindow::MainWindow(QWidget *parent):
     connect(&windowNameUpdateTimer, SIGNAL(timeout()), this, SLOT(configureWindowName()));
     windowNameUpdateTimer.start(15000);
     emit initStatusChanged("Done.");
+
+    connect(&touchInputTimer, SIGNAL(timeout()), this, SLOT(emitTouchInputValues()));           //Beginn Code AL (11.04.12)
+    touchInputTimer.start(200);                                                                 //Ende Code AL (11.04.12)
 
 #ifdef MOUSE_ENABLED                    // Beginn Code MA (21.03.2012)
     start3dMouse();
@@ -548,6 +558,10 @@ void MainWindow::buildCommonWidgets()
         headUpDockWidget->setWidget( new HUD(320, 240, this));
         headUpDockWidget->setObjectName("HEAD_UP_DISPLAY_DOCK_WIDGET");
         addTool(headUpDockWidget, tr("Head Up Display"), Qt::RightDockWidgetArea);
+
+        HUD *headUpDockWidgetHelper = dynamic_cast<HUD*>(headUpDockWidget->widget());                                       //Beginn Ende Code AL (10.04.12)
+        connect(this, SIGNAL(emitTouchInputVisibility(bool)), headUpDockWidgetHelper, SLOT(setKnobndKnobRingvisible(bool))); //Beginn Ende Code AL (10.04.12)
+        connect(headUpDockWidgetHelper, SIGNAL(valueTouchInputChangedHUD(double,double,double)), this, SLOT(setTouchInputYawPitchRoll(double,double,double))); //Beginn Ende Code AL (11.04.12)
     }
 
     if (!video1DockWidget)
@@ -604,6 +618,7 @@ void MainWindow::buildCommonWidgets()
     {
         mapWidget = new QGCMapTool(this);
         addCentralWidget(mapWidget, "Maps");
+        connect(mapWidget, SIGNAL(valueTouchInputChangedMap(double,double,double)), this, SLOT(setTouchInputXYZ(double, double, double))); //Beginn Ende Code AL (11.04.12)
     }
 
     if (!protocolWidget)
@@ -621,6 +636,7 @@ void MainWindow::buildCommonWidgets()
     if (!hudWidget) {
         hudWidget         = new HUD(320, 240, this);
         addCentralWidget(hudWidget, tr("Head Up Display"));
+        connect(hudWidget, SIGNAL(valueTouchInputChangedHUD(double,double,double)), this, SLOT(setTouchInputYawPitchRoll(double,double,double))); //Beginn Ende Code AL (11.04.12)
     }
 
     if (!dataplotWidget) {
@@ -1316,7 +1332,10 @@ void MainWindow::setActiveUAS(UASInterface* uas)
     if(tmp) {
         connect(this, SIGNAL(valueMouseChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
         connect(this, SIGNAL(valueKeyboardChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
-        connect(this->mapWidget, SIGNAL(valueTouchInputChanged(double, double, double, double, double, double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));// Beginn und Ende Code AL (26.03.12)
+        connect(this, SIGNAL(valueTouchInputChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
+
+        HUD *headUpDockWidgetHelper = dynamic_cast<HUD*>(headUpDockWidget->widget());                                                                                                                       //Beginn Ende Code AL (10.04.12)
+        connect(headUpDockWidgetHelper, SIGNAL(valueTouchInputChanged(double, double, double, double, double, double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));// Beginn und Ende Code AL (10.04.12)
     }
 #endif // MAVLINK_ENABLED_SKYE      // Ende Code MA (27.02.2012) ---------------------------
 }
@@ -1806,6 +1825,7 @@ QList<QAction*> MainWindow::listLinkMenuActions(void)
 void MainWindow::setInputMode(int inputMode)
 {
 #ifdef MAVLINK_ENABLED_SKYE
+
     switch (inputMode)
     {
     case 1:
@@ -1817,14 +1837,21 @@ void MainWindow::setInputMode(int inputMode)
             }
             #endif
             mapWidget->setRingvisible(false);
+            hudWidget->setKnobndKnobRingvisible(false);
+            //headUpDockWidget->setKnobndKnobRingvisible(false);
+            emit emitTouchInputVisibility(false);
             break;
     case 2:
             this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_TOUCH;
             mapWidget->setRingvisible(true);
+            hudWidget->setKnobndKnobRingvisible(true);
+            emit emitTouchInputVisibility(true);
             break;
     case 3:
             this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_KEYBOARD;
             mapWidget->setRingvisible(false);
+            hudWidget->setKnobndKnobRingvisible(false);
+            emit emitTouchInputVisibility(false);
             break;
     default:
             this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_NONE;
@@ -1870,6 +1897,7 @@ void MainWindow::start3dMouse()
         {
             qDebug() << "Initialized 3dMouse";
             mouseInitialized = true;
+            delete mouseTimer;
             mouseTimer = new QTimer(this);
             connect(mouseTimer, SIGNAL(timeout()),this, SLOT(filterMouseValues()));
             mouseTimer->start(200); //5Hz emitValues is called
@@ -2227,4 +2255,40 @@ void MainWindow::handleKeyEvents(QKeyEvent *event, bool keyPressed)
     }
 
     emit valueKeyboardChanged(keyXValue, keyYValue, keyZValue, keyRollValue, keyPitchValue, keyYawValue);
+}
+
+void MainWindow::setTouchInputXYZ(double x, double y, double z)
+{
+        touchXValue = x;
+        touchYValue = y;
+        touchZValue = z;
+
+    //zur Sicherheit
+    if(x > 1)
+        touchXValue = 1;
+    if(y > 1)
+        touchYValue = 1;
+    if(z > 1)
+        touchZValue = 1;
+}
+
+void MainWindow::setTouchInputYawPitchRoll(double roll, double pitch, double yaw)
+{
+    touchRollValue = roll;
+    touchPitchValue = pitch;
+    touchYawValue = yaw;
+
+    //zur Sicherheit
+    if(roll > 1)
+        touchRollValue = 1;
+    if(pitch > 1)
+        touchPitchValue = 1;
+    if(yaw > 1)
+        touchYawValue = 1;
+}
+
+void MainWindow::emitTouchInputValues()
+{
+    if(this->inputMode == UASSkyeControlWidget::QGC_INPUT_MODE_TOUCH)
+        emit valueTouchInputChanged(touchXValue, touchYValue, touchZValue, touchRollValue, touchPitchValue, touchYawValue);
 }

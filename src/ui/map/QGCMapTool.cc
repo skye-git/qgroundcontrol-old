@@ -5,7 +5,8 @@
 
 QGCMapTool::QGCMapTool(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::QGCMapTool)
+    ui(new Ui::QGCMapTool),
+    touchInputvisib(false)
 {
     ui->setupUi(this);
 
@@ -21,7 +22,7 @@ QGCMapTool::QGCMapTool(QWidget *parent) :
     connect(ui->Ring, SIGNAL(xValuechanged(double)), ui->doubleSpinBox_x, SLOT(setValue(double)));//Code AL (25.03.12)
     connect(ui->Ring, SIGNAL(yValuechanged(double)), ui->doubleSpinBox_y, SLOT(setValue(double)));
     connect(ui->Ring, SIGNAL(zValuechanged(double)), ui->doubleSpinBox_z, SLOT(setValue(double)));
-    connect(ui->Ring, SIGNAL(valueTouchInputChanged(double,double,double,double,double,double)),this,SIGNAL(valueTouchInputChanged(double,double,double,double,double,double)));//Ende
+    connect(ui->Ring, SIGNAL(valueMapRingChanged(double,double,double)),this,SLOT(transmitMapRingvalues(double,double,double)));//Ende
 }
 
 void QGCMapTool::setZoom(int zoom)
@@ -35,6 +36,16 @@ void QGCMapTool::setZoom(int zoom)
 void QGCMapTool::setRingvisible(bool visib) // Beginn Code AL (26.03.12)
 {
     ui->Ring->setVisible(visib);
+    touchInputvisib = visib;
+}                                           // Ende Code AL
+
+void QGCMapTool::transmitMapRingvalues(double x, double y, double z) // Beginn Code AL (11.04.12)
+{
+    if(touchInputvisib)
+    {
+        emit valueTouchInputChangedMap(x, y, z);
+    }
+
 }                                           // Ende Code AL
 
 QGCMapTool::~QGCMapTool()

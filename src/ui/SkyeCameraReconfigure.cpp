@@ -112,8 +112,10 @@ void SkyeCameraReconfigure::activeCameraChanged(QString camName)
 
 void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
 {
-    object = QMap<unsigned int, QWidget*>();
-    object.clear();
+    valueMap = QMap<unsigned int, QWidget*>();
+    valueMap.clear();
+    labelMap = QMap<unsigned int, QLabel*>();
+    labelMap.clear();
 
     mavlink_message_info_t msg[256] = MAVLINK_MESSAGE_INFO;
     memcpy(messageInfo, msg, sizeof(mavlink_message_info_t)*256);
@@ -129,12 +131,13 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
             // Do nothing
             qDebug() << "but here we don't create any input widget..";
             QWidget* widget = new QWidget();
-            object.insert(i, widget);
+            valueMap.insert(i, widget);
         }
         else
         {
             QLabel* labelWidget = new QLabel(name);
             hBox->addWidget(labelWidget);
+            labelMap.insert(i, labelWidget);
 
             switch (messageInfo[msgId].fields[i].type)
             {
@@ -146,7 +149,7 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
                 {
                     widgetAdded = true;
                     QComboBox* valueWidget = new QComboBox();
-                    object.insert(i, valueWidget);
+                    valueMap.insert(i, valueWidget);
 //                    QStringList ret;
                     QMetaObject metaObject = BluefoxReconfigure::staticMetaObject;
                     QMetaEnum metaEnum = metaObject.enumerator( metaObject.indexOfEnumerator("MAV_CAM_RECONFIG_PIXEL_CLOCK") );
@@ -164,7 +167,7 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
                 {
                     widgetAdded = true;
                     QComboBox* valueWidget = new QComboBox();
-                    object.insert(i, valueWidget);
+                    valueMap.insert(i, valueWidget);
 
                     QMetaObject metaObject = BluefoxReconfigure::staticMetaObject;
                     QMetaEnum metaEnum = metaObject.enumerator( metaObject.indexOfEnumerator("MAV_CAM_RECONFIG_COLOR_CODING") );
@@ -181,7 +184,7 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
                 {
                     widgetAdded = true;
                     QComboBox* valueWidget = new QComboBox();
-                    object.insert(i, valueWidget);
+                    valueMap.insert(i, valueWidget);
 
                     QMetaObject metaObject = BluefoxReconfigure::staticMetaObject;
                     QMetaEnum metaEnum = metaObject.enumerator( metaObject.indexOfEnumerator("MAV_CAM_RECONFIG_BAYER_METHOD") );
@@ -198,7 +201,7 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
                 {
                     widgetAdded = true;
                     QComboBox* valueWidget = new QComboBox();
-                    object.insert(i, valueWidget);
+                    valueMap.insert(i, valueWidget);
 
                     QMetaObject metaObject = BluefoxReconfigure::staticMetaObject;
                     QMetaEnum metaEnum = metaObject.enumerator( metaObject.indexOfEnumerator("MAV_CAM_RECONFIG_AUTO_CONTROL_SPEED") );
@@ -215,7 +218,7 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
                 {
                     widgetAdded = true;
                     QComboBox* valueWidget = new QComboBox();
-                    object.insert(i, valueWidget);
+                    valueMap.insert(i, valueWidget);
 
                     QMetaObject metaObject = BluefoxReconfigure::staticMetaObject;
                     QMetaEnum metaEnum = metaObject.enumerator( metaObject.indexOfEnumerator("MAV_CAM_RECONFIG_HDR_MODE") );
@@ -234,7 +237,7 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
                 {
                     widgetAdded = true;
                     QCheckBox* valueWidget = new QCheckBox();
-                    object.insert(i, valueWidget);
+                    valueMap.insert(i, valueWidget);
                     valueWidget->setText(name);
                     hBox->addWidget(valueWidget);
                 }
@@ -244,7 +247,7 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
                     widgetAdded = true;
                     //qDebug() << "Type is UINT8_T";
                     QSpinBox* valueWidget = new QSpinBox();
-                    object.insert(i, valueWidget);
+                    valueMap.insert(i, valueWidget);
                     valueWidget->setRange(0,255);
                     hBox->addWidget(valueWidget);
 
@@ -263,7 +266,7 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
             case MAVLINK_TYPE_UINT16_T:
             {
                 QSpinBox* valueWidget = new QSpinBox();
-                object.insert(i, valueWidget);
+                valueMap.insert(i, valueWidget);
                 valueWidget->setRange(0,65535);
                 hBox->addWidget(valueWidget);
 
@@ -278,7 +281,7 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
             case MAVLINK_TYPE_CHAR:
             {
                 QLineEdit* valueWidget = new QLineEdit();
-                object.insert(i, valueWidget);
+                valueMap.insert(i, valueWidget);
                 hBox->addWidget(valueWidget);
                 qDebug() << "THE NEW QLineEdit WAS NAMED: " << valueWidget->accessibleName();
                 break;
@@ -288,7 +291,7 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
             case MAVLINK_TYPE_FLOAT:
             {
                 QDoubleSpinBox* valueWidget = new QDoubleSpinBox();
-                object.insert(i, valueWidget);
+                valueMap.insert(i, valueWidget);
                 hBox->addWidget(valueWidget);
 
                 if ( name.contains("shutter"))
@@ -301,7 +304,7 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
             default:   // unknown type
             {
                 QLabel* valueWidget = new QLabel("Unknown Type");
-                object.insert(i, valueWidget);
+                valueMap.insert(i, valueWidget);
                 hBox->addWidget(valueWidget);
                 break;
             }
@@ -312,8 +315,8 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
 
 
         }
-        qDebug() << "We created" << object.count() << "entries..";
-        foreach (QWidget* child, object)
+        qDebug() << "We created" << valueMap.count() << "entries..";
+        foreach (QWidget* child, valueMap)
         {
             if (dynamic_cast<QLabel*>(child) == 0)
             {
@@ -326,11 +329,15 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
 
 void SkyeCameraReconfigure::deleteOldWidgets()
 {
-    foreach(QWidget* w, object)
+    foreach(QWidget* w, valueMap)
     {
         delete w;
     }
-    object.clear();
+    foreach(QLabel* l, labelMap)
+    {
+        delete l;
+    }
+    labelMap.clear();
 }
 
 void SkyeCameraReconfigure::accept()
@@ -348,7 +355,7 @@ void SkyeCameraReconfigure::accept()
             mavlink_skye_cam_reconfigure_bluefox_settings_t bluefox;
             for (unsigned int i = 0; i < messageInfo[msgId].num_fields; ++i)
             {
-                QWidget *valueWidget = object.value(i);
+                QWidget *valueWidget = valueMap.value(i);
 
                 qDebug() << i << "............" << messageInfo[msgId].fields[i].type << messageInfo[msgId].fields[i].name;
 
@@ -512,3 +519,147 @@ void SkyeCameraReconfigure::accept()
         ui->lastActionLabel->setText("No skye UAS connected");
     }
 }
+
+void SkyeCameraReconfigure::updateBluefoxSettings(mavlink_skye_cam_reconfigure_bluefox_settings_t* bluefox)
+{
+    // TODO: Check wheter uasId, cam_id is correct
+
+    ui->lastActionLabel->setText("Received Bluefox settings");
+    ui->cameraComboBox->setCurrentIndex(bluefox->cam_id);
+
+    mavlink_message_info_t msg[256] = MAVLINK_MESSAGE_INFO;
+    memcpy(messageInfo, msg, sizeof(mavlink_message_info_t)*256);
+    for (unsigned int i = 0; i < messageInfo[MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS].num_fields; ++i)
+    {
+        QWidget *valueWidget = valueMap.value(i);
+
+        qDebug() << i << "............" << messageInfo[msgId].fields[i].type << messageInfo[msgId].fields[i].name;
+
+        QString name;
+        name = messageInfo[msgId].fields[i].name;
+
+        if ( name == "frame_id")
+        {
+            QLineEdit* valWgt = dynamic_cast<QLineEdit*>(valueWidget);
+            valWgt->setText(bluefox->frame_id);
+        }
+        if ( name == "pixel_clock")
+        {
+            QComboBox* valWgt = dynamic_cast<QComboBox*>(valueWidget);
+            valWgt->setCurrentIndex(bluefox->pixel_clock);
+        }
+        if ( name == "frame_rate")
+        {
+            QDoubleSpinBox* valWgt = dynamic_cast<QDoubleSpinBox*>(valueWidget);
+            valWgt->setValue((double)bluefox->frame_rate);
+        }
+        if ( name == "camera_info_url")
+        {
+            QLineEdit* valWgt = dynamic_cast<QLineEdit*>(valueWidget);
+            valWgt->setText(bluefox->camera_info_url);
+        }
+        if ( name == "binning_x" )
+        {
+            QSpinBox* valWgt = dynamic_cast<QSpinBox*>(valueWidget);
+            valWgt->setValue((int)bluefox->binning_x);
+        }
+        if ( name == "binning_y" )
+        {
+            QSpinBox* valWgt = dynamic_cast<QSpinBox*>(valueWidget);
+            valWgt->setValue((int)bluefox->binning_y);
+        }
+        if ( name == "roi_width" )
+        {
+            QSpinBox* valWgt = dynamic_cast<QSpinBox*>(valueWidget);
+            valWgt->setValue((int)bluefox->roi_width);
+        }
+        if ( name == "roi_height" )
+        {
+            QSpinBox* valWgt = dynamic_cast<QSpinBox*>(valueWidget);
+            valWgt->setValue((int)bluefox->roi_height);
+        }
+        if ( name == "x_offset" )
+        {
+            QSpinBox* valWgt = dynamic_cast<QSpinBox*>(valueWidget);
+            valWgt->setValue((int)bluefox->x_offset);
+        }
+        if ( name == "y_offset" )
+        {
+            QSpinBox* valWgt = dynamic_cast<QSpinBox*>(valueWidget);
+            valWgt->setValue((int)bluefox->y_offset);
+        }
+        if ( name == "color_coding")
+        {
+            QComboBox* valWgt = dynamic_cast<QComboBox*>(valueWidget);
+            valWgt->setCurrentIndex(bluefox->color_coding);
+        }
+        if ( name == "bayer_method")
+        {
+            QComboBox* valWgt = dynamic_cast<QComboBox*>(valueWidget);
+            valWgt->setCurrentIndex(bluefox->bayer_method);
+        }
+        if ( name == "exposure" )
+        {
+            QSpinBox* valWgt = dynamic_cast<QSpinBox*>(valueWidget);
+            valWgt->setValue((int)bluefox->exposure);
+        }
+        if ( name == "shutter_auto" )
+        {
+            QCheckBox* valWgt = dynamic_cast<QCheckBox*>(valueWidget);
+            valWgt->setChecked((bool)bluefox->shutter_auto);
+        }
+        if ( name == "shutter_auto_max")
+        {
+            QDoubleSpinBox* valWgt = dynamic_cast<QDoubleSpinBox*>(valueWidget);
+            valWgt->setValue((double)bluefox->shutter_auto_max);
+        }
+        if ( name == "shutter")
+        {
+            QDoubleSpinBox* valWgt = dynamic_cast<QDoubleSpinBox*>(valueWidget);
+            valWgt->setValue((double)bluefox->shutter);
+        }
+        if ( name == "gain_auto" )
+        {
+            QCheckBox* valWgt = dynamic_cast<QCheckBox*>(valueWidget);
+            // TODO
+        }
+        if ( name == "gain_auto_min" )
+        {
+            QSpinBox* valWgt = dynamic_cast<QSpinBox*>(valueWidget);
+            // TODO
+        }
+        if ( name == "gain_auto_max" )
+        {
+            QSpinBox* valWgt = dynamic_cast<QSpinBox*>(valueWidget);
+            // TODO
+        }
+        if ( name == "gain" )
+        {
+            QSpinBox* valWgt = dynamic_cast<QSpinBox*>(valueWidget);
+            // TODO
+        }
+        if ( name == "auto_control_speed")
+        {
+            QComboBox* valWgt = dynamic_cast<QComboBox*>(valueWidget);
+            // TODO
+        }
+        if ( name == "auto_query_values" )
+        {
+            QCheckBox* valWgt = dynamic_cast<QCheckBox*>(valueWidget);
+            // TODO
+        }
+        if ( name == "hdr_mode")
+        {
+            QComboBox* valWgt = dynamic_cast<QComboBox*>(valueWidget);
+            // TODO
+        }
+        if ( name == "use_ros_time" )
+        {
+            QCheckBox* valWgt = dynamic_cast<QCheckBox*>(valueWidget);
+            // TODO
+        }
+    }
+
+}
+
+

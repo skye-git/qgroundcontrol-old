@@ -71,6 +71,13 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>Get</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="applyButton">
        <property name="text">
         <string>Apply</string>

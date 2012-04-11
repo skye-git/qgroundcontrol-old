@@ -56,6 +56,8 @@ signals:
     void batteryPackChanged(mavlink_skye_battery_status_t* battery);
     void reportUDPLinkFailed(QString errorStr);
 
+    /** @brief  Emit current camera reconfiguration settings **/
+    void bluefoxSettingsChanged(mavlink_skye_cam_reconfigure_bluefox_settings_t* bluefox);
 
 protected:
     /** @brief Send a Direct Control Command to MAV: */
