@@ -142,9 +142,9 @@ HUD::HUD(int width, int height, QWidget* parent)
       knobcircleisactive(false),
       alpha(0),
       beta(0),
-      psiVel(0),
-      thetaVel(0),
-      phiVel(0),//Ende Code AL
+      yawTouchInput(0),
+      pitchTouchInput(0),
+      rollTouchInput(0),//Ende Code AL
       imageRequested(false)
 {
     // Set auto fill to false
@@ -173,13 +173,6 @@ HUD::HUD(int width, int height, QWidget* parent)
     // Refresh timer
     refreshTimer->setInterval(updateInterval);
     connect(refreshTimer, SIGNAL(timeout()), this, SLOT(paintHUD()));
-    connect(refreshTimer, SIGNAL(timeout()), this, SLOT(emitValues()));//Beginn Code AL, Code below doesn't work...
-
-    //Beginn Code AL (10.04.12)
-    // Emit timer
-//    emitTimer->setInterval(touchInputInterval);//every 0.2 seconds emitValues is called
-//    connect(emitTimer, SIGNAL(timeout()),this, SLOT(emitValues()));
-    //Ende Code AL
 
     // Resize to correct size and fill with image
     resize(this->width(), this->height());
@@ -1591,20 +1584,6 @@ void HUD::setKnobndKnobRingvisible(bool visib)
     touchInputvisib = visib;
 }
 
-void HUD::emitValues()
-{
-    if((knobisactive || knobcircleisactive) && touchInputvisib)
-    {
-        static int emitValuesCounter;
-        if(emitValuesCounter == 4)
-        {
-            emit valueTouchInputChanged(0, 0, 0, phiVel, thetaVel, psiVel);
-            qDebug() << "HUD.cc emitValues called with: phiVel: "<< phiVel << " thetaVel: " << thetaVel << " psiVel :" << psiVel;
-            emitValuesCounter = 0;
-        }
-        emitValuesCounter++;
-    }
-}
 
 void HUD::mousePressEvent(QMouseEvent *event)
 {
@@ -1636,30 +1615,30 @@ void HUD::mouseMoveEvent(QMouseEvent *event)
         {
             QPointF diffVector_desired = (mousePressedPosition - dragPosition)/scalingFactor;
             //qDebug() << diffVector_desired.x() <<" : xPosition" << diffVector_desired.y() << " : yPosition";
-            double thetaVel_desired = -diffVector_desired.y()/30;
-            double psiVel_desired = diffVector_desired.x()/30;
+            double pitchTouchInput_desired = -diffVector_desired.y()/30;
+            double yawTouchInput_desired = diffVector_desired.x()/30;
 
-            if((std::pow(thetaVel,2)+std::pow(psiVel,2)) < 1)
+            if((std::pow(pitchTouchInput,2)+std::pow(yawTouchInput,2)) < 1)
             {
                 event->accept();
                 diffVector = diffVector_desired;
-                thetaVel = thetaVel_desired;
-                psiVel  = psiVel_desired;
+                pitchTouchInput = pitchTouchInput_desired;
+                yawTouchInput  = yawTouchInput_desired;
             }
             else
             {
 //                event->accept();
 //                double scalingFactor = 30 / std::sqrt(std::pow(diffVector_desired.x(), 2) + std::pow(diffVector_desired.y(), 2));
 //                diffVector = diffVector_desired * scalingFactor;
-//                thetaVel = -diffVector.y()/30;
-//                psiVel = diffVector.x()/30;
+//                pitchTouchInput = -diffVector.y()/30;
+//                yawTouchInput = diffVector.x()/30;
 //                //event->ignore();
                 event->accept();
                 double angle_desired = std::atan2((mousePressedPosition.y()-painterszeroy), (mousePressedPosition.x()-painterszerox));
-                thetaVel = -std::sin(angle_desired);
-                psiVel = std::cos(angle_desired);
-                diffVector.rx() = psiVel*30;
-                diffVector.ry() = -thetaVel*30;
+                pitchTouchInput = -std::sin(angle_desired);
+                yawTouchInput = std::cos(angle_desired);
+                diffVector.rx() = yawTouchInput*30;
+                diffVector.ry() = -pitchTouchInput*30;
             }
         }
 
@@ -1667,14 +1646,14 @@ void HUD::mouseMoveEvent(QMouseEvent *event)
         {
             double beta_desired = std::atan2((mousePressedPosition.y()-painterszeroy), (mousePressedPosition.x()-painterszerox));
             //qDebug() << "beta_desired = "<< beta_desired/M_PI*180;
-            double phiVel_desired = (-alpha + beta_desired)/M_PI*180/90;
-            //qDebug() << "phiVel_desired = "<<phiVel_desired;
+            double rollTouchInput_desired = (-alpha + beta_desired)/M_PI*180/90;
+            //qDebug() << "rollTouchInput_desired = "<<rollTouchInput_desired;
 
-            if(std::abs(phiVel_desired) < 1)
+            if(std::abs(rollTouchInput_desired) < 1)
             {
                 event->accept();
                 beta = beta_desired;
-                phiVel = phiVel_desired;
+                rollTouchInput = rollTouchInput_desired;
             }
             else
                 event->ignore();
@@ -1684,7 +1663,7 @@ void HUD::mouseMoveEvent(QMouseEvent *event)
             event->ignore();
 
 
-
+       emit valueTouchInputChangedHUD(rollTouchInput, pitchTouchInput, yawTouchInput);
     }
 }
 
@@ -1700,14 +1679,14 @@ void HUD::mouseReleaseEvent(QMouseEvent *event)
 
     alpha = 0;
     beta = 0;
-    psiVel = 0;
-    thetaVel = 0;
-    phiVel = 0;
+    yawTouchInput = 0;
+    pitchTouchInput = 0;
+    rollTouchInput = 0;
 
     if(touchInputvisib)
     {
-        emit valueTouchInputChanged(0, 0, 0, phiVel, thetaVel, psiVel);
-        qDebug() << "HUD.cc mouseReleaseEvent calls valueTouchInputChanged with: phiVel: "<< phiVel << " thetaVel: " << thetaVel << " psiVel :" << psiVel;
+        emit valueTouchInputChangedHUD(rollTouchInput, pitchTouchInput, yawTouchInput);
+        qDebug() << "HUD.cc mouseReleaseEvent calls valueTouchInputChangedHUD with: rollTouchInput: "<< rollTouchInput << " pitchTouchInput: " << pitchTouchInput << " yawTouchInput :" << yawTouchInput;
     }
 
     knobisactive = false;

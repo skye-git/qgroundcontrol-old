@@ -122,12 +122,11 @@ protected slots:
     //DRAW COMPONENTS FOR TOUCH INTERFACE
     void drawKnob(float xRef, float yRef, float radius, QPainter* painter);
     void drawKnobCircle(float xRef, float yRef, float radius, QPainter* painter);
-    void emitValues();
     //Ende Code AL
 
 signals:
     void visibilityChanged(bool visible);
-    void valueTouchInputChanged(double,double,double,double,double,double);
+    void valueTouchInputChangedHUD(double,double,double);
 
 protected:
     void commitRawDataToGL();
@@ -166,9 +165,9 @@ protected:
     double painterszeroy;
     double alpha;
     double beta;
-    double psiVel;
-    double thetaVel;
-    double phiVel;
+    double yawTouchInput;
+    double pitchTouchInput;
+    double rollTouchInput;
 
     //Ende Code AL
 

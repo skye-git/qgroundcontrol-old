@@ -17,10 +17,11 @@ signals:
     void xValuechanged(double x);
     void yValuechanged(double y);
     void zValuechanged(double z);
-    void valueTouchInputChanged(double, double, double, double, double, double);
+    void valueMapRingChanged(double, double, double);
 
 public slots:
-    void emitValues();
+    //void emitValues();
+    void increaseMultiplicator();
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -31,6 +32,7 @@ protected:
     //UASInterface* uas;
 
 private:
+    QTimer *countingupTimer;
     bool countingup;
     double stepsize;
     double multiplicator;

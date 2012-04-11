@@ -20,10 +20,11 @@ public slots:
     /** @brief Update slider zoom from map change */
     void setZoom(int zoom);
     void setRingvisible(bool visib); //Beginn/Ende Code AL (26.03.12)
+    void transmitMapRingvalues(double, double, double); //Beginn/Ende Code AL (11.04.12)
 
 signals:
     void visibilityChanged(bool visible);
-    void valueTouchInputChanged(double,double,double,double,double,double);
+    void valueTouchInputChangedMap(double,double,double); // Beginn/Ende Code AL (11.04.12)
 
 protected:
     void showEvent(QShowEvent* event)
@@ -39,6 +40,8 @@ protected:
     }
 
     void resizeEvent(QResizeEvent *event);//Beginn und Ende Code AL (18.03.12)
+
+    bool touchInputvisib; //Beginn und Ende Code AL (11.04.12)
 
 private:
     Ui::QGCMapTool *ui;

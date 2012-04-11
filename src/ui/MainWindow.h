@@ -106,7 +106,7 @@ public:
         QGC_MAINWINDOW_STYLE_NATIVE,
         QGC_MAINWINDOW_STYLE_INDOOR,
         QGC_MAINWINDOW_STYLE_OUTDOOR,
-        QGC_MAINWINDOW_STYLE_SKYE,              //Beginn Ende Code AL (14.03.12)
+        QGC_MAINWINDOW_STYLE_SKYE              //Beginn Ende Code AL (14.03.12)
     };
 
     /** @brief Get current visual style */
@@ -255,6 +255,14 @@ public slots:
     void emitMouseValues();
 #endif // MOUSE_ENABLED                                     // Ende Code MA (21.03.2012)
 
+    /** @Collect TouchInput from HUD */                             //Beginn Code AL (11.04.12)
+    void setTouchInputYawPitchRoll(double roll, double pitch, double yaw);
+    /** @Collect TouchInput from QGCMapTool */
+    void setTouchInputXYZ(double x, double y, double z);
+    /** @brief Emit TouchInput values */
+    void emitTouchInputValues();                                    //Ende Code AL (11.04.12)
+
+
 
 signals:
     void initStatusChanged(const QString& message);
@@ -279,6 +287,8 @@ signals:
     void valueKeyboardChanged(double xValue, double yValue, double zValue, double rollValue, double pitchValue, double yawValue);   // Beginn und Ende Code MA (07.03.2012)
     /** @brief Emits bool whether TouchInput Interface is shown or not */
     void emitTouchInputVisibility(bool);                                                                                 // Beginn und Ende code AL(10.04.2012)
+    /** @brief Emits new contol values for UAS given by keyboard in range [-1, 1] */
+    void valueTouchInputChanged(double xValue, double yValue, double zValue, double rollValue, double pitchValue, double yawValue); //Beginn und Ende Code AL(11.04.12)
 
 public:
     QGCMAVLinkLogPlayer* getLogPlayer()
@@ -484,6 +494,14 @@ private:
     double keyRollValue;     ///< Roll value caused by keyboard input (???)
     double keyPitchValue;    ///< Pitch value caused by keyboard input (down, up)
     double keyYawValue;      ///< Yaw value caused by keyboard input (left, right)
+
+    QTimer touchInputTimer;                         //Beginn code AL (11.04.12)
+    double touchXValue;
+    double touchYValue;
+    double touchZValue;
+    double touchRollValue;
+    double touchPitchValue;
+    double touchYawValue;                           //Ende Code AL
 
 };
 
