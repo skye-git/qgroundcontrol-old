@@ -173,6 +173,7 @@ protected:
     //Ende Code AL
 
     static const int updateInterval = 40;
+    //static const int touchInputInterval = 200; //Start Ende Code AL (11.04.12)
 
     QImage* image; ///< Double buffer image
     QImage glImage; ///< The background / camera image
@@ -217,6 +218,7 @@ protected:
     int warningBlinkRate;      ///< Blink rate of warning messages, will be rounded to the refresh rate
 
     QTimer* refreshTimer;      ///< The main timer, controls the update rate
+    QTimer* emitTimer;         ///< This timer controls the touchinput rate
     QPainter* hudPainter;
     QFont font;                ///< The HUD font, per default the free Bitstream Vera SANS, which is very close to actual HUD fonts
     QFontDatabase fontDatabase;///< Font database, only used to load the TrueType font file (the HUD font is directly loaded from file rather than from the system)

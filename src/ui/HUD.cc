@@ -173,12 +173,12 @@ HUD::HUD(int width, int height, QWidget* parent)
     // Refresh timer
     refreshTimer->setInterval(updateInterval);
     connect(refreshTimer, SIGNAL(timeout()), this, SLOT(paintHUD()));
+    connect(refreshTimer, SIGNAL(timeout()), this, SLOT(emitValues()));//Beginn Code AL, Code below doesn't work...
 
     //Beginn Code AL (10.04.12)
     // Emit timer
-    QTimer *emittimer = new QTimer(this);
-    connect(emittimer, SIGNAL(timeout()),this, SLOT(emitValues()));
-    emittimer->start(200); //every 0.2 seconds emitValues is called
+//    emitTimer->setInterval(touchInputInterval);//every 0.2 seconds emitValues is called
+//    connect(emitTimer, SIGNAL(timeout()),this, SLOT(emitValues()));
     //Ende Code AL
 
     // Resize to correct size and fill with image
@@ -1595,8 +1595,14 @@ void HUD::emitValues()
 {
     if((knobisactive || knobcircleisactive) && touchInputvisib)
     {
-        emit valueTouchInputChanged(0, 0, 0, phiVel, thetaVel, psiVel);
-        qDebug() << "HUD.cc emitValues called with: phiVel: "<< phiVel << " thetaVel: " << thetaVel << " psiVel :" << psiVel;
+        static int emitValuesCounter;
+        if(emitValuesCounter == 4)
+        {
+            emit valueTouchInputChanged(0, 0, 0, phiVel, thetaVel, psiVel);
+            qDebug() << "HUD.cc emitValues called with: phiVel: "<< phiVel << " thetaVel: " << thetaVel << " psiVel :" << psiVel;
+            emitValuesCounter = 0;
+        }
+        emitValuesCounter++;
     }
 }
 
