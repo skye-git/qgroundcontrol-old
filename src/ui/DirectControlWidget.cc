@@ -39,6 +39,7 @@ DirectControlWidget::DirectControlWidget(QWidget *parent):
         uas->setMode(MAV_MODE_DIRECT_CONTROL_DISARMED);
     }
 
+    connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 
     //connect Sliders, spinBoxes and dials
     connect(ui->sliderThrustX, SIGNAL(valueChanged(int)), ui->spinBoxThrustX, SLOT(setValue(int)));
@@ -81,9 +82,27 @@ DirectControlWidget::~DirectControlWidget()
 {
     if(uas)
     {
+        timer->stop();
         uas->setMode(MAV_MODE_PREFLIGHT);
     }
     delete ui;
+}
+
+void DirectControlWidget::setUAS(UASInterface* mav)
+{
+    if (uas != 0)
+    {
+        disconnect(this, SIGNAL(valueDirectControlChanged(double,double,double,double,double,double)), uas, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
+        disconnect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
+    }
+
+    uas = dynamic_cast<SkyeMAV*>(mav);
+    if (uas)
+    {
+        connect(this, SIGNAL(valueDirectControlChanged(double,double,double,double,double,double)), uas, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
+        connect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
+        updateState(uas->getUASState());
+    }
 }
 
 void DirectControlWidget::emitValues()
@@ -119,6 +138,7 @@ void DirectControlWidget::directControlClose()
         uas->setMode(MAV_MODE_PREFLIGHT);
     }
     engineOn=false;
+    timer->stop();
     this->close();
 }
 

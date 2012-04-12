@@ -26,6 +26,7 @@ public:
 
 public slots:
 
+    void setUAS(UASInterface* mav);
     void stopAll();
     void emitValues();
     void changeMode(int mode);
