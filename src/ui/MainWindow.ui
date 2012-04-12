@@ -51,7 +51,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMGround">
@@ -71,6 +71,7 @@
     <addaction name="actionMuteAudioOutput"/>
     <addaction name="actionJoystickSettings"/>
     <addaction name="actionTestphase"/>
+    <addaction name="actionDirectControl"/>
     <addaction name="actionCamera_Reconfigure"/>
     <addaction name="actionSettings"/>
     <addaction name="menuPreferences"/>
@@ -519,6 +520,15 @@
    </property>
    <property name="toolTip">
     <string>Set camera settings</string>
+   </property>
+  </action>
+  <action name="actionDirectControl">
+   <property name="icon">
+    <iconset resource="../../qgroundcontrol.qrc">
+     <normaloff>:/images/skye_images/LOGO_DEF.png</normaloff>:/images/skye_images/LOGO_DEF.png</iconset>
+   </property>
+   <property name="text">
+    <string>DirectControl</string>
    </property>
   </action>
  </widget>

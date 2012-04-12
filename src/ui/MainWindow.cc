@@ -114,7 +114,7 @@ MainWindow::MainWindow(QWidget *parent):
     mouseTranslationEnable(true),
     mouseRotationEnable(true),
     mouseInitialized(false),
-    mouseFilterSize(1),
+    mouseFilterSize(2),
     mouseRawValues(NULL),
     newMouseXValue(0),
     newMouseYValue(0),
@@ -225,6 +225,7 @@ MainWindow::MainWindow(QWidget *parent):
     //joystick = new JoystickInput();                               // Modified Code MA (13.03.2012) ----- Disabled JoystickThread
 
     testphaseWidget = 0;                                            //Start Ende Code AL (19.03.12)
+    directControlWidget = 0;                                        //Start Ende Code AL (19.03.12)
     skyeCameraReconfigureWidget = 0;                                //Beginn und Ende Code MA (20.03.2012)
 
     // Connect link
@@ -1147,10 +1148,12 @@ void MainWindow::connectCommonActions()
     // Application Settings
     connect(ui.actionSettings, SIGNAL(triggered()), this, SLOT(showSettings()));
 
-    ui.actionTestphase->setVisible(true);                                           //Beginn Code AL (01.03.12)----------
-    connect(ui.actionTestphase, SIGNAL(triggered()), this, SLOT(showTestphase()));  //Ende Code AL ----------------------
-    ui.actionCamera_Reconfigure->setVisible(true);                                           //Beginn Code MA (20.03.12)----------
-    connect(ui.actionCamera_Reconfigure, SIGNAL(triggered()), this, SLOT(showSkyeCamReconfig()));  //Ende Code MA ----------------------
+    ui.actionTestphase->setVisible(true);                                                           //Beginn Code AL (01.03.12)----------
+    connect(ui.actionTestphase, SIGNAL(triggered()), this, SLOT(showTestphase()));                  //Ende Code AL ----------------------
+    ui.actionDirectControl->setVisible(true);                                                       //Beginn Code MA (12.04.12)----------
+    connect(ui.actionDirectControl, SIGNAL(triggered()), this, SLOT(showDirectControl()));          //Ende Code MA ----------------------
+    ui.actionCamera_Reconfigure->setVisible(true);                                                  //Beginn Code MA (20.03.12)----------
+    connect(ui.actionCamera_Reconfigure, SIGNAL(triggered()), this, SLOT(showSkyeCamReconfig()));   //Ende Code MA ----------------------
 }
 
 void MainWindow::showHelp()
@@ -1221,7 +1224,18 @@ void MainWindow::showTestphase()                    //Beginn Code AL (03.01.12)
 //    {
 //        testphaseWidget->raise();
 //    }
-}                                                   //Ende Code AL (03.01.12)
+}
+
+void MainWindow::showDirectControl()                    //Beginn Code MA (12.04.12)
+{
+     if(!directControlWidget)
+    {
+        directControlWidget = new DirectControlWidget(this);
+    }
+    directControlWidget->show();
+    directControlWidget->activateWindow();
+
+}   //Ende Code MA
 
 void MainWindow::showSkyeCamReconfig()                    //Beginn Code MA (20.01.12)
 {
@@ -1897,10 +1911,10 @@ void MainWindow::start3dMouse()
         {
             qDebug() << "Initialized 3dMouse";
             mouseInitialized = true;
-            delete mouseTimer;
+//            delete mouseTimer;
             mouseTimer = new QTimer(this);
             connect(mouseTimer, SIGNAL(timeout()),this, SLOT(filterMouseValues()));
-            mouseTimer->start(200); //5Hz emitValues is called
+            mouseTimer->start(100); //5Hz emitValues is called //no 10Hz
 
             if (mouseRawValues == NULL)
             {

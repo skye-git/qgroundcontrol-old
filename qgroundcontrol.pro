@@ -254,7 +254,8 @@ FORMS += src/ui/MainWindow.ui \
     src/ui/firmwareupdate/QGCPX4FirmwareUpdate.ui \
     src/ui/uas/UASSkyeBatteryInfoWidget.ui \
     src/ui/uas/UASSkyeBatteryPackWidget.ui \
-    src/ui/SkyeCameraReconfigure.ui
+    src/ui/SkyeCameraReconfigure.ui \
+    src/ui/DirectControlWidget.ui
 INCLUDEPATH += src \
     src/ui \
     src/ui/linechart \
@@ -384,7 +385,8 @@ HEADERS += src/MG.h \
     src/ui/uas/UASSkyeBatteryPackWidget.h \
     src/ui/map/QGCMapRing.h \
     src/ui/SkyeCameraReconfigure.h \
-    src/ui/BluefoxReconfigure.h
+    src/ui/BluefoxReconfigure.h \
+    src/ui/DirectControlWidget.h
 
 # Google Earth is only supported on Mac OS and Windows with Visual Studio Compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010::HEADERS += src/ui/map3D/QGCGoogleEarthView.h
@@ -535,6 +537,7 @@ SOURCES += src/main.cc \
     src/ui/uas/UASSkyeBatteryPackWidget.cpp \
     src/ui/map/QGCMapRing.cc \
     src/ui/SkyeCameraReconfigure.cpp \
+    src/ui/DirectControlWidget.cc
 
 # Enable Google Earth only on Mac OS and Windows with Visual Studio compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010::SOURCES += src/ui/map3D/QGCGoogleEarthView.cc
