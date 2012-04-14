@@ -114,7 +114,8 @@ MainWindow::MainWindow(QWidget *parent):
     mouseTranslationEnable(true),
     mouseRotationEnable(true),
     mouseInitialized(false),
-    mouseFilterSize(2),
+    mouseFilterSize(5),
+    emitMouseValuesCounter(0),
     mouseRawValues(NULL),
     newMouseXValue(0),
     newMouseYValue(0),
@@ -1839,7 +1840,6 @@ QList<QAction*> MainWindow::listLinkMenuActions(void)
 void MainWindow::setInputMode(int inputMode)
 {
 #ifdef MAVLINK_ENABLED_SKYE
-
     switch (inputMode)
     {
     case 1:
@@ -1911,19 +1911,24 @@ void MainWindow::start3dMouse()
         {
             qDebug() << "Initialized 3dMouse";
             mouseInitialized = true;
+
+            if (mouseFilterSize<1)
+            {
+                mouseFilterSize = 1;
+            }
+
 //            delete mouseTimer;
             mouseTimer = new QTimer(this);
             connect(mouseTimer, SIGNAL(timeout()),this, SLOT(filterMouseValues()));
-            mouseTimer->start(100); //5Hz emitValues is called //no 10Hz
+            int mouseEmitFrequency = 5;                                     // Emit 3dMouse with 5Hz
+            int mouseFilterInterval = 1000 / mouseEmitFrequency / mouseFilterSize;
+            qDebug() << "Start mouseTimer with interval" << mouseFilterInterval;
+            mouseTimer->start(mouseFilterInterval); // Filter 3dMouse values with 25Hz
 
             if (mouseRawValues == NULL)
             {
                 qDebug() << "Allocate space for filter values all six DoF of 3dMouse";
                 // Allocate space for all six DoF of 3dMouse
-                if (mouseFilterSize<1)
-                {
-                    mouseFilterSize = 1;
-                }
 
                 mouseRawValues = new double[6*mouseFilterSize];
                 for (int i=0; i<6; i++)
@@ -1980,7 +1985,7 @@ bool MainWindow::x11Event(XEvent *event)
            {
             case MagellanInputMotionEvent :
                  MagellanRemoveMotionEvents( display );
-                 qDebug("3D Mouse Motion Detected!");
+//                 qDebug("3D Mouse Motion Detected!");
                  for (int i = 0; i < 6; i++) {  // Saturation
 //                     if (MagellanEvent.MagellanData[i] < (0-maxMagellanValue))
 //                     {
@@ -1990,12 +1995,10 @@ bool MainWindow::x11Event(XEvent *event)
 //                         MagellanEvent.MagellanData[i] = maxMagellanValue;
 //                     }
                      // Cancel value if motion is disabled
-                     qDebug() << MagellanEvent.MagellanData[1];
                      if ((i<3 && !mouseTranslationEnable) || (i>=3 && !mouseRotationEnable))
                      {
                          MagellanEvent.MagellanData[i] = 0;
                      }
-                     qDebug() << MagellanEvent.MagellanData[1];
                      MagellanEvent.MagellanData[i] = (abs(MagellanEvent.MagellanData[i]) < maxMagellanValue) ? MagellanEvent.MagellanData[i] : (maxMagellanValue*MagellanEvent.MagellanData[i]/abs(MagellanEvent.MagellanData[i]));
                  }
 //                 emit valueMouseChanged(MagellanEvent.MagellanData[ MagellanZ ] / maxMagellanValue,
@@ -2011,6 +2014,8 @@ bool MainWindow::x11Event(XEvent *event)
                  newMouseAValue = MagellanEvent.MagellanData[ MagellanC ] / maxMagellanValue;
                  newMouseBValue = MagellanEvent.MagellanData[ MagellanA ] / maxMagellanValue;
                  newMouseCValue = - MagellanEvent.MagellanData[ MagellanB ] / maxMagellanValue;
+
+                 newMouseValueTime = QTime::currentTime();
 
             return false;
             break;
@@ -2066,70 +2071,96 @@ void MainWindow::filterMouseValues()
             }
         }
     }
-    mouseRawValues[0*mouseFilterSize] = newMouseXValue;
-    mouseRawValues[1*mouseFilterSize] = newMouseYValue;
-    mouseRawValues[2*mouseFilterSize] = newMouseZValue;
-    mouseRawValues[3*mouseFilterSize] = newMouseAValue;
-    mouseRawValues[4*mouseFilterSize] = newMouseBValue;
-    mouseRawValues[5*mouseFilterSize] = newMouseCValue;
 
-    // Moving Average Filter
-    for (int i=0; i<6; i++)
+    // Safety passage in case X11event stops
+    QTime now = QTime::currentTime();
+    if (newMouseValueTime.msecsTo(now) > 200)
     {
-        double sum = 0;
-        for (int k=0; k<mouseFilterSize; k++)
-        {
-            qDebug() << "i = " << i << ", k =" << k;
-            sum += mouseRawValues[i*mouseFilterSize+k];
+//        qDebug() << "Cancelled last 3dMouse Motion (timeout: " << newMouseValueTime.msecsTo(now) << ")";
+        for (int i=0; i<6*mouseFilterSize; i++){
+            mouseRawValues[i] = 0;
         }
-//        qDebug() << "MAF: Axis:" << i << "Sum value: " << sum;
-        switch (i)
+        mouseXValueFiltered = 0;
+        mouseYValueFiltered = 0;
+        mouseZValueFiltered = 0;
+        mouseAValueFiltered = 0;
+        mouseBValueFiltered = 0;
+        mouseCValueFiltered = 0;
+
+    } else {
+//        qDebug() << "3dMouse motion accepted (timeout: " << newMouseValueTime.msecsTo(now) << ")";
+        mouseRawValues[0*mouseFilterSize] = newMouseXValue;
+        mouseRawValues[1*mouseFilterSize] = newMouseYValue;
+        mouseRawValues[2*mouseFilterSize] = newMouseZValue;
+        mouseRawValues[3*mouseFilterSize] = newMouseAValue;
+        mouseRawValues[4*mouseFilterSize] = newMouseBValue;
+        mouseRawValues[5*mouseFilterSize] = newMouseCValue;
+
+
+        // Moving Average Filter
+        for (int i=0; i<6; i++)
         {
-        case 0:
-                {
-                mouseXValueFiltered = sum/mouseFilterSize;
+            double sum = 0;
+            for (int k=0; k<mouseFilterSize; k++)
+            {
+    //            qDebug() << "i = " << i << ", k =" << k;
+                sum += mouseRawValues[i*mouseFilterSize+k];
+            }
+    //        qDebug() << "MAF: Axis:" << i << "Sum value: " << sum;
+            switch (i)
+            {
+            case 0:
+                    {
+                    mouseXValueFiltered = sum/mouseFilterSize;
+                    break;
+                    }
+            case 1:
+                    {
+                    mouseYValueFiltered = sum/mouseFilterSize;
+                    break;
+                    }
+            case 2:
+                    {
+                    mouseZValueFiltered = sum/mouseFilterSize;
+                    break;
+                    }
+            case 3:
+                    {
+                    mouseAValueFiltered = sum/mouseFilterSize;
+                    break;
+                    }
+            case 4:
+                    {
+                    mouseBValueFiltered = sum/mouseFilterSize;
+                    break;
+                    }
+            case 5:
+                    {
+                    mouseCValueFiltered = sum/mouseFilterSize;
+                    break;
+                    }
+            default:
+                qDebug() << "Moving Average Filter failed!";
                 break;
-                }
-        case 1:
-                {
-                mouseYValueFiltered = sum/mouseFilterSize;
-                break;
-                }
-        case 2:
-                {
-                mouseZValueFiltered = sum/mouseFilterSize;
-                break;
-                }
-        case 3:
-                {
-                mouseAValueFiltered = sum/mouseFilterSize;
-                break;
-                }
-        case 4:
-                {
-                mouseBValueFiltered = sum/mouseFilterSize;
-                break;
-                }
-        case 5:
-                {
-                mouseCValueFiltered = sum/mouseFilterSize;
-                break;
-                }
-        default:
-            qDebug() << "Moving Average Filter failed!";
-            break;
+            }
+            // Scale to norm = 1
+    //        double normTrans = sqrt((mouseXValueFiltered*mouseXValueFiltered) + (mouseYValueFiltered*mouseYValueFiltered) + (mouseZValueFiltered*mouseZValueFiltered));
+    //        mouseXValueFiltered = mouseXValueFiltered/normTrans;
+    //        mouseYValueFiltered = mouseYValueFiltered/normTrans;
+    //        mouseZValueFiltered = mouseZValueFiltered/normTrans;
+    //        double normRot = sqrt((mouseAValueFiltered*mouseAValueFiltered) + (mouseBValueFiltered*mouseBValueFiltered) + (mouseCValueFiltered*mouseCValueFiltered));
+    //        mouseAValueFiltered = mouseAValueFiltered/normRot;
+    //        mouseBValueFiltered = mouseBValueFiltered/normRot;
+    //        mouseCValueFiltered = mouseCValueFiltered/normRot;
         }
-        // Scale to norm = 1
-//        double normTrans = sqrt((mouseXValueFiltered*mouseXValueFiltered) + (mouseYValueFiltered*mouseYValueFiltered) + (mouseZValueFiltered*mouseZValueFiltered));
-//        mouseXValueFiltered = mouseXValueFiltered/normTrans;
-//        mouseYValueFiltered = mouseYValueFiltered/normTrans;
-//        mouseZValueFiltered = mouseZValueFiltered/normTrans;
-//        double normRot = sqrt((mouseAValueFiltered*mouseAValueFiltered) + (mouseBValueFiltered*mouseBValueFiltered) + (mouseCValueFiltered*mouseCValueFiltered));
-//        mouseAValueFiltered = mouseAValueFiltered/normRot;
-//        mouseBValueFiltered = mouseBValueFiltered/normRot;
-//        mouseCValueFiltered = mouseCValueFiltered/normRot;
     }
-    emitMouseValues();
+    emitMouseValuesCounter++;
+    if (emitMouseValuesCounter >= mouseFilterSize)
+    {
+//        qDebug() << "Emitted mouse values";
+        emitMouseValuesCounter = 0;
+        emitMouseValues();
+    }
     }
 }
 

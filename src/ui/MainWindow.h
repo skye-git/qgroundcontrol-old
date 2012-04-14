@@ -36,6 +36,7 @@ This file is part of the QGROUNDCONTROL project
 #include <QStackedWidget>
 #include <QSettings>
 #include <QProcess>                     // Beginn Ende Code MA (08.03.2012)
+#include <QTime>                        // Beginn Ende Code MA (14.04.2012)
 #include <qlist.h>
 
 #include "ui_MainWindow.h"
@@ -472,8 +473,10 @@ private:
     bool mouseRotationEnable;       ///< True when rotations of 3dMouse are enabled
     bool mouseInitialized;          ///< True when 3dMouse initialized successfully
     QTimer *mouseTimer;             ///< Timer calling 3dMouse
-    int mouseFilterSize;         ///< Size of moving average filter of skye
-    double *mouseRawValues;        ///< Array containing last few mouse values
+    QTime newMouseValueTime;        ///< Time when X11 event wrote new MouseValues. Used to check X11 timeout
+    int mouseFilterSize;            ///< Size of moving average filter of skye
+    int emitMouseValuesCounter;     ///< Counts up to mouseFilterSize and than values are emited
+    double *mouseRawValues;         ///< Array containing last #mouseFilterSize mouse values for each axis
     double newMouseXValue;          ///< New mouse value read from 3dMouse device
     double newMouseYValue;          ///< New mouse value read from 3dMouse device
     double newMouseZValue;          ///< New mouse value read from 3dMouse device
