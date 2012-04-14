@@ -100,7 +100,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
 
             ++imagePacketsArrived;
 
-//            qDebug() << "RECIEVED ENCAPSULATED IMAGE, imagePackets:" << imagePackets << "imagePacketsArrived:" << imagePacketsArrived;
+            qDebug() << "RECIEVED ENCAPSULATED IMAGE, imagePackets:" << imagePackets << "imagePacketsArrived:" << imagePacketsArrived;
 
             // emit signal if all packets arrived
             if ((imagePacketsArrived >= imagePackets))
@@ -108,7 +108,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
                 // Restart statemachine
                 imagePacketsArrived = 0;
                 emit imageReady(this);
-//                qDebug() << "SKYE imageReady emitted. all packets arrived";
+                qDebug() << "SKYE imageReady emitted. all packets arrived";
             }
         }
         break;
@@ -302,7 +302,7 @@ QImage SkyeMAV::getImage()          // Function copied from UAS.cc (pixhawk)
 {
 #ifdef MAVLINK_ENABLED_SKYE
 
-//    qDebug() << "IMAGE TYPE:" << imageType;
+    qDebug() << "getImage: IMAGE TYPE:" << imageType;
 
     // RAW greyscale
     if (imageType == MAVLINK_DATA_STREAM_IMG_RAW8U)

@@ -1435,7 +1435,7 @@ void HUD::setImageSize(int width, int height, int depth, int channels)
 void HUD::startImage(int imgid, int width, int height, int depth, int channels)
 {
     Q_UNUSED(imgid);
-//    qDebug() << "HUD: starting image (" << width << "x" << height << ", " << depth << "bits) with " << channels << "channels";
+    qDebug() << "HUD: starting image (" << width << "x" << height << ", " << depth << "bits) with " << channels << "channels";
 
     // Copy previous image to screen if it hasn't been finished properly
     finishImage();
@@ -1563,13 +1563,17 @@ void HUD::setPixels(int imgid, const unsigned char* imageData, int length, int s
 
 void HUD::copyImage()
 {
-    if (isVisible())
+    if (isVisible() && hudInstrumentsEnabled)
     {
-//        qDebug() << "HUD::copyImage()";
+        qDebug() << "HUD::copyImage()";
+#ifdef MAVLINK_ENABLED_SKYE
         SkyeMAV* u = dynamic_cast<SkyeMAV*>(this->uas);
+#else
+        UAS* u = dynamic_cast<UAS*>(this->uas);
+#endif
         if (u)
         {
-//            qDebug() << "HUD::copyImage() getImage from uas" << u->getUASName() << ".. PAINT IT!"; // << u->getImage();
+            qDebug() << "HUD::copyImage() getImage from uas" << u->getUASName() << ".. PAINT IT!"; // << u->getImage();
             this->glImage = QGLWidget::convertToGLFormat(u->getImage());
         }
     }

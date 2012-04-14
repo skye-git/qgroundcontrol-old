@@ -51,7 +51,7 @@ MOC_DIR = $${BUILDDIR}/moc
 UI_DIR = $${BUILDDIR}/ui
 RCC_DIR = $${BUILDDIR}/rcc
 MAVLINK_CONF = ""
-MAVLINKPATH = $$BASEDIR/thirdParty/mavlink/include
+MAVLINKPATH = $$BASEDIR/mavlink/include/v1.0
 DEFINES += MAVLINK_NO_DATA
 
 win32 {
@@ -128,7 +128,7 @@ contains(MAVLINK_CONF, ualberta) {
 contains(MAVLINK_CONF, ardupilotmega) { 
     # Remove the default set - it is included anyway
     INCLUDEPATH -= $$MAVLINKPATH/common
-    INCLUDEPATH -= $$BASEDIR/thirdParty/mavlink/include/common
+    INCLUDEPATH -= $$BASEDIR/mavlink/include/v1.0/common
     
     # UALBERTA SPECIAL MESSAGES
     INCLUDEPATH += $$MAVLINKPATH/ardupilotmega
@@ -144,10 +144,10 @@ contains(MAVLINK_CONF, senseSoar) {
 }
 contains(MAVLINK_CONF, skye) {                      ## Beginn Code MA  (15.02.12) copied AL (03.02.12)------------------------------------------
     # Remove the default set - it is included anyway
-    INCLUDEPATH -= $$BASEDIR/thirdParty/mavlink/include/common
+    INCLUDEPATH -= $$MAVLINKPATH/common
 
     # SKYE SPECIAL MESSAGES
-    INCLUDEPATH += $$BASEDIR/thirdParty/mavlink/include/skye
+    INCLUDEPATH += $$MAVLINKPATH/skye
     DEFINES += QGC_USE_SKYE_MESSAGES
 }                                                   ## Ende Code MA  ------------------------------------------
 
@@ -421,7 +421,7 @@ contains(DEPENDENCIES_PRESENT, protobuf):contains(MAVLINK_CONF, pixhawk) {
     message("Including headers for Protocol Buffers")
 
     # Enable only if protobuf is available
-    HEADERS += thirdParty/mavlink/include/pixhawk/pixhawk.pb.h \
+    HEADERS += mavlink/include/v1.0/pixhawk/pixhawk.pb.h \
         src/ui/map3D/ObstacleGroupNode.h \
         src/ui/map3D/GLOverlayGeode.h
 }
@@ -581,7 +581,7 @@ contains(DEPENDENCIES_PRESENT, protobuf):contains(MAVLINK_CONF, pixhawk) {
     message("Including sources for Protocol Buffers")
 
     # Enable only if protobuf is available
-    SOURCES += thirdParty/mavlink/src/pixhawk/pixhawk.pb.cc \
+    SOURCES += mavlink/src/v1.0/pixhawk/pixhawk.pb.cc \
         src/ui/map3D/ObstacleGroupNode.cc \
         src/ui/map3D/GLOverlayGeode.cc
 }
