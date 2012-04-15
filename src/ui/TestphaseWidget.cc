@@ -28,6 +28,7 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
     {
         connect(this, SIGNAL(valueTestphaseChanged(int, int, int, int, int, int, int, int)), uas, SLOT(setTestphaseCommandsByWidget(int, int, int, int, int, int, int, int)));
         connect(m_ui->homingButton, SIGNAL(clicked()), uas, SLOT(sendHomingCommand()));
+        connect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
         uas->setMode(MAV_MODE_TESTPHASE_DISARMED);
         qDebug()<< " AL:TestphaseWidget connect valueTestphaseChanged to setTestphaseCommandsByWidget";
     }
@@ -80,9 +81,9 @@ TestphaseWidget::TestphaseWidget(QWidget *parent):
 //    connect(m_ui->dialOrientation4, SIGNAL(valueChanged(int)),this, SLOT(emitValues()));
 
     // Start Timer
-    mouseTimer = new QTimer(this);
-    connect(mouseTimer, SIGNAL(timeout()),this, SLOT(emitValues()));
-    mouseTimer->start(200); //5Hz emitValues is called
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()),this, SLOT(emitValues()));
+    timer->start(200); //5Hz emitValues is called
 
 
 
@@ -95,6 +96,7 @@ TestphaseWidget::~TestphaseWidget()
 {
     if(uas)
     {
+        //timer->stop();
         uas->setMode(MAV_MODE_PREFLIGHT);
     }
     qDebug()<< " AL:TestphaseWidgetDestructor Call";
@@ -124,14 +126,29 @@ TestphaseWidget::~TestphaseWidget()
 //    event->accept();
 //}
 
+void TestphaseWidget::setUAS(UASInterface* mav)
+{
+    if (uas != 0)
+    {
+        disconnect(this, SIGNAL(valueTestphaseChanged(double,double,double,double,double,double)), uas, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
+        disconnect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
+    }
+
+    uas = dynamic_cast<SkyeMAV*>(mav);
+    if (uas)
+    {
+        connect(this, SIGNAL(valueTestphaseChanged(double,double,double,double,double,double)), uas, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
+        connect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
+        updateState(uas->getUASState());
+    }
+}
 
 void TestphaseWidget::emitValues()
 {
     //qDebug()<<"AL:in emitValues"<<m_ui->spinBoxOrientation1->value() << "AL emit valueTestphaseChanged should be called next.";
-    SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uas);
-    if (mav)
+    if (uas)
     {
-        if (mav->getMode() == MAV_MODE_TESTPHASE_ARMED)
+        if (uas->getMode() == MAV_MODE_TESTPHASE_ARMED)
         {
             emit valueTestphaseChanged(m_ui->SliderThrust1->value(), m_ui->SliderThrust2->value(), m_ui->SliderThrust3->value(), m_ui->SliderThrust4->value(), m_ui->spinBoxOrientation1->value(), m_ui->spinBoxOrientation2->value(), m_ui->spinBoxOrientation3->value(), m_ui->spinBoxOrientation4->value());
 //            qDebug()<<"AL:emit should have been called now. Thrust for Motor1 is"<< m_ui->SliderThrust1->value();
@@ -152,6 +169,7 @@ void TestphaseWidget::Testphaseclose()
 {
     if(uas)
     {
+        emit valueTestphaseChanged(0, 0, 0, 0, 0, 0 ,0 ,0);
         uas->setMode(MAV_MODE_PREFLIGHT);
     }
     engineOn=false;
@@ -179,27 +197,44 @@ void TestphaseWidget::stopall()
 //}
 
 void TestphaseWidget::cycleContextButton()
-{
-#ifdef MAVLINK_ENABLED_SKYE
-    UAS* mav = dynamic_cast<UAS*>(UASManager::instance()->getUASForId(uas->getUASID()));
-    if (mav)
+{    
+    if (uas)
     {
         if (!engineOn)
         {
-            mav->armSystem();
-            m_ui->controlButton->setText(tr("DISARMSYSTEM"));
-            m_ui->controlButton->setStyleSheet("* { background-color: rgb(255,125,100) }");
+            uas->armSystem();
+            //m_ui->controlButton->setText(tr("DISARMSYSTEM"));
+            //m_ui->controlButton->setStyleSheet("* { background-color: rgb(255,125,100) }");
             uas->setMode(MAV_MODE_TESTPHASE_ARMED);
             engineOn=true;
         } else {
-            mav->disarmSystem();
-            m_ui->controlButton->setText(tr("ARM SYSTEM"));
-            m_ui->controlButton->setStyleSheet("* { background-color: rgb(125,255,100) }");
+            emit valueTestphaseChanged( 0, 0, 0, 0, 0, 0, 0, 0);
+            uas->disarmSystem();
+            //m_ui->controlButton->setText(tr("ARM SYSTEM"));
+            //m_ui->controlButton->setStyleSheet("* { background-color: rgb(125,255,100) }");
             uas->setMode(MAV_MODE_TESTPHASE_DISARMED);
             engineOn=false;
         }
 
     }
-#endif // MAVLINK_ENABLED_SKYE
+}
+
+void TestphaseWidget::updateState(int state)
+{
+    switch(state)
+    {
+    case (int)MAV_STATE_ACTIVE:
+        engineOn = true;
+        m_ui->controlButton->setText(tr("DISARM SYSTEM"));
+        m_ui->controlButton->setStyleSheet("* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DD0044, stop: 1 #AA0022); border-color: yellow; color: yellow }");
+        break;
+    case (int)MAV_STATE_STANDBY:
+        engineOn = false;
+        stopall();
+        setzero();
+        m_ui->controlButton->setText(tr("ARM SYSTEM"));
+        m_ui->controlButton->setStyleSheet("* { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00DD44, stop: 1 #11AA22); }");
+        break;
+    }
 }
 

@@ -135,10 +135,11 @@ void DirectControlWidget::directControlClose()
 {
     if(uas)
     {
+        emit valueDirectControlChanged( 0, 0, 0, 0, 0, 0 );
         uas->setMode(MAV_MODE_PREFLIGHT);
     }
     engineOn=false;
-    timer->stop();
+    //timer->stop(); otherwise if ones reopens the widget, no signal is emitted no more
     this->close();
 }
 
@@ -164,6 +165,7 @@ void DirectControlWidget::cycleContextButton()
             uas->setMode(MAV_MODE_DIRECT_CONTROL_ARMED);
             engineOn=true;
         } else {
+            emit valueDirectControlChanged( 0, 0, 0, 0, 0, 0 );
             uas->disarmSystem();
 //            ui->controlButton->setText(tr("ARM SYSTEM"));
 //            ui.controlButton->setStyleSheet("* { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00DD44, stop: 1 #11AA22); }");
@@ -185,6 +187,7 @@ void DirectControlWidget::updateState(int state)
         break;
     case (int)MAV_STATE_STANDBY:
         engineOn = false;
+        stopAll();
         ui->controlButton->setText(tr("ARM SYSTEM"));
         ui->controlButton->setStyleSheet("* { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00DD44, stop: 1 #11AA22); }");
         break;

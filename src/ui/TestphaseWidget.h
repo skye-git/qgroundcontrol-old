@@ -9,7 +9,7 @@
 
 #include <QtGui/QDialog>
 #include <QTimer>
-#include "UASInterface.h"
+#include "SkyeMAV.h"
 
 //#include "TestphaseInput.h"//not yet implemented
 
@@ -28,27 +28,26 @@ public:
 
 public slots:
 
+    void setUAS(UASInterface* mav);
     void stopall();
     void setzero();
-//    void homing();
     void emitValues();
     void modeChanged(int mode_in);
     void Testphaseclose();
     void cycleContextButton();
-//    bool close();
-//    void closeEvent(QCloseEvent *event);
+    void updateState(int state);
 
 signals:
     void valueTestphaseChanged(int Thrust1, int Thrust2, int Thrust3, int Thrust4, int Orientation1, int Orientation2, int Orientation3, int Orientation4);
     void initiatehoming();
 
 protected:
-    UASInterface* uas;
 
 
 private:
+    SkyeMAV* uas;
     bool engineOn;
-    QTimer *mouseTimer;
+    QTimer *timer;
     Ui::TestphaseWidget *m_ui;
 
 };

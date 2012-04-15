@@ -1647,13 +1647,21 @@ void HUD::mouseMoveEvent(QMouseEvent *event)
             double beta_desired = std::atan2((mousePressedPosition.y()-painterszeroy), (mousePressedPosition.x()-painterszerox));
             //qDebug() << "beta_desired = "<< beta_desired/M_PI*180;
             double rollTouchInput_desired = (-alpha + beta_desired)/M_PI*180/90;
+
+            if(beta_desired - alpha < -M_PI)
+                rollTouchInput_desired = (2*M_PI+(beta_desired - alpha))/M_PI*180/90;
+            else if(beta_desired - alpha > M_PI)
+                rollTouchInput_desired = (-2*M_PI+(beta_desired-alpha))/M_PI*180/90;
+
             //qDebug() << "rollTouchInput_desired = "<<rollTouchInput_desired;
+            //qDebug() << "alpha = "<<alpha/M_PI*180 << "beta_desired = " << beta_desired/M_PI*180 << "diff = " << (-alpha + beta_desired)/M_PI*180;
 
             if(std::abs(rollTouchInput_desired) < 1)
             {
                 event->accept();
                 beta = beta_desired;
                 rollTouchInput = rollTouchInput_desired;
+                qDebug() << "rollTouchInput = " << rollTouchInput;
             }
             else
                 event->ignore();
