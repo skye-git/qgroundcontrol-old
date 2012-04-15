@@ -1593,7 +1593,7 @@ void HUD::mousePressEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::LeftButton){
         dragPosition = mousePressedPosition = event->posF();
-        qDebug() <<"dragPosition "<< dragPosition.x() <<" mousePressedPosition " << mousePressedPosition.y();
+        //qDebug() <<"dragPosition "<< dragPosition.x() <<" mousePressedPosition " << mousePressedPosition.y();
 
         if(std::abs(event->x()-painterszerox)/scalingFactor < 15 && std::abs(event->y()-painterszeroy)/scalingFactor <15)
             knobisactive = true;
@@ -1665,7 +1665,7 @@ void HUD::mouseMoveEvent(QMouseEvent *event)
                 event->accept();
                 beta = beta_desired;
                 rollTouchInput = rollTouchInput_desired;
-                qDebug() << "rollTouchInput = " << rollTouchInput;
+                //qDebug() << "rollTouchInput = " << rollTouchInput;
             }
             else
                 event->ignore();
@@ -1698,7 +1698,7 @@ void HUD::mouseReleaseEvent(QMouseEvent *event)
     if(touchInputvisib)
     {
         emit valueTouchInputChangedHUD(rollTouchInput, pitchTouchInput, yawTouchInput);
-        qDebug() << "HUD.cc mouseReleaseEvent calls valueTouchInputChangedHUD with: rollTouchInput: "<< rollTouchInput << " pitchTouchInput: " << pitchTouchInput << " yawTouchInput :" << yawTouchInput;
+        //qDebug() << "HUD.cc mouseReleaseEvent calls valueTouchInputChangedHUD with: rollTouchInput: "<< rollTouchInput << " pitchTouchInput: " << pitchTouchInput << " yawTouchInput :" << yawTouchInput;
     }
 
     knobisactive = false;

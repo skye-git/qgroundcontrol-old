@@ -146,7 +146,7 @@ void TestphaseWidget::setUAS(UASInterface* mav)
 void TestphaseWidget::emitValues()
 {
     //qDebug()<<"AL:in emitValues"<<m_ui->spinBoxOrientation1->value() << "AL emit valueTestphaseChanged should be called next.";
-    if (uas)
+    if (uas && this->isVisible())
     {
         if (uas->getMode() == MAV_MODE_TESTPHASE_ARMED)
         {

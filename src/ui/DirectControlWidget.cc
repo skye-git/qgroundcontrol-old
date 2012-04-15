@@ -107,7 +107,7 @@ void DirectControlWidget::setUAS(UASInterface* mav)
 
 void DirectControlWidget::emitValues()
 {
-    if (uas)
+    if (uas && this->isVisible())
     {
         if (uas->getMode() == MAV_MODE_DIRECT_CONTROL_ARMED)
         {
