@@ -50,7 +50,7 @@ This file is part of the QGROUNDCONTROL project
 #endif
 
 #ifdef QGC_USE_SKYE_MESSAGES            // Beginn Code MA (16.03.2012)
-#include <skye.h>               // is allready included in mavlink.h, but why?
+#include <skye.h>
 #endif                                  // Ende Code MA (16.03.2012)
 
 

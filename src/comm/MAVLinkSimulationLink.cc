@@ -778,7 +778,7 @@ void MAVLinkSimulationLink::mainloop()
             mavlink_msg_encapsulated_data_pack(systemId, MAV_COMP_ID_CAMERA, &msg, seqnr, data);
             // Allocate buffer with packet data
             bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-//            qDebug() << "Send package sequence" << seqnr << ":" << data;
+            qDebug() << "Send package sequence" << seqnr << ":" << data;
             //add data into datastream
             memcpy(stream+streampointer,buffer, bufferlength);
             streampointer += bufferlength;

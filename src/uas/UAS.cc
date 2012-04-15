@@ -929,7 +929,17 @@ void UAS::receiveMessage(LinkInterface* link, mavlink_message_t message)
             int severity = mavlink_msg_statustext_get_severity(&message);
             //qDebug() << "RECEIVED STATUS:" << text;false
             //emit statusTextReceived(severity, text);
-            emit textMessageReceived(uasId, message.compid, severity, text);
+
+            if (text.startsWith("#audio:"))
+            {
+                text.remove("#audio:");
+                emit textMessageReceived(uasId, message.compid, severity, QString("Audio message: ") + text);
+                GAudioOutput::instance()->say(text, severity);
+            }
+            else
+            {
+                emit textMessageReceived(uasId, message.compid, severity, text);
+            }
         }
             break;
 #ifdef MAVLINK_ENABLED_PIXHAWK
@@ -980,7 +990,7 @@ void UAS::receiveMessage(LinkInterface* link, mavlink_message_t message)
                 // Restart statemachine
                 imagePacketsArrived = 0;
                 emit imageReady(this);
-                qDebug() << "imageReady emitted. all packets arrived";
+                //qDebug() << "imageReady emitted. all packets arrived";
             }
         }
             break;
@@ -1630,7 +1640,7 @@ QImage UAS::getImage()
 {
 #ifdef MAVLINK_ENABLED_PIXHAWK
 
-    qDebug() << "IMAGE TYPE:" << imageType;
+//    qDebug() << "IMAGE TYPE:" << imageType;
 
     // RAW greyscale
     if (imageType == MAVLINK_DATA_STREAM_IMG_RAW8U)
