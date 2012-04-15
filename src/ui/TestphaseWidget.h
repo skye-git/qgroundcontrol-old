@@ -10,6 +10,7 @@
 #include <QtGui/QDialog>
 #include <QTimer>
 #include "SkyeMAV.h"
+#include <QCloseEvent>
 
 //#include "TestphaseInput.h"//not yet implemented
 
@@ -42,6 +43,7 @@ signals:
     void initiatehoming();
 
 protected:
+    void closeEvent(QCloseEvent *event);
 
 
 private:

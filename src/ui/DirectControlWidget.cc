@@ -7,7 +7,7 @@
 #include "SkyeMAV.h"
 
 DirectControlWidget::DirectControlWidget(QWidget *parent):
-    QDialog(parent),
+    QDialog(parent, Qt::WindowStaysOnTopHint),
     uas(NULL),
     engineOn(false),
     ui(new Ui::DirectControlWidget)
@@ -86,6 +86,12 @@ DirectControlWidget::~DirectControlWidget()
         uas->setMode(MAV_MODE_PREFLIGHT);
     }
     delete ui;
+}
+
+void DirectControlWidget::closeEvent(QCloseEvent *event)
+{
+    directControlClose();
+    event->accept();
 }
 
 void DirectControlWidget::setUAS(UASInterface* mav)

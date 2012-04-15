@@ -10,6 +10,7 @@
 #include <QtGui/QDialog>
 #include <QTimer>
 #include "SkyeMAV.h"
+#include <QCloseEvent>
 
 namespace Ui
 {
@@ -38,7 +39,7 @@ signals:
     void valueDirectControlChanged(double forceX, double forceY, double forceZ, double momentX, double momentY, double momentZ);
 
 protected:
-
+    void closeEvent(QCloseEvent *event);
 
 private:
     int maxThrust;

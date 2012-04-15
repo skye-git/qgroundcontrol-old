@@ -7,7 +7,7 @@
 #include "SkyeMAV.h"
 
 TestphaseWidget::TestphaseWidget(QWidget *parent):
-    QDialog(parent),
+    QDialog(parent , Qt::WindowStaysOnTopHint),
     uas(NULL),
     engineOn(false),
     m_ui(new Ui::TestphaseWidget)
@@ -103,28 +103,11 @@ TestphaseWidget::~TestphaseWidget()
     delete m_ui;
 }
 
-//bool TestphaseWidget::close()
-//{
-//    if(uas)
-//    {
-//        uas->setMode(MAV_MODE_PREFLIGHT);
-//    }
-//    engineOn=false;
-//    this->hide();
-//    qDebug()<< " AL:TestphaseWidgetclose";
-
-//    return true;
-//}
-//void TestphaseWidget::closeEvent(QCloseEvent *event)
-//{
-//    if(uas)
-//    {
-//        uas->setMode(MAV_MODE_PREFLIGHT);
-//    }
-//    engineOn=false;
-//    qDebug()<< " AL:TestphaseWidgetclose";
-//    event->accept();
-//}
+void TestphaseWidget::closeEvent(QCloseEvent *event)
+{
+    Testphaseclose();
+    event->accept();
+}
 
 void TestphaseWidget::setUAS(UASInterface* mav)
 {
