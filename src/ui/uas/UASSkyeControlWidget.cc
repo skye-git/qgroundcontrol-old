@@ -73,14 +73,14 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
 
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 
-    connect(ui.directControlButton, SIGNAL(toggled(bool)), this, SLOT(setDirectControlMode(bool)));
-    connect(ui.assistedControlButton, SIGNAL(toggled(bool)), this, SLOT(setAssistedControlMode(bool)));
-    connect(ui.halfAutomaticControlButton, SIGNAL(toggled(bool)), this, SLOT(setHalfAutomaticControlMode(bool)));
-    connect(ui.fullAutomaticControlButton, SIGNAL(toggled(bool)), this, SLOT(setFullAutomaticControlMode(bool)));
+    connect(ui.directControlButton, SIGNAL(clicked(bool)), this, SLOT(setDirectControlMode(bool)));
+    connect(ui.assistedControlButton, SIGNAL(clicked(bool)), this, SLOT(setAssistedControlMode(bool)));
+    connect(ui.halfAutomaticControlButton, SIGNAL(clicked(bool)), this, SLOT(setHalfAutomaticControlMode(bool)));
+    connect(ui.fullAutomaticControlButton, SIGNAL(clicked(bool)), this, SLOT(setFullAutomaticControlMode(bool)));
 
-    connect(ui.mouseButton, SIGNAL(toggled(bool)), this, SLOT(setInputMouse(bool)));
-    connect(ui.touchButton, SIGNAL(toggled(bool)), this, SLOT(setInputTouch(bool)));
-    connect(ui.keyboardButton, SIGNAL(toggled(bool)), this, SLOT(setInputKeyboard(bool)));
+    connect(ui.mouseButton, SIGNAL(clicked(bool)), this, SLOT(setInputMouse(bool)));
+    connect(ui.touchButton, SIGNAL(clicked(bool)), this, SLOT(setInputTouch(bool)));
+    connect(ui.keyboardButton, SIGNAL(clicked(bool)), this, SLOT(setInputKeyboard(bool)));
 
     //ui.gridLayout->setAlignment(Qt::AlignTop);
 

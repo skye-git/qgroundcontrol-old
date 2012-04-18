@@ -284,7 +284,7 @@ MainWindow::MainWindow(QWidget *parent):
     touchInputTimer.start(200);                                                                 //Ende Code AL (11.04.12)
 
 #ifdef MOUSE_ENABLED                    // Beginn Code MA (21.03.2012)
-    start3dMouse();
+    //start3dMouse();
 #endif // MOUSE_ENABLED                 // Ende Code MA
 
     show();
@@ -1904,7 +1904,15 @@ void MainWindow::start3dMouse()
         }
         if ( !MagellanInit( display, winId() ) )
         {
-            qDebug() << "No 3dXWare driver is running!";
+            QMessageBox msgBox;
+            msgBox.setIcon(QMessageBox::Information);
+            msgBox.setText(tr("No 3DxWare driver is running."));
+            msgBox.setInformativeText(tr("Enter in Terminal 'sudo /etc/3DxWare/daemon/3dxsrv -d usb'"));
+            msgBox.setStandardButtons(QMessageBox::Ok);
+            msgBox.setDefaultButton(QMessageBox::Ok);
+            msgBox.exec();
+
+            qDebug() << "No 3DxWare driver is running!";
             return;
         }
         else
@@ -1920,10 +1928,10 @@ void MainWindow::start3dMouse()
 //            delete mouseTimer;
             mouseTimer = new QTimer(this);
             connect(mouseTimer, SIGNAL(timeout()),this, SLOT(filterMouseValues()));
-            int mouseEmitFrequency = 5;                                     // Emit 3dMouse with 5Hz
-            int mouseFilterInterval = 1000 / mouseEmitFrequency / mouseFilterSize;
+            int mouseEmitFrequency = 5;                                             // Emit 3dMouse with 5Hz
+            int mouseFilterInterval = 1000 / mouseEmitFrequency / mouseFilterSize;  // in msec (40msec = 25Hz)
             qDebug() << "Start mouseTimer with interval" << mouseFilterInterval;
-            mouseTimer->start(mouseFilterInterval); // Filter 3dMouse values with 25Hz
+            mouseTimer->start(mouseFilterInterval);         // Filter 3dMouse values with 25Hz
 
             if (mouseRawValues == NULL)
             {
