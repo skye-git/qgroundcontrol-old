@@ -315,13 +315,18 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
 
 
         }
-        qDebug() << "We created" << valueMap.count() << "entries..";
-        foreach (QWidget* child, valueMap)
+
+        // Last entry: Set now size for all widgets
+        if (i == messageInfo[msgId].num_fields - 1)
         {
-            if (dynamic_cast<QLabel*>(child) == 0)
+            qDebug() << "We created" << valueMap.count() << "entries..";
+            foreach (QWidget* child, valueMap)
             {
-                child->setMaximumWidth(200);
-                hBox->setAlignment(child, Qt::AlignRight);
+                if (dynamic_cast<QLabel*>(child) == 0)
+                {
+                    child->setMaximumWidth(200);
+                    hBox->setAlignment(child, Qt::AlignRight);
+                }
             }
         }
     }
@@ -546,7 +551,7 @@ void SkyeCameraReconfigure::updateBluefoxSettings(mavlink_skye_cam_reconfigure_b
         if ( name == "pixel_clock")
         {
             QComboBox* valWgt = dynamic_cast<QComboBox*>(valueWidget);
-            valWgt->setCurrentIndex(bluefox->pixel_clock);
+            valWgt->setCurrentIndex((int)bluefox->pixel_clock);
         }
         if ( name == "frame_rate")
         {
@@ -591,12 +596,12 @@ void SkyeCameraReconfigure::updateBluefoxSettings(mavlink_skye_cam_reconfigure_b
         if ( name == "color_coding")
         {
             QComboBox* valWgt = dynamic_cast<QComboBox*>(valueWidget);
-            valWgt->setCurrentIndex(bluefox->color_coding);
+            valWgt->setCurrentIndex((int)bluefox->color_coding);
         }
         if ( name == "bayer_method")
         {
             QComboBox* valWgt = dynamic_cast<QComboBox*>(valueWidget);
-            valWgt->setCurrentIndex(bluefox->bayer_method);
+            valWgt->setCurrentIndex((int)bluefox->bayer_method);
         }
         if ( name == "exposure" )
         {
@@ -621,44 +626,45 @@ void SkyeCameraReconfigure::updateBluefoxSettings(mavlink_skye_cam_reconfigure_b
         if ( name == "gain_auto" )
         {
             QCheckBox* valWgt = dynamic_cast<QCheckBox*>(valueWidget);
-            // TODO
+            valWgt->setChecked((bool)bluefox->gain_auto);
         }
         if ( name == "gain_auto_min" )
         {
             QSpinBox* valWgt = dynamic_cast<QSpinBox*>(valueWidget);
-            // TODO
+            valWgt->setValue((int)bluefox->gain_auto_min);
         }
         if ( name == "gain_auto_max" )
         {
             QSpinBox* valWgt = dynamic_cast<QSpinBox*>(valueWidget);
-            // TODO
+            valWgt->setValue((int)bluefox->gain_auto_max);
         }
         if ( name == "gain" )
         {
             QSpinBox* valWgt = dynamic_cast<QSpinBox*>(valueWidget);
-            // TODO
+            valWgt->setValue((int)bluefox->gain);
         }
         if ( name == "auto_control_speed")
         {
             QComboBox* valWgt = dynamic_cast<QComboBox*>(valueWidget);
-            // TODO
+            valWgt->setCurrentIndex((int)bluefox->auto_control_speed);
         }
         if ( name == "auto_query_values" )
         {
             QCheckBox* valWgt = dynamic_cast<QCheckBox*>(valueWidget);
-            // TODO
+            valWgt->setChecked((bool)bluefox->auto_query_values);
         }
         if ( name == "hdr_mode")
         {
             QComboBox* valWgt = dynamic_cast<QComboBox*>(valueWidget);
-            // TODO
+            valWgt->setCurrentIndex((int)bluefox->hdr_mode);
         }
         if ( name == "use_ros_time" )
         {
             QCheckBox* valWgt = dynamic_cast<QCheckBox*>(valueWidget);
-            // TODO
+            valWgt->setChecked((bool)bluefox->use_ros_time);
         }
     }
+    ui->lastActionLabel->setText("Got current settings from camera.");
 
 }
 
