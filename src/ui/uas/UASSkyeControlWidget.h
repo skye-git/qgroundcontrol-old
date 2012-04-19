@@ -36,8 +36,14 @@ This file is part of the QGROUNDCONTROL project
 #include <QString>
 #include <QPushButton>
 #include <QButtonGroup>
+#include <QtGui/QApplication>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QHeaderView>
+#include <QtGui/QLabel>
+#include <QtGui/QVBoxLayout>
 #include <ui_UASSkyeControl.h>
 #include <UASInterface.h>
+//#include "Ui_UASSkyeControl.h"
 
 /**
  * @brief Widget controlling one (skye) MAV
@@ -81,6 +87,7 @@ signals:
     void changedMode(int);
     void changedInput(int);
     void triggeredImageShot(MAV_CAM_ID);
+    void changedSensitivityFactor(int);
 
     protected slots:
 //        /** @brief Set the background color for the widget */
@@ -105,21 +112,29 @@ signals:
         void triggerRightBluefoxImageShot();
         /** @brief Trigger image shot with Prosilica Camera */
         void triggerProsilicaImageShot();
+        /** @brief Set new (float)sensitivityFactor by int */
+        void setSensitivityFactor(int val);
 
 
     protected:
-        int uasId;              ///< Reference to the current uas
-        unsigned int uasMode; ///< Current uas mode
-        bool engineOn;        ///< Engine state
-        QGC_INPUT_MODE inputMode;        ///< Current device for input
+        int uasId;                          ///< Reference to the current uas
+        unsigned int uasMode;               ///< Current uas mode
+        bool engineOn;                      ///< Engine state
+        QGC_INPUT_MODE inputMode;           ///< Current device for input
         bool mouseTranslationEnabled;       ///< True when translational motions enabled
         bool mouseRotationEnabled;          ///< True when rotational motions enabled
+        int sensitivityFactor;               ///< Value of velocitySlider in float scale. Defines scaling of all inputs.
+        int minSensitivityFactor;            ///< Minimum value of velocitySlider in float scale.
+        int maxSensitivityFactor;            ///< Maximum value of velocitySlider in float scale.
 
     private:
+        /** @brief Set up widget, don't use ui file */
+        void buildWidget();
         /** @brief Update stylesheet for SkyeControlWidget */
         void updateStyleSheet();
         /** @brief Uncheck all mode buttons when mode is default */
         void uncheckAllModeButtons();
+//        Ui_UASSkyeControl ui;
         Ui::uasSkyeControl ui;
         QButtonGroup *modeButtonGroup;
         QButtonGroup *inputButtonGroup;

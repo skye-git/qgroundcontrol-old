@@ -431,10 +431,13 @@ void MainWindow::buildCommonWidgets()
         skyeControlDockWidget->setWidget( new UASSkyeControlWidget(this) );
 
         UASSkyeControlWidget *uasSkyeControl = dynamic_cast<UASSkyeControlWidget*>(skyeControlDockWidget->widget());
-        connect(uasSkyeControl, SIGNAL(changedInput(int)), this, SLOT(setInputMode(int)));
-        connect(this, SIGNAL(mouseTranslationEnabledChanged(bool)), uasSkyeControl, SLOT(changeMouseTranslationEnabled(bool)));
-        connect(this, SIGNAL(mouseRotationEnabledChanged(bool)), uasSkyeControl, SLOT(changeMouseRotationEnabled(bool)));
-        addTool(skyeControlDockWidget, tr("Skye Control"), Qt::LeftDockWidgetArea);
+        if (uasSkyeControl)
+        {
+            connect(uasSkyeControl, SIGNAL(changedInput(int)), this, SLOT(setInputMode(int)));
+            connect(this, SIGNAL(mouseTranslationEnabledChanged(bool)), uasSkyeControl, SLOT(changeMouseTranslationEnabled(bool)));
+            connect(this, SIGNAL(mouseRotationEnabledChanged(bool)), uasSkyeControl, SLOT(changeMouseRotationEnabled(bool)));
+            addTool(skyeControlDockWidget, tr("Skye Control"), Qt::LeftDockWidgetArea);
+        }
     }                                   // Ende Code MA (06.03.2012) --------------------------
 #endif // MAVLINK_ENABLED_SKYE
 
@@ -1231,6 +1234,8 @@ void MainWindow::showDirectControl()                    //Beginn Code MA (12.04.
 {
      if(!directControlWidget)
     {
+        if ( mouseTimer->isActive() ) mouseTimer->stop();
+
         directControlWidget = new DirectControlWidget(this);
     }
     directControlWidget->show();

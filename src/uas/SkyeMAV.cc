@@ -24,7 +24,8 @@ manualYVel(0),
 manualZVel(0),
 manualXRot(0),
 manualYRot(0),
-manualZRot(0)
+manualZRot(0),
+sensitivityFactor(0)
 {
     imagePacketsArrived = 0;
     this->setUASName("SKYE");
@@ -240,8 +241,8 @@ void SkyeMAV::sendDirectControlCommands(double xThrust, double yThrust, double z
 {
 #ifdef MAVLINK_ENABLED_SKYE
     // Scale values
-    double thrustScaling = 1.0f;
-    double momentScaling = 1.0f;
+    int thrustScaling = sensitivityFactor;
+    int momentScaling = sensitivityFactor;
     
     manualXThrust = xThrust * thrustScaling;
     manualYThrust = yThrust * thrustScaling;
@@ -266,17 +267,15 @@ void SkyeMAV::sendAssistedControlCommands(double xVel, double yVel, double zVel,
 {
 #ifdef MAVLINK_ENABLED_SKYE
     // Scale values
-    double velScaling = 1.0f;
-    double yawScaling = 1.0f;
-    double pitchScaling = 1.0f;
-    double rollScaling = 1.0f;
-    
+    int velScaling = sensitivityFactor;
+    int rotScaling = sensitivityFactor;
+    qDebug() << rotScaling << "ROTSCALING";
     manualXVel = xVel * velScaling;
     manualYVel = yVel * velScaling;
     manualZVel = zVel * velScaling;
-    manualXRot = xRot * rollScaling;
-    manualYRot = yRot * pitchScaling;
-    manualZRot = zRot * yawScaling;
+    manualXRot = xRot * rotScaling;
+    manualYRot = yRot * rotScaling;
+    manualZRot = zRot * rotScaling;
     
     mavlink_message_t message;
     
@@ -379,6 +378,28 @@ void SkyeMAV::sendBluefoxReconfigureCommand(mavlink_skye_cam_reconfigure_bluefox
         sendMessage(link, message);
         sentViaUDP++;
         qDebug() << "Sent Bluefox Reconfigure Command to" << name << "via UDPlink";
+        }
+    }
+    if (!sentViaUDP)
+    {
+        qDebug() << "Sending via UDP failed";
+        emit reportUDPLinkFailed("Sending via UDP failed. Not connected.");
+    }
+}
+
+void SkyeMAV::requestBluefoxSettings()
+{
+    int sentViaUDP = 0;
+    foreach (LinkInterface* link, *links)
+    {
+        if ( dynamic_cast<UDPLink*>(link) )
+        {
+            // TODO
+//        mavlink_message_t message;
+//        mavlink_msg_skye_request_cam_reconfigure_settings_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, bluefox);
+//        sendMessage(link, message);
+//        sentViaUDP++;
+//        qDebug() << "Requested Bluefox Configureations to" << name << "via UDPlink";
         }
     }
     if (!sentViaUDP)

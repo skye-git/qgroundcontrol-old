@@ -30,17 +30,6 @@ DirectControlWidget::DirectControlWidget(QWidget *parent):
     ui->spinBoxMomentY->setRange(-maxMoment, maxMoment);
     ui->spinBoxMomentZ->setRange(-maxMoment, maxMoment);
 
-    this->uas = dynamic_cast<SkyeMAV*>(UASManager::instance()->getActiveUAS());
-
-    if(uas)
-    {
-        connect(this, SIGNAL(valueDirectControlChanged(double,double,double,double,double,double)), uas, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
-        connect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
-        uas->setMode(MAV_MODE_DIRECT_CONTROL_DISARMED);
-    }
-
-    connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
-
     //connect Sliders, spinBoxes and dials
     connect(ui->sliderThrustX, SIGNAL(valueChanged(int)), ui->spinBoxThrustX, SLOT(setValue(int)));
     connect(ui->spinBoxThrustX, SIGNAL(valueChanged(int)), ui->sliderThrustX, SLOT(setValue(int)));
@@ -66,11 +55,7 @@ DirectControlWidget::DirectControlWidget(QWidget *parent):
     connect(ui->closeButton, SIGNAL(clicked()),this, SLOT(stopAll()));
     connect(ui->closeButton, SIGNAL(clicked()),this, SLOT(directControlClose()));
 
-
-    // Start Timer
-    timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()),this, SLOT(emitValues()));
-    timer->start(200); //5Hz emitValues is called
+    connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 
     // Display the widget
     this->window()->setWindowTitle(tr("Direct Control"));
@@ -86,6 +71,11 @@ DirectControlWidget::~DirectControlWidget()
         uas->setMode(MAV_MODE_PREFLIGHT);
     }
     delete ui;
+}
+
+void DirectControlWidget::showEvent(QShowEvent *event)
+{
+    directControlShow();
 }
 
 void DirectControlWidget::closeEvent(QCloseEvent *event)
@@ -108,6 +98,7 @@ void DirectControlWidget::setUAS(UASInterface* mav)
         connect(this, SIGNAL(valueDirectControlChanged(double,double,double,double,double,double)), uas, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
         connect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
         updateState(uas->getUASState());
+        uas->setMode(MAV_MODE_DIRECT_CONTROL_DISARMED);
     }
 }
 
@@ -137,6 +128,18 @@ void DirectControlWidget::changeMode(int mode)
     }
 }
 
+void DirectControlWidget::directControlShow()
+{
+    // Connect uas
+    setUAS( UASManager::instance()->getActiveUAS() );
+
+    // Start Timer
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()),this, SLOT(emitValues()));
+    timer->start(200); //5Hz emitValues is called
+
+}
+
 void DirectControlWidget::directControlClose()
 {
     if(uas)
@@ -145,7 +148,8 @@ void DirectControlWidget::directControlClose()
         uas->setMode(MAV_MODE_PREFLIGHT);
     }
     engineOn=false;
-    //timer->stop(); otherwise if ones reopens the widget, no signal is emitted no more
+    timer->stop(); // otherwise if ones reopens the widget, no signal is emitted no more
+    timer->deleteLater();
     this->close();
 }
 

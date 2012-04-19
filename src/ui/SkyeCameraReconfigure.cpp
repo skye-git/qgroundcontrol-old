@@ -48,6 +48,8 @@ void SkyeCameraReconfigure::setUAS(UASInterface* uas)
         if (oldMAV)
         {
             disconnect(this, SIGNAL(sendBluefoxSettings(mavlink_skye_cam_reconfigure_bluefox_settings_t*)), oldMAV, SLOT(sendBluefoxReconfigureCommand(mavlink_skye_cam_reconfigure_bluefox_settings_t*)));
+            disconnect(oldMAV, SIGNAL(bluefoxSettingsChanged(mavlink_skye_cam_reconfigure_bluefox_settings_t*)), this, SLOT(updateBluefoxSettings(mavlink_skye_cam_reconfigure_bluefox_settings_t*)));
+            disconnect(oldMAV, SIGNAL(reportUDPLinkFailed(QString)), ui->lastActionLabel, SLOT(setText(QString)));
             uasId = 0;
         }
     }
@@ -55,7 +57,9 @@ void SkyeCameraReconfigure::setUAS(UASInterface* uas)
     if (mav)
     {
         connect(this, SIGNAL(sendBluefoxSettings(mavlink_skye_cam_reconfigure_bluefox_settings_t*)), mav, SLOT(sendBluefoxReconfigureCommand(mavlink_skye_cam_reconfigure_bluefox_settings_t*)));
+        connect(mav, SIGNAL(bluefoxSettingsChanged(mavlink_skye_cam_reconfigure_bluefox_settings_t*)), this, SLOT(updateBluefoxSettings(mavlink_skye_cam_reconfigure_bluefox_settings_t*)));
         connect(mav, SIGNAL(reportUDPLinkFailed(QString)), ui->lastActionLabel, SLOT(setText(QString)));
+//        connect(ui->getButton, SIGNAL(clicked()), this, SLOT())
         ui->lastActionLabel->setText(tr("Connected to ") + uas->getUASName());
         uasId = uas->getUASID();
     }
@@ -312,8 +316,6 @@ void SkyeCameraReconfigure::createWidgetsForMessage(uint8_t msgId)
 
             hBox->setMargin(0);
             ui->groupBoxVerticalLayout->addLayout(hBox);
-
-
         }
 
         // Last entry: Set now size for all widgets

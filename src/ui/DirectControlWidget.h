@@ -31,6 +31,7 @@ public slots:
     void stopAll();
     void emitValues();
     void changeMode(int mode);
+    void directControlShow();
     void directControlClose();
     void cycleContextButton();
     void updateState(int state);
@@ -39,6 +40,7 @@ signals:
     void valueDirectControlChanged(double forceX, double forceY, double forceZ, double momentX, double momentY, double momentZ);
 
 protected:
+    void showEvent(QShowEvent *);
     void closeEvent(QCloseEvent *event);
 
 private:

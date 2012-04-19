@@ -36,12 +36,17 @@ public slots:
     void setManualControlCommands6DoF(double x , double y , double z , double a , double b, double c);
     /** @brief Send the 8 DOF command (from Testphase Widget) to MAV */
     void setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 ); //AL (06.03.12)
+    /** @brief Set multiplication factor for manual control */
+    void setSensitivityFactor(int val) {sensitivityFactor = val;}
+
     /** @brief Send command to take single image with camera and send it to groundstation */
     void takeImageShot(MAV_CAM_ID cam);
     /** Send Boolean to MAV, if motors should be homed*/
     void sendHomingCommand();
     /** Send configurations for bluefox camera*/
     void sendBluefoxReconfigureCommand(mavlink_skye_cam_reconfigure_bluefox_settings_t* bluefox);
+    /** Request for current configurations for bluefox camera*/
+    void requestBluefoxSettings();
 
 signals:
     /** @brief Emit new detailed accu info for one accu pack
@@ -69,14 +74,14 @@ protected:
 
     int airframe;                   ///< The airframe type
 
-    int manual1Thrust;          ///<Thrust for Motor 1 set by human pilot
-    int manual2Thrust;          ///<Thrust for Motor 2 set by human pilot
-    int manual3Thrust;          ///<Thrust for Motor 3 set by human pilot
-    int manual4Thrust;          ///<Thrust for Motor 4 set by human pilot
-    int manual1Orientation;     ///<Orientation for Motor 1 set by human pilot
-    int manual2Orientation;     ///<Orientation for Motor 2 set by human pilot
-    int manual3Orientation;     ///<Orientation for Motor 3 set by human pilot
-    int manual4Orientation;     ///<Orientation for Motor 4 set by human pilot
+    int manual1Thrust;          ///< Thrust for Motor 1 set by human pilot
+    int manual2Thrust;          ///< Thrust for Motor 2 set by human pilot
+    int manual3Thrust;          ///< Thrust for Motor 3 set by human pilot
+    int manual4Thrust;          ///< Thrust for Motor 4 set by human pilot
+    int manual1Orientation;     ///< Orientation for Motor 1 set by human pilot
+    int manual2Orientation;     ///< Orientation for Motor 2 set by human pilot
+    int manual3Orientation;     ///< Orientation for Motor 3 set by human pilot
+    int manual4Orientation;     ///< Orientation for Motor 4 set by human pilot
 
     double manualXThrust;      ///< X Thrust set by human pilot
     double manualYThrust;      ///< Y Thrust set by human pilot
@@ -91,6 +96,8 @@ protected:
     double manualXRot;          ///< Roll (x axis) set by human pilot
     double manualYRot;          ///< Pitch (y axis) set by human pilot
     double manualZRot;          ///< Yaw (z axis) set by human pilot
+
+    int sensitivityFactor;      ///< Multiplication factor for manual control [remark: abs(deviceInput) <= 1 ]
 
 };
 

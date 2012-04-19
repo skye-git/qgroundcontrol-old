@@ -47,7 +47,10 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     engineOn(false),
     inputMode(QGC_INPUT_MODE_NONE),
     mouseTranslationEnabled(true),
-    mouseRotationEnabled(true)
+    mouseRotationEnabled(true),
+    sensitivityFactor(20),
+    minSensitivityFactor(0),
+    maxSensitivityFactor(100)
 {
 #ifdef MAVLINK_ENABLED_SKYE
     ui.setupUi(this);
@@ -82,6 +85,13 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     connect(ui.touchButton, SIGNAL(clicked(bool)), this, SLOT(setInputTouch(bool)));
     connect(ui.keyboardButton, SIGNAL(clicked(bool)), this, SLOT(setInputKeyboard(bool)));
 
+    // Multiplication factor for all outputs
+    ui.sensitivitySlider->setValue(sensitivityFactor);
+    connect(ui.sensitivitySlider, SIGNAL(valueChanged(int)), this, SLOT(setSensitivityFactor(int)));
+    setSensitivityFactor(ui.sensitivitySlider->value());
+    ui.minSensitivityLabel->setNum(minSensitivityFactor);
+    ui.maxSensitivityLabel->setNum(maxSensitivityFactor);
+
     //ui.gridLayout->setAlignment(Qt::AlignTop);
 
     updateStyleSheet();
@@ -104,6 +114,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
             disconnect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
             disconnect(mav, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
 
+
             disconnect(ui.bluefoxLeftButton, SIGNAL(clicked()), this, SLOT(triggerLeftBluefoxImageShot()));
             disconnect(ui.bluefoxRightButton, SIGNAL(clicked()), this, SLOT(triggerRightBluefoxImageShot()));
             disconnect(ui.prosilicaButton, SIGNAL(clicked()), this, SLOT(triggerProsilicaImageShot()));
@@ -124,6 +135,9 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(ui.controlButton, SIGNAL(clicked()), this, SLOT(cycleContextButton()));
         connect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
         connect(mav, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
+
+        connect(this, SIGNAL(changedSensitivityFactor(int)), mav, SLOT(setSensitivityFactor(int)));
+        emit changedSensitivityFactor(sensitivityFactor);
 
         connect(ui.bluefoxLeftButton, SIGNAL(clicked()), this, SLOT(triggerLeftBluefoxImageShot()));
         connect(ui.bluefoxRightButton, SIGNAL(clicked()), this, SLOT(triggerRightBluefoxImageShot()));
@@ -263,6 +277,7 @@ void UASSkyeControlWidget::setDirectControlMode(bool checked)
     if (checked)
     {
 #ifdef  MAVLINK_ENABLED_SKYE
+        ui.sensitivitySlider->setValue(20);
         SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
         if (mav){
             UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
@@ -285,6 +300,7 @@ void UASSkyeControlWidget::setAssistedControlMode(bool checked)
     if (checked)
     {
 #ifdef MAVLINK_ENABLED_SKYE
+        ui.sensitivitySlider->setValue(5);
         SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
         if (mav){
             UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
@@ -511,3 +527,15 @@ void UASSkyeControlWidget::uncheckAllModeButtons()
     }
     modeButtonGroup->setExclusive(true);
 }
+
+void UASSkyeControlWidget::setSensitivityFactor(int val)
+{
+    sensitivityFactor = val;
+    QString str = QString("Sensitivity: %1").arg(val);
+    ui.sensitivityLabel->setText(str);
+    QString style = QString("QSlider::sub-page:horizontal {border: 1px solid #bbb; border-radius: 4px; background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #6e6, stop: 1 #e66); }");
+//    style.append("QSlider::groove:horizontal {border: 1px solid #bbb; border-radius: 4px;  background: qlineargradient(x1: 0, y1: %1, x2: 1, y2: %2, stop: 0 #6e6, stop: 1 #e66); }").arg((float)val/maxSensitivityFactor-0.1).arg((float)val/maxSensitivityFactor+0.1);
+    ui.sensitivitySlider->setStyleSheet(style);
+    emit changedSensitivityFactor(val);
+}
+
