@@ -24,7 +24,7 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>267</width>
+    <width>10000</width>
     <height>16777215</height>
    </size>
   </property>
@@ -35,43 +35,6 @@
    <string>Control widget to send basic control actions to the micro air vehicle</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="4" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QPushButton" name="bluefoxLeftButton">
-       <property name="text">
-        <string>BF L</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../../qgroundcontrol.qrc">
-         <normaloff>:/general/images/skye_images/input/fotoapparat.png</normaloff>:/general/images/skye_images/input/fotoapparat.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="bluefoxRightButton">
-       <property name="text">
-        <string>BF R</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../../qgroundcontrol.qrc">
-         <normaloff>:/general/images/skye_images/input/fotoapparat.png</normaloff>:/general/images/skye_images/input/fotoapparat.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="prosilicaButton">
-       <property name="text">
-        <string>PRO</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../../qgroundcontrol.qrc">
-         <normaloff>:/general/images/skye_images/input/fotoapparat.png</normaloff>:/general/images/skye_images/input/fotoapparat.png</iconset>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
    <item row="2" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
@@ -176,50 +139,6 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0">
-    <widget class="QPushButton" name="controlButton">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>40</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Main control button</string>
-     </property>
-     <property name="statusTip">
-      <string>Main control button</string>
-     </property>
-     <property name="text">
-      <string>Activate Engine</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="controlStatusLabel">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>10</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Currently controlled system</string>
-     </property>
-     <property name="statusTip">
-      <string>Currently controlled system</string>
-     </property>
-     <property name="text">
-      <string>UNCONNECTED</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-     <property name="margin">
-      <number>0</number>
-     </property>
-    </widget>
-   </item>
    <item row="3" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <property name="sizeConstraint">
@@ -312,6 +231,87 @@ p, li { white-space: pre-wrap; }
        </property>
        <property name="autoExclusive">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0">
+    <widget class="QPushButton" name="controlButton">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>40</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Main control button</string>
+     </property>
+     <property name="statusTip">
+      <string>Main control button</string>
+     </property>
+     <property name="text">
+      <string>Activate Engine</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="controlStatusLabel">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>10</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Currently controlled system</string>
+     </property>
+     <property name="statusTip">
+      <string>Currently controlled system</string>
+     </property>
+     <property name="text">
+      <string>UNCONNECTED</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="bluefoxLeftButton">
+       <property name="text">
+        <string>BF L</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../qgroundcontrol.qrc">
+         <normaloff>:/general/images/skye_images/input/fotoapparat.png</normaloff>:/general/images/skye_images/input/fotoapparat.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="bluefoxRightButton">
+       <property name="text">
+        <string>BF R</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../qgroundcontrol.qrc">
+         <normaloff>:/general/images/skye_images/input/fotoapparat.png</normaloff>:/general/images/skye_images/input/fotoapparat.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="prosilicaButton">
+       <property name="text">
+        <string>PRO</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../qgroundcontrol.qrc">
+         <normaloff>:/general/images/skye_images/input/fotoapparat.png</normaloff>:/general/images/skye_images/input/fotoapparat.png</iconset>
        </property>
       </widget>
      </item>

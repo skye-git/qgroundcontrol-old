@@ -187,6 +187,7 @@ void SkyeMAV::setManualControlCommands6DoF(double x , double y , double z , doub
         if ((mode == MAV_MODE_DIRECT_CONTROL_DISARMED) || (mode == MAV_MODE_DIRECT_CONTROL_ARMED))
         {
             sendDirectControlCommands(x, y, z, a, b, c);
+            qDebug() << "SkyeMAV.cc l.190, sendDirectControlCommands(x,y,z,a,b,c): "<< x <<":"<< y <<":" << z <<":" << a <<":" << b <<":" << c;
         }else if ((mode == MAV_MODE_ASSISTED_CONTROL_DISARMED) || (mode == MAV_MODE_ASSISTED_CONTROL_ARMED))
         {
             sendAssistedControlCommands(x, y, z, a, b, c);
