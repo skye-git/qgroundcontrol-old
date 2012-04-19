@@ -54,20 +54,20 @@
       <item>
        <widget class="QDial" name="dialOrientation1">
         <property name="minimum">
-         <number>-10800</number>
+         <number>-1800</number>
         </property>
         <property name="maximum">
-         <number>10800</number>
+         <number>1800</number>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QSpinBox" name="spinBoxOrientation1">
         <property name="minimum">
-         <number>-10800</number>
+         <number>-1800</number>
         </property>
         <property name="maximum">
-         <number>10800</number>
+         <number>1800</number>
         </property>
        </widget>
       </item>
