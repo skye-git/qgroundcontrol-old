@@ -48,9 +48,12 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     inputMode(QGC_INPUT_MODE_NONE),
     mouseTranslationEnabled(true),
     mouseRotationEnabled(true),
-    sensitivityFactor(20),
-    minSensitivityFactor(0),
-    maxSensitivityFactor(100)
+    sensitivityFactorTrans(20.0),
+    minSensitivityFactorTrans(0.0),
+    maxSensitivityFactorTrans(50.0),
+    sensitivityFactorRot(10.0),
+    minSensitivityFactorRot(0.0),
+    maxSensitivityFactorRot(50.0)
 {
 #ifdef MAVLINK_ENABLED_SKYE
     ui.setupUi(this);
@@ -85,12 +88,19 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     connect(ui.touchButton, SIGNAL(clicked(bool)), this, SLOT(setInputTouch(bool)));
     connect(ui.keyboardButton, SIGNAL(clicked(bool)), this, SLOT(setInputKeyboard(bool)));
 
-    // Multiplication factor for all outputs
-    ui.sensitivitySlider->setValue(sensitivityFactor);
-    connect(ui.sensitivitySlider, SIGNAL(valueChanged(int)), this, SLOT(setSensitivityFactor(int)));
-    setSensitivityFactor(ui.sensitivitySlider->value());
-    ui.minSensitivityLabel->setNum(minSensitivityFactor);
-    ui.maxSensitivityLabel->setNum(maxSensitivityFactor);
+    // Multiplication factor for translational commands
+    ui.sensitivityTransSlider->setValue(ui.sensitivityTransSlider->maximum()*sensitivityFactorTrans/maxSensitivityFactorTrans);
+    connect(ui.sensitivityTransSlider, SIGNAL(valueChanged(int)), this, SLOT(setSensitivityFactorTrans(int)));
+    setSensitivityFactorTrans(ui.sensitivityTransSlider->value());
+    ui.minSensitivityTransLabel->setNum((double)minSensitivityFactorTrans);
+    ui.maxSensitivityTransLabel->setNum((double)maxSensitivityFactorTrans);
+
+    // Multiplication factor for rotational commands
+    ui.sensitivityRotSlider->setValue(ui.sensitivityRotSlider->maximum()*sensitivityFactorRot/maxSensitivityFactorRot);
+    connect(ui.sensitivityRotSlider, SIGNAL(valueChanged(int)), this, SLOT(setSensitivityFactorRot(int)));
+    setSensitivityFactorRot(ui.sensitivityRotSlider->value());
+    ui.minSensitivityRotLabel->setNum((double)minSensitivityFactorRot);
+    ui.maxSensitivityRotLabel->setNum((double)maxSensitivityFactorRot);
 
     //ui.gridLayout->setAlignment(Qt::AlignTop);
 
@@ -136,8 +146,10 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
         connect(mav, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
 
-        connect(this, SIGNAL(changedSensitivityFactor(int)), mav, SLOT(setSensitivityFactor(int)));
-        emit changedSensitivityFactor(sensitivityFactor);
+        connect(this, SIGNAL(changedSensitivityFactor(float)), mav, SLOT(setSensitivityFactorTrans(float)));
+        connect(this, SIGNAL(changedSensitivityRotFactor(float)), mav, SLOT(setSensitivityFactorRot(float)));
+        emit changedSensitivityTransFactor(sensitivityFactorTrans);
+        emit changedSensitivityRotFactor(sensitivityFactorRot);
 
         connect(ui.bluefoxLeftButton, SIGNAL(clicked()), this, SLOT(triggerLeftBluefoxImageShot()));
         connect(ui.bluefoxRightButton, SIGNAL(clicked()), this, SLOT(triggerRightBluefoxImageShot()));
@@ -277,7 +289,8 @@ void UASSkyeControlWidget::setDirectControlMode(bool checked)
     if (checked)
     {
 #ifdef  MAVLINK_ENABLED_SKYE
-        ui.sensitivitySlider->setValue(20);
+        ui.sensitivityTransSlider->setValue(40);
+        ui.sensitivityRotSlider->setValue(20);
         SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
         if (mav){
             UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
@@ -300,7 +313,8 @@ void UASSkyeControlWidget::setAssistedControlMode(bool checked)
     if (checked)
     {
 #ifdef MAVLINK_ENABLED_SKYE
-        ui.sensitivitySlider->setValue(5);
+        ui.sensitivityTransSlider->setValue(10);
+        ui.sensitivityRotSlider->setValue(10);
         SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
         if (mav){
             UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
@@ -477,7 +491,7 @@ void UASSkyeControlWidget::updateStyleSheet()
     style.append("QPushButton#touchButton {image: url(:images/skye_images/input/FingerPointing.png);}");
     style.append("QPushButton#keyboardButton {image: url(:images/skye_images/input/keyboard-icon_64.png); }");
     style.append("QPushButton:disabled {background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #BBBBBB, stop: 1 #444444); color: #333333 }");
-    this->setStyleSheet(style);
+   // this->setStyleSheet(style);
 }
 
 void UASSkyeControlWidget::changeMouseTranslationEnabled(bool transEnabled)
@@ -528,14 +542,37 @@ void UASSkyeControlWidget::uncheckAllModeButtons()
     modeButtonGroup->setExclusive(true);
 }
 
-void UASSkyeControlWidget::setSensitivityFactor(int val)
+void UASSkyeControlWidget::setSensitivityFactorTrans(int val)
 {
-    sensitivityFactor = val;
-    QString str = QString("Sensitivity: %1").arg(val);
-    ui.sensitivityLabel->setText(str);
-    QString style = QString("QSlider::sub-page:horizontal {border: 1px solid #bbb; border-radius: 4px; background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #6e6, stop: 1 #e66); }");
-//    style.append("QSlider::groove:horizontal {border: 1px solid #bbb; border-radius: 4px;  background: qlineargradient(x1: 0, y1: %1, x2: 1, y2: %2, stop: 0 #6e6, stop: 1 #e66); }").arg((float)val/maxSensitivityFactor-0.1).arg((float)val/maxSensitivityFactor+0.1);
-    ui.sensitivitySlider->setStyleSheet(style);
-    emit changedSensitivityFactor(val);
+    sensitivityFactorTrans = val*maxSensitivityFactorTrans/ui.sensitivityTransSlider->maximum();
+    QString str = QString("Sensitivity: %1").arg(sensitivityFactorTrans);
+    ui.sensitivityTransLabel->setText(str);
+    int red = 16*16;
+    int green = 16;
+    int blue = 1;
+    int colorStart = (int)(( 1+10*ui.sensitivityTransSlider->value()/ui.sensitivityTransSlider->maximum() ) * red + (  10*(ui.sensitivityTransSlider->maximum()-ui.sensitivityTransSlider->value())/ui.sensitivityTransSlider->maximum()) * green + 6 * blue);
+    int colorEnd =   (int)(( 1+14*ui.sensitivityTransSlider->value()/ui.sensitivityTransSlider->maximum() ) * red + (  14*(ui.sensitivityTransSlider->maximum()-ui.sensitivityTransSlider->value())/ui.sensitivityTransSlider->maximum()) * green + 6 * blue);
+    qDebug() << "COLORS" << colorStart << colorEnd;
+    QString style = QString("QSlider::sub-page:horizontal {border: 1px solid #bbb; border-radius: 4px; background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #%1, stop: 1 #%2); }").arg(colorStart, 1, 16).arg(colorEnd, 1, 16);
+    ui.sensitivityTransSlider->setStyleSheet(style);
+    emit changedSensitivityTransFactor(sensitivityFactorTrans);
 }
+
+void UASSkyeControlWidget::setSensitivityFactorRot(int val)
+{
+    sensitivityFactorRot = val*maxSensitivityFactorRot/ui.sensitivityRotSlider->maximum();
+    QString str = QString("Sensitivity: %1").arg(sensitivityFactorRot);
+    ui.sensitivityRotLabel->setText(str);
+    int red = 16*16;
+    int green = 16;
+    int blue = 1;
+    int colorStart = (int)(( 1+10*ui.sensitivityRotSlider->value()/ui.sensitivityRotSlider->maximum() ) * red + (  10*(ui.sensitivityRotSlider->maximum()-ui.sensitivityRotSlider->value())/ui.sensitivityRotSlider->maximum()) * green + 6 * blue);
+    int colorEnd =   (int)(( 1+14*ui.sensitivityRotSlider->value()/ui.sensitivityRotSlider->maximum() ) * red + (  14*(ui.sensitivityRotSlider->maximum()-ui.sensitivityRotSlider->value())/ui.sensitivityRotSlider->maximum()) * green + 6 * blue);
+    qDebug() << "COLORS" << colorStart << colorEnd;
+    QString style = QString("QSlider::sub-page:horizontal {border: 1px solid #bbb; border-radius: 4px; background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #%1, stop: 1 #%2); }").arg(colorStart, 1, 16).arg(colorEnd, 1, 16);
+//    style.append("QSlider::groove:horizontal {border: 1px solid #bbb; border-radius: 4px;  background: qlineargradient(x1: 0, y1: %1, x2: 1, y2: %2, stop: 0 #6e6, stop: 1 #e66); }").arg((float)val/maxSensitivityFactorRot-0.1).arg((float)val/maxSensitivityFactorRot+0.1);
+    ui.sensitivityRotSlider->setStyleSheet(style);
+    emit changedSensitivityRotFactor(sensitivityFactorRot);
+}
+
 

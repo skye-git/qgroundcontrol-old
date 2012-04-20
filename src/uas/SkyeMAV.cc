@@ -25,7 +25,8 @@ manualZVel(0),
 manualXRot(0),
 manualYRot(0),
 manualZRot(0),
-sensitivityFactor(0)
+sensitivityFactorTrans(0),
+sensitivityFactorRot(0)
 {
     imagePacketsArrived = 0;
     this->setUASName("SKYE");
@@ -242,8 +243,8 @@ void SkyeMAV::sendDirectControlCommands(double xThrust, double yThrust, double z
 {
 #ifdef MAVLINK_ENABLED_SKYE
     // Scale values
-    int thrustScaling = sensitivityFactor;
-    int momentScaling = sensitivityFactor;
+    float thrustScaling = sensitivityFactorTrans;
+    float momentScaling = sensitivityFactorRot;
     
     manualXThrust = xThrust * thrustScaling;
     manualYThrust = yThrust * thrustScaling;
@@ -268,8 +269,8 @@ void SkyeMAV::sendAssistedControlCommands(double xVel, double yVel, double zVel,
 {
 #ifdef MAVLINK_ENABLED_SKYE
     // Scale values
-    int velScaling = sensitivityFactor;
-    int rotScaling = sensitivityFactor;
+    float velScaling = sensitivityFactorTrans;
+    float rotScaling = sensitivityFactorRot;
     qDebug() << rotScaling << "ROTSCALING";
     manualXVel = xVel * velScaling;
     manualYVel = yVel * velScaling;

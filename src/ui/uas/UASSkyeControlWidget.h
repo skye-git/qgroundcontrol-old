@@ -87,7 +87,8 @@ signals:
     void changedMode(int);
     void changedInput(int);
     void triggeredImageShot(MAV_CAM_ID);
-    void changedSensitivityFactor(int);
+    void changedSensitivityTransFactor(float);
+    void changedSensitivityRotFactor(float);
 
     protected slots:
 //        /** @brief Set the background color for the widget */
@@ -112,8 +113,10 @@ signals:
         void triggerRightBluefoxImageShot();
         /** @brief Trigger image shot with Prosilica Camera */
         void triggerProsilicaImageShot();
-        /** @brief Set new (float)sensitivityFactor by int */
-        void setSensitivityFactor(int val);
+        /** @brief Set new (float)sensitivityFactorTrans by int */
+        void setSensitivityFactorTrans(int val);
+        /** @brief Set new (float)sensitivityFactorRot by int */
+        void setSensitivityFactorRot(int val);
 
 
     protected:
@@ -123,9 +126,12 @@ signals:
         QGC_INPUT_MODE inputMode;           ///< Current device for input
         bool mouseTranslationEnabled;       ///< True when translational motions enabled
         bool mouseRotationEnabled;          ///< True when rotational motions enabled
-        int sensitivityFactor;               ///< Value of velocitySlider in float scale. Defines scaling of all inputs.
-        int minSensitivityFactor;            ///< Minimum value of velocitySlider in float scale.
-        int maxSensitivityFactor;            ///< Maximum value of velocitySlider in float scale.
+        float sensitivityFactorTrans;       ///< Gain rotational manual inputs.
+        float minSensitivityFactorTrans;    ///< Minimum value of velocitySlider in float scale.
+        float maxSensitivityFactorTrans;    ///< Maximum value of velocitySlider in float scale.
+        float sensitivityFactorRot;         ///< Gain rotational manual inputs.
+        float minSensitivityFactorRot;      ///< Minimum value of velocitySlider in float scale.
+        float maxSensitivityFactorRot;      ///< Maximum value of velocitySlider in float scale.
 
     private:
         /** @brief Set up widget, don't use ui file */

@@ -37,7 +37,9 @@ public slots:
     /** @brief Send the 8 DOF command (from Testphase Widget) to MAV */
     void setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 ); //AL (06.03.12)
     /** @brief Set multiplication factor for manual control */
-    void setSensitivityFactor(int val) {sensitivityFactor = val;}
+    void setSensitivityFactorTrans(float val) {sensitivityFactorTrans = val;}
+    /** @brief Set multiplication factor for manual control */
+    void setSensitivityFactorRot(float val) {sensitivityFactorRot = val;}
 
     /** @brief Send command to take single image with camera and send it to groundstation */
     void takeImageShot(MAV_CAM_ID cam);
@@ -97,7 +99,8 @@ protected:
     double manualYRot;          ///< Pitch (y axis) set by human pilot
     double manualZRot;          ///< Yaw (z axis) set by human pilot
 
-    int sensitivityFactor;      ///< Multiplication factor for manual control [remark: abs(deviceInput) <= 1 ]
+    float sensitivityFactorTrans;    ///< Translational factor for manual control [remark: abs(deviceInput) <= 1 ]
+    float sensitivityFactorRot;      ///< Rotational factor for manual control [remark: abs(deviceInput) <= 1 ]
 
 };
 
