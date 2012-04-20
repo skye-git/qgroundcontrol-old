@@ -545,7 +545,7 @@ void UASSkyeControlWidget::uncheckAllModeButtons()
 void UASSkyeControlWidget::setSensitivityFactorTrans(int val)
 {
     sensitivityFactorTrans = val*maxSensitivityFactorTrans/ui.sensitivityTransSlider->maximum();
-    QString str = QString("Sensitivity: %1").arg(sensitivityFactorTrans);
+    QString str = QString("Translation-Sensitivity: %1").arg(sensitivityFactorTrans);
     ui.sensitivityTransLabel->setText(str);
     int red = 16*16;
     int green = 16;
@@ -561,7 +561,7 @@ void UASSkyeControlWidget::setSensitivityFactorTrans(int val)
 void UASSkyeControlWidget::setSensitivityFactorRot(int val)
 {
     sensitivityFactorRot = val*maxSensitivityFactorRot/ui.sensitivityRotSlider->maximum();
-    QString str = QString("Sensitivity: %1").arg(sensitivityFactorRot);
+    QString str = QString("Rotation-Sensitivity: %1").arg(sensitivityFactorRot);
     ui.sensitivityRotLabel->setText(str);
     int red = 16*16;
     int green = 16;
