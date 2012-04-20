@@ -1234,7 +1234,9 @@ void MainWindow::showDirectControl()                    //Beginn Code MA (12.04.
 {
      if(!directControlWidget)
     {
+        #ifdef MOUSE_ENABLED
         if ( mouseTimer->isActive() ) mouseTimer->stop();
+        #endif // MOUSE_ENABLED
 
         directControlWidget = new DirectControlWidget(this);
     }
