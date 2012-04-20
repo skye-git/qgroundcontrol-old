@@ -491,7 +491,7 @@ void UASSkyeControlWidget::updateStyleSheet()
     style.append("QPushButton#touchButton {image: url(:images/skye_images/input/FingerPointing.png);}");
     style.append("QPushButton#keyboardButton {image: url(:images/skye_images/input/keyboard-icon_64.png); }");
     style.append("QPushButton:disabled {background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #BBBBBB, stop: 1 #444444); color: #333333 }");
-   // this->setStyleSheet(style);
+    this->setStyleSheet(style);
 }
 
 void UASSkyeControlWidget::changeMouseTranslationEnabled(bool transEnabled)
@@ -552,7 +552,7 @@ void UASSkyeControlWidget::setSensitivityFactorTrans(int val)
     int blue = 1;
     int colorStart = (int)(( 1+10*ui.sensitivityTransSlider->value()/ui.sensitivityTransSlider->maximum() ) * red + (  10*(ui.sensitivityTransSlider->maximum()-ui.sensitivityTransSlider->value())/ui.sensitivityTransSlider->maximum()) * green + 6 * blue);
     int colorEnd =   (int)(( 1+14*ui.sensitivityTransSlider->value()/ui.sensitivityTransSlider->maximum() ) * red + (  14*(ui.sensitivityTransSlider->maximum()-ui.sensitivityTransSlider->value())/ui.sensitivityTransSlider->maximum()) * green + 6 * blue);
-    qDebug() << "COLORS" << colorStart << colorEnd;
+//    qDebug() << "COLORS" << colorStart << colorEnd;
     QString style = QString("QSlider::sub-page:horizontal {border: 1px solid #bbb; border-radius: 4px; background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #%1, stop: 1 #%2); }").arg(colorStart, 1, 16).arg(colorEnd, 1, 16);
     ui.sensitivityTransSlider->setStyleSheet(style);
     emit changedSensitivityTransFactor(sensitivityFactorTrans);
@@ -568,7 +568,7 @@ void UASSkyeControlWidget::setSensitivityFactorRot(int val)
     int blue = 1;
     int colorStart = (int)(( 1+10*ui.sensitivityRotSlider->value()/ui.sensitivityRotSlider->maximum() ) * red + (  10*(ui.sensitivityRotSlider->maximum()-ui.sensitivityRotSlider->value())/ui.sensitivityRotSlider->maximum()) * green + 6 * blue);
     int colorEnd =   (int)(( 1+14*ui.sensitivityRotSlider->value()/ui.sensitivityRotSlider->maximum() ) * red + (  14*(ui.sensitivityRotSlider->maximum()-ui.sensitivityRotSlider->value())/ui.sensitivityRotSlider->maximum()) * green + 6 * blue);
-    qDebug() << "COLORS" << colorStart << colorEnd;
+//    qDebug() << "COLORS" << colorStart << colorEnd;
     QString style = QString("QSlider::sub-page:horizontal {border: 1px solid #bbb; border-radius: 4px; background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #%1, stop: 1 #%2); }").arg(colorStart, 1, 16).arg(colorEnd, 1, 16);
 //    style.append("QSlider::groove:horizontal {border: 1px solid #bbb; border-radius: 4px;  background: qlineargradient(x1: 0, y1: %1, x2: 1, y2: %2, stop: 0 #6e6, stop: 1 #e66); }").arg((float)val/maxSensitivityFactorRot-0.1).arg((float)val/maxSensitivityFactorRot+0.1);
     ui.sensitivityRotSlider->setStyleSheet(style);

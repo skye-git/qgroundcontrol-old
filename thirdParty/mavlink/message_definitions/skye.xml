@@ -245,31 +245,31 @@
           <message id="154" name="SKYE_DIRECT_CONTROL">
                <description>Control six degrees of freedom in Body Frame. This type of control is intended to use if there is no attitude feedback in the control. Requested mode: "MAV_MODE_DIRECT_CONTROL_ARMED"</description>
                <field type="uint8_t" name="target_system">System ID</field>
-               <field type="float" name="thrust_x">Resulting thrust in Body Frame x, range [-1,1]</field>
-               <field type="float" name="thrust_y">Resulting thrust in Body Frame y, range [-1,1]</field>
-               <field type="float" name="thrust_z">Resulting thrust in Body Frame z, range [-1,1]</field>
-               <field type="float" name="moment_x">Resulting moment in Body Frame x (roll), range [-1,1]</field>
-               <field type="float" name="moment_y">Resulting moment in Body Frame y (pitch), range [-1,1]</field>
-               <field type="float" name="moment_z">Resulting moment in Body Frame z (yaw), range [-1,1]</field>
+               <field type="float" name="thrust_x">Resulting thrust in Body Frame x, in Newton</field>
+               <field type="float" name="thrust_y">Resulting thrust in Body Frame y, in Newton</field>
+               <field type="float" name="thrust_z">Resulting thrust in Body Frame z, in Newton</field>
+               <field type="float" name="moment_x">Resulting moment in Body Frame x (roll), in Newtonmeter</field>
+               <field type="float" name="moment_y">Resulting moment in Body Frame y (pitch), in Newtonmeter</field>
+               <field type="float" name="moment_z">Resulting moment in Body Frame z (yaw), in Newtonmeter</field>
           </message>
           <message id="155" name="SKYE_ASSISTED_CONTROL">
                <description>Control six degrees of freedom. Translational velocity in Inertial (earth) Frame, . Use this type if you have attitude feedback in the control loop. Requested mode: "MAV_MODE_ASSISTED_CONTROL_ARMED"</description>
                <field type="uint8_t" name="target_system">System ID</field>
-               <field type="float" name="translation_lat">Translation (velocity) in Inertial Frame latitude, range [-1,1]</field>
-               <field type="float" name="translation_long">Translation (velocity) in Inertial Frame longitude, range [-1,1]</field>
-               <field type="float" name="translation_alt">Translation (velocity) in Inertial Frame altitude, range [-1,1]</field>
-               <field type="float" name="rotation_x">Roll, range [-1,1]</field>
-               <field type="float" name="rotation_y">Pitch, range [-1,1]</field>
-               <field type="float" name="rotation_z">Yaw, range [-1,1]</field>
+               <field type="float" name="translation_lat">Translation (velocity) in Inertial Frame latitude, in m/sec</field>
+               <field type="float" name="translation_long">Translation (velocity) in Inertial Frame longitude, in m/sec</field>
+               <field type="float" name="translation_alt">Translation (velocity) in Inertial Frame altitude, in m/sec</field>
+               <field type="float" name="rotation_x">Roll (angular velocity), in rad/sec</field>
+               <field type="float" name="rotation_y">Pitch (angular velocity), in rad/sec</field>
+               <field type="float" name="rotation_z">Yaw (angular velocity), in rad/sec</field>
           </message>
-          <message id="156" name="SKYE_ASSISTED_RC_CONTROL">
+<!--          <message id="156" name="SKYE_ASSISTED_RC_CONTROL">
                <description>FIXME: NOT USED YET.. Control four degrees of freedom. This type of control is intended to use with a 4-channel limited input device. This message is similar to Message MANUAL_CONTROL</description>
                <field type="uint8_t" name="target_system">System ID</field>
-               <field type="float" name="translation_lat">Translation latitude [-1,1]</field>
-               <field type="float" name="translation_long">Translation longitude [-1,1]</field>
-               <field type="float" name="translation_alt">Translation altitude [-1,1]</field>
-               <field type="float" name="rotation_z">Yaw, range [-1,1]</field>
-          </message>
+               <field type="float" name="translation">Translation</field>
+               <field type="float" name="rotation_roll">Roll</field>
+               <field type="float" name="rotation_pitch">Pitch</field>
+               <field type="float" name="rotation_yaw">Yaw</field>
+          </message> -->
           <message id="157" name="SKYE_SCALED_PRESSURE">
                <description>The pressure readings for the typical setup of one absolute and differential pressure sensor. The units are as specified in each field. For accurate analysis needed by at least 6Hz.</description>
                <field type="uint32_t" name="time_boot_ms">Timestamp (microseconds since UNIX epoch or microseconds since system boot)</field>

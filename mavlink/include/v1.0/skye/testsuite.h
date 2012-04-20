@@ -248,57 +248,6 @@ static void mavlink_test_skye_assisted_control(uint8_t system_id, uint8_t compon
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
-static void mavlink_test_skye_assisted_rc_control(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
-{
-	mavlink_message_t msg;
-        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
-        uint16_t i;
-	mavlink_skye_assisted_rc_control_t packet_in = {
-		17.0,
-	45.0,
-	73.0,
-	101.0,
-	53,
-	};
-	mavlink_skye_assisted_rc_control_t packet1, packet2;
-        memset(&packet1, 0, sizeof(packet1));
-        	packet1.translation_lat = packet_in.translation_lat;
-        	packet1.translation_long = packet_in.translation_long;
-        	packet1.translation_alt = packet_in.translation_alt;
-        	packet1.rotation_z = packet_in.rotation_z;
-        	packet1.target_system = packet_in.target_system;
-        
-        
-
-        memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_assisted_rc_control_encode(system_id, component_id, &msg, &packet1);
-	mavlink_msg_skye_assisted_rc_control_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_assisted_rc_control_pack(system_id, component_id, &msg , packet1.target_system , packet1.translation_lat , packet1.translation_long , packet1.translation_alt , packet1.rotation_z );
-	mavlink_msg_skye_assisted_rc_control_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_assisted_rc_control_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.target_system , packet1.translation_lat , packet1.translation_long , packet1.translation_alt , packet1.rotation_z );
-	mavlink_msg_skye_assisted_rc_control_decode(&msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-
-        memset(&packet2, 0, sizeof(packet2));
-        mavlink_msg_to_send_buffer(buffer, &msg);
-        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
-        	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
-        }
-	mavlink_msg_skye_assisted_rc_control_decode(last_msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-        
-        memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_assisted_rc_control_send(MAVLINK_COMM_1 , packet1.target_system , packet1.translation_lat , packet1.translation_long , packet1.translation_alt , packet1.rotation_z );
-	mavlink_msg_skye_assisted_rc_control_decode(last_msg, &packet2);
-        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
-}
-
 static void mavlink_test_skye_scaled_pressure(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
 {
 	mavlink_message_t msg;
@@ -1209,7 +1158,6 @@ static void mavlink_test_skye(uint8_t system_id, uint8_t component_id, mavlink_m
 	mavlink_test_skye_test_motors(system_id, component_id, last_msg);
 	mavlink_test_skye_direct_control(system_id, component_id, last_msg);
 	mavlink_test_skye_assisted_control(system_id, component_id, last_msg);
-	mavlink_test_skye_assisted_rc_control(system_id, component_id, last_msg);
 	mavlink_test_skye_scaled_pressure(system_id, component_id, last_msg);
 	mavlink_test_skye_motor_signal(system_id, component_id, last_msg);
 	mavlink_test_skye_motor_meassured_position(system_id, component_id, last_msg);

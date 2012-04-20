@@ -4,12 +4,12 @@
 
 typedef struct __mavlink_skye_assisted_control_t
 {
- float translation_lat; ///< Translation (velocity) in Inertial Frame latitude, range [-1,1]
- float translation_long; ///< Translation (velocity) in Inertial Frame longitude, range [-1,1]
- float translation_alt; ///< Translation (velocity) in Inertial Frame altitude, range [-1,1]
- float rotation_x; ///< Roll, range [-1,1]
- float rotation_y; ///< Pitch, range [-1,1]
- float rotation_z; ///< Yaw, range [-1,1]
+ float translation_lat; ///< Translation (velocity) in Inertial Frame latitude, in m/sec
+ float translation_long; ///< Translation (velocity) in Inertial Frame longitude, in m/sec
+ float translation_alt; ///< Translation (velocity) in Inertial Frame altitude, in m/sec
+ float rotation_x; ///< Roll (angular velocity), in rad/sec
+ float rotation_y; ///< Pitch (angular velocity), in rad/sec
+ float rotation_z; ///< Yaw (angular velocity), in rad/sec
  uint8_t target_system; ///< System ID
 } mavlink_skye_assisted_control_t;
 
@@ -39,12 +39,12 @@ typedef struct __mavlink_skye_assisted_control_t
  * @param msg The MAVLink message to compress the data into
  *
  * @param target_system System ID
- * @param translation_lat Translation (velocity) in Inertial Frame latitude, range [-1,1]
- * @param translation_long Translation (velocity) in Inertial Frame longitude, range [-1,1]
- * @param translation_alt Translation (velocity) in Inertial Frame altitude, range [-1,1]
- * @param rotation_x Roll, range [-1,1]
- * @param rotation_y Pitch, range [-1,1]
- * @param rotation_z Yaw, range [-1,1]
+ * @param translation_lat Translation (velocity) in Inertial Frame latitude, in m/sec
+ * @param translation_long Translation (velocity) in Inertial Frame longitude, in m/sec
+ * @param translation_alt Translation (velocity) in Inertial Frame altitude, in m/sec
+ * @param rotation_x Roll (angular velocity), in rad/sec
+ * @param rotation_y Pitch (angular velocity), in rad/sec
+ * @param rotation_z Yaw (angular velocity), in rad/sec
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_skye_assisted_control_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
@@ -85,12 +85,12 @@ static inline uint16_t mavlink_msg_skye_assisted_control_pack(uint8_t system_id,
  * @param chan The MAVLink channel this message was sent over
  * @param msg The MAVLink message to compress the data into
  * @param target_system System ID
- * @param translation_lat Translation (velocity) in Inertial Frame latitude, range [-1,1]
- * @param translation_long Translation (velocity) in Inertial Frame longitude, range [-1,1]
- * @param translation_alt Translation (velocity) in Inertial Frame altitude, range [-1,1]
- * @param rotation_x Roll, range [-1,1]
- * @param rotation_y Pitch, range [-1,1]
- * @param rotation_z Yaw, range [-1,1]
+ * @param translation_lat Translation (velocity) in Inertial Frame latitude, in m/sec
+ * @param translation_long Translation (velocity) in Inertial Frame longitude, in m/sec
+ * @param translation_alt Translation (velocity) in Inertial Frame altitude, in m/sec
+ * @param rotation_x Roll (angular velocity), in rad/sec
+ * @param rotation_y Pitch (angular velocity), in rad/sec
+ * @param rotation_z Yaw (angular velocity), in rad/sec
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_skye_assisted_control_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
@@ -143,12 +143,12 @@ static inline uint16_t mavlink_msg_skye_assisted_control_encode(uint8_t system_i
  * @param chan MAVLink channel to send the message
  *
  * @param target_system System ID
- * @param translation_lat Translation (velocity) in Inertial Frame latitude, range [-1,1]
- * @param translation_long Translation (velocity) in Inertial Frame longitude, range [-1,1]
- * @param translation_alt Translation (velocity) in Inertial Frame altitude, range [-1,1]
- * @param rotation_x Roll, range [-1,1]
- * @param rotation_y Pitch, range [-1,1]
- * @param rotation_z Yaw, range [-1,1]
+ * @param translation_lat Translation (velocity) in Inertial Frame latitude, in m/sec
+ * @param translation_long Translation (velocity) in Inertial Frame longitude, in m/sec
+ * @param translation_alt Translation (velocity) in Inertial Frame altitude, in m/sec
+ * @param rotation_x Roll (angular velocity), in rad/sec
+ * @param rotation_y Pitch (angular velocity), in rad/sec
+ * @param rotation_z Yaw (angular velocity), in rad/sec
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
@@ -197,7 +197,7 @@ static inline uint8_t mavlink_msg_skye_assisted_control_get_target_system(const 
 /**
  * @brief Get field translation_lat from skye_assisted_control message
  *
- * @return Translation (velocity) in Inertial Frame latitude, range [-1,1]
+ * @return Translation (velocity) in Inertial Frame latitude, in m/sec
  */
 static inline float mavlink_msg_skye_assisted_control_get_translation_lat(const mavlink_message_t* msg)
 {
@@ -207,7 +207,7 @@ static inline float mavlink_msg_skye_assisted_control_get_translation_lat(const 
 /**
  * @brief Get field translation_long from skye_assisted_control message
  *
- * @return Translation (velocity) in Inertial Frame longitude, range [-1,1]
+ * @return Translation (velocity) in Inertial Frame longitude, in m/sec
  */
 static inline float mavlink_msg_skye_assisted_control_get_translation_long(const mavlink_message_t* msg)
 {
@@ -217,7 +217,7 @@ static inline float mavlink_msg_skye_assisted_control_get_translation_long(const
 /**
  * @brief Get field translation_alt from skye_assisted_control message
  *
- * @return Translation (velocity) in Inertial Frame altitude, range [-1,1]
+ * @return Translation (velocity) in Inertial Frame altitude, in m/sec
  */
 static inline float mavlink_msg_skye_assisted_control_get_translation_alt(const mavlink_message_t* msg)
 {
@@ -227,7 +227,7 @@ static inline float mavlink_msg_skye_assisted_control_get_translation_alt(const 
 /**
  * @brief Get field rotation_x from skye_assisted_control message
  *
- * @return Roll, range [-1,1]
+ * @return Roll (angular velocity), in rad/sec
  */
 static inline float mavlink_msg_skye_assisted_control_get_rotation_x(const mavlink_message_t* msg)
 {
@@ -237,7 +237,7 @@ static inline float mavlink_msg_skye_assisted_control_get_rotation_x(const mavli
 /**
  * @brief Get field rotation_y from skye_assisted_control message
  *
- * @return Pitch, range [-1,1]
+ * @return Pitch (angular velocity), in rad/sec
  */
 static inline float mavlink_msg_skye_assisted_control_get_rotation_y(const mavlink_message_t* msg)
 {
@@ -247,7 +247,7 @@ static inline float mavlink_msg_skye_assisted_control_get_rotation_y(const mavli
 /**
  * @brief Get field rotation_z from skye_assisted_control message
  *
- * @return Yaw, range [-1,1]
+ * @return Yaw (angular velocity), in rad/sec
  */
 static inline float mavlink_msg_skye_assisted_control_get_rotation_z(const mavlink_message_t* msg)
 {

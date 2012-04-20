@@ -4,12 +4,12 @@
 
 typedef struct __mavlink_skye_direct_control_t
 {
- float thrust_x; ///< Resulting thrust in Body Frame x, range [-1,1]
- float thrust_y; ///< Resulting thrust in Body Frame y, range [-1,1]
- float thrust_z; ///< Resulting thrust in Body Frame z, range [-1,1]
- float moment_x; ///< Resulting moment in Body Frame x (roll), range [-1,1]
- float moment_y; ///< Resulting moment in Body Frame y (pitch), range [-1,1]
- float moment_z; ///< Resulting moment in Body Frame z (yaw), range [-1,1]
+ float thrust_x; ///< Resulting thrust in Body Frame x, in Newton
+ float thrust_y; ///< Resulting thrust in Body Frame y, in Newton
+ float thrust_z; ///< Resulting thrust in Body Frame z, in Newton
+ float moment_x; ///< Resulting moment in Body Frame x (roll), in Newtonmeter
+ float moment_y; ///< Resulting moment in Body Frame y (pitch), in Newtonmeter
+ float moment_z; ///< Resulting moment in Body Frame z (yaw), in Newtonmeter
  uint8_t target_system; ///< System ID
 } mavlink_skye_direct_control_t;
 
@@ -39,12 +39,12 @@ typedef struct __mavlink_skye_direct_control_t
  * @param msg The MAVLink message to compress the data into
  *
  * @param target_system System ID
- * @param thrust_x Resulting thrust in Body Frame x, range [-1,1]
- * @param thrust_y Resulting thrust in Body Frame y, range [-1,1]
- * @param thrust_z Resulting thrust in Body Frame z, range [-1,1]
- * @param moment_x Resulting moment in Body Frame x (roll), range [-1,1]
- * @param moment_y Resulting moment in Body Frame y (pitch), range [-1,1]
- * @param moment_z Resulting moment in Body Frame z (yaw), range [-1,1]
+ * @param thrust_x Resulting thrust in Body Frame x, in Newton
+ * @param thrust_y Resulting thrust in Body Frame y, in Newton
+ * @param thrust_z Resulting thrust in Body Frame z, in Newton
+ * @param moment_x Resulting moment in Body Frame x (roll), in Newtonmeter
+ * @param moment_y Resulting moment in Body Frame y (pitch), in Newtonmeter
+ * @param moment_z Resulting moment in Body Frame z (yaw), in Newtonmeter
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_skye_direct_control_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
@@ -85,12 +85,12 @@ static inline uint16_t mavlink_msg_skye_direct_control_pack(uint8_t system_id, u
  * @param chan The MAVLink channel this message was sent over
  * @param msg The MAVLink message to compress the data into
  * @param target_system System ID
- * @param thrust_x Resulting thrust in Body Frame x, range [-1,1]
- * @param thrust_y Resulting thrust in Body Frame y, range [-1,1]
- * @param thrust_z Resulting thrust in Body Frame z, range [-1,1]
- * @param moment_x Resulting moment in Body Frame x (roll), range [-1,1]
- * @param moment_y Resulting moment in Body Frame y (pitch), range [-1,1]
- * @param moment_z Resulting moment in Body Frame z (yaw), range [-1,1]
+ * @param thrust_x Resulting thrust in Body Frame x, in Newton
+ * @param thrust_y Resulting thrust in Body Frame y, in Newton
+ * @param thrust_z Resulting thrust in Body Frame z, in Newton
+ * @param moment_x Resulting moment in Body Frame x (roll), in Newtonmeter
+ * @param moment_y Resulting moment in Body Frame y (pitch), in Newtonmeter
+ * @param moment_z Resulting moment in Body Frame z (yaw), in Newtonmeter
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_skye_direct_control_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
@@ -143,12 +143,12 @@ static inline uint16_t mavlink_msg_skye_direct_control_encode(uint8_t system_id,
  * @param chan MAVLink channel to send the message
  *
  * @param target_system System ID
- * @param thrust_x Resulting thrust in Body Frame x, range [-1,1]
- * @param thrust_y Resulting thrust in Body Frame y, range [-1,1]
- * @param thrust_z Resulting thrust in Body Frame z, range [-1,1]
- * @param moment_x Resulting moment in Body Frame x (roll), range [-1,1]
- * @param moment_y Resulting moment in Body Frame y (pitch), range [-1,1]
- * @param moment_z Resulting moment in Body Frame z (yaw), range [-1,1]
+ * @param thrust_x Resulting thrust in Body Frame x, in Newton
+ * @param thrust_y Resulting thrust in Body Frame y, in Newton
+ * @param thrust_z Resulting thrust in Body Frame z, in Newton
+ * @param moment_x Resulting moment in Body Frame x (roll), in Newtonmeter
+ * @param moment_y Resulting moment in Body Frame y (pitch), in Newtonmeter
+ * @param moment_z Resulting moment in Body Frame z (yaw), in Newtonmeter
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
@@ -197,7 +197,7 @@ static inline uint8_t mavlink_msg_skye_direct_control_get_target_system(const ma
 /**
  * @brief Get field thrust_x from skye_direct_control message
  *
- * @return Resulting thrust in Body Frame x, range [-1,1]
+ * @return Resulting thrust in Body Frame x, in Newton
  */
 static inline float mavlink_msg_skye_direct_control_get_thrust_x(const mavlink_message_t* msg)
 {
@@ -207,7 +207,7 @@ static inline float mavlink_msg_skye_direct_control_get_thrust_x(const mavlink_m
 /**
  * @brief Get field thrust_y from skye_direct_control message
  *
- * @return Resulting thrust in Body Frame y, range [-1,1]
+ * @return Resulting thrust in Body Frame y, in Newton
  */
 static inline float mavlink_msg_skye_direct_control_get_thrust_y(const mavlink_message_t* msg)
 {
@@ -217,7 +217,7 @@ static inline float mavlink_msg_skye_direct_control_get_thrust_y(const mavlink_m
 /**
  * @brief Get field thrust_z from skye_direct_control message
  *
- * @return Resulting thrust in Body Frame z, range [-1,1]
+ * @return Resulting thrust in Body Frame z, in Newton
  */
 static inline float mavlink_msg_skye_direct_control_get_thrust_z(const mavlink_message_t* msg)
 {
@@ -227,7 +227,7 @@ static inline float mavlink_msg_skye_direct_control_get_thrust_z(const mavlink_m
 /**
  * @brief Get field moment_x from skye_direct_control message
  *
- * @return Resulting moment in Body Frame x (roll), range [-1,1]
+ * @return Resulting moment in Body Frame x (roll), in Newtonmeter
  */
 static inline float mavlink_msg_skye_direct_control_get_moment_x(const mavlink_message_t* msg)
 {
@@ -237,7 +237,7 @@ static inline float mavlink_msg_skye_direct_control_get_moment_x(const mavlink_m
 /**
  * @brief Get field moment_y from skye_direct_control message
  *
- * @return Resulting moment in Body Frame y (pitch), range [-1,1]
+ * @return Resulting moment in Body Frame y (pitch), in Newtonmeter
  */
 static inline float mavlink_msg_skye_direct_control_get_moment_y(const mavlink_message_t* msg)
 {
@@ -247,7 +247,7 @@ static inline float mavlink_msg_skye_direct_control_get_moment_y(const mavlink_m
 /**
  * @brief Get field moment_z from skye_direct_control message
  *
- * @return Resulting moment in Body Frame z (yaw), range [-1,1]
+ * @return Resulting moment in Body Frame z (yaw), in Newtonmeter
  */
 static inline float mavlink_msg_skye_direct_control_get_moment_z(const mavlink_message_t* msg)
 {
