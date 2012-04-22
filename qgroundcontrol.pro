@@ -255,7 +255,8 @@ FORMS += src/ui/MainWindow.ui \
     src/ui/uas/UASSkyeBatteryInfoWidget.ui \            # Code MA
     src/ui/uas/UASSkyeBatteryPackWidget.ui \            # Code MA
     src/ui/SkyeCameraReconfigure.ui \                   # Code MA
-    src/ui/DirectControlWidget.ui                       # Code MA
+    src/ui/DirectControlWidget.ui \                       # Code MA
+    src/ui/map/ElevationProfile.ui			# Code AL
 INCLUDEPATH += src \
     src/ui \
     src/ui/linechart \
@@ -386,7 +387,11 @@ HEADERS += src/MG.h \
     src/ui/map/QGCMapRing.h \                           # Code AL
     src/ui/SkyeCameraReconfigure.h \                    # Code MA
     src/ui/BluefoxReconfigure.h \                       # Code MA
-    src/ui/DirectControlWidget.h \                      # Code MA
+    src/ui/DirectControlWidget.h \                        # Code MA
+    src/ui/map/ElevationProfile.h \
+    src/ui/map/ElevationProfileDisplay.cc \
+    src/ui/map/ElevationProfileDisplay.h \
+    src/ui/map/ElevationPoint.h
 
 # Google Earth is only supported on Mac OS and Windows with Visual Studio Compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010::HEADERS += src/ui/map3D/QGCGoogleEarthView.h
@@ -537,7 +542,9 @@ SOURCES += src/main.cc \
     src/ui/uas/UASSkyeBatteryPackWidget.cpp \       # Code MA
     src/ui/map/QGCMapRing.cc \                      # Code AL
     src/ui/SkyeCameraReconfigure.cpp \              # Code MA
-    src/ui/DirectControlWidget.cc \                 # Code MA
+    src/ui/DirectControlWidget.cc \                   # Code MA
+    src/ui/map/ElevationProfile.cpp \			# Code AL
+    src/ui/map/ElevationPoint.cc			# Code AL
 
 # Enable Google Earth only on Mac OS and Windows with Visual Studio compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010::SOURCES += src/ui/map3D/QGCGoogleEarthView.cc
