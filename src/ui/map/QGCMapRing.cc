@@ -200,8 +200,8 @@ void QGCMapRing::resizeEvent(QResizeEvent * /* event */)
     //int side = qMin(width(), height());
     side = qMin(width(), height());
 
-    QRegion outerCircle(width()/2-side/2*0.81, height()/2-side/2*0.81, side*0.81, side*0.81, QRegion::Ellipse);
-    QRegion innerCircle(width()/2-side/2*0.69, height()/2-side/2*0.69, side*0.69, side*0.69, QRegion::Ellipse);
+    QRegion outerCircle(width()/2-side/2*0.9, height()/2-side/2*0.9, side*0.9, side*0.9, QRegion::Ellipse);
+    QRegion innerCircle(width()/2-side/2*0.6, height()/2-side/2*0.6, side*0.6, side*0.6, QRegion::Ellipse);
     QRegion Ring = outerCircle.subtracted(innerCircle);
 
     QRegion lowerButton(width()/2+side/2*0.58, height()/2+side/2*0.58, side/2*0.3, side/2*0.3, QRegion::Ellipse);
