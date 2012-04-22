@@ -146,7 +146,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
         connect(mav, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
 
-        connect(this, SIGNAL(changedSensitivityFactor(float)), mav, SLOT(setSensitivityFactorTrans(float)));
+        connect(this, SIGNAL(changedSensitivityTransFactor(float)), mav, SLOT(setSensitivityFactorTrans(float)));
         connect(this, SIGNAL(changedSensitivityRotFactor(float)), mav, SLOT(setSensitivityFactorRot(float)));
         emit changedSensitivityTransFactor(sensitivityFactorTrans);
         emit changedSensitivityRotFactor(sensitivityFactorRot);
