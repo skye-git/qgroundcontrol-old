@@ -624,6 +624,7 @@ void MainWindow::buildCommonWidgets()
         mapWidget = new QGCMapTool(this);
         addCentralWidget(mapWidget, "Maps");
         connect(mapWidget, SIGNAL(valueTouchInputChangedMap(double,double,double)), this, SLOT(setTouchInputXYZ(double, double, double))); //Beginn Ende Code AL (11.04.12)
+        connect(this, SIGNAL(emitTouchInputVisibility(bool)), mapWidget, SLOT(setRingvisible(bool))); //Beginn Ende Code AL (23.04.12)
     }
 
     if (!protocolWidget)
@@ -642,6 +643,7 @@ void MainWindow::buildCommonWidgets()
         hudWidget         = new HUD(320, 240, this);
         addCentralWidget(hudWidget, tr("Head Up Display"));
         connect(hudWidget, SIGNAL(valueTouchInputChangedHUD(double,double,double)), this, SLOT(setTouchInputYawPitchRoll(double,double,double))); //Beginn Ende Code AL (11.04.12)
+        connect(this, SIGNAL(emitTouchInputVisibility(bool)), hudWidget, SLOT(setKnobndKnobRingvisible(bool))); //Beginn Ende Code AL (23.04.12)
     }
 
     if (!dataplotWidget) {
@@ -1857,21 +1859,14 @@ void MainWindow::setInputMode(int inputMode)
                 start3dMouse();
             }
             #endif
-            mapWidget->setRingvisible(false);
-            hudWidget->setKnobndKnobRingvisible(false);
-            //headUpDockWidget->setKnobndKnobRingvisible(false);
             emit emitTouchInputVisibility(false);
             break;
     case 2:
             this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_TOUCH;
-            mapWidget->setRingvisible(true);
-            hudWidget->setKnobndKnobRingvisible(true);
             emit emitTouchInputVisibility(true);
             break;
     case 3:
             this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_KEYBOARD;
-            mapWidget->setRingvisible(false);
-            hudWidget->setKnobndKnobRingvisible(false);
             emit emitTouchInputVisibility(false);
             break;
     default:
