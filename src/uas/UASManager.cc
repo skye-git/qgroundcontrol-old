@@ -232,8 +232,8 @@ void UASManager::uavChangedHomePosition(int uav, double lat, double lon, double 
  **/
 UASManager::UASManager() :
         activeUAS(NULL),
-        homeLat(47.3769),
-        homeLon(8.549444),
+        homeLat(47.377424),                     // Code Mod MA (23.04.2012) was 47.3769
+        homeLon(8.546612),                      // Code Mod MA (23.04.2012) was 8.549444
         homeAlt(470.0),
         homeFrame(MAV_FRAME_GLOBAL)
 {

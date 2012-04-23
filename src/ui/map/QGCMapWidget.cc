@@ -11,7 +11,7 @@ QGCMapWidget::QGCMapWidget(QWidget *parent) :
     currWPManager(NULL),
     firingWaypointChange(NULL),
     maxUpdateInterval(2.1f), // 2 seconds
-    followUAVEnabled(false),
+    followUAVEnabled(true),                                 // Code Mod MA (23.04.2012)
     trailType(mapcontrol::UAVTrailType::ByTimeElapsed),
     trailInterval(2.0f),
     followUAVID(0),
@@ -46,7 +46,7 @@ void QGCMapWidget::showEvent(QShowEvent* event)
 
     if (!mapInitialized)
     {
-        internals::PointLatLng pos_lat_lon = internals::PointLatLng(0, 0);
+        //internals::PointLatLng pos_lat_lon = internals::PointLatLng(0, 0);        // Code removed MA (23.04.2012)
 
         SetMouseWheelZoomType(internals::MouseWheelZoomType::MousePositionWithoutCenter);	    // set how the mouse wheel zoom functions
         SetFollowMouse(true);				    // we want a contiuous mouse position reading
@@ -54,7 +54,7 @@ void QGCMapWidget::showEvent(QShowEvent* event)
         SetShowHome(true);					    // display the HOME position on the map
         Home->SetSafeArea(30);                         // set radius (meters)
         Home->SetShowSafeArea(true);                                         // show the safe area
-        Home->SetCoord(pos_lat_lon);             // set the HOME position
+        //Home->SetCoord(pos_lat_lon);             // set the HOME position         // Code removed MA (23.04.2012)
 
         setFrameStyle(QFrame::NoFrame);      // no border frame
         setBackgroundBrush(QBrush(Qt::black)); // tile background
@@ -68,7 +68,7 @@ void QGCMapWidget::showEvent(QShowEvent* event)
         // Connect map updates to the adapter slots
         connect(this, SIGNAL(WPValuesChanged(WayPointItem*)), this, SLOT(handleMapWaypointEdit(WayPointItem*)));
 
-        SetCurrentPosition(pos_lat_lon);         // set the map position
+        SetCurrentPosition(Home->Coord());         // set the map position // Code Mod MA (23.04.2012) was pos_lat_lon
         setFocus();
 
         // Start timer
@@ -93,10 +93,15 @@ void QGCMapWidget::hideEvent(QHideEvent* event)
  */
 void QGCMapWidget::loadSettings(bool changePosition)
 {
-    // Atlantic Ocean near Africa, coordinate origin
-    double lastZoom = 1;
-    double lastLat = 0;
-    double lastLon = 0;
+//    // Atlantic Ocean near Africa, coordinate origin
+//    double lastZoom = 1;
+//    double lastLat = 0;
+//    double lastLon = 0;
+
+    // ETH Zurich, Europe, Switzerland (default position)       // Beginn Code MA (23.04.2012)
+    double lastZoom = 17;
+    double lastLat = 47.377424;
+    double lastLon = 8.546612;                                  // Ende Code MA (23.04.2012)
 
     QSettings settings;
     settings.beginGroup("QGC_MAPWIDGET");
@@ -387,6 +392,7 @@ void QGCMapWidget::updateHomePosition(double latitude, double longitude, double 
 void QGCMapWidget::goHome()
 {
     SetCurrentPosition(Home->Coord());
+
 }
 
 /**
