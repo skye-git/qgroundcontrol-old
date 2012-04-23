@@ -831,7 +831,7 @@ void MAVLinkSimulationLink::writeBytes(const char* data, qint64 size)
         if (mavlink_parse_char(this->id, data[i], &msg, &comm))
         {
             // MESSAGE RECEIVED!
-            qDebug() << "SIMULATION LINK RECEIVED MESSAGE!";
+//            qDebug() << "SIMULATION LINK RECEIVED MESSAGE!";
             emit messageReceived(msg);
 
             switch (msg.msgid)
@@ -1017,7 +1017,6 @@ void MAVLinkSimulationLink::writeBytes(const char* data, qint64 size)
                 mavlink_skye_direct_control_t dc;
                 mavlink_msg_skye_direct_control_decode(&msg, &dc);
                 if (dc.target_system == this->systemId) {
-                    qDebug() << "thrust x: " << dc.thrust_x << "------------------------------------------";
                     thrustX = dc.thrust_x;
                     thrustY = dc.thrust_y;
                     thrustZ = dc.thrust_z;

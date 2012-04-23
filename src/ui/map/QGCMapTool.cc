@@ -5,9 +5,12 @@
 
 QGCMapTool::QGCMapTool(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::QGCMapTool),
-    touchInputvisib(false)
-{
+    uasId(0),
+    uasMode(0),
+    touchInputvisib(false),
+    touchInputModeSet(false),
+    ui(new Ui::QGCMapTool)
+    {
     ui->setupUi(this);
 
     // Connect map and toolbar
@@ -23,7 +26,43 @@ QGCMapTool::QGCMapTool(QWidget *parent) :
     connect(ui->Ring, SIGNAL(yValuechanged(double)), ui->doubleSpinBox_y, SLOT(setValue(double)));
     connect(ui->Ring, SIGNAL(zValuechanged(double)), ui->doubleSpinBox_z, SLOT(setValue(double)));
     connect(ui->Ring, SIGNAL(valueMapRingChanged(double,double,double)),this,SLOT(transmitMapRingvalues(double,double,double)));//Ende
+
+    connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));//Code MA (23.04.2012)
+
 }
+
+void QGCMapTool::setUAS(UASInterface* uas)
+{
+    if (this->uasId!= 0)
+    {
+        UASInterface* oldUAS = UASManager::instance()->getUASForId(this->uasId);
+        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(oldUAS);
+        if (mav)
+        {
+            disconnect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
+        }
+    }
+
+    SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uas);
+    if (mav)
+    {
+        this->uasId = mav->getUASID();
+
+        connect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
+        updateMode(mav->getUASID(), mav->getUASMode());
+    }
+}
+
+void QGCMapTool::updateMode(int uas,int mode)
+{
+    if ((uasId == uas) && ((int)uasMode != mode))
+    {
+        uasMode = (unsigned int)mode;
+        // Check for touchring visibility
+        setRingvisible(touchInputModeSet);
+    }
+}
+
 
 void QGCMapTool::setZoom(int zoom)
 {
@@ -33,11 +72,12 @@ void QGCMapTool::setZoom(int zoom)
     }
 }
 
-void QGCMapTool::setRingvisible(bool visib) // Beginn Code AL (26.03.12)
+void QGCMapTool::setRingvisible(bool visib) // Beginn Code AL (26.03.12) Mod MA
 {
-    ui->Ring->setVisible(visib);
-    touchInputvisib = visib;
-}                                           // Ende Code AL
+    touchInputModeSet = visib;
+    touchInputvisib = (visib && !(uasMode & MAV_MODE_FLAG_DECODE_POSITION_GUIDED));
+    ui->Ring->setVisible(touchInputvisib);
+}                                           // Ende Code AL, Mod MA
 
 void QGCMapTool::transmitMapRingvalues(double x, double y, double z) // Beginn Code AL (11.04.12)
 {

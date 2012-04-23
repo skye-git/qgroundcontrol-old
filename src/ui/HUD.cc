@@ -74,6 +74,7 @@ HUD::HUD(int width, int height, QWidget* parent)
       uas(NULL),
       yawInt(0.0f),
       mode(tr("UNKNOWN MODE")),
+      uasMode(0),
       state(tr("UNKNOWN STATE")),
       fuelStatus(tr("00.0V (00m:00s)")),
       xCenterOffset(0.0f),
@@ -295,9 +296,19 @@ void HUD::setActiveUAS(UASInterface* uas)
             disconnect(u, SIGNAL(imageStarted(quint64)), this, SLOT(startImage(quint64)));
             disconnect(u, SIGNAL(imageReady(UASInterface*)), this, SLOT(copyImage()));
         }
+
+        // Try to disconnect mode from SKYE (not implemented for other uas yet)
+        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(this->uas);
+        if (mav)
+        {
+            disconnect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
+        }
     }
 
     if (uas) {
+        // Set new UAS
+        this->uas = uas;
+
         // Now connect the new UAS
         // Setup communication
         connect(uas, SIGNAL(attitudeChanged(UASInterface*,double,double,double,quint64)), this, SLOT(updateAttitude(UASInterface*, double, double, double, quint64)));
@@ -320,8 +331,23 @@ void HUD::setActiveUAS(UASInterface* uas)
             qDebug() << "imageReady connected to HUD";
         }
 
-        // Set new UAS
-        this->uas = uas;
+        // Try to connect mode of Skye (not yet implemented for other uas)
+        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uas);
+        if (mav)
+        {
+            connect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
+            updateMode(mav->getUASID(), mav->getUASMode());
+        }
+    }
+}
+
+void HUD::updateMode(int uasId, int mode)
+{
+    if ((this->uas->getUASID() == uasId) && ((int)uasMode != mode))
+    {
+        uasMode = (unsigned int)mode;
+        // Check for touch knob visibility
+        setKnobndKnobRingvisible(touchInputModeSet);
     }
 }
 
@@ -1585,7 +1611,8 @@ void HUD::copyImage()
 
 void HUD::setKnobndKnobRingvisible(bool visib)
 {
-    touchInputvisib = visib;
+    touchInputModeSet = visib;
+    touchInputvisib = (visib && !(uasMode & MAV_MODE_FLAG_DECODE_POSITION_AUTO));
 }
 
 

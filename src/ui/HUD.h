@@ -63,6 +63,8 @@ public slots:
 
     /** @brief Set the currently monitored UAS */
     virtual void setActiveUAS(UASInterface* uas);
+    /** @brief Update the mode */                  // Begin Code MA (23.04.2012)
+    void updateMode(int uasId, int mode);      // Ende Code MA
 
     /** @brief Attitude from main autopilot / system state */
     void updateAttitude(UASInterface* uas, double roll, double pitch, double yaw, quint64 timestamp);
@@ -158,7 +160,9 @@ protected:
     QPointF dragPosition;
     QPointF diffVector;
 
-    bool touchInputvisib;
+
+    bool touchInputvisib;     ///< Visibility of Touch Ring
+    bool touchInputModeSet;   ///< True if InputMode == TOUCH   //Beginn und Ende Code MA (23.04.12)
     bool knobisactive;
     bool knobcircleisactive;
     double painterszerox;
@@ -179,6 +183,7 @@ protected:
     UASInterface* uas; ///< The uas currently monitored
     float yawInt; ///< The yaw integral. Used to damp the yaw indication.
     QString mode; ///< The current vehicle mode
+    unsigned int uasMode; ///< The current vehicle/uas mode         // Code MA (23.04.2012)
     QString state; ///< The current vehicle state
     QString fuelStatus; ///< Current fuel level / battery voltage
     double scalingFactor; ///< Factor used to scale all absolute values to screen coordinates

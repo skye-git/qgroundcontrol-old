@@ -1498,11 +1498,11 @@ void UAS::sendMessage(mavlink_message_t message)
     // Emit message on all links that are currently connected
     foreach (LinkInterface* link, *links)
     {
-        qDebug() << "ITERATING THROUGH LINKS";
+//        qDebug() << "ITERATING THROUGH LINKS";
         if (link)
         {
             sendMessage(link, message);
-            qDebug() << "SENT MESSAGE";
+//            qDebug() << "SENT MESSAGE";
         }
         else
         {

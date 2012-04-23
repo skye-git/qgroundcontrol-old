@@ -102,7 +102,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
 
             ++imagePacketsArrived;
 
-            qDebug() << "RECIEVED ENCAPSULATED IMAGE, imagePackets:" << imagePackets << "imagePacketsArrived:" << imagePacketsArrived;
+//            qDebug() << "RECIEVED ENCAPSULATED IMAGE, imagePackets:" << imagePackets << "imagePacketsArrived:" << imagePacketsArrived;
 
             // emit signal if all packets arrived
             if ((imagePacketsArrived >= imagePackets))
@@ -110,7 +110,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
                 // Restart statemachine
                 imagePacketsArrived = 0;
                 emit imageReady(this);
-                qDebug() << "SKYE imageReady emitted. all packets arrived";
+//                qDebug() << "SKYE imageReady emitted. all packets arrived";
             }
         }
         break;
@@ -189,12 +189,12 @@ void SkyeMAV::setManualControlCommands6DoF(double x , double y , double z , doub
         if ((mode == MAV_MODE_DIRECT_CONTROL_DISARMED) || (mode == MAV_MODE_DIRECT_CONTROL_ARMED))
         {
             sendDirectControlCommands(x, y, z, a, b, c);
-            qDebug() << "SkyeMAV.cc l.190, sendDirectControlCommands(x,y,z,a,b,c): "<< x <<":"<< y <<":" << z <<":" << a <<":" << b <<":" << c;
+//            qDebug() << "SkyeMAV.cc l.190, sendDirectControlCommands(x,y,z,a,b,c): "<< x <<":"<< y <<":" << z <<":" << a <<":" << b <<":" << c;
         }else if ((mode == MAV_MODE_ASSISTED_CONTROL_DISARMED) || (mode == MAV_MODE_ASSISTED_CONTROL_ARMED))
         {
             sendAssistedControlCommands(x, y, z, a, b, c);
         }else{
-            qDebug() << "3DMOUSE/MANUAL CONTROL: IGNORING COMMANDS: Set mode to MANUAL and CUSTOM to send 3DMouse commands!";
+            qDebug() << "6DOF MANUAL CONTROL: IGNORING COMMANDS: Set mode to MANUAL and CUSTOM to send 6 DoF Mouse commands!";
         }
     }
 
@@ -257,7 +257,7 @@ void SkyeMAV::sendDirectControlCommands(double xThrust, double yThrust, double z
     
     mavlink_msg_skye_direct_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (float)manualXThrust, (float)manualYThrust, (float)manualZThrust, (float)manualXMoment, (float)manualYMoment, (float)manualZMoment);
     sendMessage(message);
-    qDebug() << __FILE__ << __LINE__ << ": SENT DIRECT CONTROL MESSAGE: xThrust" << manualXThrust << " yThrust: " << manualYThrust << " zThrust: " << manualZThrust << " xMoment: " << manualXMoment << " yMoment: " << manualYMoment << " zMoment: " << manualZMoment;
+//    qDebug() << __FILE__ << __LINE__ << ": SENT DIRECT CONTROL MESSAGE: xThrust" << manualXThrust << " yThrust: " << manualYThrust << " zThrust: " << manualZThrust << " xMoment: " << manualXMoment << " yMoment: " << manualYMoment << " zMoment: " << manualZMoment;
     
     //emit attitudeThrustSetPointChanged(this, roll, pitch, yaw, thrust, MG::TIME::getGroundTimeNow());
     
@@ -283,7 +283,7 @@ void SkyeMAV::sendAssistedControlCommands(double xVel, double yVel, double zVel,
     
     mavlink_msg_skye_assisted_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (float)manualXVel, (float)manualYVel, (float)manualZVel, (float)manualXRot, (float)manualYRot, (float)manualZRot);
     sendMessage(message);
-    qDebug() << __FILE__ << __LINE__ << ": SENT ASSISTED CONTROL MESSAGE: x velocity" << manualXVel << " y velocity: " << manualYVel << " z velocity: " << manualZVel << " x rotation: " << manualXRot << " y rotation: " << manualYRot << " z rotation: " << manualZRot;
+//    qDebug() << __FILE__ << __LINE__ << ": SENT ASSISTED CONTROL MESSAGE: x velocity" << manualXVel << " y velocity: " << manualYVel << " z velocity: " << manualZVel << " x rotation: " << manualXRot << " y rotation: " << manualYRot << " z rotation: " << manualZRot;
     
     //emit attitudeThrustSetPointChanged(this, roll, pitch, yaw, thrust, MG::TIME::getGroundTimeNow());
     
