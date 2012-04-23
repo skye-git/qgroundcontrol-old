@@ -120,7 +120,6 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         SkyeMAV* mav = dynamic_cast<SkyeMAV*>(oldUAS);
         if (mav)
         {
-            disconnect(this, SIGNAL(changedMode(int)), mav, SLOT(setMode(int)));
             disconnect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
             disconnect(mav, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
 
@@ -274,16 +273,6 @@ void UASSkyeControlWidget::updateState(int state)
 #endif // MAVLINK_ENABLED_SKYE
 }
 
-/**
- * Called by the button
- */
-void UASSkyeControlWidget::setMode(int mode)
-{
-    // Adapt context button mode
-    uasMode = mode;
-    emit changedMode(mode);
-}
-
 void UASSkyeControlWidget::setDirectControlMode(bool checked)
 {
     if (checked)
@@ -295,10 +284,9 @@ void UASSkyeControlWidget::setDirectControlMode(bool checked)
         if (mav){
             UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
             if (mav->isArmed())
-                setMode(MAV_MODE_DIRECT_CONTROL_ARMED);
+                transmitMode(MAV_MODE_DIRECT_CONTROL_ARMED);
             else
-                setMode(MAV_MODE_DIRECT_CONTROL_DISARMED);
-            transmitMode();
+                transmitMode(MAV_MODE_DIRECT_CONTROL_DISARMED);
         }
         else
         {
@@ -319,10 +307,9 @@ void UASSkyeControlWidget::setAssistedControlMode(bool checked)
         if (mav){
             UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
             if (mav->isArmed())
-                setMode(MAV_MODE_ASSISTED_CONTROL_ARMED);
+                transmitMode(MAV_MODE_ASSISTED_CONTROL_ARMED);
             else
-                setMode(MAV_MODE_ASSISTED_CONTROL_DISARMED);
-            transmitMode();
+                transmitMode(MAV_MODE_ASSISTED_CONTROL_DISARMED);
         }
         else
         {
@@ -341,10 +328,9 @@ void UASSkyeControlWidget::setHalfAutomaticControlMode(bool checked)
         if (mav){
             UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
             if (mav->isArmed())
-                setMode(MAV_MODE_HALF_AUTOMATIC_ARMED);
+                transmitMode(MAV_MODE_HALF_AUTOMATIC_ARMED);
             else
-                setMode(MAV_MODE_HALF_AUTOMATIC_DISARMED);
-            transmitMode();
+                transmitMode(MAV_MODE_HALF_AUTOMATIC_DISARMED);
         }
         else
         {
@@ -363,10 +349,9 @@ void UASSkyeControlWidget::setFullAutomaticControlMode(bool checked)
         if (mav){
             UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
             if (mav->isArmed())
-                setMode(MAV_MODE_FULL_AUTOMATIC_ARMED);
+                transmitMode(MAV_MODE_FULL_AUTOMATIC_ARMED);
             else
-                setMode(MAV_MODE_FULL_AUTOMATIC_DISARMED);
-            transmitMode();
+                transmitMode(MAV_MODE_FULL_AUTOMATIC_DISARMED);
         }
         else
         {
@@ -413,16 +398,16 @@ void UASSkyeControlWidget::setInputKeyboard(bool checked)
 #endif // MAVLINK_ENABLED_SKYE
 }
 
-void UASSkyeControlWidget::transmitMode()
+void UASSkyeControlWidget::transmitMode(int mode)
 {
 #ifdef MAVLINK_ENABLED_SKYE
     UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
     if (mav)
     {
-        mav->setMode(uasMode);
-        QString mode = UAS::getShortModeTextFor(uasMode);
+        mav->setMode(mode);
+        QString modeStr = UAS::getShortModeTextFor(mode);
 
-        ui.lastActionLabel->setText(QString("Sent mode %1 to %2").arg(mode).arg(mav->getUASName()));
+        ui.lastActionLabel->setText(QString("Sent mode %1 to %2").arg(modeStr).arg(mav->getUASName()));
     }
     else
     {

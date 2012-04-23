@@ -68,10 +68,8 @@ public slots:
     void setUAS(UASInterface* uas);
     /** @brief Trigger next context action */
     void cycleContextButton();
-    /** @brief Set the operation mode of the MAV */
-    void setMode(int mode);
     /** @brief Transmit the operation mode */
-    void transmitMode();
+    void transmitMode(int mode);
     /** @brief Update the mode */
     void updateMode(int uas,int baseMode);
     /** @brief Update state */
