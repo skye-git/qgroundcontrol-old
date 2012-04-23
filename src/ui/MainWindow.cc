@@ -114,6 +114,7 @@ MainWindow::MainWindow(QWidget *parent):
     mouseTranslationEnable(true),
     mouseRotationEnable(true),
     mouseInitialized(false),
+    mouseTimer(NULL),
     mouseFilterSize(5),
     emitMouseValuesCounter(0),
     mouseRawValues(NULL),
@@ -1235,7 +1236,8 @@ void MainWindow::showDirectControl()                    //Beginn Code MA (12.04.
      if(!directControlWidget)
     {
         #ifdef MOUSE_ENABLED
-        if ( mouseTimer->isActive() ) mouseTimer->stop();
+        if ( mouseTimer )
+            if ( mouseTimer->isActive() ) mouseTimer->stop();
         #endif // MOUSE_ENABLED
 
         directControlWidget = new DirectControlWidget(this);
