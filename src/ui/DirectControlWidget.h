@@ -31,6 +31,7 @@ public slots:
     void stopAll();
     void emitValues();
     void changeMode(int mode);
+    void changeAssistedMode(bool isAssisted);
     void directControlShow();
     void directControlClose();
     void cycleContextButton();

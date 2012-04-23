@@ -55,6 +55,8 @@ DirectControlWidget::DirectControlWidget(QWidget *parent):
     connect(ui->closeButton, SIGNAL(clicked()),this, SLOT(stopAll()));
     connect(ui->closeButton, SIGNAL(clicked()),this, SLOT(directControlClose()));
 
+    connect(ui->assistedControlCheckBox, SIGNAL(toggled(bool)), this, SLOT(changeAssistedMode(bool)));
+
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 
     // Display the widget
@@ -106,7 +108,8 @@ void DirectControlWidget::emitValues()
 {
     if (uas && this->isVisible())
     {
-        if (uas->getMode() == MAV_MODE_DIRECT_CONTROL_ARMED)
+//        if (uas->getMode() == MAV_MODE_DIRECT_CONTROL_ARMED)
+        if ( (uas->getMode() == MAV_MODE_DIRECT_CONTROL_ARMED) || (uas->getMode() == MAV_MODE_ASSISTED_CONTROL_ARMED ) )
         {
             double forceX = (double)ui->sliderThrustX->value() / (double)maxThrust;
             double forceY = (double)ui->sliderThrustY->value() / (double)maxThrust;
@@ -125,6 +128,27 @@ void DirectControlWidget::changeMode(int mode)
     if(uas)
     {
         uas->setMode(mode);
+    }
+}
+
+void DirectControlWidget::changeAssistedMode(bool isAssisted)
+{
+    if(uas) {
+        if (engineOn) {
+            stopAll();
+            if (!isAssisted) {
+                uas->setMode(MAV_MODE_DIRECT_CONTROL_ARMED);
+            } else {
+                uas->setMode(MAV_MODE_ASSISTED_CONTROL_ARMED);
+            }
+        } else {
+            stopAll();
+            if (!isAssisted) {
+                uas->setMode(MAV_MODE_DIRECT_CONTROL_DISARMED);
+            } else {
+                uas->setMode(MAV_MODE_ASSISTED_CONTROL_DISARMED);
+            }
+        }
     }
 }
 
@@ -148,7 +172,7 @@ void DirectControlWidget::directControlClose()
         uas->setMode(MAV_MODE_PREFLIGHT);
     }
     engineOn=false;
-    timer->stop(); // otherwise if ones reopens the widget, no signal is emitted no more
+    timer->stop();
     timer->deleteLater();
     this->close();
 }
@@ -172,14 +196,25 @@ void DirectControlWidget::cycleContextButton()
             uas->armSystem();
 //            ui->controlButton->setText(tr("DISARMSYSTEM"));
 //            ui.controlButton->setStyleSheet("* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DD0044, stop: 1 #AA0022); border-color: yellow; color: yellow }");
-            uas->setMode(MAV_MODE_DIRECT_CONTROL_ARMED);
+            if (!ui->assistedControlCheckBox->isChecked()) {
+                uas->setMode(MAV_MODE_DIRECT_CONTROL_ARMED);
+            } else {
+                uas->setMode(MAV_MODE_ASSISTED_CONTROL_ARMED);
+            }
+//            uas->setMode(MAV_MODE_DIRECT_CONTROL_ARMED);
             engineOn=true;
         } else {
             emit valueDirectControlChanged( 0, 0, 0, 0, 0, 0 );
             uas->disarmSystem();
 //            ui->controlButton->setText(tr("ARM SYSTEM"));
 //            ui.controlButton->setStyleSheet("* { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00DD44, stop: 1 #11AA22); }");
-            uas->setMode(MAV_MODE_DIRECT_CONTROL_DISARMED);
+            if (!ui->assistedControlCheckBox->isChecked()) {
+                uas->setMode(MAV_MODE_DIRECT_CONTROL_DISARMED);
+            } else {
+                uas->setMode(MAV_MODE_ASSISTED_CONTROL_DISARMED);
+            }
+//            uas->setMode(MAV_MODE_DIRECT_CONTROL_DISARMED);
+
             engineOn=false;
         }
 
