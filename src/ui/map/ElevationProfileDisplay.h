@@ -14,6 +14,10 @@ signals:
 public slots:
 
 protected:
+    void wheelEvent(QWheelEvent *event);
+
+
+    void scaleView(qreal scaleFactor);
 
 private:
     

@@ -153,6 +153,7 @@ void QGCMapRing::mouseMoveEvent(QMouseEvent *event)
 
 void QGCMapRing::mouseReleaseEvent(QMouseEvent *event)
 {
+    Q_UNUSED(event);
     countingup = false;
     x_0 = 0;
     y_0 = 0;

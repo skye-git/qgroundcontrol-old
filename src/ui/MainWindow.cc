@@ -44,6 +44,7 @@ This file is part of the QGROUNDCONTROL project
 #include "MAVLinkProtocol.h"
 #include "CommConfigurationWindow.h"
 #include "QGCWaypointListMulti.h"
+#include "ElevationProfile.h"           // Beginn und Ende Code (24.04.12)
 #include "MainWindow.h"
 #include "GAudioOutput.h"
 #include "QGCToolWidget.h"
@@ -455,6 +456,14 @@ void MainWindow::buildCommonWidgets()
         waypointsDockWidget->setWidget( new QGCWaypointListMulti(this) );
         waypointsDockWidget->setObjectName("WAYPOINT_LIST_DOCKWIDGET");
         addTool(waypointsDockWidget, tr("Mission Plan"), Qt::BottomDockWidgetArea);
+    }
+
+    if (!elevationProfileWidget)
+    {
+        elevationProfileWidget = new QDockWidget(tr("Elevation Profile"), this);
+        elevationProfileWidget->setWidget( new ElevationProfile(this) );
+        elevationProfileWidget->setObjectName("ELEVATION_PROFILE_DOCKWIDGET");
+        addTool(elevationProfileWidget, tr("Elevation Profile"), Qt::BottomDockWidgetArea);
     }
 
     if (!infoDockWidget)

@@ -400,6 +400,7 @@ protected:
     QPointer<QDockWidget> cameraDockWidget;
     QPointer<QDockWidget> listDockWidget;
     QPointer<QDockWidget> waypointsDockWidget;
+    QPointer<QDockWidget> elevationProfileWidget;       //Beginn Ende Code AL (24.04.12)
     QPointer<QDockWidget> detectionDockWidget;
     QPointer<QDockWidget> debugConsoleDockWidget;
     QPointer<QDockWidget> parametersDockWidget;
