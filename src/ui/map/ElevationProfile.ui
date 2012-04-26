@@ -20,9 +20,9 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QLabel" name="statusLabel">
        <property name="text">
-        <string>PushButton</string>
+        <string>not yet initialized</string>
        </property>
       </widget>
      </item>

@@ -12,6 +12,13 @@ ElevationPoint::ElevationPoint(ElevationProfileDisplay *elevationProfileDisplay)
     setFlag(ItemIsMovable);
 }
 
+ElevationPoint::ElevationPoint(Waypoint* wp, ElevationProfileDisplay *elevationProfileDisplay)
+    : display(elevationProfileDisplay)
+{
+    setFlag(ItemIsMovable);
+    this->wp = wp;
+}
+
 QRectF ElevationPoint::boundingRect() const
 {
     qreal adjust = 2;
