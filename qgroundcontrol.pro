@@ -387,6 +387,8 @@ HEADERS += src/MG.h \
     src/ui/SkyeCameraReconfigure.h \                    # Code MA
     src/ui/BluefoxReconfigure.h \                       # Code MA
     src/ui/DirectControlWidget.h \                      # Code MA
+    src/Trajectory.h                                   # Code MA
+#    src/ui/TrajectoryList.h                             # Code MA
 
 # Google Earth is only supported on Mac OS and Windows with Visual Studio Compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010::HEADERS += src/ui/map3D/QGCGoogleEarthView.h
@@ -538,6 +540,8 @@ SOURCES += src/main.cc \
     src/ui/map/QGCMapRing.cc \                      # Code AL
     src/ui/SkyeCameraReconfigure.cpp \              # Code MA
     src/ui/DirectControlWidget.cc \                 # Code MA
+    src/Trajectory.cpp                            # Code MA
+#    src/ui/TrajectoryList.cpp                       # Code MA
 
 # Enable Google Earth only on Mac OS and Windows with Visual Studio compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010::SOURCES += src/ui/map3D/QGCGoogleEarthView.cc

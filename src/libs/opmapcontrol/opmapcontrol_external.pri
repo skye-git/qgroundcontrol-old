@@ -61,7 +61,8 @@ HEADERS += opmapcontrol.h \
            src/internals/projections/mercatorprojectionyandex.h \
            src/internals/projections/platecarreeprojection.h \
            src/internals/projections/platecarreeprojectionpergo.h \
-    src/libs/opmapcontrol/src/mapwidget/waypointlineitem.h
+           src/libs/opmapcontrol/src/mapwidget/waypointlineitem.h \
+           src/libs/opmapcontrol/src/mapwidget/waypointpathitem.h           # Code MA (26.04.2012)
 FORMS += src/mapwidget/mapripform.ui
 SOURCES += src/core/alllayersoftype.cpp \
            src/core/cache.cpp \
@@ -106,5 +107,6 @@ SOURCES += src/core/alllayersoftype.cpp \
            src/internals/projections/mercatorprojectionyandex.cpp \
            src/internals/projections/platecarreeprojection.cpp \
            src/internals/projections/platecarreeprojectionpergo.cpp \
-    src/libs/opmapcontrol/src/mapwidget/waypointlineitem.cpp
+           src/libs/opmapcontrol/src/mapwidget/waypointlineitem.cpp \
+           src/libs/opmapcontrol/src/mapwidget/waypointpathitem.cpp
 RESOURCES += src/mapwidget/mapresources.qrc

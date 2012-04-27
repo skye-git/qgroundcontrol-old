@@ -41,6 +41,7 @@
 #include "gpsitem.h"
 #include "homeitem.h"
 #include "waypointlineitem.h"
+#include "waypointpathitem.h"       // Code MA (26.04.2012)
 #include "mapripper.h"
 #include "uavtrailtype.h"
 namespace mapcontrol

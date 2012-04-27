@@ -34,6 +34,7 @@ This file is part of the PIXHAWK project
 #define WAYPOINT_H
 
 #include <QObject>
+#include <QVector>
 #include <QString>
 #include <QTextStream>
 #include "QGCMAVLink.h"
@@ -129,6 +130,10 @@ public:
     void save(QTextStream &saveStream);
     bool load(QTextStream &loadStream);
 
+    // FIXME: protect
+    QVector<double> pathX2WP;                   // Code MA (26.04.2012)
+    QVector<double> pathY2WP;                   // Code MA (26.04.2012)
+    QVector<double> pathZ2WP;                   // Code MA (26.04.2012)
 
 protected:
     quint16 id;

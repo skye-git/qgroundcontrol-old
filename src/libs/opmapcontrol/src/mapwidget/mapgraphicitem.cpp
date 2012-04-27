@@ -29,6 +29,7 @@
 #include "homeitem.h"
 #include "mapgraphicitem.h"
 #include "waypointlineitem.h"
+#include "waypointpathitem.h"           // Code MA (26.04.2012)
 
 namespace mapcontrol
 {

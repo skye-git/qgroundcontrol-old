@@ -647,6 +647,12 @@ void QGCMapWidget::updateWaypointList(int uas)
                 if (uasInstance) wpColor = uasInstance->getColor();
                 mapcontrol::WaypointLineItem* line = new mapcontrol::WaypointLineItem(prevIcon, currIcon, wpColor, map);
                 line->setParentItem(map);
+
+                trajectory.setWPList(wps);          // Beginn Code MA (26.04.2012)
+                QGraphicsPathItem* path = new mapcontrol::WaypointPathItem(trajectory.getPolyXY(), wpColor, map);
+                path->setParentItem(map);
+                                                    // Ende Code MA (26.04.2012)
+
                 QGraphicsItemGroup* group = waypointLines.value(uas, NULL);
                 if (group)
                 {

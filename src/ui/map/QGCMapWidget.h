@@ -4,6 +4,7 @@
 #include <QMap>
 #include <QTimer>
 #include "opmapcontrol.h"
+#include "Trajectory.h"
 
 class UASInterface;
 class UASWaypointManager;
@@ -150,6 +151,7 @@ protected:
     int followUAVID;                    ///< Which UAV should be tracked?
     bool mapInitialized;                ///< Map initialized?
 
+    Trajectory trajectory;              ///< Trajectory
 
 };
 
