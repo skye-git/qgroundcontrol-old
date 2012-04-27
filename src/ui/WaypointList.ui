@@ -38,7 +38,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="editTab">
       <attribute name="title">
@@ -70,8 +70,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>836</width>
-            <height>316</height>
+            <width>834</width>
+            <height>325</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -255,6 +255,30 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="editHeightTab">
+      <attribute name="title">
+       <string>Edit Waypoint Height</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0" colspan="2">
+        <widget class="HeightProfile" name="heightProfile"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="pushButton">
+         <property name="text">
+          <string>PushButton</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="viewTab">
       <attribute name="title">
        <string>Onboard Waypoints</string>
@@ -282,8 +306,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>836</width>
-            <height>316</height>
+            <width>834</width>
+            <height>323</height>
            </rect>
           </property>
           <property name="autoFillBackground">
@@ -386,6 +410,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>HeightProfile</class>
+   <extends>QGraphicsView</extends>
+   <header>HeightProfile.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../../qgroundcontrol.qrc"/>
  </resources>

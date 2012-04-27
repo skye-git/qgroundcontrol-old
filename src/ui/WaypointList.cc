@@ -84,6 +84,10 @@ WaypointList::WaypointList(QWidget *parent, UASInterface* uas) :
 
     //connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 
+    //EDIT HEIGHT TAG //AL
+    heightscene = m_ui->heightProfile->scene;
+
+
     //VIEW TAB
 
     viewOnlyListLayout = new QVBoxLayout(m_ui->viewOnlyListWidget);
@@ -401,6 +405,8 @@ void WaypointList::updateWaypointEditable(int uas, Waypoint* wp)
     Q_UNUSED(uas);
     WaypointEditableView *wpv = wpEditableViews.value(wp);
     wpv->updateValues();
+    HeightPoint *hp = wpHeightPoints.value(wp); //AL
+    hp->updateValues(); //AL
 }
 
 void WaypointList::updateWaypointViewOnly(int uas, Waypoint* wp)
@@ -488,6 +494,29 @@ void WaypointList::waypointEditableListChanged()
             }
         }
     }
+    // Beginn AL
+    if (!wpHeightPoints.empty()) {
+        QMapIterator<Waypoint*,HeightPoint*> viewIt(wpHeightPoints);
+        viewIt.toFront();
+        while(viewIt.hasNext()) {
+            viewIt.next();
+            Waypoint *cur = viewIt.key();
+            int i;
+            for (i = 0; i < waypoints.size(); i++) {
+                if (waypoints[i] == cur) {
+                    break;
+                }
+            }
+            if (i == waypoints.size()) {
+                HeightPoint* hp = wpHeightPoints.find(cur).value();
+                hp->hide();
+                //editableListLayout->removeWidget(widget);
+                heightscene->removeItem(hp);
+                wpHeightPoints.remove(cur);
+            }
+        }
+    }
+    // Ende AL
 
     // then add/update the views for each waypoint in the list
     for(int i = 0; i < waypoints.size(); i++) {
@@ -511,6 +540,29 @@ void WaypointList::waypointEditableListChanged()
         }
 
         wpv->updateValues();    // update the values of the ui elements in the view
+
+        //Beginn AL
+        if (!wpHeightPoints.contains(wp)) {
+            HeightPoint* hp = new HeightPoint(wp, m_ui->heightProfile);
+            wpHeightPoints.insert(wp, hp);
+            //connect(wpview, SIGNAL(changeCurrentWaypoint(quint16)), this, SLOT(currentWaypointEditableChanged(quint16)));
+            heightscene->addItem(hp);
+            //hp->setPos(0,0);........brauche eine eigne add Funktion für HeightProfile scene...
+        }
+        HeightPoint *hp = wpHeightPoints.value(wp);
+
+//        //check if ordering has changed
+//        if(editableListLayout->itemAt(i)->widget() != wpv) {
+//            editableListLayout->removeWidget(wpv);
+//            editableListLayout->insertWidget(i, wpv);
+//        }
+
+        hp->updateValues();    // update the values of the ui elements in the view
+
+        //Ende AL
+
+
+
     }
     this->setUpdatesEnabled(true);
     loadFileGlobalWP = false;
@@ -630,6 +682,11 @@ void WaypointList::clearWPWidget()
         while(!waypoints.isEmpty()) { //for(int i = 0; i <= waypoints.size(); i++)
             WaypointEditableView* widget = wpEditableViews.find(waypoints[0]).value();
             widget->remove();
+            //Beginn AL
+            HeightPoint* hp = wpHeightPoints.find(waypoints[0]).value();
+            //fixme....still to do
+
+            //Ende AL
         }    
 }
 
