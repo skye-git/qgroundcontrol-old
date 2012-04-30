@@ -104,6 +104,7 @@ void Waypoint::setId(quint16 id)
     this->id = id;
     this->name = QString("WP%1").arg(id, 2, 10, QChar('0'));
     emit changed(this);
+    qDebug() << "Waypoint setId" << id;
 }
 
 void Waypoint::setX(double x)
@@ -112,6 +113,7 @@ void Waypoint::setX(double x)
     {
         this->x = x;
         emit changed(this);
+        qDebug() << "Waypoint setX" << x << "of point" << id;
     }
 }
 
@@ -139,6 +141,7 @@ void Waypoint::setLatitude(double lat)
     {
         this->x = lat;
         emit changed(this);
+        qDebug() << "Waypoint setLat" << x << "of point" << id;
     }
 }
 

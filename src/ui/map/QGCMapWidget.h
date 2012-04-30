@@ -4,7 +4,6 @@
 #include <QMap>
 #include <QTimer>
 #include "opmapcontrol.h"
-#include "Trajectory.h"
 
 class UASInterface;
 class UASWaypointManager;
@@ -150,8 +149,6 @@ protected:
     float trailInterval;                ///< Time or distance between trail items
     int followUAVID;                    ///< Which UAV should be tracked?
     bool mapInitialized;                ///< Map initialized?
-
-    Trajectory trajectory;              ///< Trajectory
 
 };
 

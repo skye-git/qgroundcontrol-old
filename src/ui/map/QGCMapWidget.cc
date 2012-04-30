@@ -507,11 +507,12 @@ void QGCMapWidget::updateWaypoint(int uas, Waypoint* wp)
                 waypointsToIcons.insert(wp, icon);
                 iconsToWaypoints.insert(icon, wp);
 
+                // Get predecessor of this WP
+                QVector<Waypoint* > wps = currWPManager->getGlobalFrameAndNavTypeWaypointList();
+
                 // Add line element if this is NOT the first waypoint
                 if (wpindex > 0)
                 {
-                    // Get predecessor of this WP
-                    QVector<Waypoint* > wps = currWPManager->getGlobalFrameAndNavTypeWaypointList();
                     Waypoint* wp1 = wps.at(wpindex-1);
                     mapcontrol::WayPointItem* prevIcon = waypointsToIcons.value(wp1, NULL);
                     // If we got a valid graphics item, continue
@@ -520,6 +521,7 @@ void QGCMapWidget::updateWaypoint(int uas, Waypoint* wp)
                         mapcontrol::WaypointLineItem* line = new mapcontrol::WaypointLineItem(prevIcon, icon, wpColor, map);
                         line->setParentItem(map);
                         QGraphicsItemGroup* group = waypointLines.value(uas, NULL);
+
                         if (group)
                         {
                             group->addToGroup(line);
@@ -527,6 +529,12 @@ void QGCMapWidget::updateWaypoint(int uas, Waypoint* wp)
                         }
                     }
                 }
+
+                // Update trajectory        // Beginn Code MA (26.04.2012)
+                // FIXME: Do this only once for wp list
+                QGraphicsPathItem* path = new mapcontrol::WaypointPathItem(wps, QColor(Qt::green), map);
+                path->setParentItem(map);
+                                                    // Ende Code MA (26.04.2012)
             }
             else
             {
@@ -648,11 +656,6 @@ void QGCMapWidget::updateWaypointList(int uas)
                 mapcontrol::WaypointLineItem* line = new mapcontrol::WaypointLineItem(prevIcon, currIcon, wpColor, map);
                 line->setParentItem(map);
 
-                trajectory.setWPList(wps);          // Beginn Code MA (26.04.2012)
-                QGraphicsPathItem* path = new mapcontrol::WaypointPathItem(trajectory.getPolyXY(), wpColor, map);
-                path->setParentItem(map);
-                                                    // Ende Code MA (26.04.2012)
-
                 QGraphicsItemGroup* group = waypointLines.value(uas, NULL);
                 if (group)
                 {
@@ -662,6 +665,16 @@ void QGCMapWidget::updateWaypointList(int uas)
             }
             prevIcon = currIcon;
         }
+
+        // Add path for whole wp list
+//        qDebug() << "QGCMapWidget prevIcon Lat" << prevIcon->Coord().Lat() << "Lon" << prevIcon->Coord().Lng();
+//        qDebug() << "QGCMapWidget currIcon Lat" << currIcon->Coord().Lat() << "Lon" << currIcon->Coord().Lng();
+                                            // Beginn Code MA (26.04.2012)
+        if (wps.size() >= 2)
+        {
+            QGraphicsPathItem* path = new mapcontrol::WaypointPathItem(wps, QColor(Qt::blue), map);
+            path->setParentItem(map);
+        }                                   // Ende Code MA (26.04.2012)
     }
 }
 

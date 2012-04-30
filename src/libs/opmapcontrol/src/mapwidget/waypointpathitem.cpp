@@ -2,10 +2,9 @@
 
 namespace mapcontrol
 {
-WaypointPathItem::WaypointPathItem(QPolygonF poly, QColor color, mapcontrol::MapGraphicItem* map) :
+WaypointPathItem::WaypointPathItem(QVector<Waypoint* > wps, QColor color, mapcontrol::MapGraphicItem* map) :
         QGraphicsPathItem(map),
-//    wp1(wp1),
-//    wp2(wp2),
+    wpList(wps),
     map(map)
 {
     // Make sure this stick to the map
@@ -16,7 +15,7 @@ WaypointPathItem::WaypointPathItem(QPolygonF poly, QColor color, mapcontrol::Map
     QPen pen(color);
     pen.setWidth(2);
     setPen(pen);
-/***************************************************************************************
+/*************************************** LINE ITEM **************************************
     point1 = wp1->Coord();
     point2 = wp2->Coord();
 
@@ -27,46 +26,49 @@ WaypointPathItem::WaypointPathItem(QPolygonF poly, QColor color, mapcontrol::Map
     // Draw Line
     setLine(localPoint1.X(), localPoint1.Y(), localPoint2.X(), localPoint2.Y());
 ***************************************************************************************/
+    trajectory.setWPList(wps);
+    polyLatLng = trajectory.getPolyXY();
+    // Pixel coordinates of the local points
     QPolygonF polyLocal;
-    for (int i=0; i<poly.size(); i++)
+    for (int i = 0; i < polyLatLng->size(); i++)
     {
         internals::PointLatLng pointLatLong;
-        double newX = poly.at(i).x();
-        double newY = poly.at(i).y();
-        qDebug() << "New polygon at" << newX << newY;
+        double newX = trajectory.getPolyXY()->at(i).x();
+        double newY = trajectory.getPolyXY()->at(i).y();
+        qDebug() << "CONSTRUCTOR Point" << i << "of Polygon at" << newX << newY;
         pointLatLong.SetLat(newX);
         pointLatLong.SetLng(newY);
-//        pointLatLong.SetLat(47.4);
-//        pointLatLong.SetLng( 8.1);
         core::Point localPoint = map->FromLatLngToLocal(pointLatLong);
         polyLocal.append( QPoint( localPoint.X(), localPoint.Y() ) );
     }
+    // Draw Path
     QPainterPath pathLocal;
     pathLocal.addPolygon(polyLocal);
     setPath(pathLocal);
 
-
-//    // Connect updates
-//    // Update Path from both waypoints
-//    connect(wp1, SIGNAL(WPValuesChanged(WayPointItem*)), this, SLOT(updateWPValues(WayPointItem*)));
-//    connect(wp2, SIGNAL(WPValuesChanged(WayPointItem*)), this, SLOT(updateWPValues(WayPointItem*)));
-//    // Delete Path if one of the waypoints get deleted
-//    connect(wp1, SIGNAL(destroyed()), this, SLOT(deleteLater()));
-//    connect(wp2, SIGNAL(destroyed()), this, SLOT(deleteLater()));
-
-//    // Map Zoom and move
-//    connect(map, SIGNAL(mapChanged()), this, SLOT(updateWPValues()));
+    // Connect updates
+    // Update Path from both waypoints
+    //foreach(Waypoint* wp, wps)
+    {
+        Waypoint* wp = wpList.last();
+        connect(wp, SIGNAL(WPValuesChanged(WayPointItem*)), this, SLOT(updateWPValues(WayPointItem*)));
+        // Delete Path if one of the waypoints get deleted
+        connect(wp, SIGNAL(destroyed()), this, SLOT(deleteLater()));
+    }
+    // Map Zoom and move
+    connect(map, SIGNAL(mapChanged()), this, SLOT(updateWPValues())); // DANGER !! mapChanged is emited very often !!
 }
 
 void WaypointPathItem::RefreshPos()
 {
-    // Delete if either waypoint got deleted
-    if (!wp1 || !wp2)
+    // Delete if either waypoint got deleted            // FIXME: Delete if only one wp left
+//    if (!wp1 || !wp2)
+//    {
+//        this->deleteLater();
+//    }
+//    else
     {
-        this->deleteLater();
-    }
-    else
-    {
+/******************************************* LINE ITEM ***************************************
         // Set new pixel coordinates based on new global coordinates
         //QTimer::singleShot(0, this, SLOT(updateWPValues()));
         core::Point localPoint1 = map->FromLatLngToLocal(point1);
@@ -75,19 +77,42 @@ void WaypointPathItem::RefreshPos()
         {
 //            setLine(localPoint1.X(), localPoint1.Y(), localPoint2.X(), localPoint2.Y());
         }
+***********************************************************************************************/
+        // Set new pixel coordinates based on new global coordinates
+        QPolygonF polyLocal;
+        if ( polyLatLng ) {
+            for (int i = 0; i < polyLatLng->size(); i++)
+            {
+                internals::PointLatLng pointLatLong;
+                double newX = polyLatLng->at(i).x();
+                double newY = polyLatLng->at(i).y();
+                qDebug() << "REFRESH POS Point" << i << "of Polygon at" << newX << newY;
+                pointLatLong.SetLat(newX);
+                pointLatLong.SetLng(newY);
+                core::Point localPoint = map->FromLatLngToLocal(pointLatLong);
+                polyLocal.append( QPoint( localPoint.X(), localPoint.Y() ) );
+            }
+            // Draw Path
+            QPainterPath pathLocal;
+            pathLocal.addPolygon(polyLocal);
+            setPath(pathLocal);
+        }
     }
 }
 
 void WaypointPathItem::updateWPValues(WayPointItem* waypoint)
 {
     Q_UNUSED(waypoint);
-    // Delete if either waypoint got deleted
-    if (!wp1 || !wp2)
+    // Delete if either waypoint got deleted        // FIXME: Delete if only one wp left
+//    if (!wp1 || !wp2)
+//    {
+//        this->deleteLater();
+//    }
+//    else
     {
-        this->deleteLater();
-    }
-    else
-    {
+        trajectory.setWPList(wpList);
+        polyLatLng = trajectory.getPolyXY();
+        /*************************** LINE ITEM **********************************
         // Set new pixel coordinates based on new global coordinates
         point1 = wp1->Coord();
         point2 = wp2->Coord();
@@ -95,11 +120,30 @@ void WaypointPathItem::updateWPValues(WayPointItem* waypoint)
         core::Point localPoint2 = map->FromLatLngToLocal(wp2->Coord());
 
 //        setPath(localPoint1.X(), localPoint1.Y(), localPoint2.X(), localPoint2.Y());
+        ************************************************************************/
+        QPolygonF polyLocal;
+        for (int i = 0; i < polyLatLng->size(); i++)
+        {
+            internals::PointLatLng pointLatLong;
+            double newX = polyLatLng->at(i).x();
+            double newY = polyLatLng->at(i).y();
+//            qDebug() << "UPDATE WP VALUES" << i << "of Polygon at" << newX << newY;
+            pointLatLong.SetLat(newX);
+            pointLatLong.SetLng(newY);
+            core::Point localPoint = map->FromLatLngToLocal(pointLatLong);
+            polyLocal.append( QPoint( localPoint.X(), localPoint.Y() ) );
+        }
+        // Draw Path
+        qDebug() << "Draw path with" << wpList.size() << "waypoints";
+        QPainterPath pathLocal;
+        pathLocal.addPolygon(polyLocal);
+        setPath(pathLocal);
     }
 }
 
 void WaypointPathItem::updateWPValues()
 {
+//    if UASWaypointManager::currentWaypointChanged()
     updateWPValues(NULL);
 }
 

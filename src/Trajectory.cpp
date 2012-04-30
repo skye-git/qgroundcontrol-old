@@ -3,67 +3,67 @@
 
 Trajectory::Trajectory()
 {
-    x = NULL;
-    y = NULL;
-    z = NULL;
+    x = new QVector<double>;
+    y = new QVector<double>;
+    z = new QVector<double>;
     blockSplineInterpolation = false;
     splineResolution = 100;
-    spline = NULL;
+//    spline = NULL;
 }
 
 QPainterPath Trajectory::getPathXY()
 {
-    polyXY = getPolyXY();
+    getPolyXY();
     QPainterPath pathXY;
     pathXY.addPolygon(polyXY);
     return pathXY;
 }
 
-QPolygonF Trajectory::getPolyXY()
+QPolygonF* Trajectory::getPolyXY()
 {
-    for (int i = 0; i<x->size(); i++)
-    {
-        polyXY.append( QPointF( x->at(i), y->at(i) ) );
-    }
-    return polyXY;
+    return &polyXY;
 }
 
-void Trajectory::updateWPList(QVector<Waypoint *> wpList)
-{
-    /* Update path to wp if it is not first wp */
-    for (int i = 1; i<wpList.size(); i++)
-    {
-        wpList.at(i)->pathX2WP = interpolX.mid(splineResolution * (i-1) + 1, splineResolution);
-        wpList.at(i)->pathY2WP = interpolY.mid(splineResolution * (i-1) + 1, splineResolution);
-        wpList.at(i)->pathZ2WP = interpolZ.mid(splineResolution * (i-1) + 1, splineResolution);
-    }
-}
+//void Trajectory::updateWPList(QVector<Waypoint *> wpList)
+//{
+//    /* Update path to wp if it is not first wp */
+//    for (int i = 1; i<wpList.size(); i++)
+//    {
+//        wpList.at(i)->pathX2WP = interpolX.mid(splineResolution * (i-1) + 1, splineResolution);
+//        wpList.at(i)->pathY2WP = interpolY.mid(splineResolution * (i-1) + 1, splineResolution);
+//        wpList.at(i)->pathZ2WP = interpolZ.mid(splineResolution * (i-1) + 1, splineResolution);
+//    }
+//}
 
 void Trajectory::setWPList(QVector<Waypoint *> wpList)
 {
+    x->clear();
+    y->clear();
+    z->clear();
     blockSplineInterpolation = true;
     foreach (Waypoint *wp, wpList)
     {
+        qDebug() << "setWPList: addWP" << wp->getId() << "with Lat" << wp->getLatitude() << "Lon" << wp->getLongitude();
         addWP(wp);
     }
-    blockSplineInterpolation = true;
+    blockSplineInterpolation = false;
     generateSplines();
-    updateWPList(wpList);
+//    updateWPList(wpList);     // FIXME
 }
 
 void Trajectory::addWP(Waypoint *wp)
 {
-    if(!x)
-        x = new QVector<double>;
     x->append(wp->getX());
-    if(!y)
-        y = new QVector<double>;
     y->append(wp->getY());
-    if(!z)
-        z = new QVector<double>;
     z->append(wp->getZ());
+}
+
+void Trajectory::updateWP(Waypoint *wp)
+{
+    x->replace(wp->getId(), wp->getX());
+    y->replace(wp->getId(), wp->getY());
+    z->replace(wp->getId(), wp->getZ());
     generateSplines();
-//    updateWPList(wpList); // FIXME !!!!!!!!!!!
 }
 
 void Trajectory::generateSplines(uint resolution)
@@ -74,14 +74,20 @@ void Trajectory::generateSplines(uint resolution)
         interpolY = interpolate(y, resolution);
         interpolZ = interpolate(z, resolution);
     }
+
+    polyXY.clear();
+    for (int i = 0; i<interpolX.size(); i++)
+    {
+        polyXY.append( QPointF( interpolX.at(i), interpolY.at(i) ) );
+    }
 }
 
 void Trajectory::generateSplines()
 {
-    if (splineResolution)
-    {
+    if (!splineResolution)
+        generateSplines(20);
+    else
         generateSplines(splineResolution);
-    }
 }
 
 void Trajectory::setSplineResolution(uint resolution)
@@ -95,22 +101,25 @@ QVector<double> Trajectory::interpolate(const QVector<double> *points, int resol
     foreach (double value, *points)
     {
         poly.append( QPointF( (qreal)poly.size(), value ) );
+        qDebug() << "interpolate: Appended to poly" << poly.last().x() << poly.last().y();
     }
 
-    if ( !spline->setPoints(poly) )
+    if ( !spline.setPoints(poly) )
     {
         qDebug() << "No valid points passed for interpolation.";
         return *points;
     }
 
     QVector<double> interpolatedPoints;
+    interpolatedPoints = QVector<double>(); //FIXME
 
-    const double delta = (points->size()) / (resolution + 1);
+    const double delta = (double)points->size() / (resolution + 1);
 
-    for(int i = 0; i < resolution; i++)  // interpolate
+    for (int i = 0; i < resolution; i++)  // interpolate
     {
-        const double x = (i+1) * delta;
-        interpolatedPoints.append(spline->value(x));
+        const double x = (double)(i+1) * delta;
+        interpolatedPoints.append(spline.value(x));
+//        qDebug() << "interpolate: Interpolated point" << x << interpolatedPoints.last();
     }
     return interpolatedPoints;
 }

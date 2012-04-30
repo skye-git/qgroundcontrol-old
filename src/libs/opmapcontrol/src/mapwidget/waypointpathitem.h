@@ -3,7 +3,10 @@
 
 #include <QGraphicsPathItem>
 #include <QPolygonF>
+#include <QVector>
 #include "opmapcontrol.h"
+#include "Trajectory.h"
+#include "UASWaypointManager.h"
 
 namespace mapcontrol {
 class WaypointPathItem : public QObject,public QGraphicsPathItem
@@ -12,7 +15,7 @@ class WaypointPathItem : public QObject,public QGraphicsPathItem
     Q_INTERFACES(QGraphicsItem)
 public:
     enum { Type = UserType + 7 };
-    WaypointPathItem(QPolygonF poly, QColor color=QColor(Qt::red), MapGraphicItem* parent=0);
+    WaypointPathItem(QVector<Waypoint* > wps, QColor color=QColor(Qt::red), MapGraphicItem* parent=0);
     int type() const;
 
 public slots:
@@ -33,10 +36,9 @@ public slots:
     void RefreshPos();
 
 protected:
-    internals::PointLatLng point1;
-    internals::PointLatLng point2;
-    WayPointItem* wp1;
-    WayPointItem* wp2;
+    Trajectory trajectory;
+    QPolygonF* polyLatLng;
+    QVector<Waypoint* > wpList;
     MapGraphicItem* map;              ///< The map this item is parent of
 };
 }
