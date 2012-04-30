@@ -1591,7 +1591,7 @@ void HUD::copyImage()
 {
     if (isVisible() && hudInstrumentsEnabled)
     {
-        qDebug() << "HUD::copyImage()";
+        //qDebug() << "HUD::copyImage()";
 #ifdef MAVLINK_ENABLED_SKYE
         SkyeMAV* u = dynamic_cast<SkyeMAV*>(this->uas);
 #else
@@ -1599,13 +1599,13 @@ void HUD::copyImage()
 #endif
         if (u)
         {
-            qDebug() << "HUD::copyImage() getImage from uas" << u->getUASName() << ".. PAINT IT!"; // << u->getImage();
+            //qDebug() << "HUD::copyImage() getImage from uas" << u->getUASName() << ".. PAINT IT!"; // << u->getImage();
             this->glImage = QGLWidget::convertToGLFormat(u->getImage());
         }
     }
     else
     {
-        qDebug() << "HUD widget is not visible. Image not copied.";
+        //qDebug() << "HUD widget is not visible. Image not copied.";
     }
 }
 

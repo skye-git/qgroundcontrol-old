@@ -63,7 +63,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
         break;
         case MAVLINK_MSG_ID_DATA_TRANSMISSION_HANDSHAKE:
         {
-            qDebug() << "RECIEVED ACK TO GET IMAGE";
+            //qDebug() << "RECIEVED ACK TO GET IMAGE";
             mavlink_data_transmission_handshake_t p;
             mavlink_msg_data_transmission_handshake_decode(&message, &p);
             imageSize = p.size;
@@ -303,7 +303,7 @@ QImage SkyeMAV::getImage()          // Function copied from UAS.cc (pixhawk)
 {
 #ifdef MAVLINK_ENABLED_SKYE
 
-    qDebug() << "getImage: IMAGE TYPE:" << imageType;
+    //qDebug() << "getImage: IMAGE TYPE:" << imageType;
 
     // RAW greyscale
     if (imageType == MAVLINK_DATA_STREAM_IMG_RAW8U)

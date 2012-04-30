@@ -42,7 +42,7 @@ This file is part of the QGROUNDCONTROL project
 #include "UASInterface.h"
 #include "WaypointEditableView.h"
 #include "WaypointViewOnlyView.h"
-#include "HeightPoint.h" //AL
+//#include "HeightPoint.h" //AL
 #include "UnconnectedUASInfoWidget.h"
 //#include "PopupMessage.h"
 
@@ -131,10 +131,10 @@ protected:
 protected:
     QMap<Waypoint*, WaypointEditableView*> wpEditableViews;
     QMap<Waypoint*, WaypointViewOnlyView*> wpViewOnlyViews;
-    QMap<Waypoint*, HeightPoint*> wpHeightPoints; //AL
+    //QMap<Waypoint*, HeightPoint*> wpHeightPoints; //AL
     QVBoxLayout* viewOnlyListLayout;
     QVBoxLayout* editableListLayout;
-    QGraphicsScene* heightscene; //AL
+    //QGraphicsScene* heightscene; //AL
     UASInterface* uas;
     UASWaypointManager* WPM;
     double mavX;

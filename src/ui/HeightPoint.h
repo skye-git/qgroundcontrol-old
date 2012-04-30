@@ -3,32 +3,42 @@
 
 #include <QGraphicsItem>
 #include "Waypoint.h"
-#include "HeightProfile.h"
+#include "opmapcontrol.h"
 
-class HeightPoint : public QGraphicsItem
+class HeightProfile;
+
+class HeightPoint : public QGraphicsObject
 {
+    //Q_OBJECT //if enabled symbol(s) not found for architecture!!!!!
 public:
-    HeightPoint(Waypoint* wp, HeightProfile *heightProfile);
+    HeightPoint(HeightProfile* parent, Waypoint* wp, QColor color, int listindex);
+
 
     QRectF boundingRect() const;
     QPainterPath shape() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
+    void setNumber(int const & value);
+    //void updateWayoint();
+
 public slots:
-    void updateValues(void);
+    void updateHeightPoint(Waypoint* _wp);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
-    Waypoint* wp; //waypoint data container this item represents.
+    HeightProfile* parent; ///< Parent widget
+    Waypoint* wp; ///< Waypoint data container this item represents.
+    QColor color;
+    int number;
 
 private:
-    HeightProfile *display;
-    //QGraphicsSimpleTextItem* numberI; //to display wp's id number
+
 
 signals:
-    void move(Waypoint*);
+    //void move(double);
 
 
 

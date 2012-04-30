@@ -3,13 +3,23 @@
 #include <QPainter>
 #include <QStyleOption>
 
+
 #include "HeightPoint.h"
 
-HeightPoint::HeightPoint(Waypoint* wp, HeightProfile* heightProfile)
-    : display(heightProfile)
+#include "HeightProfile.h"
+
+HeightPoint::HeightPoint(HeightProfile* parent, Waypoint* wp, QColor color, int listindex)
+     : parent(parent),
+       wp(wp),
+       color(color)
 {
+    setNumber(listindex);
     setFlag(ItemIsMovable);
-    this->wp = wp;
+    //setParent(parent);
+
+    //connect waypoint and this item
+    //connect(this, SIGNAL(move(double)), wp, SLOT(setAltitude(double)));
+    connect(wp, SIGNAL(changed(Waypoint*)), this, SLOT(updateHeightPoint(Waypoint*)));
 }
 
 QRectF HeightPoint::boundingRect() const
@@ -56,17 +66,34 @@ void HeightPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     painter->drawPath(textPath);
 }
 
-void HeightPoint::updateValues()
+void HeightPoint::setNumber(const int &value)
 {
-    ;
+    number = value;
+    this->update();
 }
+
+void HeightPoint::updateHeightPoint(Waypoint *_wp)
+{
+    this->setY(-(_wp->getAltitude()));
+}
+
 
 void HeightPoint::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    update();
     QGraphicsItem::mousePressEvent(event);
 }
 
 void HeightPoint::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+    update();
     QGraphicsItem::mouseReleaseEvent(event);
+    wp->setAltitude(-(this->y()));
+    //emit move(-(this->y()));
+}
+
+void HeightPoint::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    qDebug() << "The  Items corrdinates are " << this->pos();
+    QGraphicsItem::mouseMoveEvent(event);
 }
