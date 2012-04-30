@@ -23,16 +23,16 @@ protected:
     QVector<double> *y;
     QVector<double> *z;
     bool blockSplineInterpolation;      ///< If true, spline interpolation will not be calculated
-    uint splineResolution;              ///< Number of calculated points between two waypoints
+    uint splineResolution;              ///< Number of calculated points per waypoint (including start wp)
     QwtSpline spline;                  ///< Spline interpolation through all points
     QVector<double> interpolX;
     QVector<double> interpolY;
     QVector<double> interpolZ;
-    QPolygonF polyXY;
+    QPolygonF interpolPolyXY;
 
     /** @brief Get cubic spline interpolation
       * @param points Pointer to list of points
-      * @param resolution Number of calculated points between two waypoints
+      * @param resolution Number of calculated points per waypoint
       */
     QVector<double> interpolate(const QVector<double> *points, int resolution);
 
@@ -48,7 +48,7 @@ public slots:
     void setWPList(QVector<Waypoint*> wpList);
 
     /** @brief Generate a spline interpolation through internal stored points
-      * @param resolution Number of calculated points between two waypoints
+      * @param resolution Number of calculated points per waypoint
       */
     void generateSplines(uint resolution);
 
@@ -56,7 +56,7 @@ public slots:
     void generateSplines();
 
     /** @brief Set spline interpolation resolution
-      * @param resolution Number of calculated points between two waypoints
+      * @param resolution Number of calculated points per waypoint
       */
     void setSplineResolution(uint resolution);
     /** @brief Update a point of the trajectory and recalc trajectory
