@@ -532,8 +532,8 @@ void QGCMapWidget::updateWaypoint(int uas, Waypoint* wp)
 
                 // Update trajectory        // Beginn Code MA (26.04.2012)
                 // FIXME: Do this only once for wp list
-                QGraphicsPathItem* path = new mapcontrol::WaypointPathItem(wps, QColor(Qt::green), map);
-                path->setParentItem(map);
+//                QGraphicsPathItem* path = new mapcontrol::WaypointPathItem(wps, QColor(Qt::green), map);
+//                path->setParentItem(map);
                                                     // Ende Code MA (26.04.2012)
             }
             else
@@ -674,6 +674,13 @@ void QGCMapWidget::updateWaypointList(int uas)
         {
             QGraphicsPathItem* path = new mapcontrol::WaypointPathItem(wps, QColor(Qt::blue), map);
             path->setParentItem(map);
+
+            QGraphicsItemGroup* group = waypointLines.value(uas, NULL);
+            if (group)
+            {
+                group->addToGroup(path);
+                group->setParentItem(map);
+            }
         }                                   // Ende Code MA (26.04.2012)
     }
 }
