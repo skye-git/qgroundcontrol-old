@@ -17,7 +17,7 @@ HeightProfile::HeightProfile(QWidget *parent) :
 
     scene = new QGraphicsScene(this);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
-    scene->setSceneRect(0, -100, 500, 100);
+    scene->setSceneRect(0, -100, 500, 120);
     setScene(scene);
     //setSceneRect(0,-100,200,100);
     setCacheMode(CacheBackground);
@@ -398,10 +398,21 @@ void HeightProfile::drawBackground(QPainter *painter, const QRectF &rect)
     // Fill
     QLinearGradient gradient(sceneRect.topLeft(), sceneRect.bottomRight());
     gradient.setColorAt(0, Qt::white);
-    gradient.setColorAt(1, Qt::lightGray);
+    gradient.setColorAt(1, Qt::blue);
     painter->fillRect(rect.intersect(sceneRect), gradient);
     painter->setBrush(Qt::NoBrush);
     painter->drawRect(sceneRect);
+
+    //Draw sea mean line
+    QLineF line(0,0,500,0);
+//    QBrush zerolinebrush();
+//    QPen zerolinepen(zerolinebrush, 2, Qt::black);
+    painter->setPen(Qt::black);
+    painter->drawLine(line);
+
+    //Fill Ground
+    QRectF groundRect(0,0, 500,20);
+    painter->fillRect(groundRect, Qt::darkGreen);
 
 
     // Text

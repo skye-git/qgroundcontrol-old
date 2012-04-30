@@ -35,6 +35,7 @@ protected:
     int number;
 
 private:
+    QPointF oldMousePos;
 
 
 signals:

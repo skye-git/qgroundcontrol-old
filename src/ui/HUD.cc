@@ -72,6 +72,17 @@ This file is part of the QGROUNDCONTROL project
 HUD::HUD(int width, int height, QWidget* parent)
     : QGLWidget(QGLFormat(QGL::SampleBuffers), parent),
       uas(NULL),
+      mousePressedPosition(0,0),//Beginn Code AL (09.04.12)
+      dragPosition(0,0),
+      diffVector(0,0),
+      touchInputvisib(false),
+      knobisactive(false),
+      knobcircleisactive(false),
+      alpha(0),
+      beta(0),
+      yawTouchInput(0),
+      pitchTouchInput(0),
+      rollTouchInput(0),//Ende Code AL
       yawInt(0.0f),
       mode(tr("UNKNOWN MODE")),
       uasMode(0),
@@ -135,17 +146,6 @@ HUD::HUD(int width, int height, QWidget* parent)
       videoEnabled(false),
       xImageFactor(1.0),
       yImageFactor(1.0),
-      mousePressedPosition(0,0),//Beginn Code AL (09.04.12)
-      dragPosition(0,0),
-      diffVector(0,0),
-      touchInputvisib(false),
-      knobisactive(false),
-      knobcircleisactive(false),
-      alpha(0),
-      beta(0),
-      yawTouchInput(0),
-      pitchTouchInput(0),
-      rollTouchInput(0),//Ende Code AL
       imageRequested(false)
 {
     // Set auto fill to false

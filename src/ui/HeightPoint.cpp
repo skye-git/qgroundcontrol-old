@@ -11,7 +11,8 @@
 HeightPoint::HeightPoint(HeightProfile* parent, Waypoint* wp, QColor color, int listindex)
      : parent(parent),
        wp(wp),
-       color(color)
+       color(color),
+       oldMousePos(0,0)
 {
     setNumber(listindex);
     setFlag(ItemIsMovable);
@@ -80,6 +81,7 @@ void HeightPoint::updateHeightPoint(Waypoint *_wp)
 
 void HeightPoint::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    oldMousePos = this->pos();//event->scenePos();
     update();
     QGraphicsItem::mousePressEvent(event);
 }
@@ -95,5 +97,6 @@ void HeightPoint::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 void HeightPoint::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     qDebug() << "The  Items corrdinates are " << this->pos();
-    QGraphicsItem::mouseMoveEvent(event);
+    this->setPos(oldMousePos.x(), event->scenePos().y());
+    //QGraphicsItem::mouseMoveEvent(event);
 }
