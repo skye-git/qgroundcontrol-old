@@ -32,6 +32,8 @@ public slots:
     void updateWaypointList(int uas);
     /** @brief arrange the HeightPoints in the scene */
     void arrangeHeightPoints(); //Integrate perhaps in update slots...
+    /** @brief get the Elevation for each HeightPoint in the scene */
+    void getElevationPoints(); //Integrate perhaps in update slots...
 
 protected slots:
     /** @brief Convert a HeightPoint edit into a QGC waypoint event */
@@ -58,9 +60,11 @@ protected:
     bool profileInitialized; ///< Profile initialized?
     //QTimer rearrangeTimer;
 
-
-
+    double sWidth;
+    double sHeight;
     
+
+
 };
 
 #endif // HEIGHTPROFILE_H

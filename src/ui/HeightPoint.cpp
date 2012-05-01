@@ -9,11 +9,12 @@
 #include "HeightProfile.h"
 
 HeightPoint::HeightPoint(HeightProfile* parent, Waypoint* wp, QColor color, int listindex)
-     : parent(parent),
+    :  parent(parent),
        wp(wp),
        color(color),
        oldMousePos(0,0)
 {
+    elevationPoint = new ElevationPoint(parent,Qt::red);
     setNumber(listindex);
     setFlag(ItemIsMovable);
     //setParent(parent);
@@ -65,6 +66,12 @@ void HeightPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     timesFont.setStyleStrategy(QFont::ForceOutline);
     textPath.addText(8, -8, timesFont, waypointid);
     painter->drawPath(textPath);
+}
+
+void HeightPoint::setPos(qreal x, qreal y)
+{
+    elevationPoint->setPos(x, elevationPoint->y());
+    QGraphicsItem::setPos(x,y);
 }
 
 void HeightPoint::setNumber(const int &value)

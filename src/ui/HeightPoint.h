@@ -4,6 +4,7 @@
 #include <QGraphicsItem>
 #include "Waypoint.h"
 #include "opmapcontrol.h"
+#include "ElevationPoint.h"
 
 class HeightProfile;
 
@@ -17,9 +18,12 @@ public:
     QRectF boundingRect() const;
     QPainterPath shape() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    void setPos(qreal x, qreal y); //reimplemented so that the elevationPoint gets also the new Pos
 
     void setNumber(int const & value);
     //void updateWayoint();
+
+    ElevationPoint* elevationPoint;
 
 public slots:
     void updateHeightPoint(Waypoint* _wp);

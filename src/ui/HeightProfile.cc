@@ -14,7 +14,11 @@ HeightProfile::HeightProfile(QWidget *parent) :
 {
 
 
-
+    qDebug() << "in constructor of class HeightProfile 1";
+    sWidth = 100;
+    //sHeight = 100;
+    qDebug() << "in constructor of class HeightProfile 2";
+    //sHuuuuuu = 100;
     scene = new QGraphicsScene(this);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
     scene->setSceneRect(0, -100, 500, 120);
@@ -29,10 +33,6 @@ HeightProfile::HeightProfile(QWidget *parent) :
     //setMinimumSize(400, 400);//setMinimum (with, height) of widget
     setWindowTitle(tr("Height Profile"));
 
-    //Test Debug
-    //HeightPoint* hp0 = new HeightPoint
-    //connect(&rearrangeTimer, SIGNAL(timeout()), this, SLOT(arrangeHeightPoints()));
-    //rearrangeTimer.start(4000);
 }
 
 void HeightProfile::showEvent(QShowEvent *event)
@@ -172,27 +172,6 @@ void HeightProfile::updateWaypoint(int uas, Waypoint* wp)
                 heightPointsToWaypoints.insert(hp, wp);
                 scene->addItem(hp);
 
-                //not yet uses
-                // Add line element if this is NOT the first waypoint
-//                if (wpindex > 0)
-//                {
-//                    // Get predecessor of this WP
-//                    QVector<Waypoint* > wps = currWPManager->getGlobalFrameAndNavTypeWaypointList();
-//                    Waypoint* wp1 = wps.at(wpindex-1);
-//                    mapcontrol::WayPointItem* prevIcon = waypointsToIcons.value(wp1, NULL);
-//                    // If we got a valid graphics item, continue
-//                    if (prevIcon)
-//                    {
-//                        mapcontrol::WaypointLineItem* line = new mapcontrol::WaypointLineItem(prevIcon, icon, wpColor, map);
-//                        line->setParentItem(map);
-//                        QGraphicsItemGroup* group = waypointLines.value(uas, NULL);
-//                        if (group)
-//                        {
-//                            group->addToGroup(line);
-//                            group->setParentItem(map);
-//                        }
-//                    }
-//                }
             }
             else
             {
@@ -271,6 +250,7 @@ void HeightProfile::updateWaypointList(int uas)
                 waypointsToHeightPoints.remove(wp);
                 heightPointsToWaypoints.remove(hp);
                 scene->removeItem(hp);//correct!!!!?????
+                scene->removeItem(hp->elevationPoint);
                 //WPDelete(hp);
             }
         }
@@ -291,40 +271,6 @@ void HeightProfile::updateWaypointList(int uas)
         }
         //arrangeHeightPoints();
 
-        //not yet used
-//        // Delete connecting waypoint lines
-//        QGraphicsItemGroup* group = waypointLines.value(uas, NULL);
-//        if (group)
-//        {
-//            foreach (QGraphicsItem* item, group->childItems())
-//            {
-//                delete item;
-//            }
-//        }
-
-//        // Add line element if this is NOT the first waypoint
-//        mapcontrol::WayPointItem* prevIcon = NULL;
-//        foreach (Waypoint* wp, wps)
-//        {
-//            mapcontrol::WayPointItem* currIcon = waypointsToIcons.value(wp, NULL);
-//            // Do not work on first waypoint, but only increment counter
-//            // do not continue if icon is invalid
-//            if (prevIcon && currIcon)
-//            {
-//                // If we got a valid graphics item, continue
-//                QColor wpColor(Qt::red);
-//                if (uasInstance) wpColor = uasInstance->getColor();
-//                mapcontrol::WaypointLineItem* line = new mapcontrol::WaypointLineItem(prevIcon, currIcon, wpColor, map);
-//                line->setParentItem(map);
-//                QGraphicsItemGroup* group = waypointLines.value(uas, NULL);
-//                if (group)
-//                {
-//                    group->addToGroup(line);
-//                    group->setParentItem(map);
-//                }
-//            }
-//            prevIcon = currIcon;
-//        }
     }
 }
 
@@ -337,27 +283,7 @@ void HeightProfile::arrangeHeightPoints()
     qreal width = this->width();
     qreal distance = 500/(number+1);
     int i = 1;
-//    foreach (Waypoint* wp, wps)
-//    {
-//        HeightPoint* currHp = waypointsToHeightPoints.value(wp, NULL);
-//        //currHp->setPos((i*distance), 0);
-//        if(i == 1)
-//        {
-//            bool ishp = dynamic_cast<HeightPoint*>(currHp);
-//            qDebug() << "before changning Pos of i==1";
-//            if(ishp) //why necessary???!!!!
-//                currHp->setPos(30.0,-30.1);
-//            qDebug() << "item  = " << i << " Pos is set ";
-//            qDebug() << "wp id is = "<< wp->getId();
-//        }
-//        if(i == 0)
-//        {
-//            qDebug() << "befor changing Pos of i == 0";
-//            currHp->setPos(50,0);
-//            qDebug() << "item  = " << i << " Pos is set ";
-//        }
-//        i++;
-//    }
+
     foreach (Waypoint* wp, wps)
     {
         HeightPoint* currHp = waypointsToHeightPoints.value(wp, NULL);
@@ -372,6 +298,27 @@ void HeightProfile::arrangeHeightPoints()
             qDebug() << "crazy error";
         }
         i++;
+    }
+}
+
+void HeightProfile::getElevationPoints()
+{
+    qDebug() << "in getElevationPoints()";
+    QVector<Waypoint* > wps = currWPManager->getGlobalFrameAndNavTypeWaypointList();
+    foreach(Waypoint* wp, wps)
+    {
+        HeightPoint* currHp = waypointsToHeightPoints.value(wp, NULL);
+        //currHp->setPos((i*distance), 0);
+        bool ishp = dynamic_cast<HeightPoint*>(currHp);
+        if(ishp)
+        {
+            scene->addItem(currHp->elevationPoint);
+            currHp->elevationPoint->setPos(currHp->x(),0);
+        }
+        else
+        {
+            qDebug() << "crazy error number 2";
+        }
     }
 }
 
