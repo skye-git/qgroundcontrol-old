@@ -530,11 +530,13 @@ void QGCMapWidget::updateWaypoint(int uas, Waypoint* wp)
                     }
                 }
 
+/************************************************ OLD STUFF ************************************************
                 // Update trajectory        // Beginn Code MA (26.04.2012)
                 // FIXME: Do this only once for wp list
 //                QGraphicsPathItem* path = new mapcontrol::WaypointPathItem(wps, QColor(Qt::green), map);
 //                path->setParentItem(map);
                                                     // Ende Code MA (26.04.2012)
+*************************************************************************************************************/
             }
             else
             {
@@ -666,6 +668,9 @@ void QGCMapWidget::updateWaypointList(int uas)
             prevIcon = currIcon;
         }
 
+        Trajectory *currTrajectory = currWPManager->getEditableTrajectory();
+        QGraphicsPathItem* path = new mapcontrol::WaypointPathItem(currTrajectory->getPolyXY(), QColor(Qt::blue), map);
+/************************************************ OLD STUFF ************************************************
         // Add path for whole wp list
 //        qDebug() << "QGCMapWidget prevIcon Lat" << prevIcon->Coord().Lat() << "Lon" << prevIcon->Coord().Lng();
 //        qDebug() << "QGCMapWidget currIcon Lat" << currIcon->Coord().Lat() << "Lon" << currIcon->Coord().Lng();
@@ -674,7 +679,6 @@ void QGCMapWidget::updateWaypointList(int uas)
         {
             QGraphicsPathItem* path = new mapcontrol::WaypointPathItem(wps, QColor(Qt::blue), map);
             path->setParentItem(map);
-
             QGraphicsItemGroup* group = waypointLines.value(uas, NULL);
             if (group)
             {
@@ -682,6 +686,7 @@ void QGCMapWidget::updateWaypointList(int uas)
                 group->setParentItem(map);
             }
         }                                   // Ende Code MA (26.04.2012)
+***********************************************************************************************/
     }
 }
 

@@ -15,7 +15,7 @@ class WaypointPathItem : public QObject,public QGraphicsPathItem
     Q_INTERFACES(QGraphicsItem)
 public:
     enum { Type = UserType + 7 };
-    WaypointPathItem(QVector<Waypoint* > wps, QColor color=QColor(Qt::red), MapGraphicItem* parent=0);
+    WaypointPathItem(QPolygonF* polyLatLng, QColor color=QColor(Qt::red), MapGraphicItem* parent=0);
     int type() const;
 
 public slots:
@@ -36,9 +36,9 @@ public slots:
     void RefreshPos();
 
 protected:
-    Trajectory trajectory;
+//    Trajectory trajectory;
     QPolygonF* polyLatLng;
-    QVector<Waypoint* > wpList;
+//    QVector<Waypoint* > wpList;
     MapGraphicItem* map;              ///< The map this item is parent of
 };
 }

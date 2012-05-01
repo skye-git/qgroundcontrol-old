@@ -54,6 +54,9 @@ UASWaypointManager::UASWaypointManager(UAS* _uas)
         connect(&protocol_timer, SIGNAL(timeout()), this, SLOT(timeout()));
         connect(uas, SIGNAL(localPositionChanged(UASInterface*,double,double,double,quint64)), this, SLOT(handleLocalPositionChanged(UASInterface*,double,double,double,quint64)));
         connect(uas, SIGNAL(globalPositionChanged(UASInterface*,double,double,double,quint64)), this, SLOT(handleGlobalPositionChanged(UASInterface*,double,double,double,quint64)));
+
+        // As slots are executed in order they have been connected, this slot will always called as first one
+        connect(this, SIGNAL(waypointEditableListChanged()), this, SLOT(updateEditableListTrajectory()));   // Code Add MA (01.05.2012)
     }
     else
     {
@@ -1015,4 +1018,14 @@ void UASWaypointManager::sendWaypointAck(quint8 type)
     QGC::SLEEP::msleep(PROTOCOL_DELAY_MS);
 
     // // qDebug() << "sent waypoint ack (" << wpa.type << ") to ID " << wpa.target_system;
+}
+
+void UASWaypointManager::updateEditableListTrajectory()
+{
+    trajectoryEditable.setWPList(waypointsEditable);
+}
+
+Trajectory* UASWaypointManager::getEditableTrajectory()
+{
+    return &trajectoryEditable;
 }
