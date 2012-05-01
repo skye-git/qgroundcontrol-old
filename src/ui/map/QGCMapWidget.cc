@@ -658,7 +658,7 @@ void QGCMapWidget::updateWaypointList(int uas)
                 mapcontrol::WaypointLineItem* line = new mapcontrol::WaypointLineItem(prevIcon, currIcon, wpColor, map);
                 line->setParentItem(map);
 
-                QGraphicsItemGroup* group = waypointLines.value(uas, NULL);
+//                QGraphicsItemGroup* group = waypointLines.value(uas, NULL);
                 if (group)
                 {
                     group->addToGroup(line);
@@ -670,6 +670,12 @@ void QGCMapWidget::updateWaypointList(int uas)
 
         Trajectory *currTrajectory = currWPManager->getEditableTrajectory();
         QGraphicsPathItem* path = new mapcontrol::WaypointPathItem(currTrajectory->getPolyXY(), QColor(Qt::blue), map);
+        // Add path to waypointLines group so it will be destroyed afterwards
+        if (group)
+        {
+            group->addToGroup(path);
+            group->setParentItem(map);
+        }
 /************************************************ OLD STUFF ************************************************
         // Add path for whole wp list
 //        qDebug() << "QGCMapWidget prevIcon Lat" << prevIcon->Coord().Lat() << "Lon" << prevIcon->Coord().Lng();

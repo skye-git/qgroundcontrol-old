@@ -299,14 +299,17 @@ void UASWaypointManager::handleWaypointCurrent(quint8 systemId, quint8 compId, m
 
 void UASWaypointManager::notifyOfChangeEditable(Waypoint* wp)
 {
-    // // qDebug() << "WAYPOINT CHANGED: ID:" << wp->getId();
+    qDebug() << "notifyOfChangeEditable: WAYPOINT CHANGED: ID:" << wp->getId();
     // If only one waypoint was changed, emit only WP signal
-    if (wp != NULL) {
-        emit waypointEditableChanged(uasid, wp);
-    } else {
-        emit waypointEditableListChanged();
-        emit waypointEditableListChanged(uasid);
-    }
+//    if (wp != NULL) {
+//        emit waypointEditableChanged(uasid, wp);
+//    } else {
+//        emit waypointEditableListChanged();
+//        emit waypointEditableListChanged(uasid);
+//    }
+    emit waypointEditableChanged(uasid, wp);        // Code Mod MA (01.05.2012)
+    emit waypointEditableListChanged();
+    emit waypointEditableListChanged(uasid);
 }
 
 void UASWaypointManager::notifyOfChangeViewOnly(Waypoint* wp)
@@ -393,6 +396,7 @@ void UASWaypointManager::addWaypointEditable(Waypoint *wp, bool enforceFirstActi
             currentWaypointEditable = wp;
         }
         waypointsEditable.insert(waypointsEditable.size(), wp);
+        qDebug() << "UASWaypointManager::addWaypointEditable and connect it to notifyOfChangeEditable";
         connect(wp, SIGNAL(changed(Waypoint*)), this, SLOT(notifyOfChangeEditable(Waypoint*)));
 
         emit waypointEditableListChanged();
@@ -1022,6 +1026,7 @@ void UASWaypointManager::sendWaypointAck(quint8 type)
 
 void UASWaypointManager::updateEditableListTrajectory()
 {
+    qDebug() << "UASWaypointManager: editableList changed, update trajectory values";
     trajectoryEditable.setWPList(waypointsEditable);
 }
 
