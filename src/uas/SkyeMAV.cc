@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <qmath.h>
 #include "SkyeMAV.h"
 #include "UDPLink.h"
 
@@ -26,10 +27,13 @@ manualXRot(0),
 manualYRot(0),
 manualZRot(0),
 sensitivityFactorTrans(0),
-sensitivityFactorRot(0)
+sensitivityFactorRot(0),
+currentTrajectoryStamp(0)
 {
     imagePacketsArrived = 0;
     this->setUASName("SKYE");
+    connect(&trajectoryTimer, SIGNAL(timeout()), this, SLOT(followTrajectory()));
+    trajectoryTimer.start(100);
 }
 
 SkyeMAV::~SkyeMAV(void)
@@ -414,4 +418,31 @@ void SkyeMAV::requestBluefoxSettings()
 uint8_t SkyeMAV::getMode()
 {
     return this->mode;
+}
+
+void SkyeMAV::followTrajectory()
+{
+    if (mode == MAV_MODE_HALF_AUTOMATIC_ARMED)
+    {
+        qDebug() << "SkyeMAV::followTrajectory";
+        QPolygonF* poly = this->waypointManager.getEditableTrajectory()->getPolyXY();
+        if (!poly->isEmpty())
+        {
+            double k_p = 60.0;
+            double deltaX = poly->at(currentTrajectoryStamp).x() - latitude;
+            double deltaY = poly->at(currentTrajectoryStamp).y() - longitude;
+            qDebug() << "Following polygon point" << currentTrajectoryStamp << "deltaX is" << deltaX << "deltaY is" << deltaY;
+            if (deltaX > 0.01) deltaX = 0.01;
+            if (deltaX < -0.01) deltaX = -0.01;
+            if (deltaY > 0.01) deltaY = 0.01;
+            if (deltaY < -0.01) deltaY = -0.01;
+            sendDirectControlCommands(k_p * deltaX, k_p * deltaY, 0, 0, 0, 0);
+
+            if ( (deltaX*deltaX + deltaY*deltaY) < 0.0001*0.0001 )
+            {
+                qDebug() << "REACHED POINT" << currentTrajectoryStamp << "OF TRAJECTORY";
+                currentTrajectoryStamp++;
+            }
+        }
+    }
 }

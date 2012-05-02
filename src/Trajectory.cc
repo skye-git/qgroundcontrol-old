@@ -26,14 +26,19 @@ void Trajectory::setWPList(QVector<Waypoint *> wpList)
     x.clear();
     y.clear();
     z.clear();
-    blockSplineInterpolation = true;
+//    blockSplineInterpolation = true;
     foreach (Waypoint *wp, wpList)
     {
 //        qDebug() << "setWPList: addWP" << wp->getId() << "with Lat" << wp->getLatitude() << "Lon" << wp->getLongitude();
         addWP(wp);
     }
-    blockSplineInterpolation = false;
-    generateSplines();
+//    blockSplineInterpolation = false;
+
+    // Avoid generating nonsense trajectories going trough lat/lon 0/0
+    if (x.last() != 0.0 && y.last() != 0.0)
+    {
+        generateSplines();
+    }
 //    updateWPList(wpList);     // FIXME
 }
 
@@ -54,12 +59,12 @@ void Trajectory::updateWP(Waypoint *wp)
 
 void Trajectory::generateSplines(uint resolution)
 {
-    if (!blockSplineInterpolation)
-    {
+//    if (!blockSplineInterpolation)
+//    {
         interpolX = interpolate(&x, resolution);
         interpolY = interpolate(&y, resolution);
         interpolZ = interpolate(&z, resolution);
-    }
+//    }
 
     interpolPolyXY.clear();
     for (int i = 0; i<interpolX.size(); i++)
