@@ -54,6 +54,10 @@ UASWaypointManager::UASWaypointManager(UAS* _uas)
         connect(&protocol_timer, SIGNAL(timeout()), this, SLOT(timeout()));
         connect(uas, SIGNAL(localPositionChanged(UASInterface*,double,double,double,quint64)), this, SLOT(handleLocalPositionChanged(UASInterface*,double,double,double,quint64)));
         connect(uas, SIGNAL(globalPositionChanged(UASInterface*,double,double,double,quint64)), this, SLOT(handleGlobalPositionChanged(UASInterface*,double,double,double,quint64)));
+
+        // As slots are executed in order they have been connected, this slot will always called as first one
+        connect(this, SIGNAL(waypointEditableListChanged()), this, SLOT(updateEditableListTrajectory()));   // Code Add MA (01.05.2012)
+        connect(this, SIGNAL(waypointEditableChanged(int,Waypoint*)), this, SLOT(updateEditableListTrajectory()));   // Code Add MA (01
     }
     else
     {
@@ -296,7 +300,7 @@ void UASWaypointManager::handleWaypointCurrent(quint8 systemId, quint8 compId, m
 
 void UASWaypointManager::notifyOfChangeEditable(Waypoint* wp)
 {
-    // // qDebug() << "WAYPOINT CHANGED: ID:" << wp->getId();
+    qDebug() << "notifyOfChangeEditable: WAYPOINT CHANGED: ID:" << wp->getId();
     // If only one waypoint was changed, emit only WP signal
     if (wp != NULL) {
         emit waypointEditableChanged(uasid, wp);
@@ -390,6 +394,7 @@ void UASWaypointManager::addWaypointEditable(Waypoint *wp, bool enforceFirstActi
             currentWaypointEditable = wp;
         }
         waypointsEditable.insert(waypointsEditable.size(), wp);
+        qDebug() << "UASWaypointManager::addWaypointEditable and connect it to notifyOfChangeEditable";
         connect(wp, SIGNAL(changed(Waypoint*)), this, SLOT(notifyOfChangeEditable(Waypoint*)));
 
         emit waypointEditableListChanged();
@@ -472,6 +477,7 @@ void UASWaypointManager::moveWaypoint(quint16 cur_seq, quint16 new_seq)
             }
         }
         waypointsEditable[new_seq] = t;
+        double x = waypointsEditable[new_seq]->getLatitude();
         waypointsEditable[new_seq]->setId(new_seq);
 
         emit waypointEditableListChanged();
@@ -1015,4 +1021,15 @@ void UASWaypointManager::sendWaypointAck(quint8 type)
     QGC::SLEEP::msleep(PROTOCOL_DELAY_MS);
 
     // // qDebug() << "sent waypoint ack (" << wpa.type << ") to ID " << wpa.target_system;
+}
+
+void UASWaypointManager::updateEditableListTrajectory()
+{
+    qDebug() << "UASWaypointManager: editableList changed, update trajectory values";
+    trajectoryEditable.setWPList(waypointsEditable);
+}
+
+Trajectory* UASWaypointManager::getEditableTrajectory()
+{
+    return &trajectoryEditable;
 }

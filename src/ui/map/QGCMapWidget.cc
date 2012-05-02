@@ -507,11 +507,12 @@ void QGCMapWidget::updateWaypoint(int uas, Waypoint* wp)
                 waypointsToIcons.insert(wp, icon);
                 iconsToWaypoints.insert(icon, wp);
 
+                // Get predecessor of this WP
+                QVector<Waypoint* > wps = currWPManager->getGlobalFrameAndNavTypeWaypointList();
+
                 // Add line element if this is NOT the first waypoint
                 if (wpindex > 0)
                 {
-                    // Get predecessor of this WP
-                    QVector<Waypoint* > wps = currWPManager->getGlobalFrameAndNavTypeWaypointList();
                     Waypoint* wp1 = wps.at(wpindex-1);
                     mapcontrol::WayPointItem* prevIcon = waypointsToIcons.value(wp1, NULL);
                     // If we got a valid graphics item, continue
@@ -520,6 +521,7 @@ void QGCMapWidget::updateWaypoint(int uas, Waypoint* wp)
                         mapcontrol::WaypointLineItem* line = new mapcontrol::WaypointLineItem(prevIcon, icon, wpColor, map);
                         line->setParentItem(map);
                         QGraphicsItemGroup* group = waypointLines.value(uas, NULL);
+
                         if (group)
                         {
                             group->addToGroup(line);
@@ -527,6 +529,18 @@ void QGCMapWidget::updateWaypoint(int uas, Waypoint* wp)
                         }
                     }
                 }
+
+                // Beginn Code MA (01.05.2012) ----------------------------
+                Trajectory *currTrajectory = currWPManager->getEditableTrajectory();
+                QGraphicsPathItem* path = new mapcontrol::WaypointPathItem(currTrajectory->getPolyXY(), QColor(Qt::blue), map);
+                // Add path to waypointLines group so it will be destroyed afterwards
+                QGraphicsItemGroup* group = waypointLines.value(uas, NULL);
+                if (group)
+                {
+                    group->addToGroup(path);
+                    group->setParentItem(map);
+                }
+                // Ende Code MA (01.05.2012) ------------------------------
             }
             else
             {
@@ -647,7 +661,8 @@ void QGCMapWidget::updateWaypointList(int uas)
                 if (uasInstance) wpColor = uasInstance->getColor();
                 mapcontrol::WaypointLineItem* line = new mapcontrol::WaypointLineItem(prevIcon, currIcon, wpColor, map);
                 line->setParentItem(map);
-                QGraphicsItemGroup* group = waypointLines.value(uas, NULL);
+
+//                QGraphicsItemGroup* group = waypointLines.value(uas, NULL);
                 if (group)
                 {
                     group->addToGroup(line);
@@ -656,6 +671,17 @@ void QGCMapWidget::updateWaypointList(int uas)
             }
             prevIcon = currIcon;
         }
+
+        // Beginn Code MA (01.05.2012) ----------------------------
+        Trajectory *currTrajectory = currWPManager->getEditableTrajectory();
+        QGraphicsPathItem* path = new mapcontrol::WaypointPathItem(currTrajectory->getPolyXY(), QColor(Qt::blue), map);
+        // Add path to waypointLines group so it will be destroyed afterwards
+        if (group)
+        {
+            group->addToGroup(path);
+            group->setParentItem(map);
+        }
+        // Ende Code MA (01.05.2012) ------------------------------
     }
 }
 

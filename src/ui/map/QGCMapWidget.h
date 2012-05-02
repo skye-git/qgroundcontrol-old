@@ -150,7 +150,6 @@ protected:
     int followUAVID;                    ///< Which UAV should be tracked?
     bool mapInitialized;                ///< Map initialized?
 
-
 };
 
 #endif // QGCMAPWIDGET_H

@@ -36,6 +36,7 @@ This file is part of the QGROUNDCONTROL project
 #include <QVector>
 #include <QTimer>
 #include "Waypoint.h"
+#include "Trajectory.h"
 #include "QGCMAVLink.h"
 class UAS;
 class UASInterface;
@@ -109,6 +110,7 @@ public:
     int getNavTypeCount(); ///< Get the count of global waypoints in navigation mode in the list
     int getLocalFrameCount();   ///< Get the count of local waypoints in the list
     /*@}*/
+    Trajectory* getEditableTrajectory();                    // Code Add MA (01.05.2012)
 
     UAS* getUAS() {
         return this->uas;    ///< Returns the owning UAS
@@ -143,6 +145,8 @@ public slots:
     void handleLocalPositionChanged(UASInterface* mav, double x, double y, double z, quint64 time);
     void handleGlobalPositionChanged(UASInterface* mav, double lat, double lon, double alt, quint64 time);
 
+    void updateEditableListTrajectory();                    ///< Recalculates trajectory through list of editable waypoints // Code Add MA (01.05.2012)
+
 signals:
     void waypointEditableListChanged(void);                 ///< emits signal that the list of editable waypoints has been changed
     void waypointEditableListChanged(int uasid);            ///< emits signal that the list of editable waypoints has been changed
@@ -174,6 +178,8 @@ private:
     QTimer protocol_timer;                          ///< Timer to catch timeouts
     bool standalone;                                ///< If standalone is set, do not write to UAS
     quint16 uasid;
+
+    Trajectory trajectoryEditable;
 };
 
 #endif // UASWAYPOINTMANAGER_H
