@@ -12,16 +12,14 @@ class Trajectory : public QObject
     Q_OBJECT
 public:
     Trajectory();
-    /** @brief Returns a path of trajectory in xy plane */
-    QPainterPath getPathXY();
     /** @brief Returns a pointer to polygon of trajectory in xy plane */
     QPolygonF* getPolyXY();
 
 
 protected:
-    QVector<double> *x;
-    QVector<double> *y;
-    QVector<double> *z;
+    QVector<double> x;
+    QVector<double> y;
+    QVector<double> z;
     bool blockSplineInterpolation;      ///< If true, spline interpolation will not be calculated
     uint splineResolution;              ///< Number of calculated points per waypoint (including start wp)
     QwtSpline spline;                  ///< Spline interpolation through all points

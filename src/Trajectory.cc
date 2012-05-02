@@ -15,35 +15,10 @@ Trajectory::Trajectory()
     splineResolution = 15;
 }
 
-//QPainterPath Trajectory::getPathXY() // FIXME: Not in use anymore
-//{
-//    QPainterPath pathXY;
-//    pathXY.addPolygon(interpolPolyXY);
-//    return pathXY;
-//}
-
 QPolygonF* Trajectory::getPolyXY()
 {
     qDebug() << "Return a polygon for" << x.size() << "Points," << "Resolution =" << splineResolution << "Poygonpoints = " << interpolPolyXY.size();
     return &interpolPolyXY;
-}
-
-void Trajectory::getWaypointTrajectory(WaypointWithTrajectory* wp)
-{
-    if (interpolX.size() == 0)
-    {
-        qDebug() << "Interpolated trajectory is empty";
-        return;
-    }
-    qint16 wpId = wp->getId();
-
-    wp->trajectoryToWP.setX(interpolX.mid(wpId * splineResolution, splineResolution));
-    wp->trajectoryToWP.setY(interpolY.mid(wpId * splineResolution, splineResolution));
-    wp->trajectoryToWP.setZ(interpolZ.mid(wpId * splineResolution, splineResolution));
-    for (int i = 0; i < wp->trajectoryToWP.getX().size(); i++)
-    {
-        qDebug() << "WAYPOINT UPDATED:" << wp->trajectoryToWP.getX().at(i);
-    }
 }
 
 void Trajectory::setWPList(QVector<Waypoint *> wpList)
@@ -112,7 +87,7 @@ QVector<double> Trajectory::interpolate(const QVector<double> *points, int resol
     foreach (double value, *points)
     {
         poly.append( QPointF( (qreal)poly.size(), value ) );
-//        qDebug() << "interpolate: Appended to poly" << poly.last().x() << poly.last().y();
+        qDebug() << "interpolate: Appended to poly" << poly.last().x() << poly.last().y();
     }
 
     if ( !spline.setPoints(poly) )

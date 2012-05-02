@@ -101,7 +101,7 @@ QVector<double> Trajectory::interpolate(const QVector<double> *points, int resol
     foreach (double value, *points)
     {
         poly.append( QPointF( (qreal)poly.size(), value ) );
-//        qDebug() << "interpolate: Appended to poly" << poly.last().x() << poly.last().y();
+        qDebug() << "interpolate: Appended to poly" << poly.last().x() << poly.last().y();
     }
 
     if ( !spline.setPoints(poly) )

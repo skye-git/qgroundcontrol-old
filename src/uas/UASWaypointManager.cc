@@ -57,6 +57,7 @@ UASWaypointManager::UASWaypointManager(UAS* _uas)
 
         // As slots are executed in order they have been connected, this slot will always called as first one
         connect(this, SIGNAL(waypointEditableListChanged()), this, SLOT(updateEditableListTrajectory()));   // Code Add MA (01.05.2012)
+        connect(this, SIGNAL(waypointEditableChanged(int,Waypoint*)), this, SLOT(updateEditableListTrajectory()));   // Code Add MA (01
     }
     else
     {
@@ -301,15 +302,12 @@ void UASWaypointManager::notifyOfChangeEditable(Waypoint* wp)
 {
     qDebug() << "notifyOfChangeEditable: WAYPOINT CHANGED: ID:" << wp->getId();
     // If only one waypoint was changed, emit only WP signal
-//    if (wp != NULL) {
-//        emit waypointEditableChanged(uasid, wp);
-//    } else {
-//        emit waypointEditableListChanged();
-//        emit waypointEditableListChanged(uasid);
-//    }
-    emit waypointEditableChanged(uasid, wp);        // Code Mod MA (01.05.2012)
-    emit waypointEditableListChanged();
-    emit waypointEditableListChanged(uasid);
+    if (wp != NULL) {
+        emit waypointEditableChanged(uasid, wp);
+    } else {
+        emit waypointEditableListChanged();
+        emit waypointEditableListChanged(uasid);
+    }
 }
 
 void UASWaypointManager::notifyOfChangeViewOnly(Waypoint* wp)
@@ -479,6 +477,7 @@ void UASWaypointManager::moveWaypoint(quint16 cur_seq, quint16 new_seq)
             }
         }
         waypointsEditable[new_seq] = t;
+        double x = waypointsEditable[new_seq]->getLatitude();
         waypointsEditable[new_seq]->setId(new_seq);
 
         emit waypointEditableListChanged();

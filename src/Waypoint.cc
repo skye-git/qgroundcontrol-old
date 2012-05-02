@@ -103,8 +103,8 @@ void Waypoint::setId(quint16 id)
 {
     this->id = id;
     this->name = QString("WP%1").arg(id, 2, 10, QChar('0'));
-    emit changed(this);
     qDebug() << "Waypoint setId" << id;
+    emit changed(this);
 }
 
 void Waypoint::setX(double x)
@@ -112,8 +112,8 @@ void Waypoint::setX(double x)
     if (!isinf(x) && !isnan(x) && ((this->frame == MAV_FRAME_LOCAL_NED) || (this->frame == MAV_FRAME_LOCAL_ENU)))
     {
         this->x = x;
-        emit changed(this);
         qDebug() << "Waypoint setX" << x << "of point" << id;
+        emit changed(this);
     }
 }
 
@@ -140,8 +140,8 @@ void Waypoint::setLatitude(double lat)
     if (this->x != lat && ((this->frame == MAV_FRAME_GLOBAL) || (this->frame == MAV_FRAME_GLOBAL_RELATIVE_ALT)))
     {
         this->x = lat;
-        emit changed(this);
         qDebug() << "Waypoint setLat" << x << "of point" << id;
+        emit changed(this);
     }
 }
 

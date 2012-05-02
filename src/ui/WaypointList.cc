@@ -505,9 +505,12 @@ void WaypointList::waypointEditableListChanged()
         WaypointEditableView *wpv = wpEditableViews.value(wp);
 
         //check if ordering has changed
+        if (editableListLayout->itemAt(i))
+        {
         if(editableListLayout->itemAt(i)->widget() != wpv) {
             editableListLayout->removeWidget(wpv);
             editableListLayout->insertWidget(i, wpv);
+        }
         }
 
         wpv->updateValues();    // update the values of the ui elements in the view
