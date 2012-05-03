@@ -7,6 +7,11 @@
 #include "UASWaypointManager.h"
 #include "Waypoint.h"
 
+#include <QtNetwork/QNetworkRequest>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QUrl>
+
 class HeightPoint;
 
 class HeightProfile : public QGraphicsView
@@ -20,6 +25,10 @@ public:
     
 signals:
     void wapointChanged(Waypoint*wp);
+
+public:
+    qreal fromAltitudeToScene(qreal altitude);
+    qreal fromSceneToAltitude(qreal sceneY);
     
 public slots:
     /** @brief Add system to Height Profile view */
@@ -34,6 +43,11 @@ public slots:
     void arrangeHeightPoints(); //Integrate perhaps in update slots...
     /** @brief get the Elevation for each HeightPoint in the scene */
     void getElevationPoints(); //Integrate perhaps in update slots...
+    /** @brief construct the URL for the Elevation request */
+    QUrl constructUrl(QVector<Waypoint* > wps); //Integrate perhaps in update slots...
+    /** @brief processes the xml reply after getElevationPoints request */
+    void replyFinished(QNetworkReply* reply); //Integrate perhaps in update slots...
+
 
 protected slots:
     /** @brief Convert a HeightPoint edit into a QGC waypoint event */
@@ -60,8 +74,14 @@ protected:
     bool profileInitialized; ///< Profile initialized?
     //QTimer rearrangeTimer;
 
+    //sceneParameters
+    QPointF sTopLeftCorner;
     double sWidth;
     double sHeight;
+    double offset;
+    double scalefactor;
+
+    QNetworkAccessManager* networkManager;
     
 
 

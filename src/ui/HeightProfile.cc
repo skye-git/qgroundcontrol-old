@@ -5,6 +5,8 @@
 
 #include "UASManager.h"
 #include "HeightPoint.h"
+#include <QXmlStreamReader>
+#include <QMessageBox>
 
 HeightProfile::HeightProfile(QWidget *parent) :
     QGraphicsView(parent),
@@ -12,18 +14,16 @@ HeightProfile::HeightProfile(QWidget *parent) :
     firingWaypointChange(NULL),
     profileInitialized(false)
 {
-
-
-    qDebug() << "in constructor of class HeightProfile 1";
-    sWidth = 100;
-    //sHeight = 100;
-    qDebug() << "in constructor of class HeightProfile 2";
-    //sHuuuuuu = 100;
+    sTopLeftCorner.setX(0);
+    sTopLeftCorner.setY(-100);
+    sWidth = 600;
+    sHeight = 120;
+    offset = 0;
+    scalefactor = 1;
     scene = new QGraphicsScene(this);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
-    scene->setSceneRect(0, -100, 500, 120);
+    scene->setSceneRect(sTopLeftCorner.x(), sTopLeftCorner.y(), sWidth, sHeight);
     setScene(scene);
-    //setSceneRect(0,-100,200,100);
     setCacheMode(CacheBackground);
     setViewportUpdateMode(BoundingRectViewportUpdate);
     setRenderHint(QPainter::Antialiasing);
@@ -32,6 +32,10 @@ HeightProfile::HeightProfile(QWidget *parent) :
     //scale(qreal(0.3), qreal(0.3));
     //setMinimumSize(400, 400);//setMinimum (with, height) of widget
     setWindowTitle(tr("Height Profile"));
+
+    //Network Manger
+    networkManager = new QNetworkAccessManager();
+    connect(networkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 
 }
 
@@ -61,6 +65,18 @@ void HeightProfile::hideEvent(QHideEvent *event)
 {
     QGraphicsView::hideEvent(event);
 }
+
+qreal HeightProfile::fromAltitudeToScene(qreal altitude)
+{
+    Q_UNUSED(altitude);
+}
+
+
+qreal HeightProfile::fromSceneToAltitude(qreal sceneY)
+{
+    Q_UNUSED(sceneY);
+}
+
 
 void HeightProfile::addUAS(UASInterface* uas)
 {
@@ -280,8 +296,7 @@ void HeightProfile::arrangeHeightPoints()
     QVector<Waypoint* > wps = currWPManager->getGlobalFrameAndNavTypeWaypointList();
     int number = wps.size();
     qDebug() << "WPVector Size is " << number;
-    qreal width = this->width();
-    qreal distance = 500/(number+1);
+    qreal distance = sWidth/(number+1);
     int i = 1;
 
     foreach (Waypoint* wp, wps)
@@ -307,8 +322,8 @@ void HeightProfile::getElevationPoints()
     QVector<Waypoint* > wps = currWPManager->getGlobalFrameAndNavTypeWaypointList();
     foreach(Waypoint* wp, wps)
     {
+        //qDebug() << "the longitude of the actual waypoint is: " << wp->getLongitude();
         HeightPoint* currHp = waypointsToHeightPoints.value(wp, NULL);
-        //currHp->setPos((i*distance), 0);
         bool ishp = dynamic_cast<HeightPoint*>(currHp);
         if(ishp)
         {
@@ -320,8 +335,76 @@ void HeightProfile::getElevationPoints()
             qDebug() << "crazy error number 2";
         }
     }
+    networkManager->get(QNetworkRequest(constructUrl(wps)));
 }
 
+QUrl HeightProfile::constructUrl(QVector<Waypoint* > wps)
+{
+    QString urlString("http://maps.googleapis.com/maps/api/elevation/xml?locations=");
+    foreach(Waypoint* wp, wps)
+    {
+        HeightPoint* currHp = waypointsToHeightPoints.value(wp, NULL);
+        bool ishp = dynamic_cast<HeightPoint*>(currHp);
+        if(ishp)
+        {
+            qDebug() << "the latitude|longitude of the actual waypoint is: " << QString::number(wp->getLatitude(),'f', 8) << "|" << QString::number(wp->getLongitude(),'f', 8);
+            urlString.append(QString::number(wp->getLatitude(),'f', 8));
+            urlString.append(",");
+            urlString.append(QString::number(wp->getLongitude(),'f', 8));
+            urlString.append("|");
+        }
+        else
+        {
+            qDebug() << "crazy error, not all waypoints in GlobalFrameAndNavTypeWaypointList have a height point,  replyFinished() won't work";
+        }
+    }
+    urlString = urlString.remove(urlString.lastIndexOf("|"),1);
+    urlString.append("&sensor=true"); //use false if no GPS Sensor is used
+    QUrl constructedUrl(urlString);
+
+    qDebug() << "The constructed Url is:" << constructedUrl;
+
+    return constructedUrl;
+
+}
+
+
+void HeightProfile::replyFinished(QNetworkReply *reply)
+{
+    qDebug() << "Is reply readable? - " << reply->isReadable();
+
+    QVector<Waypoint* > wps = currWPManager->getGlobalFrameAndNavTypeWaypointList();
+
+    QByteArray data = reply->readAll();
+    QXmlStreamReader reader(data);
+    int i = 0;
+    while(!reader.atEnd() && !reader.hasError()) {
+
+
+            QXmlStreamReader::TokenType token = reader.readNext();
+
+            if(token == QXmlStreamReader::StartElement)
+            {
+                if(reader.name() == "elevation")
+                {
+                    QString readout = reader.readElementText();
+                    qDebug() << readout;
+                    double altitude = readout.toDouble();
+                    qDebug() << QString::toNumber(altitude,'f', 7);
+                    //wps[i]->setAltitude(altitude);
+                    i++;
+                }
+            }
+    }
+
+    if(reader.hasError()) {
+        qDebug() << "QMessageBox reader error";
+            QMessageBox::critical(this,
+            "xmlFile.xml Parse Error",reader.errorString(),
+            QMessageBox::Ok);
+            return;
+    }
+}
 
 
 void HeightProfile::wheelEvent(QWheelEvent *event)
@@ -351,14 +434,14 @@ void HeightProfile::drawBackground(QPainter *painter, const QRectF &rect)
     painter->drawRect(sceneRect);
 
     //Draw sea mean line
-    QLineF line(0,0,500,0);
+    QLineF line(0,0,sWidth,0);
 //    QBrush zerolinebrush();
 //    QPen zerolinepen(zerolinebrush, 2, Qt::black);
     painter->setPen(Qt::black);
     painter->drawLine(line);
 
     //Fill Ground
-    QRectF groundRect(0,0, 500,20);
+    QRectF groundRect(0,0, sWidth,20);
     painter->fillRect(groundRect, Qt::darkGreen);
 
 
