@@ -535,7 +535,7 @@ void QGCMapWidget::updateWaypoint(int uas, Waypoint* wp)
                 }
 
                 // Beginn Code MA (01.05.2012) ----------------------------
-                qDebug() << "updateWaypoint";
+//                qDebug() << "updateWaypoint";
                 SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uasInstance);
                 if (mav)
                 {
@@ -607,7 +607,7 @@ void QGCMapWidget::updateWaypoint(int uas, Waypoint* wp)
  */
 void QGCMapWidget::updateWaypointList(int uas)
 {
-    qDebug() << "UPDATE WP LIST IN 2D MAP CALLED FOR UAS" << uas;
+//    qDebug() << "UPDATE WP LIST IN 2D MAP CALLED FOR UAS" << uas;
     // Currently only accept waypoint updates from the UAS in focus
     // this has to be changed to accept read-only updates from other systems as well.
     UASInterface* uasInstance = UASManager::instance()->getUASForId(uas);
@@ -616,7 +616,7 @@ void QGCMapWidget::updateWaypointList(int uas)
         // ORDER MATTERS HERE!
         // TWO LOOPS ARE NEEDED - INFINITY LOOP ELSE
 
-        qDebug() << "DELETING NOW OLD WPS";
+//        qDebug() << "DELETING NOW OLD WPS";
 
         // Delete first all old waypoints
         // this is suboptimal (quadratic, but wps should stay in the sub-100 range anyway)
@@ -693,7 +693,7 @@ void QGCMapWidget::updateWaypointList(int uas)
 //            group->setParentItem(map);
 //        }
 
-        qDebug() << "updateWaypointList";
+//        qDebug() << "updateWaypointList";
         SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uasInstance);
         if (mav)
         {

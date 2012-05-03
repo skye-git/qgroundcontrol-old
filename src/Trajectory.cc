@@ -17,13 +17,13 @@ Trajectory::Trajectory()
 
 QPolygonF* Trajectory::getPolyXY()
 {
-    qDebug() << "Return a polygon for" << x.size() << "Points," << "Resolution =" << splineResolution << "Polygonpoints = " << interpolPolyXY.size();
+//    qDebug() << "Return a polygon for" << x.size() << "Points," << "Resolution =" << splineResolution << "Polygonpoints = " << interpolPolyXY.size();
     return &interpolPolyXY;
 }
 
 QPolygonF* Trajectory::getPolyXY(int from, int to)
 {
-    qDebug() << "Return a partial polygon from" << from << "to" << to;
+//    qDebug() << "Return a partial polygon from" << from << "to" << to;
     if (interpolPolyXY.size() > to)
     {
         interpolPolyXYpart = interpolPolyXY.mid(from, to - from + 1);
@@ -106,7 +106,7 @@ QVector<double> Trajectory::interpolate(const QVector<double> *points, int resol
     foreach (double value, *points)
     {
         poly.append( QPointF( (qreal)poly.size(), value ) );
-        qDebug() << "interpolate: Appended to poly" << poly.last().x() << poly.last().y();
+//        qDebug() << "interpolate: Appended to poly" << poly.last().x() << poly.last().y();
     }
 
     if ( !spline.setPoints(poly) )
