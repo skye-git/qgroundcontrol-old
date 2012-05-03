@@ -1,6 +1,8 @@
 #ifndef SKYEMAV_H
 #define SKYEMAV_H
 
+#include <QPolygonF>
+#include <QTimer>
 #include "UAS.h"
 #include "BluefoxReconfigure.h"
 
@@ -22,6 +24,8 @@ public:
     QImage getImage();
     /** @brief Get mode */
     uint8_t getMode();
+    /** @brief */
+    int getCurrentTrajectoryStamp() { return currentTrajectoryStamp; }
 
 public slots:
     /** @brief Set the specific airframe type */
@@ -49,6 +53,8 @@ public slots:
     void sendBluefoxReconfigureCommand(mavlink_skye_cam_reconfigure_bluefox_settings_t* bluefox);
     /** Request for current configurations for bluefox camera*/
     void requestBluefoxSettings();
+
+    void followTrajectory();
 
 signals:
     /** @brief Emit new detailed accu info for one accu pack
@@ -102,6 +108,8 @@ protected:
     float sensitivityFactorTrans;    ///< Translational factor for manual control [remark: abs(deviceInput) <= 1 ]
     float sensitivityFactorRot;      ///< Rotational factor for manual control [remark: abs(deviceInput) <= 1 ]
 
+    int currentTrajectoryStamp;
+    QTimer trajectoryTimer;
 };
 
 #endif // SKYEMAV_H

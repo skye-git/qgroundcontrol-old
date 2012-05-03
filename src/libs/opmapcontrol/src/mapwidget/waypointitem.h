@@ -169,6 +169,9 @@ protected:
     QGraphicsRectItem* numberIBG;
     QTransform transf;
     internals::PointLatLng coord;//coordinates of this WayPoint
+    QVector<double> pathX2WP;           // Code MA
+    QVector<double> pathY2WP;           // Code MA
+    QVector<double> pathZ2WP;           // Code MA
     bool reached;
     QString description;
     bool shownumber;

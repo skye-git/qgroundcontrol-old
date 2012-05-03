@@ -381,15 +381,16 @@ HEADERS += src/MG.h \
     src/ui/firmwareupdate/QGCFirmwareUpdateWidget.h \
     src/ui/QGCPluginHost.h \
     src/ui/firmwareupdate/QGCPX4FirmwareUpdate.h \
-    src/ui/uas/UASSkyeBatteryInfoWidget.h \             # Code MA
-    src/ui/uas/UASSkyeBatteryPackWidget.h \             # Code MA
-    src/ui/map/QGCMapRing.h \                           # Code AL
-    src/ui/SkyeCameraReconfigure.h \                    # Code MA
-    src/ui/BluefoxReconfigure.h \                       # Code MA
-    src/ui/DirectControlWidget.h \                      # Code MA
+    src/ui/uas/UASSkyeBatteryInfoWidget.h \
+    src/ui/uas/UASSkyeBatteryPackWidget.h \
+    src/ui/map/QGCMapRing.h \
+    src/ui/SkyeCameraReconfigure.h \
+    src/ui/BluefoxReconfigure.h \
+    src/ui/DirectControlWidget.h \
     src/ui/HeightProfile.h \
     src/ui/HeightPoint.h \
-    src/ui/ElevationPoint.h
+    src/ui/ElevationPoint.h \
+    src/Trajectory.h
 
 # Google Earth is only supported on Mac OS and Windows with Visual Studio Compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010::HEADERS += src/ui/map3D/QGCGoogleEarthView.h
@@ -536,14 +537,15 @@ SOURCES += src/main.cc \
     src/ui/firmwareupdate/QGCFirmwareUpdateWidget.cc \
     src/ui/QGCPluginHost.cc \
     src/ui/firmwareupdate/QGCPX4FirmwareUpdate.cc \
-    src/ui/uas/UASSkyeBatteryInfoWidget.cpp \       # Code MA
-    src/ui/uas/UASSkyeBatteryPackWidget.cpp \       # Code MA
-    src/ui/map/QGCMapRing.cc \                      # Code AL
-    src/ui/SkyeCameraReconfigure.cpp \              # Code MA
-    src/ui/DirectControlWidget.cc \                 # Code MA
+    src/ui/uas/UASSkyeBatteryInfoWidget.cpp \
+    src/ui/uas/UASSkyeBatteryPackWidget.cpp \
+    src/ui/map/QGCMapRing.cc \
+    src/ui/SkyeCameraReconfigure.cpp \
+    src/ui/DirectControlWidget.cc \
     src/ui/HeightProfile.cc \
     src/ui/HeightPoint.cpp \
-    src/ui/ElevationPoint.cpp
+    src/ui/ElevationPoint.cpp \
+    src/Trajectory.cc
 
 # Enable Google Earth only on Mac OS and Windows with Visual Studio compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010::SOURCES += src/ui/map3D/QGCGoogleEarthView.cc
