@@ -78,6 +78,9 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             imageWidth = p.width;
             imageHeight = p.height;
             imageStart = QGC::groundTimeMilliseconds();
+
+            // Reset arrived packages
+            imagePacketsArrived = 0;
         }
             break;
 
@@ -87,6 +90,8 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             mavlink_msg_encapsulated_data_decode(&message, &img);
             int seq = img.seqnr;
             int pos = seq * imagePayload;
+
+//            qDebug() << "Seqnr" << img.seqnr;
 
             // Check if we have a valid transaction
             if (imagePackets == 0)
@@ -103,10 +108,9 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
                 }
                 ++pos;
             }
+//            qDebug() << "RECIEVED ENCAPSULATED IMAGE, imagePackets:" << imagePackets << "imagePacketsArrived:" << imagePacketsArrived;
 
             ++imagePacketsArrived;
-
-//            qDebug() << "RECIEVED ENCAPSULATED IMAGE, imagePackets:" << imagePackets << "imagePacketsArrived:" << imagePacketsArrived;
 
             // emit signal if all packets arrived
             if ((imagePacketsArrived >= imagePackets))
@@ -275,7 +279,7 @@ void SkyeMAV::sendAssistedControlCommands(double xVel, double yVel, double zVel,
     // Scale values
     float velScaling = sensitivityFactorTrans;
     float rotScaling = sensitivityFactorRot;
-    qDebug() << rotScaling << "ROTSCALING";
+//    qDebug() << rotScaling << "ROTSCALING";
     manualXVel = xVel * velScaling;
     manualYVel = yVel * velScaling;
     manualZVel = zVel * velScaling;
