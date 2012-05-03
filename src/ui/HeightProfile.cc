@@ -13,13 +13,15 @@ HeightProfile::HeightProfile(QWidget *parent) :
     currWPManager(NULL),
     firingWaypointChange(NULL),
     profileInitialized(false)
+    //elevationItem(NULL)
 {
     sTopLeftCorner.setX(0);
     sTopLeftCorner.setY(-100);
     sWidth = 600;
-    sHeight = 120;
-    offset = 0;
-    scalefactor = 1;
+    sHeight = 100;
+    minHeight = 0;
+    maxHeight = 100;
+    boundary =10;
     scene = new QGraphicsScene(this);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
     scene->setSceneRect(sTopLeftCorner.x(), sTopLeftCorner.y(), sWidth, sHeight);
@@ -32,6 +34,9 @@ HeightProfile::HeightProfile(QWidget *parent) :
     //scale(qreal(0.3), qreal(0.3));
     //setMinimumSize(400, 400);//setMinimum (with, height) of widget
     setWindowTitle(tr("Height Profile"));
+
+//    displayminHeight = scene->addText("not yet ini");//not working
+//    displaymaxHeight = scene->addText("not yet ini");
 
     //Network Manger
     networkManager = new QNetworkAccessManager();
@@ -68,13 +73,13 @@ void HeightProfile::hideEvent(QHideEvent *event)
 
 qreal HeightProfile::fromAltitudeToScene(qreal altitude)
 {
-    Q_UNUSED(altitude);
+    return -((altitude-minHeight)/(maxHeight-minHeight)*(sHeight-2*boundary)+boundary);
 }
 
 
 qreal HeightProfile::fromSceneToAltitude(qreal sceneY)
 {
-    Q_UNUSED(sceneY);
+    return minHeight+(-sceneY-boundary)/(sHeight-2*boundary)*(maxHeight-minHeight);
 }
 
 
@@ -177,7 +182,7 @@ void HeightProfile::updateWaypoint(int uas, Waypoint* wp)
             // Check if wp exists yet in map
             if (!waypointsToHeightPoints.contains(wp))
             {
-                // Create icon for new WP
+                // Create HeightPoint for new WP
                 QColor wpColor(Qt::red);
                 if (uasInstance) wpColor = uasInstance->getColor();
                 HeightPoint* hp = new HeightPoint(this, wp, wpColor, wpindex);
@@ -187,6 +192,7 @@ void HeightProfile::updateWaypoint(int uas, Waypoint* wp)
                 waypointsToHeightPoints.insert(wp, hp);
                 heightPointsToWaypoints.insert(hp, wp);
                 scene->addItem(hp);
+                wp->setAltitude(maxHeight); //new waypoint should appear in scene!
 
             }
             else
@@ -205,7 +211,8 @@ void HeightProfile::updateWaypoint(int uas, Waypoint* wp)
                 {
                     // Let icon read out values directly from waypoint
                     hp->setNumber(wpindex);
-                    wphp->updateHeightPoint(wp);
+                    //wphp->updateHeightPoint(wp);
+                    wphp->setY(fromAltitudeToScene(wp->getAltitude()));
                 }
                 else
                 {
@@ -306,7 +313,8 @@ void HeightProfile::arrangeHeightPoints()
         bool ishp = dynamic_cast<HeightPoint*>(currHp);
         if(ishp)
         {
-            currHp->setPos((i*distance), currHp->y());
+            currHp->setPos((i*distance), fromAltitudeToScene(wp->getAltitude()));
+            currHp->elevationPoint->setPos((i*distance), fromAltitudeToScene(currHp->elevationPoint->elevation));
         }
         else
         {
@@ -314,6 +322,7 @@ void HeightProfile::arrangeHeightPoints()
         }
         i++;
     }
+
 }
 
 void HeightProfile::getElevationPoints()
@@ -328,7 +337,7 @@ void HeightProfile::getElevationPoints()
         if(ishp)
         {
             scene->addItem(currHp->elevationPoint);
-            currHp->elevationPoint->setPos(currHp->x(),0);
+            currHp->elevationPoint->setPos(currHp->x(),fromAltitudeToScene(currHp->elevationPoint->elevation));
         }
         else
         {
@@ -388,10 +397,17 @@ void HeightProfile::replyFinished(QNetworkReply *reply)
                 if(reader.name() == "elevation")
                 {
                     QString readout = reader.readElementText();
-                    qDebug() << readout;
-                    double altitude = readout.toDouble();
-                    qDebug() << QString::toNumber(altitude,'f', 7);
-                    //wps[i]->setAltitude(altitude);
+                    //qDebug() << readout;
+                    double elevation = readout.toDouble();
+                    //qDebug() << QString::number(elevation,'f', 7);
+                    HeightPoint* currHp = waypointsToHeightPoints.value(wps[i], NULL);
+                    currHp->elevationPoint->elevation = elevation;
+                    if(wps[i]->getAltitude() < elevation)
+                    {
+                        wps[i]->setAltitude(elevation);
+                        qDebug() << "Altitude had to be adjusted to the Elevation: " << elevation;
+                    }
+
                     i++;
                 }
             }
@@ -404,6 +420,43 @@ void HeightProfile::replyFinished(QNetworkReply *reply)
             QMessageBox::Ok);
             return;
     }
+    updateExtrema();
+    this->update();
+    //drawElevation();//not working
+}
+
+void HeightProfile::updateExtrema()
+{
+    minHeight = +4000; //FIXME not nice, assu
+    maxHeight = -4000;
+    QVector<Waypoint* > wps = currWPManager->getGlobalFrameAndNavTypeWaypointList();
+    foreach(Waypoint* wp, wps)
+    {
+        HeightPoint* currHp = waypointsToHeightPoints.value(wp, NULL);
+        bool ishp = dynamic_cast<HeightPoint*>(currHp);
+        if(ishp)
+        {
+            if(wp->getAltitude() > maxHeight)
+                maxHeight = wp->getAltitude() + 20; //FIXME parametrisch
+            if(currHp->elevationPoint->elevation > maxHeight)
+                maxHeight = currHp->elevationPoint->elevation + 20;
+            if(wp->getAltitude() < minHeight)
+                minHeight = wp->getAltitude() - 20;
+            if(currHp->elevationPoint->elevation > minHeight)
+                minHeight = currHp->elevationPoint->elevation - 20;
+        }
+        else
+        {
+            qDebug() << "crazy error #2, not all waypoints in GlobalFrameAndNavTypeWaypointList have a height point,  replyFinished() won't work";
+        }
+    }
+
+    qDebug() << "min Height" << minHeight;
+    qDebug() << "max Height" << maxHeight;
+//    displayminHeight->setPlainText(QString(QString::number(minHeight)));//not working
+//    displaymaxHeight->setPlainText(QString(QString::number(maxHeight)));
+
+    arrangeHeightPoints();
 }
 
 
@@ -434,15 +487,64 @@ void HeightProfile::drawBackground(QPainter *painter, const QRectF &rect)
     painter->drawRect(sceneRect);
 
     //Draw sea mean line
-    QLineF line(0,0,sWidth,0);
+    QLineF line(0,-boundary,sWidth,-boundary);
 //    QBrush zerolinebrush();
 //    QPen zerolinepen(zerolinebrush, 2, Qt::black);
     painter->setPen(Qt::black);
     painter->drawLine(line);
 
     //Fill Ground
-    QRectF groundRect(0,0, sWidth,20);
+    QRectF groundRect(0,-boundary, sWidth, boundary);
     painter->fillRect(groundRect, Qt::darkGreen);
+
+
+    //a try
+//    qDebug() << "in drawElevation";
+//    QPainterPath tryElePath;
+//    tryElePath.moveTo(50,-50);
+//    tryElePath.lineTo(50,-20);
+//    tryElePath.lineTo(80,-20);
+//    tryElePath.lineTo(80,-50);
+//    tryElePath.lineTo(50,-50);
+
+//    painter->setBrush(Qt::SolidPattern);
+//    painter->drawPath(tryElePath);
+//    painter->fillPath(tryElePath, Qt::darkGreen);
+
+//    QLineF line2(50,-50,80,-50);
+//    painter->drawLine(line2);
+
+//    QRectF tryRect(50,-50,50,50);
+//    painter->fillRect(tryRect, Qt::red);
+
+
+//    //Draw Elevation Profile
+//    QPainterPath elevationPath;
+//    elevationPath.moveTo(0,0);
+
+//    QVector<Waypoint* > wps = currWPManager->getGlobalFrameAndNavTypeWaypointList();
+//    foreach(Waypoint* wp, wps)
+//    {
+//        //qDebug() << "the longitude of the actual waypoint is: " << wp->getLongitude();
+//        HeightPoint* currHp = waypointsToHeightPoints.value(wp, NULL);
+//        bool ishp = dynamic_cast<HeightPoint*>(currHp);
+//        if(ishp)
+//        {
+//            elevationPath.moveTo(currHp->elevationPoint->pos());
+//        }
+//        else
+//        {
+//            qDebug() << "crazy error number #3";
+//        }
+//    }
+
+//    elevationPath.moveTo(sTopLeftCorner.x()+sWidth, sTopLeftCorner.y()+sHeight);
+//    elevationPath.moveTo(0,0);
+
+//    painter->fillPath(elevationPath,Qt::darkGreen);
+    //ende try
+
+
 
 
     // Text
@@ -460,6 +562,42 @@ void HeightProfile::drawBackground(QPainter *painter, const QRectF &rect)
     painter->setPen(Qt::black);
     painter->drawText(textRect, message);
 
+}
+
+void HeightProfile::drawElevation()
+{
+    //Draw Elevation Profile
+    //QPainter elevationPainter(this);
+    QPainterPath elevationPath;
+    elevationPath.moveTo(0,0);
+
+    QVector<Waypoint* > wps = currWPManager->getGlobalFrameAndNavTypeWaypointList();
+    foreach(Waypoint* wp, wps)
+    {
+        //qDebug() << "the longitude of the actual waypoint is: " << wp->getLongitude();
+        HeightPoint* currHp = waypointsToHeightPoints.value(wp, NULL);
+        bool ishp = dynamic_cast<HeightPoint*>(currHp);
+        if(ishp)
+        {
+            elevationPath.moveTo(currHp->elevationPoint->pos());
+        }
+        else
+        {
+            qDebug() << "crazy error number #3";
+        }
+    }
+
+    elevationPath.moveTo(sTopLeftCorner.x()+sWidth, sTopLeftCorner.y()+sHeight);
+    elevationPath.moveTo(0,0);
+
+//    elevationItem = scene->addPath(elevationPath);
+//    qDebug() << "is elevationItem visisble? " << elevationItem->isVisible();
+
+    QPolygonF elevationPolygon(30);
+    scene->addPolygon(elevationPolygon);
+
+    ElevationPoint* trypoint = new ElevationPoint(this,Qt::black);
+    scene->addItem(trypoint);
 }
 
 void HeightProfile::scaleView(qreal scaleFactor)

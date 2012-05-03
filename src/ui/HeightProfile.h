@@ -47,6 +47,8 @@ public slots:
     QUrl constructUrl(QVector<Waypoint* > wps); //Integrate perhaps in update slots...
     /** @brief processes the xml reply after getElevationPoints request */
     void replyFinished(QNetworkReply* reply); //Integrate perhaps in update slots...
+    /** @brief update the values for minHeight /maxHeight */
+    void updateExtrema();
 
 
 protected slots:
@@ -65,6 +67,7 @@ protected:
 
     void wheelEvent(QWheelEvent *event);
     void drawBackground(QPainter *painter, const QRectF &rect);
+    void drawElevation();
     void scaleView(qreal scaleFactor);
 
     UASWaypointManager* currWPManager; ///< The current waypoint manager
@@ -78,8 +81,13 @@ protected:
     QPointF sTopLeftCorner;
     double sWidth;
     double sHeight;
-    double offset;
-    double scalefactor;
+    double minHeight;
+    double maxHeight;
+    double boundary;
+
+//    QGraphicsPathItem * elevationItem; //not working!!!!!
+//    QGraphicsTextItem * displayminHeight;
+//    QGraphicsTextItem * displaymaxHeight;
 
     QNetworkAccessManager* networkManager;
     

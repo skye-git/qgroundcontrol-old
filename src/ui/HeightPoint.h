@@ -21,6 +21,7 @@ public:
     void setPos(qreal x, qreal y); //reimplemented so that the elevationPoint gets also the new Pos
 
     void setNumber(int const & value);
+    void refreshToolTip();
     //void updateWayoint();
 
     ElevationPoint* elevationPoint;
