@@ -17,8 +17,22 @@ Trajectory::Trajectory()
 
 QPolygonF* Trajectory::getPolyXY()
 {
-    qDebug() << "Return a polygon for" << x.size() << "Points," << "Resolution =" << splineResolution << "Poygonpoints = " << interpolPolyXY.size();
+    qDebug() << "Return a polygon for" << x.size() << "Points," << "Resolution =" << splineResolution << "Polygonpoints = " << interpolPolyXY.size();
     return &interpolPolyXY;
+}
+
+QPolygonF* Trajectory::getPolyXY(int from, int to)
+{
+    qDebug() << "Return a partial polygon from" << from << "to" << to;
+    if (interpolPolyXY.size() > to)
+    {
+        interpolPolyXYpart = interpolPolyXY.mid(from, to - from + 1);
+    }
+    else
+    {
+        interpolPolyXYpart.clear();
+    }
+    return &interpolPolyXYpart;
 }
 
 void Trajectory::setWPList(QVector<Waypoint *> wpList)

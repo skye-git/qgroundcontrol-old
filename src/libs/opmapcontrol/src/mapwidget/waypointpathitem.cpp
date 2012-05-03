@@ -23,7 +23,7 @@ WaypointPathItem::WaypointPathItem(QPolygonF* poly, QColor color, mapcontrol::Ma
         internals::PointLatLng pointLatLong;
         double newX = poly->at(i).x();
         double newY = poly->at(i).y();
-        qDebug() << "CONSTRUCTOR Point" << i << "of Polygon at" << newX << newY;
+//        qDebug() << "CONSTRUCTOR Point" << i << "of Polygon at" << newX << newY;
         pointLatLong.SetLat(newX);
         pointLatLong.SetLng(newY);
         core::Point localPoint = map->FromLatLngToLocal(pointLatLong);

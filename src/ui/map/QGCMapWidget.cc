@@ -5,6 +5,7 @@
 #include "MAV2DIcon.h"
 #include "Waypoint2DIcon.h"
 #include "UASWaypointManager.h"
+#include "SkyeMAV.h"
 
 QGCMapWidget::QGCMapWidget(QWidget *parent) :
     mapcontrol::OPMapWidget(parent),
@@ -286,6 +287,9 @@ void QGCMapWidget::updateGlobalPosition()
         if (followUAVEnabled && system->getUASID() == followUAVID) SetCurrentPosition(pos_lat_lon);
         // Convert from radians to degrees and apply
         uav->SetUAVHeading((system->getYaw()/M_PI)*180.0f);
+
+        // Update trajectory
+        updateWaypointList(system->getUASID());         // Code Add MA (03.05.2012)
     }
 }
 
@@ -531,15 +535,22 @@ void QGCMapWidget::updateWaypoint(int uas, Waypoint* wp)
                 }
 
                 // Beginn Code MA (01.05.2012) ----------------------------
-                Trajectory *currTrajectory = currWPManager->getEditableTrajectory();
-                QGraphicsPathItem* path = new mapcontrol::WaypointPathItem(currTrajectory->getPolyXY(), QColor(Qt::blue), map);
-                // Add path to waypointLines group so it will be destroyed afterwards
-                QGraphicsItemGroup* group = waypointLines.value(uas, NULL);
-                if (group)
+                qDebug() << "updateWaypoint";
+                SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uasInstance);
+                if (mav)
                 {
-                    group->addToGroup(path);
-                    group->setParentItem(map);
-                }
+                    Trajectory *currTrajectory = currWPManager->getEditableTrajectory();
+                    QGraphicsPathItem* path = new mapcontrol::WaypointPathItem(currTrajectory->getPolyXY(0, mav->getCurrentTrajectoryStamp()), QColor(Qt::blue), map);
+                    QGraphicsPathItem* pathRemaining = new mapcontrol::WaypointPathItem(currTrajectory->getPolyXY(mav->getCurrentTrajectoryStamp(), currTrajectory->getPolyXY()->size() - 1), QColor(Qt::yellow), map);
+                    // Add path to waypointLines group so it will be destroyed afterwards
+                    QGraphicsItemGroup* group = waypointLines.value(uas, NULL);
+                    if (group)
+                    {
+                        group->addToGroup(path);
+                        group->addToGroup(pathRemaining);
+                        group->setParentItem(map);
+                    }
+                }else qDebug() << "updateWaypoint with invalid uas";
                 // Ende Code MA (01.05.2012) ------------------------------
             }
             else
@@ -673,14 +684,32 @@ void QGCMapWidget::updateWaypointList(int uas)
         }
 
         // Beginn Code MA (01.05.2012) ----------------------------
-        Trajectory *currTrajectory = currWPManager->getEditableTrajectory();
-        QGraphicsPathItem* path = new mapcontrol::WaypointPathItem(currTrajectory->getPolyXY(), QColor(Qt::blue), map);
-        // Add path to waypointLines group so it will be destroyed afterwards
-        if (group)
+//        Trajectory *currTrajectory = currWPManager->getEditableTrajectory();
+//        QGraphicsPathItem* path = new mapcontrol::WaypointPathItem(currTrajectory->getPolyXY(), QColor(Qt::blue), map);
+//        // Add path to waypointLines group so it will be destroyed afterwards
+//        if (group)
+//        {
+//            group->addToGroup(path);
+//            group->setParentItem(map);
+//        }
+
+        qDebug() << "updateWaypointList";
+        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uasInstance);
+        if (mav)
         {
-            group->addToGroup(path);
-            group->setParentItem(map);
+            Trajectory *currTrajectory = currWPManager->getEditableTrajectory();
+            QGraphicsPathItem* path = new mapcontrol::WaypointPathItem(currTrajectory->getPolyXY(0, mav->getCurrentTrajectoryStamp()), QColor(Qt::blue), map);
+            QGraphicsPathItem* pathRemaining = new mapcontrol::WaypointPathItem(currTrajectory->getPolyXY(mav->getCurrentTrajectoryStamp(), currTrajectory->getPolyXY()->size() - 1), QColor(Qt::yellow), map);
+            // Add path to waypointLines group so it will be destroyed afterwards
+            QGraphicsItemGroup* group = waypointLines.value(uas, NULL);
+            if (group)
+            {
+                group->addToGroup(path);
+                group->addToGroup(pathRemaining);
+                group->setParentItem(map);
+            }
         }
+        else qDebug() << "updateWaypointList with invalid uas";
         // Ende Code MA (01.05.2012) ------------------------------
     }
 }

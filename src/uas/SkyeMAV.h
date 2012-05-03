@@ -24,6 +24,8 @@ public:
     QImage getImage();
     /** @brief Get mode */
     uint8_t getMode();
+    /** @brief */
+    int getCurrentTrajectoryStamp() { return currentTrajectoryStamp; }
 
 public slots:
     /** @brief Set the specific airframe type */

@@ -16,6 +16,11 @@ public:
     QPainterPath getPathXY();
     /** @brief Returns a pointer to polygon of trajectory in xy plane */
     QPolygonF* getPolyXY();
+    /** @brief Returns a pointer to polygon of part of trajectory in xy plane
+      * @param from Element position of first point
+      * @param to Element position of last point
+      */
+    QPolygonF* getPolyXY(int from, int to);
 
 
 protected:
@@ -29,6 +34,7 @@ protected:
     QVector<double> interpolY;
     QVector<double> interpolZ;
     QPolygonF interpolPolyXY;
+    QPolygonF interpolPolyXYpart;
 
     /** @brief Get cubic spline interpolation
       * @param points Pointer to list of points

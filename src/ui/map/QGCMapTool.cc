@@ -25,6 +25,15 @@ QGCMapTool::QGCMapTool(QWidget *parent) :
     connect(ui->Ring, SIGNAL(xValuechanged(double)), ui->doubleSpinBox_x, SLOT(setValue(double)));//Code AL (25.03.12)
     connect(ui->Ring, SIGNAL(yValuechanged(double)), ui->doubleSpinBox_y, SLOT(setValue(double)));
     connect(ui->Ring, SIGNAL(zValuechanged(double)), ui->doubleSpinBox_z, SLOT(setValue(double)));
+    ui->horizontalLayoutWidget->hide();
+    ui->horizontalLayoutWidget_2->hide();
+    ui->horizontalLayoutWidget_3->hide();
+//    ui->label_x->hide();
+//    ui->label_y->hide();
+//    ui->label_z->hide();
+//    ui->doubleSpinBox_x->hide();
+//    ui->doubleSpinBox_y->hide();
+//    ui->doubleSpinBox_z->hide();
     connect(ui->Ring, SIGNAL(valueMapRingChanged(double,double,double)),this,SLOT(transmitMapRingvalues(double,double,double)));//Ende
 
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));//Code MA (23.04.2012)

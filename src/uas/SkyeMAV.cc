@@ -441,7 +441,8 @@ void SkyeMAV::followTrajectory()
             if ( (deltaX*deltaX + deltaY*deltaY) < 0.0001*0.0001 )
             {
                 qDebug() << "REACHED POINT" << currentTrajectoryStamp << "OF TRAJECTORY";
-                currentTrajectoryStamp++;
+                if (this->waypointManager.getEditableTrajectory()->getPolyXY()->size() > currentTrajectoryStamp + 1)
+                    currentTrajectoryStamp++;
             }
         }
     }
