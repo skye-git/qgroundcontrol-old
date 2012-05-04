@@ -6,8 +6,22 @@
 
 ElevationPoint::ElevationPoint(HeightProfile*parent, QColor color)
     : parent(parent),
-      color(color)
+      color(color),
+      elevation(0)
 {
+    setFlag(ItemStacksBehindParent);
+    refreshToolTip();
+}
+
+void ElevationPoint::refreshToolTip()
+{
+    setToolTip(QString("Elevation Point\nAltitude: %1 m (MSL)").arg(QString::number(elevation)));
+}
+
+void ElevationPoint::setPos(qreal x, qreal y)
+{
+    QGraphicsItem::setPos(x,y);
+    refreshToolTip();
 }
 
 QRectF ElevationPoint::boundingRect() const

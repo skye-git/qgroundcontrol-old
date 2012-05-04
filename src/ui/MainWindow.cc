@@ -1351,7 +1351,7 @@ void MainWindow::setActiveUAS(UASInterface* uas)
     if (tmp) {
         disconnect(this, SIGNAL(valueMouseChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
         disconnect(this, SIGNAL(valueKeyboardChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
-        disconnect(this->mapWidget, SIGNAL(valueTouchInputChanged(double, double, double, double, double, double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));// Beginn und Ende Code AL (26.03.12)
+        disconnect(this, SIGNAL(valueTouchInputChanged(double, double, double, double, double, double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));// Beginn und Ende Code AL (26.03.12)
     }
 
     tmp = dynamic_cast<SkyeMAV*>(uas);
@@ -1359,9 +1359,6 @@ void MainWindow::setActiveUAS(UASInterface* uas)
         connect(this, SIGNAL(valueMouseChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
         connect(this, SIGNAL(valueKeyboardChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
         connect(this, SIGNAL(valueTouchInputChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
-
-        HUD *headUpDockWidgetHelper = dynamic_cast<HUD*>(headUpDockWidget->widget());                                                                                                                       //Beginn Ende Code AL (10.04.12)
-        connect(headUpDockWidgetHelper, SIGNAL(valueTouchInputChanged(double, double, double, double, double, double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));// Beginn und Ende Code AL (10.04.12)
     }
 #endif // MAVLINK_ENABLED_SKYE      // Ende Code MA (27.02.2012) ---------------------------
 }

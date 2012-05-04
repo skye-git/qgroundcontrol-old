@@ -11,11 +11,16 @@ class ElevationPoint : public QGraphicsObject
 public:
     ElevationPoint(HeightProfile* parent, QColor color);
 
+    void refreshToolTip();
+
+    void setPos(qreal x, qreal y);
+
     QRectF boundingRect() const;
     QPainterPath shape() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
     QColor color;
+    double elevation;
 
 protected:
 //    Waypoint* wp;

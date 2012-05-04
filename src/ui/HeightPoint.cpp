@@ -17,10 +17,8 @@ HeightPoint::HeightPoint(HeightProfile* parent, Waypoint* wp, QColor color, int 
     elevationPoint = new ElevationPoint(parent,Qt::red);
     setNumber(listindex);
     setFlag(ItemIsMovable);
-    //setParent(parent);
+    refreshToolTip();
 
-    //connect waypoint and this item
-    //connect(this, SIGNAL(move(double)), wp, SLOT(setAltitude(double)));
     connect(wp, SIGNAL(changed(Waypoint*)), this, SLOT(updateHeightPoint(Waypoint*)));
 }
 
@@ -72,6 +70,7 @@ void HeightPoint::setPos(qreal x, qreal y)
 {
     elevationPoint->setPos(x, elevationPoint->y());
     QGraphicsItem::setPos(x,y);
+    refreshToolTip();
 }
 
 void HeightPoint::setNumber(const int &value)
@@ -80,9 +79,16 @@ void HeightPoint::setNumber(const int &value)
     this->update();
 }
 
+void HeightPoint::refreshToolTip()
+{
+    setToolTip(QString("WayPoint Id: %1\nAltitude: %2 m (MSL)\noverGround %3 m").arg(QString::number(number)).arg(QString::number(this->wp->getAltitude())).arg(QString::number(this->wp->getAltitude()-this->elevationPoint->elevation)));
+}
+
 void HeightPoint::updateHeightPoint(Waypoint *_wp)
 {
-    this->setY(-(_wp->getAltitude()));
+    //this->setY(-(_wp->getAltitude()));
+    //this->setY(HeightProfile::fromAltitudeToScene(_wp->getAltitude()));
+    this->setY(parent->fromAltitudeToScene(_wp->getAltitude()));
 }
 
 
@@ -97,7 +103,9 @@ void HeightPoint::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     update();
     QGraphicsItem::mouseReleaseEvent(event);
-    wp->setAltitude(-(this->y()));
+    //wp->setAltitude(-(this->y()));
+    //wp->setAltitude(HeightProfile::fromSceneToAltitude(this->y()));
+    wp->setAltitude(parent->fromSceneToAltitude(this->y()));
     //emit move(-(this->y()));
 }
 
