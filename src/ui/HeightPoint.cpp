@@ -107,6 +107,7 @@ void HeightPoint::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     //wp->setAltitude(HeightProfile::fromSceneToAltitude(this->y()));
     wp->setAltitude(parent->fromSceneToAltitude(this->y()));
     //emit move(-(this->y()));
+    refreshToolTip();
 }
 
 void HeightPoint::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
