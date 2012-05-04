@@ -28,7 +28,8 @@ MAVLinkDecoder::MAVLinkDecoder(MAVLinkProtocol* protocol, QObject *parent) :
     messageFilter.insert(MAVLINK_MSG_ID_MISSION_COUNT, false);
     messageFilter.insert(MAVLINK_MSG_ID_MISSION_ACK, false);
     messageFilter.insert(MAVLINK_MSG_ID_DATA_STREAM, false);
-    #ifdef MAVLINK_ENABLED_PIXHAWK
+    #if defined MAVLINK_ENABLED_PIXHAWK || defined MAVLINK_ENABLED_SKYE
+    qDebug() << "Filtering MAVLINK_MSG_ID_ENCAPSULATED_DATA and MAVLINK_MSG_ID_DATA_TRANSMISSION_HANDSHAKE in MAVLinkDecoder";
     messageFilter.insert(MAVLINK_MSG_ID_ENCAPSULATED_DATA, false);
     messageFilter.insert(MAVLINK_MSG_ID_DATA_TRANSMISSION_HANDSHAKE, false);
     #endif
@@ -39,12 +40,11 @@ MAVLinkDecoder::MAVLinkDecoder(MAVLinkProtocol* protocol, QObject *parent) :
     textMessageFilter.insert(MAVLINK_MSG_ID_NAMED_VALUE_FLOAT, false);
     textMessageFilter.insert(MAVLINK_MSG_ID_NAMED_VALUE_INT, false);
 
-//    connect(protocol, SIGNAL(messageReceived(LinkInterface*,mavlink_message_t)), this, SLOT(receiveMessage(LinkInterface*,mavlink_message_t)));
+    connect(protocol, SIGNAL(messageReceived(LinkInterface*,mavlink_message_t)), this, SLOT(receiveMessage(LinkInterface*,mavlink_message_t)));
 }
 
 void MAVLinkDecoder::receiveMessage(LinkInterface* link,mavlink_message_t message)
 {
-    qDebug() << "MavlinkDecoder active and received message";
     Q_UNUSED(link);
     memcpy(receivedMessages+message.msgid, &message, sizeof(mavlink_message_t));
 
