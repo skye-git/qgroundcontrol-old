@@ -429,25 +429,75 @@ void SkyeMAV::followTrajectory()
     if (mode == MAV_MODE_HALF_AUTOMATIC_ARMED)
     {
         qDebug() << "SkyeMAV::followTrajectory";
-        QPolygonF* poly = this->waypointManager.getEditableTrajectory()->getPolyXY();
-        if (!poly->isEmpty())
-        {
-            double k_p = 60.0;
-            double deltaX = poly->at(currentTrajectoryStamp).x() - latitude;
-            double deltaY = poly->at(currentTrajectoryStamp).y() - longitude;
-            qDebug() << "Following polygon point" << currentTrajectoryStamp << "deltaX is" << deltaX << "deltaY is" << deltaY;
-            if (deltaX > 0.01) deltaX = 0.01;
-            if (deltaX < -0.01) deltaX = -0.01;
-            if (deltaY > 0.01) deltaY = 0.01;
-            if (deltaY < -0.01) deltaY = -0.01;
-            sendDirectControlCommands(k_p * deltaX, k_p * deltaY, 0, 0, 0, 0);
+        QVector<double> trajX;
+        QVector<double> trajY;
+        QVector<double> trajZ;
+        waypointManager.getEditableTrajectory()->getVector(trajX, trajY, trajZ);
+//if (!(waypointManager.getEditableTrajectory()->getVector(trajX, trajY, trajZ)));
+//        {
+//            qDebug() << "SkyeMAV: Trajectory empty or not valid";
+//            return;
+//        }
 
-            if ( (deltaX*deltaX + deltaY*deltaY) < 0.0001*0.0001 )
-            {
-                qDebug() << "REACHED POINT" << currentTrajectoryStamp << "OF TRAJECTORY";
-                if (this->waypointManager.getEditableTrajectory()->getPolyXY()->size() > currentTrajectoryStamp + 1)
-                    currentTrajectoryStamp++;
-            }
+        deltaLatLngAlt[0] = trajX.value(currentTrajectoryStamp) - latitude;
+        deltaLatLngAlt[1] = trajY.value(currentTrajectoryStamp) - longitude;
+        deltaLatLngAlt[2] = - (trajZ.value(currentTrajectoryStamp) - altitude) / 10000000.0;
+        // FIXME TODO: Translate to local coordinates
+        deltaNorm = qSqrt(deltaLatLngAlt[0]*deltaLatLngAlt[0] + deltaLatLngAlt[1]*deltaLatLngAlt[1] + deltaLatLngAlt[2]+deltaLatLngAlt[2]);
+        qDebug() << "Follows point" << currentTrajectoryStamp << "deltaLat" << deltaLatLngAlt[0] << "deltaLng" << deltaLatLngAlt[1] << "deltaAlt" << deltaLatLngAlt[2] << "deltaNorm" << deltaNorm << "altitude" << altitude;
+        if (deltaNorm > 0.0005)
+        {
+            for (int i = 0; i < 3; i++)
+                deltaLatLngAlt[i] = deltaLatLngAlt[i]/deltaNorm * 0.0005;
+        }
+        static double *deltaCam = new double[3];
+        InertialToCamera(deltaLatLngAlt, deltaCam);
+
+        static double k_p = 50.0;
+        sendDirectControlCommands(k_p * deltaCam[0],
+                                  k_p * deltaCam[1],
+                                  k_p * deltaCam[2],
+                                  0, 0, 0);
+
+        if ( deltaNorm < 0.0001 )
+        {
+            qDebug() << "REACHED POINT" << currentTrajectoryStamp << "OF TRAJECTORY";
+            if (this->waypointManager.getEditableTrajectory()->getPolyXY()->size() > currentTrajectoryStamp + 1)
+                currentTrajectoryStamp++;
         }
     }
+}
+
+void SkyeMAV::InertialToCamera(const double *inertFrame, double *camFrame)
+{
+    updateTrigonometry();
+    int i = 0;
+    int k = 0;
+    for (i = 0; i<3; i++)
+    {
+        camFrame[i] = 0;
+        for (k = 0; k<3; k++)
+        {
+            camFrame[i] += fromItoC[i*3 + k] * inertFrame[k];
+        }
+    }
+}
+
+void SkyeMAV::updateTrigonometry()
+{
+    cosPhi = qCos(roll);
+    sinPhi = qSin(roll);
+    cosTheta = qCos(pitch);
+    sinTheta = qSin(pitch);
+    cosPsi = qCos(yaw);
+    sinPsi = qSin(yaw);
+    fromItoC[0] = cosTheta*cosPsi;
+    fromItoC[1] = cosTheta*sinPsi;
+    fromItoC[2] = -sinTheta;
+    fromItoC[3] = sinPhi*sinTheta*cosPsi - cosPhi*sinPsi;
+    fromItoC[4] = sinPhi*sinTheta*sinPsi + cosPhi*cosPsi;;
+    fromItoC[5] = sinPhi*cosTheta;
+    fromItoC[6] = cosPhi*sinTheta*cosPsi + sinPhi*sinPsi;
+    fromItoC[7] = cosPhi*sinTheta*sinPsi - sinPhi*cosPsi;
+    fromItoC[8] = cosPhi*cosTheta;
 }

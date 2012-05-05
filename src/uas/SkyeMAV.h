@@ -3,6 +3,7 @@
 
 #include <QPolygonF>
 #include <QTimer>
+#include <QVector>
 #include "UAS.h"
 #include "BluefoxReconfigure.h"
 
@@ -26,6 +27,11 @@ public:
     uint8_t getMode();
     /** @brief */
     int getCurrentTrajectoryStamp() { return currentTrajectoryStamp; }
+
+private:
+    /** @brief Transforms a Vector from inertial to uas coordinates */
+    void InertialToCamera(const double *inertFrame, double *camFrame);
+    void updateTrigonometry();
 
 public slots:
     /** @brief Set the specific airframe type */
@@ -110,6 +116,17 @@ protected:
 
     int currentTrajectoryStamp;
     QTimer trajectoryTimer;
+
+    double deltaLatLngAlt[3];
+    double deltaNorm;
+
+    double cosPhi;
+    double sinPhi;
+    double cosTheta;
+    double sinTheta;
+    double cosPsi;
+    double sinPsi;
+    double fromItoC[9];
 };
 
 #endif // SKYEMAV_H

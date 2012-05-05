@@ -6,14 +6,21 @@
 #include <QGraphicsScene>
 #include "Waypoint.h"
 #include "qwt_spline.h"
+#include "qwt_math.h"
 
 class Trajectory : public QObject
 {
     Q_OBJECT
 public:
     Trajectory();
-    /** @brief Returns a path of trajectory in xy plane */
-    QPainterPath getPathXY();
+    /** @brief Returns a pointer to interpolated trajectory components */
+    bool getVector(QVector<double> &trajX, QVector<double> &trajY, QVector<double> &trajZ);
+    /** @brief Returns a pointer to interpolated x trajectory */
+    bool getVectorX(QVector<double>* trajX);
+    /** @brief Returns a pointer to interpolated y trajectory */
+    bool getVectorY(QVector<double>* trajY);
+    /** @brief Returns a pointer to interpolated z trajectory */
+    bool getVectorZ(QVector<double>* trajZ);
     /** @brief Returns a pointer to polygon of trajectory in xy plane */
     QPolygonF* getPolyXY();
     /** @brief Returns a pointer to polygon of part of trajectory in xy plane
@@ -33,14 +40,18 @@ protected:
     QVector<double> interpolX;
     QVector<double> interpolY;
     QVector<double> interpolZ;
-    QPolygonF interpolPolyXY;
-    QPolygonF interpolPolyXYpart;
+    QPolygonF interpolPolyXY;           ///< Projection of interpolated trajectory to XY plane
+    QPolygonF interpolPolyXYpart;       // FIXME: Blinking is caused by pointer..
+    QVector<double> interpolDeltaXY;    ///< Distance between two interpolated points projected to XY plane
 
     /** @brief Get cubic spline interpolation
       * @param points Pointer to list of points
       * @param resolution Number of calculated points per waypoint
       */
     QVector<double> interpolate(const QVector<double> *points, int resolution);
+    /** @brief Get euler norm delta on 2D space */
+    QVector<double> getDeltaNorm(const QVector<double> *x, const QVector<double> *y);
+
 
 public slots:
 //    /** @brief Update trajectory of each wp

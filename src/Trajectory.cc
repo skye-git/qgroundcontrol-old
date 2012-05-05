@@ -15,6 +15,52 @@ Trajectory::Trajectory()
     splineResolution = 15;
 }
 
+bool Trajectory::getVector(QVector<double> &trajX, QVector<double> &trajY, QVector<double> &trajZ)
+{
+    if ( interpolX.isEmpty() || interpolY.isEmpty() || interpolZ.isEmpty())
+    {
+        qDebug() << "isEmpty" << interpolX.isEmpty() << interpolY.isEmpty() << interpolZ.isEmpty();
+        return false;
+    }
+    trajX = interpolX;
+    trajY = interpolY;
+    trajZ = interpolZ;
+    return true;
+}
+
+bool Trajectory::getVectorX(QVector<double>* trajX)
+{
+    if ( interpolX.isEmpty() )
+    {
+        return false;
+    }
+
+    trajX = &interpolX;
+    return true;
+}
+
+bool Trajectory::getVectorY(QVector<double>* trajY)
+{
+    if ( interpolY.isEmpty() )
+    {
+        return false;
+    }
+
+    trajY = &interpolY;
+    return true;
+}
+
+bool Trajectory::getVectorZ(QVector<double>* trajZ)
+{
+    if ( interpolZ.isEmpty() )
+    {
+        return false;
+    }
+
+    trajZ = &interpolZ;
+    return true;
+}
+
 QPolygonF* Trajectory::getPolyXY()
 {
 //    qDebug() << "Return a polygon for" << x.size() << "Points," << "Resolution =" << splineResolution << "Polygonpoints = " << interpolPolyXY.size();
@@ -53,7 +99,6 @@ void Trajectory::setWPList(QVector<Waypoint *> wpList)
     {
         generateSplines();
     }
-//    updateWPList(wpList);     // FIXME
 }
 
 void Trajectory::addWP(Waypoint *wp)
@@ -78,6 +123,7 @@ void Trajectory::generateSplines(uint resolution)
         interpolX = interpolate(&x, resolution);
         interpolY = interpolate(&y, resolution);
         interpolZ = interpolate(&z, resolution);
+        qDebug() << "generated Splines length" << interpolX.size() << interpolY.size() << interpolZ.size();
 //    }
 
     interpolPolyXY.clear();
@@ -126,4 +172,26 @@ QVector<double> Trajectory::interpolate(const QVector<double> *points, int resol
 //        qDebug() << "interpolate: Interpolated point" << x << interpolatedPoints.last();
     }
     return interpolatedPoints;
+}
+
+QVector<double> Trajectory::getDeltaNorm(const QVector<double> *x, const QVector<double> *y)
+{
+    // Check if input vectors are valid
+    if (x->size() != y->size())
+    {
+        qDebug() << "Invalid input vectors for delta norm calculation";
+        return QVector<double>();
+    }
+
+    double deltaX;
+    double deltaY;
+
+    QVector<double> deltaNorm(x->size() - 1);
+    for (int i=0; i<deltaNorm.size(); i++)
+    {
+        deltaX = x->value(i+1) - x->value(i);
+        deltaY = y->value(i+1) - y->value(i);
+        deltaNorm[i] = qwtSqr(deltaX*deltaX + deltaY*deltaY);
+    }
+    return deltaNorm;
 }
