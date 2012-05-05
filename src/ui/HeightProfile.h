@@ -67,7 +67,7 @@ protected:
 
     void wheelEvent(QWheelEvent *event);
     void drawBackground(QPainter *painter, const QRectF &rect);
-    void drawElevation();
+    void updateElevationItem();
     void scaleView(qreal scaleFactor);
 
     UASWaypointManager* currWPManager; ///< The current waypoint manager
@@ -85,9 +85,9 @@ protected:
     double maxHeight;
     double boundary;
 
-//    QGraphicsPathItem * elevationItem; //not working!!!!!
-//    QGraphicsTextItem * displayminHeight;
-//    QGraphicsTextItem * displaymaxHeight;
+    QGraphicsPolygonItem * elevationItem; //not working!!!!!
+    QGraphicsTextItem * displayminHeight;
+    QGraphicsTextItem * displaymaxHeight;
 
     QNetworkAccessManager* networkManager;
     
