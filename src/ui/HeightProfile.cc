@@ -2,6 +2,7 @@
 
 #include <QtGui>
 #include <math.h>
+#include <QVector3D>
 
 #include "UASManager.h"
 #include "HeightPoint.h"
@@ -10,6 +11,7 @@
 
 HeightProfile::HeightProfile(QWidget *parent) :
     QGraphicsView(parent),
+    getelevationwascalled(false),
     currWPManager(NULL),
     firingWaypointChange(NULL),
     profileInitialized(false)
@@ -60,6 +62,8 @@ HeightProfile::HeightProfile(QWidget *parent) :
     //Network Manger
     networkManager = new QNetworkAccessManager();
     connect(networkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
+
+    emit setinfoLabelText(QString("set meters over ground"));
 
 }
 
@@ -234,7 +238,7 @@ void HeightProfile::updateWaypoint(int uas, Waypoint* wp)
                     if(wp->getAltitude() < minHeight)
                     {
                         wp->setAltitude(minHeight);//prevents the Height Points from disappearing in the scene
-                        wphp->setY(fromAltitudeToScene(minHeight));
+                        wphp->setY(fromAltitudeToScene(wp->getAltitude()));
                     }
                     else
                     {
@@ -264,7 +268,12 @@ void HeightProfile::updateWaypoint(int uas, Waypoint* wp)
                 updateWaypointList(uas);
             }
         }
-        //arrangeHeightPoints(); seems to produce a crash
+        arrangeHeightPoints();
+        if(getelevationwascalled)
+        {
+            emit setinfoLabelText(QString("The elevation profile is no more up to date."));
+        }
+
     }
 }
 
@@ -319,7 +328,6 @@ void HeightProfile::updateWaypointList(int uas)
             // Update / add only if new
             if (!waypointsToHeightPoints.contains(wp)) updateWaypoint(uas, wp);
         }
-        arrangeHeightPoints();
 
     }
 }
@@ -330,26 +338,75 @@ void HeightProfile::arrangeHeightPoints()
     QVector<Waypoint* > wps = currWPManager->getGlobalFrameAndNavTypeWaypointList();
     int number = wps.size();
     qDebug() << "WPVector Size is " << number;
-    qreal distance = sWidth/(number+1);
-    int i = 1;
 
-    foreach (Waypoint* wp, wps)
+    QVector<qreal> angleToFirst(number);
+    if(number != 0)
     {
-        HeightPoint* currHp = waypointsToHeightPoints.value(wp, NULL);
-        bool ishp = dynamic_cast<HeightPoint*>(currHp);
-        if(ishp)
+        angleToFirst[0] = 0;
+    }
+    for(int i = 1; i < number; i++)
+    {
+        HeightPoint* currHp0 = waypointsToHeightPoints.value(wps[i-1], NULL);
+        bool ishp0 = dynamic_cast<HeightPoint*>(currHp0);
+        HeightPoint* currHp1 = waypointsToHeightPoints.value(wps[i], NULL);
+        bool ishp1 = dynamic_cast<HeightPoint*>(currHp1);
+        if(ishp0 && ishp1)
         {
-            currHp->setPos((i*distance), fromAltitudeToScene(wp->getAltitude()));
-            currHp->elevationPoint->setPos((i*distance), fromAltitudeToScene(currHp->elevationPoint->elevation));
+            angleToFirst[i] = angleToFirst[i-1] + getAngle(wps[i-1], wps[i]);
         }
         else
         {
-            qDebug() << "crazy error #43 arrangeHeightPoints was called too early!!!";
+            return; //essential!!! Otherwise setPos is called, although the waypoint has not yet a HeightPoint!
+           qDebug() << "crazy error #43 arrangeHeightPoints was called too early. Before all updateWaypoints call!!!";
         }
-        i++;
+
+    }
+    if(number == 1)
+    {
+        HeightPoint* currHp = waypointsToHeightPoints.value(wps[0], NULL);
+        currHp->setPos(sWidth/2, fromAltitudeToScene(wps[0]->getAltitude()));
+        currHp->elevationPoint->setPos(sWidth/2, fromAltitudeToScene(currHp->elevationPoint->elevation));
+    }
+    else
+    {
+        for(int j = 0; j < number; j++)
+        {
+            HeightPoint* currHp = waypointsToHeightPoints.value(wps[j], NULL);
+            currHp->setPos((angleToFirst[j]/angleToFirst[number-1])*(sWidth-2*boundary)+boundary, fromAltitudeToScene(wps[j]->getAltitude()));
+            currHp->elevationPoint->setPos((angleToFirst[j]/angleToFirst[number-1])*(sWidth-2*boundary)+boundary, fromAltitudeToScene(currHp->elevationPoint->elevation));
+
+        }
     }
     //updateElevationItem(); //!!!!seems to produce a crash, if called too early. Should anyways only be called after replyfinished!
 
+
+}
+
+qreal HeightProfile::getAngle(Waypoint *wp1, Waypoint *wp2)
+{
+    HeightPoint* currHp1 = waypointsToHeightPoints.value(wp1, NULL);
+    HeightPoint* currHp2 = waypointsToHeightPoints.value(wp2, NULL);
+    bool ishp1 = dynamic_cast<HeightPoint*>(currHp1);
+    bool ishp2 = dynamic_cast<HeightPoint*>(currHp2);
+    if(ishp1 & ishp2)
+    {
+        qreal lat1 = wp1->getLatitude();
+        qreal lon1 = wp1->getLongitude();
+        qreal lat2 = wp2->getLatitude();
+        qreal lon2 = wp2->getLongitude();
+        QVector3D vec1(cos(lat1)*sin(lon1), cos(lat1)*cos(lon1), sin(lat1));
+        QVector3D vec2(cos(lat2)*sin(lon2), cos(lat2)*cos(lon2), sin(lat2));
+        qreal alpha = acos(QVector3D::dotProduct(vec1, vec2));
+
+        return alpha;
+
+    }
+    else
+    {
+        qDebug() << "crazy error (return must have been removed in arrangeHeightPoints!) should first crash in arrangeHeightPoints!!!";
+    }
+
+    return -1; //what value is best here ?
 }
 
 void HeightProfile::getElevationPoints()
@@ -368,10 +425,11 @@ void HeightProfile::getElevationPoints()
         }
         else
         {
-            qDebug() << "crazy error number 2 every crazy error should have made a crash before, amazing!!";
+            qDebug() << "basically unnecessary check, getElevationPoints() was called before all waypoints updates were made";
         }
     }
     networkManager->get(QNetworkRequest(constructUrl(wps)));
+    getelevationwascalled = true;
 }
 
 QUrl HeightProfile::constructUrl(QVector<Waypoint* > wps)
@@ -391,7 +449,7 @@ QUrl HeightProfile::constructUrl(QVector<Waypoint* > wps)
         }
         else
         {
-            qDebug() << "crazy error, not all waypoints in GlobalFrameAndNavTypeWaypointList have a height point,  replyFinished() won't work";
+            qDebug() << "crazy error, not all waypoints in GlobalFrameAndNavTypeWaypointList have a height point,  replyFinished() won't work, see Debug in elevationPoints";
         }
     }
     urlString = urlString.remove(urlString.lastIndexOf("|"),1);
@@ -428,12 +486,20 @@ void HeightProfile::replyFinished(QNetworkReply *reply)
                     double elevation = readout.toDouble();
                     //qDebug() << QString::number(elevation,'f', 7);
                     HeightPoint* currHp = waypointsToHeightPoints.value(wps[i], NULL);
-                    currHp->elevationPoint->elevation = elevation;
                     if(wps[i]->getAltitude() < elevation)
                     {
-                        wps[i]->setAltitude(elevation);
-                        qDebug() << "Altitude had to be adjusted to the Elevation: " << elevation;
+                        if((currHp->elevationPoint->elevation == 0) && wps[i]->getAltitude() < 100) //the number 100 is set arbitrarily
+                        {
+                            wps[i]->setAltitude(elevation + wps[i]->getAltitude()); //the idea is that the meters over ground are set before getelevation is called
+                            qDebug() << "Altitude had to be adjusted to the Elevation: " << wps[i]->getAltitude();
+                        }
+                        else
+                        {
+                            wps[i]->setAltitude(elevation);
+                            qDebug() << "Altitude had to be adjusted to the Elevation: " << wps[i]->getAltitude();
+                        }
                     }
+                    currHp->elevationPoint->elevation = elevation;
 
                     i++;
                 }
@@ -449,7 +515,7 @@ void HeightProfile::replyFinished(QNetworkReply *reply)
     }
     updateExtrema();
     this->update();
-    //updateElevationItem();
+    emit setinfoLabelText("The elevation profile is up to date");
 }
 
 void HeightProfile::updateExtrema()

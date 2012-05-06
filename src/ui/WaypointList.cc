@@ -86,6 +86,7 @@ WaypointList::WaypointList(QWidget *parent, UASInterface* uas) :
 
     //EDIT HEIGHT TAG //AL
     connect(m_ui->getElevationPoinsButton, SIGNAL(clicked()), m_ui->heightProfile, SLOT(getElevationPoints()));
+    connect(m_ui->heightProfile,SIGNAL(setinfoLabelText(QString)), m_ui->infoLabel,SLOT(setText(QString)));
 
 
     //VIEW TAB

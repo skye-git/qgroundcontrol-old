@@ -22,9 +22,13 @@ public:
 
 
     QGraphicsScene* scene;
+
+    //For Text Label
+    bool getelevationwascalled;
     
 signals:
     void wapointChanged(Waypoint*wp);
+    void setinfoLabelText(QString string);
 
 public:
     qreal fromAltitudeToScene(qreal altitude);
@@ -41,6 +45,8 @@ public slots:
     void updateWaypointList(int uas);
     /** @brief arrange the HeightPoints in the scene */
     void arrangeHeightPoints(); //Integrate perhaps in update slots...
+    /** @brief calculate the angle between two wp */
+    qreal getAngle(Waypoint* wp1, Waypoint *wp2);
     /** @brief get the Elevation for each HeightPoint in the scene */
     void getElevationPoints(); //Integrate perhaps in update slots...
     /** @brief construct the URL for the Elevation request */

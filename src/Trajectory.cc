@@ -99,6 +99,8 @@ void Trajectory::setWPList(QVector<Waypoint *> wpList)
     {
         generateSplines();
     }
+//    updateWPList(wpList);     // FIXME
+    qDebug()<< "reached before crash";//not reached if all wp deleted in the lines above sth. missing
 }
 
 void Trajectory::addWP(Waypoint *wp)
