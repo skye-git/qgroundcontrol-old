@@ -30,7 +30,7 @@ public:
 
 private:
     /** @brief Transforms a Vector from inertial to uas coordinates */
-    void InertialToCamera(const double *inertFrame, double *camFrame);
+    void InertialToCamera(const double inertFrame[3], double camFrame[3]);
     void updateTrigonometry();
 
 public slots:
@@ -84,6 +84,8 @@ protected:
     /** @brief Send a Assisted Control Command to MAV: */
     void sendAssistedControlCommands(double xVel, double yVel, double zVel, double xRot, double yRot, double zRot);
     /** @brief Send a Testphase Control Command to MAV: */
+    void sendHalfAutomaticControlCommands(double xVel, double yVel, double zVel, double xRot, double yRot, double zRot);
+    /** @brief Send a Testphase Control Command to MAV: */
     void sendTestphaseControlCommands(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 );
 
     int airframe;                   ///< The airframe type
@@ -118,6 +120,8 @@ protected:
     QTimer trajectoryTimer;
 
     double deltaLatLngAlt[3];
+    double deltaXYZ[3];
+    double deltaCam[3];
     double deltaNorm;
 
     double cosPhi;

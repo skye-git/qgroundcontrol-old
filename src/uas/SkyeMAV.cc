@@ -3,6 +3,9 @@
 #include "SkyeMAV.h"
 #include "UDPLink.h"
 
+#define QGC_EARTH_RADIUS 6367449.0
+#define QGC_COS_LATITUDE 0.67716
+
 SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
 UAS(mavlink, id),
 airframe(QGC_AIRFRAME_SKYE),
@@ -190,7 +193,7 @@ void SkyeMAV::setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrus
 void SkyeMAV::setManualControlCommands6DoF(double x , double y , double z , double a , double b, double c)
 {
 #ifdef MAVLINK_ENABLED_SKYE
-//    qDebug() << "Recent Mode: " << mode << ": " << getShortModeTextFor(mode);
+    qDebug() << "Recent Mode: " << mode << ": " << getShortModeTextFor(mode);
 
     //if (mode & MAV_MODE_FLAG_DECODE_POSITION_SAFETY)
     {
@@ -201,7 +204,14 @@ void SkyeMAV::setManualControlCommands6DoF(double x , double y , double z , doub
         }else if ((mode == MAV_MODE_ASSISTED_CONTROL_DISARMED) || (mode == MAV_MODE_ASSISTED_CONTROL_ARMED))
         {
             sendAssistedControlCommands(x, y, z, a, b, c);
-        }else{
+        }else if ((mode == MAV_MODE_HALF_AUTOMATIC_DISARMED) || (mode == MAV_MODE_HALF_AUTOMATIC_ARMED))
+        {
+            qDebug() << "set Rotation for HAC" << a << b << c;
+            manualXRot = a;
+            manualYRot = b;
+            manualZRot = c;
+        }else
+        {
             qDebug() << "6DOF MANUAL CONTROL: IGNORING COMMANDS: Set mode to MANUAL and CUSTOM to send 6 DoF Mouse commands!";
         }
     }
@@ -426,7 +436,7 @@ uint8_t SkyeMAV::getMode()
 
 void SkyeMAV::followTrajectory()
 {
-    if (mode == MAV_MODE_HALF_AUTOMATIC_ARMED)
+    if (mode == MAV_MODE_HALF_AUTOMATIC_ARMED || mode == MAV_MODE_HALF_AUTOMATIC_DISARMED)
     {
         qDebug() << "SkyeMAV::followTrajectory";
         QVector<double> trajX;
@@ -441,25 +451,38 @@ void SkyeMAV::followTrajectory()
 
         deltaLatLngAlt[0] = trajX.value(currentTrajectoryStamp) - latitude;
         deltaLatLngAlt[1] = trajY.value(currentTrajectoryStamp) - longitude;
-        deltaLatLngAlt[2] = - (trajZ.value(currentTrajectoryStamp) - altitude) / 10000000.0;
-        // FIXME TODO: Translate to local coordinates
-        deltaNorm = qSqrt(deltaLatLngAlt[0]*deltaLatLngAlt[0] + deltaLatLngAlt[1]*deltaLatLngAlt[1] + deltaLatLngAlt[2]+deltaLatLngAlt[2]);
-        qDebug() << "Follows point" << currentTrajectoryStamp << "deltaLat" << deltaLatLngAlt[0] << "deltaLng" << deltaLatLngAlt[1] << "deltaAlt" << deltaLatLngAlt[2] << "deltaNorm" << deltaNorm << "altitude" << altitude;
-        if (deltaNorm > 0.0005)
+        deltaLatLngAlt[2] = trajZ.value(currentTrajectoryStamp) - altitude;
+
+        // Translate to local coordinates
+        deltaXYZ[0] = deltaLatLngAlt[0] * 3.141592 / 180.0 * QGC_EARTH_RADIUS * QGC_COS_LATITUDE;
+        deltaXYZ[1] = deltaLatLngAlt[1] * 3.141592 / 180.0 * QGC_EARTH_RADIUS;
+        deltaXYZ[2] = deltaLatLngAlt[2];
+
+        deltaNorm = qSqrt(deltaXYZ[0]*deltaXYZ[0] + deltaXYZ[1]*deltaXYZ[1] + deltaXYZ[2]+deltaXYZ[2]);
+//        qDebug() << "Follows point" << currentTrajectoryStamp << "deltaLat" << deltaLatLngAlt[0] << "deltaLng" << deltaLatLngAlt[1] << "deltaAlt" << deltaLatLngAlt[2]<< "altitude" << altitude;
+        qDebug() << "deltaX" << deltaXYZ[0] << "deltaY" << deltaXYZ[1] << "deltaZ" << deltaXYZ[2] << "deltaNorm" << deltaNorm;
+
+        InertialToCamera(deltaXYZ, deltaCam);
+        qDebug() << "DeltaCam" << deltaCam[0] << deltaCam[1] << deltaCam[2];
+
+        if (mode & MAV_MODE_FLAG_SAFETY_ARMED)
         {
-            for (int i = 0; i < 3; i++)
-                deltaLatLngAlt[i] = deltaLatLngAlt[i]/deltaNorm * 0.0005;
+            if ((sensitivityFactorTrans * deltaNorm) < 0.2)
+            {
+                sendDirectControlCommands(deltaCam[0],
+                                          deltaCam[1],
+                                          deltaCam[2],
+                                          manualXRot, manualYRot, manualZRot);
+            } else {
+                qDebug() << "Send reduced Direct Control";
+                sendDirectControlCommands(0.2 / ((double)sensitivityFactorTrans * deltaNorm) * deltaCam[0],
+                                          0.2 / ((double)sensitivityFactorTrans * deltaNorm) * deltaCam[1],
+                                          0.2 / ((double)sensitivityFactorTrans * deltaNorm) * deltaCam[2],
+                                          manualXRot, manualYRot, manualZRot);
+            }
         }
-        static double *deltaCam = new double[3];
-        InertialToCamera(deltaLatLngAlt, deltaCam);
 
-        static double k_p = 50.0;
-        sendDirectControlCommands(k_p * deltaCam[0],
-                                  k_p * deltaCam[1],
-                                  k_p * deltaCam[2],
-                                  0, 0, 0);
-
-        if ( deltaNorm < 0.0001 )
+        if ( deltaNorm < 2.0 )
         {
             qDebug() << "REACHED POINT" << currentTrajectoryStamp << "OF TRAJECTORY";
             if (this->waypointManager.getEditableTrajectory()->getPolyXY()->size() > currentTrajectoryStamp + 1)
@@ -468,7 +491,7 @@ void SkyeMAV::followTrajectory()
     }
 }
 
-void SkyeMAV::InertialToCamera(const double *inertFrame, double *camFrame)
+void SkyeMAV::InertialToCamera(const double inertFrame[3], double camFrame[3])
 {
     updateTrigonometry();
     int i = 0;
@@ -500,4 +523,5 @@ void SkyeMAV::updateTrigonometry()
     fromItoC[6] = cosPhi*sinTheta*cosPsi + sinPhi*sinPsi;
     fromItoC[7] = cosPhi*sinTheta*sinPsi - sinPhi*cosPsi;
     fromItoC[8] = cosPhi*cosTheta;
+    qDebug() << "I to C" << fromItoC[0] << fromItoC[1] << fromItoC[2] << fromItoC[3] << fromItoC[4] << fromItoC[5] << fromItoC[6] << fromItoC[7] << fromItoC[8];
 }
