@@ -77,6 +77,7 @@ DirectControlWidget::~DirectControlWidget()
 
 void DirectControlWidget::showEvent(QShowEvent *event)
 {
+    Q_UNUSED(event);
     directControlShow();
 }
 

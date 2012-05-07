@@ -9,6 +9,13 @@
 #include <QXmlStreamReader>
 #include <QMessageBox>
 
+#ifndef QGC_EARTH_RADIUS
+#define QGC_EARTH_RADIUS 6367449.0
+#endif
+#ifndef M_PI
+#define M_PI 3.14159265359
+#endif
+
 HeightProfile::HeightProfile(QWidget *parent) :
     QGraphicsView(parent),
     getelevationwascalled(false),
@@ -52,12 +59,19 @@ HeightProfile::HeightProfile(QWidget *parent) :
     displayminHeight->setPos(sTopLeftCorner.x(), sTopLeftCorner.y()+sHeight-boundary-displayminHeight->boundingRect().height()/2);
 
 
+    //display dynamic items
     elevationItem = new QGraphicsPolygonItem();
     elevationItem->setFlag(QGraphicsItem::ItemStacksBehindParent);
     elevationItem->setBrush(QBrush(Qt::darkGreen));
     elevationItem->setFillRule(Qt::WindingFill);
     scene->addItem(elevationItem);
     elevationItem->setPos(0,0);
+
+    splineItem = new QGraphicsPathItem();
+    splineItem->setFlag(QGraphicsItem::ItemStacksBehindParent);
+    splineItem->setBrush(Qt::NoBrush);
+    scene->addItem(splineItem);
+    splineItem->setPos(0,0);
 
     //Network Manger
     networkManager = new QNetworkAccessManager();
@@ -202,7 +216,7 @@ void HeightProfile::updateWaypoint(int uas, Waypoint* wp)
 
             qDebug() << "UPDATING WAYPOINT" << wpindex << "IN HEIGHT PROFILE";
 
-            // Check if wp exists yet in map
+            // Check if wp exists yet in scene
             if (!waypointsToHeightPoints.contains(wp))
             {
                 // Create HeightPoint for new WP
@@ -217,23 +231,7 @@ void HeightProfile::updateWaypoint(int uas, Waypoint* wp)
                 scene->addItem(hp);
                 wp->setAltitude(maxHeight); //new waypoint should appear in scene!
 
-
-//                // Beginn Code MA (07.05.2012) ----------------------------
-//                SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uasInstance);
-//                if (mav)
-//                {
-//                    Trajectory *currTrajectory = currWPManager->getEditableTrajectory();
-//                    QGraphicsPathItem* path = new mapcontrol::WaypointPathItem(currTrajectory->getPolyXY(0, mav->getCurrentTrajectoryStamp()), QColor(Qt::red), map);
-//                    // Add path to waypointLines group so it will be destroyed afterwards
-//                    QGraphicsItemGroup* group = waypointLines.value(uas, NULL);
-//                    if (group)
-//                    {
-//                        group->addToGroup(path);
-//                        group->addToGroup(pathRemaining);
-//                        group->setParentItem(map);
-//                    }
-//                }else qDebug() << "HeightProfile::HupdateWaypoint with invalid uas";
-//                // Ende Code MA (07.05.2012) ------------------------------
+                updateSplineItem();//working!!!!?
             }
             else
             {
@@ -261,6 +259,7 @@ void HeightProfile::updateWaypoint(int uas, Waypoint* wp)
                     {
                         wphp->setY(fromAltitudeToScene(wp->getAltitude()));
                     }
+                    updateSplineItem();//working ??!!!-no seems to crash->move to updateWaypointlist
                 }
                 else
                 {
@@ -345,6 +344,7 @@ void HeightProfile::updateWaypointList(int uas)
             // Update / add only if new
             if (!waypointsToHeightPoints.contains(wp)) updateWaypoint(uas, wp);
         }
+        //updateSplineItem(); //working, but not frequent enough!
 
     }
 }
@@ -353,15 +353,16 @@ void HeightProfile::arrangeHeightPoints()
 {
     //get the Waypoints with the right frame
     QVector<Waypoint* > wps = currWPManager->getGlobalFrameAndNavTypeWaypointList();
+    int splineNumber = currWPManager->getEditableTrajectory()->getVectorSize();
+    int res = currWPManager->getEditableTrajectory()->getSplineResolution();
     int number = wps.size();
     qDebug() << "WPVector Size is " << number;
-
-    QVector<qreal> angleToFirst(number);
+    QVector<qreal> distanceToFirst(number);
     if(number != 0)
     {
-        angleToFirst[0] = 0;
+        distanceToFirst[0] = 0;
     }
-    for(int i = 1; i < number; i++)
+    for(int i = 1; i < number; i++) //number ==1 won't be processed!
     {
         HeightPoint* currHp0 = waypointsToHeightPoints.value(wps[i-1], NULL);
         bool ishp0 = dynamic_cast<HeightPoint*>(currHp0);
@@ -369,7 +370,19 @@ void HeightProfile::arrangeHeightPoints()
         bool ishp1 = dynamic_cast<HeightPoint*>(currHp1);
         if(ishp0 && ishp1)
         {
-            angleToFirst[i] = angleToFirst[i-1] + getAngle(wps[i-1], wps[i]);
+            if(splineNumber < (number-1)*res) // in this case no spline can be calculated! Trajectory.cc : interpol.clear()=?
+            {
+                distanceToFirst[i] = distanceToFirst[i-1] + getDistanceStraight(wps[i-1],wps[i]);
+            }
+            else
+            {
+
+                //qDebug() << "The  spline distance between the " << i-1 << "WP" << "and the " << i << "Wp is : "<< getDistanceSpline(i-1, i);
+                //qDebug() << "The  straight distance between the " << i-1 << "WP" << "and the " << i << "Wp is : "<< getDistanceStraight(wps[i-1], wps[i]);
+                distanceToFirst[i] = distanceToFirst[i-1] + getDistanceSpline(i-1, i);
+                //distanceToFirst[i] = distanceToFirst[i-1] + getDistanceStraight(wps[i-1],wps[i]);
+            }
+            //distanceToFirst[i] = distanceToFirst[i-1] + getDistanceStraight(wps[i-1],wps[i]);
         }
         else
         {
@@ -389,17 +402,16 @@ void HeightProfile::arrangeHeightPoints()
         for(int j = 0; j < number; j++)
         {
             HeightPoint* currHp = waypointsToHeightPoints.value(wps[j], NULL);
-            currHp->setPos((angleToFirst[j]/angleToFirst[number-1])*(sWidth-2*boundary)+boundary, fromAltitudeToScene(wps[j]->getAltitude()));
-            currHp->elevationPoint->setPos((angleToFirst[j]/angleToFirst[number-1])*(sWidth-2*boundary)+boundary, fromAltitudeToScene(currHp->elevationPoint->elevation));
+            currHp->setPos((distanceToFirst[j]/distanceToFirst[number-1])*(sWidth-2*boundary)+boundary, fromAltitudeToScene(wps[j]->getAltitude()));
+            currHp->elevationPoint->setPos((distanceToFirst[j]/distanceToFirst[number-1])*(sWidth-2*boundary)+boundary, fromAltitudeToScene(currHp->elevationPoint->elevation));
 
         }
     }
     //updateElevationItem(); //!!!!seems to produce a crash, if called too early. Should anyways only be called after replyfinished!
 
-
 }
 
-qreal HeightProfile::getAngle(Waypoint *wp1, Waypoint *wp2)
+qreal HeightProfile::getDistanceStraight(Waypoint *wp1, Waypoint *wp2)
 {
     HeightPoint* currHp1 = waypointsToHeightPoints.value(wp1, NULL);
     HeightPoint* currHp2 = waypointsToHeightPoints.value(wp2, NULL);
@@ -411,11 +423,11 @@ qreal HeightProfile::getAngle(Waypoint *wp1, Waypoint *wp2)
         qreal lon1 = wp1->getLongitude();
         qreal lat2 = wp2->getLatitude();
         qreal lon2 = wp2->getLongitude();
-        QVector3D vec1(cos(lat1)*sin(lon1), cos(lat1)*cos(lon1), sin(lat1));
-        QVector3D vec2(cos(lat2)*sin(lon2), cos(lat2)*cos(lon2), sin(lat2));
-        qreal alpha = acos(QVector3D::dotProduct(vec1, vec2));
+        qreal distancelong = M_PI * 2*QGC_EARTH_RADIUS*cos(M_PI/180*lat1)*fabs(lon1-lon2)/360;
+        qreal distancelat = M_PI * 2 *QGC_EARTH_RADIUS*fabs(lat1-lat2)/360;
+        qreal distance = sqrt(pow(distancelong,2)+pow(distancelat,2));
 
-        return alpha;
+        return distance;
 
     }
     else
@@ -424,6 +436,44 @@ qreal HeightProfile::getAngle(Waypoint *wp1, Waypoint *wp2)
     }
 
     return -1; //what value is best here ?
+}
+
+qreal HeightProfile::getDistanceSpline(uint index1, uint index2)
+{
+//    uint res = currWPManager->getEditableTrajectory()->getSplineResolution();
+//    QPolygonF* splinei1Toi2 = currWPManager->getEditableTrajectory()->getPolyXY(index1*res, index2*res+1); //!!!garden fence problem!
+//    qreal distance = 0;
+//    for(uint i = 0; i < (index2 - index1)*res; i++)
+//    {
+////        QPointF sPoint1 = splinei1Toi2->at(i);
+////        QPointF sPoint2 = splinei1Toi2->at(i+1);
+////        qDebug() << sPoint1;
+////        qDebug() << sPoint2;
+//        distance = distance + getDistance(sPoint1.x(),sPoint1.y(), sPoint2.x(), sPoint2.y());
+////        distance = distance + getDistance((splinei1Toi2->at(i)).x(), (splinei1Toi2->at(i)).y(), (splinei1Toi2->at(i+1)).x(), (splinei1Toi2->at(i+1)).y());//!!!garden fence problem!
+//    }
+//    return distance;
+
+    QVector<double> trajX; //absolute X value
+    QVector<double> trajY;
+    QVector<double> trajZ;
+    uint res = currWPManager->getEditableTrajectory()->getSplineResolution();
+    currWPManager->getEditableTrajectory()->getVector(trajX,trajY,trajZ);
+    qreal distance = 0;
+    for(uint i = index1*res; i < index2*res; i++)
+    {
+        distance = distance + getDistance(trajX[i],trajY[i], trajX[i+1],trajY[i+1]);
+        qDebug() << "spline distance between wp" << index1 << "and wp" << index2 << "is : " << distance;
+    }
+    return distance;
+
+}
+
+qreal HeightProfile::getDistance(qreal sp1x, qreal sp1y, qreal sp2x, qreal sp2y)
+{
+    qreal distance = sqrt(pow(sp1x-sp2x,2)+pow(sp1y-sp2y,2));
+
+    return distance;
 }
 
 void HeightProfile::getElevationPoints()
@@ -661,6 +711,54 @@ void HeightProfile::updateElevationItem()
 
 
     elevationItem->setPolygon(elevationPolygon);
+
+}
+
+void HeightProfile::updateSplineItem()
+{
+    QPainterPath splinePath; //path to be drawn in scene
+    QPolygonF splinePoly; //points in scene coordinates for the splinePat
+    QVector<double> trajX; //absolute X value
+    QVector<double> trajY;
+    QVector<double> trajZ;
+    currWPManager->getEditableTrajectory()->getVector(trajX,trajY,trajZ);
+    int splineNumber = trajX.size();
+    if (splineNumber != trajY.size() && splineNumber != trajZ.size())
+    {
+        qDebug() << "Error in editableTrajectory";
+    }
+    if(splineNumber < 3)
+    {
+        //do something if waypoints are deleted!!!!!!
+        return;
+    }
+    //get first and last wp from list
+    QVector<Waypoint* > wps = currWPManager->getGlobalFrameAndNavTypeWaypointList();
+    HeightPoint* startHp = dynamic_cast<HeightPoint*>(waypointsToHeightPoints.value(wps[0], NULL));
+    HeightPoint* endHp = dynamic_cast<HeightPoint*>(waypointsToHeightPoints.value(wps[wps.size()-1], NULL));
+//    qreal startX = waypointsToHeightPoints.value(wps[0], NULL)->x();
+//    qreal endX = waypointsToHeightPoints.value(wps[wps.size()-1], NULL)->x();
+    qreal startX=boundary;
+    qreal endX = sWidth-boundary;
+    if(!startHp || !endHp)
+    {
+        return;
+    }
+    //construct the splinePoly
+    QVector<qreal> distanceToFirst(splineNumber);
+    distanceToFirst[0] = 0;
+    for(int i = 1; i < splineNumber; i++)
+    {
+        distanceToFirst[i] = distanceToFirst[i-1] + getDistance(trajX[i-1],trajY[i-1],trajX[i],trajY[i]);
+
+    }
+    for(int j = 0; j < splineNumber; j++)
+    {
+        splinePoly << QPointF(distanceToFirst[j]/distanceToFirst[splineNumber-1]*(endX-startX)+startX,fromAltitudeToScene(trajZ[j]));
+    }
+
+    splinePath.addPolygon(splinePoly);
+    splineItem->setPath(splinePath);
 
 }
 
