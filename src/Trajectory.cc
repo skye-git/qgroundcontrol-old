@@ -95,9 +95,12 @@ void Trajectory::setWPList(QVector<Waypoint *> wpList)
 //    blockSplineInterpolation = false;
 
     // Avoid generating nonsense trajectories going trough lat/lon 0/0
-    if (x.last() != 0.0 && y.last() != 0.0)
+    if(!x.isEmpty())
     {
-        generateSplines();
+        if (x.last() != 0.0 && y.last() != 0.0)
+        {
+            generateSplines();
+        }
     }
 //    updateWPList(wpList);     // FIXME
     qDebug()<< "reached before crash";//not reached if all wp deleted in the lines above sth. missing
