@@ -122,17 +122,29 @@ void Trajectory::generateSplines(uint resolution)
 {
 //    if (!blockSplineInterpolation)
 //    {
+    if (!x.isEmpty() && !y.isEmpty() && !z.isEmpty())
+    {
         interpolX = interpolate(&x, resolution);
         interpolY = interpolate(&y, resolution);
         interpolZ = interpolate(&z, resolution);
         qDebug() << "generated Splines length" << interpolX.size() << interpolY.size() << interpolZ.size();
-//    }
 
-    interpolPolyXY.clear();
-    for (int i = 0; i<interpolX.size(); i++)
-    {
-        interpolPolyXY.append( QPointF( interpolX.at(i), interpolY.at(i) ) );
+        //
+        interpolPolyXY.clear();
+        for (int i = 0; i<interpolX.size(); i++)
+        {
+            interpolPolyXY.append( QPointF( interpolX.at(i), interpolY.at(i) ) );
+        }
     }
+    else
+    {
+        // No waypoints, clear trajectories
+        interpolX.clear();
+        interpolY.clear();
+        interpolZ.clear();
+        interpolPolyXY.clear();
+    }
+//    }
 }
 
 void Trajectory::generateSplines()

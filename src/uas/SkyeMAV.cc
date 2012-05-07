@@ -448,6 +448,13 @@ void SkyeMAV::followTrajectory()
 //            qDebug() << "SkyeMAV: Trajectory empty or not valid";
 //            return;
 //        }
+        if (trajX.isEmpty()){
+            return;
+        }
+        if (trajX.size() <= currentTrajectoryStamp && currentTrajectoryStamp > 0)
+        {
+            currentTrajectoryStamp = trajX.size() - 1;
+        }
 
         deltaLatLngAlt[0] = trajX.value(currentTrajectoryStamp) - latitude;
         deltaLatLngAlt[1] = trajY.value(currentTrajectoryStamp) - longitude;
@@ -485,7 +492,7 @@ void SkyeMAV::followTrajectory()
         if ( deltaNorm < 2.0 )
         {
             qDebug() << "REACHED POINT" << currentTrajectoryStamp << "OF TRAJECTORY";
-            if (this->waypointManager.getEditableTrajectory()->getPolyXY()->size() > currentTrajectoryStamp + 1)
+            if (trajX.size() > currentTrajectoryStamp + 1)
                 currentTrajectoryStamp++;
         }
     }
