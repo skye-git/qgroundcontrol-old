@@ -200,7 +200,7 @@ void HeightProfile::updateWaypoint(int uas, Waypoint* wp)
             // Mark this wp as currently edited
             firingWaypointChange = wp;
 
-            qDebug() << "UPDATING WAYPOINT" << wpindex << "IN 2D MAP";
+            qDebug() << "UPDATING WAYPOINT" << wpindex << "IN HEIGHT PROFILE";
 
             // Check if wp exists yet in map
             if (!waypointsToHeightPoints.contains(wp))
@@ -217,6 +217,23 @@ void HeightProfile::updateWaypoint(int uas, Waypoint* wp)
                 scene->addItem(hp);
                 wp->setAltitude(maxHeight); //new waypoint should appear in scene!
 
+
+//                // Beginn Code MA (07.05.2012) ----------------------------
+//                SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uasInstance);
+//                if (mav)
+//                {
+//                    Trajectory *currTrajectory = currWPManager->getEditableTrajectory();
+//                    QGraphicsPathItem* path = new mapcontrol::WaypointPathItem(currTrajectory->getPolyXY(0, mav->getCurrentTrajectoryStamp()), QColor(Qt::red), map);
+//                    // Add path to waypointLines group so it will be destroyed afterwards
+//                    QGraphicsItemGroup* group = waypointLines.value(uas, NULL);
+//                    if (group)
+//                    {
+//                        group->addToGroup(path);
+//                        group->addToGroup(pathRemaining);
+//                        group->setParentItem(map);
+//                    }
+//                }else qDebug() << "HeightProfile::HupdateWaypoint with invalid uas";
+//                // Ende Code MA (07.05.2012) ------------------------------
             }
             else
             {

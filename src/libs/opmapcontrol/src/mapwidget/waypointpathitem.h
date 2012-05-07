@@ -16,6 +16,7 @@ class WaypointPathItem : public QObject,public QGraphicsPathItem
 public:
     enum { Type = UserType + 7 };
     WaypointPathItem(QPolygonF* polyLatLng, QColor color=QColor(Qt::red), MapGraphicItem* parent=0);
+    WaypointPathItem(QVector<double> height, QVector<double> horizontalDistance, QColor color=QColor(Qt::red), MapGraphicItem* parent=0);
     int type() const;
 
 public slots:
