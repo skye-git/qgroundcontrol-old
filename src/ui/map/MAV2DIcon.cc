@@ -260,6 +260,7 @@ void MAV2DIcon::drawAirframePolygon(int airframe, QPainter& painter, int radius,
         QPointF middle(-0.5, -0.5);
         middle *= radius;
         QImage img(":images/skye_images/mav/skye.png");
+        painter.setOpacity(0.8);
         painter.drawImage(middle,img);
 
         painter.rotate(-yawRotate);
