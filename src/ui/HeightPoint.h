@@ -10,7 +10,7 @@ class HeightProfile;
 
 class HeightPoint : public QGraphicsObject
 {
-    //Q_OBJECT //if enabled symbol(s) not found for architecture!!!!!
+    Q_OBJECT //if enabled symbol(s) not found for architecture!!!!!
 public:
     HeightPoint(HeightProfile* parent, Waypoint* wp, QColor color, int listindex);
 

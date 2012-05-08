@@ -28,39 +28,6 @@ bool Trajectory::getVector(QVector<double> &trajX, QVector<double> &trajY, QVect
     return true;
 }
 
-bool Trajectory::getVectorX(QVector<double>* trajX)
-{
-    if ( interpolX.isEmpty() )
-    {
-        return false;
-    }
-
-    trajX = &interpolX;
-    return true;
-}
-
-bool Trajectory::getVectorY(QVector<double>* trajY)
-{
-    if ( interpolY.isEmpty() )
-    {
-        return false;
-    }
-
-    trajY = &interpolY;
-    return true;
-}
-
-bool Trajectory::getVectorZ(QVector<double>* trajZ)
-{
-    if ( interpolZ.isEmpty() )
-    {
-        return false;
-    }
-
-    trajZ = &interpolZ;
-    return true;
-}
-
 QPolygonF* Trajectory::getPolyXY()
 {
 //    qDebug() << "Return a polygon for" << x.size() << "Points," << "Resolution =" << splineResolution << "Polygonpoints = " << interpolPolyXY.size();

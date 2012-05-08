@@ -3,8 +3,13 @@
 #include "SkyeMAV.h"
 #include "UDPLink.h"
 
+#ifndef QGC_EARTH_RADIUS
 #define QGC_EARTH_RADIUS 6367449.0
+#endif
+
+#ifndef QGC_COS_LATITUDE
 #define QGC_COS_LATITUDE 0.67716
+#endif
 
 SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
 UAS(mavlink, id),

@@ -5,9 +5,9 @@
 #include "HeightProfile.h"
 
 ElevationPoint::ElevationPoint(HeightProfile*parent, QColor color)
-    : parent(parent),
+    : elevation(0),
       color(color),
-      elevation(0)
+      parent(parent)
 {
     setFlag(ItemStacksBehindParent);
     refreshToolTip();

@@ -27,7 +27,7 @@ public:
     bool getelevationwascalled;
     
 signals:
-    void wapointChanged(Waypoint*wp);
+    void wapointChanged(Waypoint*);
     void setinfoLabelText(QString string);
 
 public:
@@ -45,8 +45,12 @@ public slots:
     void updateWaypointList(int uas);
     /** @brief arrange the HeightPoints in the scene */
     void arrangeHeightPoints(); //Integrate perhaps in update slots...
-    /** @brief calculate the angle between two wp */
-    qreal getAngle(Waypoint* wp1, Waypoint *wp2);
+    /** @brief calculate the distance between two wp */
+    qreal getDistanceStraight(Waypoint* wp1, Waypoint *wp2);
+    /** @brief calculate spline the distance between two wp */
+    qreal getDistanceSpline(uint index1, uint index2);
+    /** @brief calculate the distance between two Points */
+    qreal getDistance(qreal sp1x, qreal sp1y, qreal sp2x, qreal sp2y);
     /** @brief get the Elevation for each HeightPoint in the scene */
     void getElevationPoints(); //Integrate perhaps in update slots...
     /** @brief construct the URL for the Elevation request */
@@ -74,6 +78,7 @@ protected:
     void wheelEvent(QWheelEvent *event);
     void drawBackground(QPainter *painter, const QRectF &rect);
     void updateElevationItem();
+    void updateSplineItem();
     void scaleView(qreal scaleFactor);
 
     UASWaypointManager* currWPManager; ///< The current waypoint manager
@@ -91,9 +96,10 @@ protected:
     double maxHeight;
     double boundary;
 
-    QGraphicsPolygonItem * elevationItem; //not working!!!!!
+    QGraphicsPolygonItem * elevationItem;
     QGraphicsTextItem * displayminHeight;
     QGraphicsTextItem * displaymaxHeight;
+    QGraphicsPathItem * splineItem;
 
     QNetworkAccessManager* networkManager;
     

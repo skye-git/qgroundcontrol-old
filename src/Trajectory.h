@@ -15,12 +15,6 @@ public:
     Trajectory();
     /** @brief Returns a pointer to interpolated trajectory components */
     bool getVector(QVector<double> &trajX, QVector<double> &trajY, QVector<double> &trajZ);
-    /** @brief Returns a pointer to interpolated x trajectory */
-    bool getVectorX(QVector<double>* trajX);
-    /** @brief Returns a pointer to interpolated y trajectory */
-    bool getVectorY(QVector<double>* trajY);
-    /** @brief Returns a pointer to interpolated z trajectory */
-    bool getVectorZ(QVector<double>* trajZ);
     /** @brief Returns a pointer to polygon of trajectory in xy plane */
     QPolygonF* getPolyXY();
     /** @brief Returns a pointer to polygon of part of trajectory in xy plane
@@ -28,6 +22,9 @@ public:
       * @param to Element position of last point
       */
     QPolygonF* getPolyXY(int from, int to);
+    uint getSplineResolution(){return splineResolution;}
+    uint getVectorSize(){return interpolX.size();}
+
 
 
 protected:
@@ -42,7 +39,7 @@ protected:
     QVector<double> interpolZ;
     QPolygonF interpolPolyXY;           ///< Projection of interpolated trajectory to XY plane
     QPolygonF interpolPolyXYpart;       // FIXME: Blinking is caused by pointer..
-    QVector<double> interpolDeltaXY;    ///< Distance between two interpolated points projected to XY plane
+    //QVector<double> interpolDeltaXY;    ///< Distance between two interpolated points projected to XY plane
 
     /** @brief Get cubic spline interpolation
       * @param points Pointer to list of points
