@@ -1032,7 +1032,7 @@ void MAVLinkSimulationLink::writeBytes(const char* data, qint64 size)
                     float lastY = y;
                     float lastZ = z;
 
-                    speedRoll = -1.5*dc.moment_x;
+                    speedRoll = 1.5*dc.moment_x;
                     speedPitch = 1.5*dc.moment_y;
                     speedYaw = 1.5*dc.moment_z;
                     speedX = 10*dc.thrust_x;
