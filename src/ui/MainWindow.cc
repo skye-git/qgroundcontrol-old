@@ -190,6 +190,8 @@ MainWindow::MainWindow(QWidget *parent):
 	centerStackActionGroup->setExclusive(true);
 
     centerStack = new QStackedWidget(this);
+//    qDebug() << "MinimumWidth of censterStack" << centerStack->minimumWidth();
+    centerStack->setMinimumWidth(100);          // Code Add MA (08.05.2012)
     setCentralWidget(centerStack);
 
     // Load Toolbar
@@ -437,7 +439,7 @@ void MainWindow::buildCommonWidgets()
             connect(uasSkyeControl, SIGNAL(changedInput(int)), this, SLOT(setInputMode(int)));
             connect(this, SIGNAL(mouseTranslationEnabledChanged(bool)), uasSkyeControl, SLOT(changeMouseTranslationEnabled(bool)));
             connect(this, SIGNAL(mouseRotationEnabledChanged(bool)), uasSkyeControl, SLOT(changeMouseRotationEnabled(bool)));
-            addTool(skyeControlDockWidget, tr("Skye Control"), Qt::LeftDockWidgetArea);
+            addTool(skyeControlDockWidget, tr("Skye Control"), Qt::RightDockWidgetArea);
         }
     }                                   // Ende Code MA (06.03.2012) --------------------------
 #endif // MAVLINK_ENABLED_SKYE
@@ -563,12 +565,12 @@ void MainWindow::buildCommonWidgets()
         headUpDockWidget = new QDockWidget(tr("HUD"), this);
         headUpDockWidget->setWidget( new HUD(320, 240, this));
         headUpDockWidget->setObjectName("HEAD_UP_DISPLAY_DOCK_WIDGET");
-        addTool(headUpDockWidget, tr("Head Up Display"), Qt::RightDockWidgetArea);
+        addTool(headUpDockWidget, tr("Head Up Display"), Qt::LeftDockWidgetArea);
 
         HUD *headUpDockWidgetHelper = dynamic_cast<HUD*>(headUpDockWidget->widget());                                       //Beginn Ende Code AL (10.04.12)
         connect(this, SIGNAL(emitTouchInputVisibility(bool)), headUpDockWidgetHelper, SLOT(setKnobndKnobRingvisible(bool))); //Beginn Ende Code AL (10.04.12)
         connect(headUpDockWidgetHelper, SIGNAL(valueTouchInputChangedHUD(double,double,double)), this, SLOT(setTouchInputYawPitchRoll(double,double,double))); //Beginn Ende Code AL (11.04.12)
-    }
+     }
 
     if (!video1DockWidget)
     {
@@ -1702,9 +1704,9 @@ void MainWindow::loadViewState()
             centerStack->setCurrentWidget(mapWidget);
             controlDockWidget->hide();
             listDockWidget->show();
-            waypointsDockWidget->hide();
+            waypointsDockWidget->show();
             infoDockWidget->hide();
-            debugConsoleDockWidget->show();
+            debugConsoleDockWidget->hide();
             logPlayerDockWidget->hide();
             parametersDockWidget->hide();
             hsiDockWidget->hide();
