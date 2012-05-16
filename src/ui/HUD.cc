@@ -880,8 +880,8 @@ void HUD::paintHUD()
             //KNOB
             if(touchInputvisib)
             {
-                drawKnob(diffVector.x(), diffVector.y(), 10.0f, &painter);
-                drawKnobCircle(0,0,30.0f, &painter);
+                drawKnob(diffVector.x(), diffVector.y(), 12.0f, &painter);
+                drawKnobCircle(0,0,60.0f, &painter);
                 //qDebug() << "drawKnob has just been called";
             }
             // Ende Code AL
@@ -1302,7 +1302,7 @@ void HUD::drawKnob(float xRef, float yRef, float radius, QPainter* painter)
     // Draw the circle
     QPen circlePen(Qt::SolidLine);
     circlePen.setStyle(Qt::SolidLine);
-    circlePen.setWidth(refLineWidthToPen(0.5f));
+    circlePen.setWidth(refLineWidthToPen(1.0f));
     circlePen.setColor(defaultColor);
 
     QRadialGradient grad(0,0,180,-75,0);
@@ -1330,7 +1330,7 @@ void HUD::drawKnobCircle(float xRef, float yRef, float radius, QPainter *painter
     // Draw the circle
     QPen circlePen(Qt::SolidLine);
     circlePen.setStyle(Qt::SolidLine);
-    circlePen.setWidth(refLineWidthToPen(0.5f));
+    circlePen.setWidth(refLineWidthToPen(1.0f));
     circlePen.setColor(defaultColor);
 
     QRadialGradient grad(0,0,180,-75,0);
@@ -1346,13 +1346,13 @@ void HUD::drawKnobCircle(float xRef, float yRef, float radius, QPainter *painter
         painter->save();
         painter->rotate(beta/M_PI*180);
         painter->setBrush(brush);
-        drawCircle(radius, yRef, radius/8, 200.0f, 170.0f, 1.0f, touchColor, painter);
+        drawCircle(radius, yRef, radius/6, 200.0f, 170.0f, 1.0f, touchColor, painter);
         painter->restore();
 
         painter->save();
         painter->rotate(alpha/M_PI*180);
         painter->setBrush(Qt::NoBrush);
-        drawCircle(radius, yRef, radius/8, 200.0f, 170.0f, 1.0f, touchColor, painter);
+        drawCircle(radius, yRef, radius/6, 200.0f, 170.0f, 1.0f, touchColor, painter);
         painter->restore();
     }
     painter->setBrush(Qt::NoBrush);

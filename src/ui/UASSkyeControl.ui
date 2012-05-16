@@ -36,31 +36,6 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="controlStatusLabel">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>10</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Currently controlled system</string>
-     </property>
-     <property name="statusTip">
-      <string>Currently controlled system</string>
-     </property>
-     <property name="text">
-      <string>UNCONNECTED</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-     <property name="margin">
-      <number>0</number>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QPushButton" name="controlButton">
      <property name="minimumSize">
       <size>
@@ -414,11 +389,8 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
   <zorder>controlButton</zorder>
-  <zorder>controlStatusLabel</zorder>
   <zorder></zorder>
   <zorder>lastActionLabel</zorder>
-  <zorder>gridLayoutWidget_2</zorder>
-  <zorder>gridLayoutWidget</zorder>
  </widget>
  <resources>
   <include location="../../qgroundcontrol.qrc"/>

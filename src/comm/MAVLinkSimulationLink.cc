@@ -1,5 +1,7 @@
 /*=====================================================================
 
+
+
 QGroundControl Open Source Ground Control Station
 
 
@@ -2635,3 +2637,4 @@ int MAVLinkSimulationLink::getLinkQuality()
     return 100;
 
 }
+

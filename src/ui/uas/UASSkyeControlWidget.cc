@@ -134,7 +134,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
     SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uas);
     if (mav)
     {
-        ui.controlStatusLabel->setText(tr("Connected to ") + mav->getUASName());
+        //ui.controlStatusLabel->setText(tr("Connected to ") + mav->getUASName());
         this->uasId = mav->getUASID();
 
         updateMode(mav->getUASID(), mav->getUASMode());
