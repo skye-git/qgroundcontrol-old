@@ -99,6 +99,8 @@ signals:
         void setHalfAutomaticControlMode(bool checked);
         /** @brief Set uasMode to Full Automatic Control */
         void setFullAutomaticControlMode(bool checked);
+        /** @brief 3dMouse activated */
+        void mouseActivated(bool success);
         /** @brief Set 3d Mouse as active inpute device */
         void setInputMouse(bool checked);
         /** @brief Set Touchscreen as active inpute device */

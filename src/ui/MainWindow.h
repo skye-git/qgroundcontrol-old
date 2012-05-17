@@ -286,7 +286,9 @@ signals:
     /** @brief Translational degrees of 3dMouse are activated/disactivated */                                           // Beginn Code MA (18.03.2012)
     void mouseTranslationEnabledChanged(bool transEnabled);
     /** @brief Rotational degrees of 3dMouse are activated/disactivated */
-    void mouseRotationEnabledChanged(bool rotEnabled);                                                                  // Ende Code MA (18.03.2012)
+    void mouseRotationEnabledChanged(bool rotEnabled);
+    /** @brief Signal when successfully initialized and started 3dMouse input */
+    void mouseStarted(bool success);                                                                                    // Ende Code MA (18.03.2012)
     /** @brief Emits new contol values for UAS given by keyboard in range [-1, 1] */
     void valueKeyboardChanged(double xValue, double yValue, double zValue, double rollValue, double pitchValue, double yawValue);   // Beginn und Ende Code MA (07.03.2012)
     /** @brief Emits bool whether TouchInput Interface is shown or not */

@@ -439,6 +439,7 @@ void MainWindow::buildCommonWidgets()
             connect(uasSkyeControl, SIGNAL(changedInput(int)), this, SLOT(setInputMode(int)));
             connect(this, SIGNAL(mouseTranslationEnabledChanged(bool)), uasSkyeControl, SLOT(changeMouseTranslationEnabled(bool)));
             connect(this, SIGNAL(mouseRotationEnabledChanged(bool)), uasSkyeControl, SLOT(changeMouseRotationEnabled(bool)));
+            connect(this, SIGNAL(mouseStarted(bool)), uasSkyeControl, SLOT(mouseActivated(bool)));
             addTool(skyeControlDockWidget, tr("Skye Control"), Qt::RightDockWidgetArea);
         }
     }                                   // Ende Code MA (06.03.2012) --------------------------
@@ -1915,6 +1916,7 @@ void MainWindow::start3dMouse()
             msgBox.setDefaultButton(QMessageBox::Ok);
             msgBox.exec();
 
+            emit mouseStarted(false);
             qDebug() << "No 3DxWare driver is running!";
             return;
         }
@@ -1964,6 +1966,7 @@ void MainWindow::start3dMouse()
     {
         qDebug() << "3dMouse already initialized..";
     }
+    emit mouseStarted(true);
 }                               // Ende Code MA (21.03.2012)
 
                                 // Beginn Code MA (06.03.2012) -----------
