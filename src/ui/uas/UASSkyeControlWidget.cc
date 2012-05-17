@@ -29,10 +29,10 @@ This file is part of the PIXHAWK project
  *
  */
 
-#define QGC_SKYE_DEFAULT_SENS_DIRECT_TRANS 50.0
-#define QGC_SKYE_DEFAULT_SENS_DIRECT_ROT 50.0
-#define QGC_SKYE_DEFAULT_SENS_ASSIST_TRANS 50.0
-#define QGC_SKYE_DEFAULT_SENS_ASSIST_ROT 50.0
+#define QGC_SKYE_DEFAULT_SENS_DIRECT_TRANS 0.5
+#define QGC_SKYE_DEFAULT_SENS_DIRECT_ROT 0.5
+#define QGC_SKYE_DEFAULT_SENS_ASSIST_TRANS 0.5
+#define QGC_SKYE_DEFAULT_SENS_ASSIST_ROT 0.5
 
 #include <QString>
 #include <QTimer>
@@ -55,10 +55,10 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     mouseRotationEnabled(true),
     sensitivityFactorTrans(QGC_SKYE_DEFAULT_SENS_DIRECT_TRANS),
     minSensitivityFactorTrans(0.0),
-    maxSensitivityFactorTrans(100.0),
+    maxSensitivityFactorTrans(1.0),
     sensitivityFactorRot(QGC_SKYE_DEFAULT_SENS_DIRECT_ROT),
     minSensitivityFactorRot(0.0),
-    maxSensitivityFactorRot(100.0)
+    maxSensitivityFactorRot(1.0)
 {
 #ifdef MAVLINK_ENABLED_SKYE
     ui.setupUi(this);
