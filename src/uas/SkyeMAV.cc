@@ -3,6 +3,11 @@
 #include "SkyeMAV.h"
 #include "UDPLink.h"
 
+// Use exponential gain
+#ifndef QGC_SKYE_USE_SQUARE_OUT
+#define QGC_SKYE_USE_SQUARE_OUT
+#endif
+
 #ifndef QGC_EARTH_RADIUS
 #define QGC_EARTH_RADIUS 6367449.0
 #endif
@@ -199,6 +204,15 @@ void SkyeMAV::setManualControlCommands6DoF(double x , double y , double z , doub
 {
 #ifdef MAVLINK_ENABLED_SKYE
     qDebug() << "Recent Mode: " << mode << ": " << getShortModeTextFor(mode);
+
+#ifdef QGC_SKYE_USE_SQUARE_OUT
+    x = qPow(x, 2);
+    y = qPow(y, 2);
+    z = qPow(z, 2);
+    a = qPow(a, 2);
+    b = qPow(b, 2);
+    c = qPow(c, 2);
+#endif
 
     //if (mode & MAV_MODE_FLAG_DECODE_POSITION_SAFETY)
     {
