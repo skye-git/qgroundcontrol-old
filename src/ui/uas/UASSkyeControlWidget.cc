@@ -29,6 +29,11 @@ This file is part of the PIXHAWK project
  *
  */
 
+#define QGC_SKYE_DEFAULT_SENS_DIRECT_TRANS 50.0
+#define QGC_SKYE_DEFAULT_SENS_DIRECT_ROT 50.0
+#define QGC_SKYE_DEFAULT_SENS_ASSIST_TRANS 50.0
+#define QGC_SKYE_DEFAULT_SENS_ASSIST_ROT 50.0
+
 #include <QString>
 #include <QTimer>
 #include <QLabel>
@@ -48,12 +53,12 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     inputMode(QGC_INPUT_MODE_NONE),
     mouseTranslationEnabled(true),
     mouseRotationEnabled(true),
-    sensitivityFactorTrans(20.0),
+    sensitivityFactorTrans(QGC_SKYE_DEFAULT_SENS_DIRECT_TRANS),
     minSensitivityFactorTrans(0.0),
-    maxSensitivityFactorTrans(50.0),
-    sensitivityFactorRot(10.0),
+    maxSensitivityFactorTrans(100.0),
+    sensitivityFactorRot(QGC_SKYE_DEFAULT_SENS_DIRECT_ROT),
     minSensitivityFactorRot(0.0),
-    maxSensitivityFactorRot(50.0)
+    maxSensitivityFactorRot(100.0)
 {
 #ifdef MAVLINK_ENABLED_SKYE
     ui.setupUi(this);
@@ -104,7 +109,14 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
 
     //ui.gridLayout->setAlignment(Qt::AlignTop);
 
+    ui.bluefoxLeftButton->hide();
+    ui.bluefoxRightButton->hide();
+    ui.prosilicaButton->hide();
+
     updateStyleSheet();
+
+    // TODO: set correct margins instead of min height
+    this->setMinimumHeight(220);
 
 #endif //MAVLINK_ENABLED_SKYE
 }
@@ -278,8 +290,8 @@ void UASSkyeControlWidget::setDirectControlMode(bool checked)
     if (checked)
     {
 #ifdef  MAVLINK_ENABLED_SKYE
-        ui.sensitivityTransSlider->setValue(40);
-        ui.sensitivityRotSlider->setValue(20);
+        ui.sensitivityTransSlider->setValue(QGC_SKYE_DEFAULT_SENS_DIRECT_TRANS);
+        ui.sensitivityRotSlider->setValue(QGC_SKYE_DEFAULT_SENS_DIRECT_ROT);
         SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
         if (mav){
             UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
@@ -301,8 +313,8 @@ void UASSkyeControlWidget::setAssistedControlMode(bool checked)
     if (checked)
     {
 #ifdef MAVLINK_ENABLED_SKYE
-        ui.sensitivityTransSlider->setValue(10);
-        ui.sensitivityRotSlider->setValue(10);
+        ui.sensitivityTransSlider->setValue(QGC_SKYE_DEFAULT_SENS_ASSIST_TRANS);
+        ui.sensitivityRotSlider->setValue(QGC_SKYE_DEFAULT_SENS_ASSIST_ROT);
         SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
         if (mav){
             UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
@@ -449,7 +461,7 @@ void UASSkyeControlWidget::cycleContextButton()
 void UASSkyeControlWidget::updateStyleSheet()
 {
     QString style = "";
-    style.append("QPushButton { height: 40; }");
+    style.append("QPushButton { min-height: 30; }");
     if (ui.mouseButton->isChecked())
     {
 //        qDebug() << "3dMouse TRANSLATION is: " << mouseTranslationEnabled << ", ROTATION is: " << mouseRotationEnabled;

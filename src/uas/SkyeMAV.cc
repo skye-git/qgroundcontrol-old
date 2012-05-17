@@ -206,12 +206,12 @@ void SkyeMAV::setManualControlCommands6DoF(double x , double y , double z , doub
     qDebug() << "Recent Mode: " << mode << ": " << getShortModeTextFor(mode);
 
 #ifdef QGC_SKYE_USE_SQUARE_OUT
-    x = qPow(x, 2);
-    y = qPow(y, 2);
-    z = qPow(z, 2);
-    a = qPow(a, 2);
-    b = qPow(b, 2);
-    c = qPow(c, 2);
+    x = qPow(x, 3);
+    y = qPow(y, 3);
+    z = qPow(z, 3);
+    a = qPow(a, 3);
+    b = qPow(b, 3);
+    c = qPow(c, 3);
 #endif
 
     //if (mode & MAV_MODE_FLAG_DECODE_POSITION_SAFETY)
