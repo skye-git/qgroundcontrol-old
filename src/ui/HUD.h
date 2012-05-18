@@ -130,6 +130,7 @@ protected slots:
 signals:
     void visibilityChanged(bool visible);
     void valueTouchInputChangedHUD(double,double,double);
+    void valueXZoomChangedHUD(double);
 
 protected:
     void commitRawDataToGL();

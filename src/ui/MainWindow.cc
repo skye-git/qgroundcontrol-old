@@ -570,6 +570,7 @@ void MainWindow::buildCommonWidgets()
         HUD *headUpDockWidgetHelper = dynamic_cast<HUD*>(headUpDockWidget->widget());                                       //Beginn Ende Code AL (10.04.12)
         connect(this, SIGNAL(emitTouchInputVisibility(bool)), headUpDockWidgetHelper, SLOT(setKnobndKnobRingvisible(bool))); //Beginn Ende Code AL (10.04.12)
         connect(headUpDockWidgetHelper, SIGNAL(valueTouchInputChangedHUD(double,double,double)), this, SLOT(setTouchInputYawPitchRoll(double,double,double))); //Beginn Ende Code AL (11.04.12)
+        connect(headUpDockWidgetHelper, SIGNAL(valueXZoomChangedHUD(double)), this, SLOT(setTouchInputXZoom(double))); // 18.05.12
      }
 
     if (!video1DockWidget)
@@ -646,6 +647,7 @@ void MainWindow::buildCommonWidgets()
         hudWidget         = new HUD(320, 240, this);
         addCentralWidget(hudWidget, tr("Head Up Display"));
         connect(hudWidget, SIGNAL(valueTouchInputChangedHUD(double,double,double)), this, SLOT(setTouchInputYawPitchRoll(double,double,double))); //Beginn Ende Code AL (11.04.12)
+        connect(hudWidget, SIGNAL(valueXZoomChangedHUD(double)), this, SLOT(setTouchInputXZoom(double)));
         connect(this, SIGNAL(emitTouchInputVisibility(bool)), hudWidget, SLOT(setKnobndKnobRingvisible(bool))); //Beginn Ende Code AL (23.04.12)
     }
 
@@ -2313,21 +2315,6 @@ void MainWindow::handleKeyEvents(QKeyEvent *event, bool keyPressed)
     emit valueKeyboardChanged(keyXValue, keyYValue, keyZValue, keyRollValue, keyPitchValue, keyYawValue);
 }
 
-void MainWindow::setTouchInputXYZ(double x, double y, double z)
-{
-        touchXValue = x;
-        touchYValue = y;
-        touchZValue = z;
-
-    //zur Sicherheit
-    if(x > 1)
-        touchXValue = 1;
-    if(y > 1)
-        touchYValue = 1;
-    if(z > 1)
-        touchZValue = 1;
-}
-
 void MainWindow::setTouchInputYawPitchRoll(double roll, double pitch, double yaw)
 {
     touchRollValue = roll;
@@ -2341,6 +2328,31 @@ void MainWindow::setTouchInputYawPitchRoll(double roll, double pitch, double yaw
         touchPitchValue = 1;
     if(yaw > 1)
         touchYawValue = 1;
+}
+
+void MainWindow::setTouchInputXZoom(double x)
+{
+    touchXValue = x; // TO DO, make touchXZoomValue and send seperately, because it is in the camera frame
+
+    //zur Sicherheit
+    if(x > 1)
+        touchXValue = 1;
+    qDebug() << touchXValue << "in setTouchInputXZoom()";
+}
+
+void MainWindow::setTouchInputXYZ(double x, double y, double z)
+{
+        touchXValue = x;
+        touchYValue = y;
+        touchZValue = z;
+
+    //zur Sicherheit
+    if(x > 1)
+        touchXValue = 1;
+    if(y > 1)
+        touchYValue = 1;
+    if(z > 1)
+        touchZValue = 1;
 }
 
 void MainWindow::emitTouchInputValues()

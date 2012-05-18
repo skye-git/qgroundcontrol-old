@@ -259,8 +259,10 @@ public slots:
     void emitMouseValues();
 #endif // MOUSE_ENABLED                                     // Ende Code MA (21.03.2012)
 
-    /** @Collect TouchInput from HUD */                             //Beginn Code AL (11.04.12)
+    /** @Collect Rotational TouchInput from HUD */                             //Beginn Code AL (11.04.12)
     void setTouchInputYawPitchRoll(double roll, double pitch, double yaw);
+    /** @Collect Translational TouchInput from HUD */
+    void setTouchInputXZoom(double x);
     /** @Collect TouchInput from QGCMapTool */
     void setTouchInputXYZ(double x, double y, double z);
     /** @brief Emit TouchInput values */

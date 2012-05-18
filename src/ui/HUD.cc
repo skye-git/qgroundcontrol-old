@@ -1654,7 +1654,7 @@ void HUD::mousePressEvent(QMouseEvent *event)
 
         if(std::abs(event->x()-painterszerox)/scalingFactor < 15 && std::abs(event->y()-painterszeroy)/scalingFactor <15) //TO DO make 15 parametric!!
             knobisactive = true;
-        else if((event->x()-painterszerox)/scalingFactor > 60) //TO DO make 15 parametric!!
+        else if((event->x()-painterszerox)/scalingFactor > 60 && std::abs((event->y()-painterszeroy))/scalingFactor < 20) //TO DO make 15 parametric!!
             knoblineisactive = true;
         else
         {
@@ -1735,13 +1735,15 @@ void HUD::mouseMoveEvent(QMouseEvent *event)
             diffZoomVector_desired.ry() = (mousePressedPosition.y() - dragPosition.y())/scalingFactor;
             if(std::abs(diffZoomVector_desired.y()) > 55) //TO DO, replace 55 by variable
             {
-                qDebug() << "before ignore" << diffZoomVector_desired.y();
+                //qDebug() << "before ignore" << diffZoomVector_desired.y();
                 event->ignore();
             }
             else
             {
-                qDebug() << (diffZoomVector_desired.y())/55; //TO DO, replace 55 by variable
                 diffZoomVector = diffZoomVector_desired;
+                double xZoom = -diffZoomVector.y()/55; //TO DO replace 55 with variable
+                //qDebug() << xZoom;
+                emit valueXZoomChangedHUD(xZoom);
             }
         }
 
