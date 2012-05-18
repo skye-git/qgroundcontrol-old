@@ -1386,6 +1386,8 @@ void HUD::drawKnobLine(float xRef, float yRef, float radius, QPainter *painter)
 
     painter->setBrush(Qt::NoBrush);
     drawLine(xRef,-yRef,xRef,yRef,1.0f,touchColor,painter);
+    qreal barWidth = 6;
+    drawLine((xRef-barWidth), 0, (xRef+barWidth), 0,1.0f,touchColor, painter);
 }
 
 
@@ -1654,7 +1656,7 @@ void HUD::mousePressEvent(QMouseEvent *event)
 
         if(std::abs(event->x()-painterszerox)/scalingFactor < 15 && std::abs(event->y()-painterszeroy)/scalingFactor <15) //TO DO make 15 parametric!!
             knobisactive = true;
-        else if((event->x()-painterszerox)/scalingFactor > 60 && std::abs((event->y()-painterszeroy))/scalingFactor < 20) //TO DO make 15 parametric!!
+        else if((event->x()-painterszerox)/scalingFactor > 60 && std::abs((event->y()-painterszeroy))/scalingFactor < 30) //TO DO make 15 parametric!!
             knoblineisactive = true;
         else
         {
