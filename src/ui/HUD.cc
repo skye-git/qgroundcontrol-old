@@ -75,9 +75,11 @@ HUD::HUD(int width, int height, QWidget* parent)
       mousePressedPosition(0,0),//Beginn Code AL (09.04.12)
       dragPosition(0,0),
       diffVector(0,0),
+      diffZoomVector(0,0),
       touchInputvisib(false),
       knobisactive(false),
       knobcircleisactive(false),
+      knoblineisactive(false),
       alpha(0),
       beta(0),
       yawTouchInput(0),
@@ -881,7 +883,8 @@ void HUD::paintHUD()
             if(touchInputvisib)
             {
                 drawKnob(diffVector.x(), diffVector.y(), 12.0f, &painter);
-                drawKnobCircle(0,0,60.0f, &painter);
+                drawKnobCircle(0,0,55.0f, &painter);
+                drawKnobLine(75, 55, 10, &painter);
                 //qDebug() << "drawKnob has just been called";
             }
             // Ende Code AL
@@ -1306,10 +1309,10 @@ void HUD::drawKnob(float xRef, float yRef, float radius, QPainter* painter)
     circlePen.setColor(defaultColor);
 
     QRadialGradient grad(0,0,180,-75,0);
-        grad.setColorAt(0.0, Qt::white);
-//        grad.setColorAt(0.1, Qt::green);
-        grad.setColorAt(0.99, touchColor);
-        QBrush brush(grad);
+    grad.setColorAt(0.0, Qt::white);
+//  grad.setColorAt(0.1, Qt::green);
+    grad.setColorAt(0.99, touchColor);
+    QBrush brush(grad);
 
     painter->setBrush(brush);
     painter->setPen(circlePen);
@@ -1334,10 +1337,10 @@ void HUD::drawKnobCircle(float xRef, float yRef, float radius, QPainter *painter
     circlePen.setColor(defaultColor);
 
     QRadialGradient grad(0,0,180,-75,0);
-        grad.setColorAt(0.0, Qt::white);
-//        grad.setColorAt(0.1, Qt::green);
-        grad.setColorAt(0.99, touchColor);
-        QBrush brush(grad);
+    grad.setColorAt(0.0, Qt::white);
+//  grad.setColorAt(0.1, Qt::green);
+    grad.setColorAt(0.99, touchColor);
+    QBrush brush(grad);
 
 
     painter->setPen(circlePen);
@@ -1357,6 +1360,32 @@ void HUD::drawKnobCircle(float xRef, float yRef, float radius, QPainter *painter
     }
     painter->setBrush(Qt::NoBrush);
     drawCircle(xRef, yRef, radius, 200.0f, 170.0f, 1.0f, touchColor, painter);
+}
+
+void HUD::drawKnobLine(float xRef, float yRef, float radius, QPainter *painter)
+{
+    //Draw the line
+    QPen linePen(Qt::SolidLine);
+    linePen.setStyle(Qt::SolidLine);
+    linePen.setWidth(refLineWidthToPen(1.0f));
+    linePen.setColor(defaultColor);
+
+    QRadialGradient grad(0,0,180,-75,0);
+    grad.setColorAt(0.0, Qt::white);
+//  grad.setColorAt(0.1, Qt::green);
+    grad.setColorAt(0.99, touchColor);
+    QBrush brush(grad);
+
+    painter->setPen(linePen);
+    if(knoblineisactive)
+    {
+        painter->setBrush(brush);
+        drawCircle(xRef, diffZoomVector.y(), radius, 200.f, 170.0f, 1.0f, touchColor, painter);
+    }
+
+
+    painter->setBrush(Qt::NoBrush);
+    drawLine(xRef,-yRef,xRef,yRef,1.0f,touchColor,painter);
 }
 
 
@@ -1623,8 +1652,10 @@ void HUD::mousePressEvent(QMouseEvent *event)
         dragPosition = mousePressedPosition = event->posF();
         //qDebug() <<"dragPosition "<< dragPosition.x() <<" mousePressedPosition " << mousePressedPosition.y();
 
-        if(std::abs(event->x()-painterszerox)/scalingFactor < 15 && std::abs(event->y()-painterszeroy)/scalingFactor <15)
+        if(std::abs(event->x()-painterszerox)/scalingFactor < 15 && std::abs(event->y()-painterszeroy)/scalingFactor <15) //TO DO make 15 parametric!!
             knobisactive = true;
+        else if((event->x()-painterszerox)/scalingFactor > 60 && std::abs((event->y()-painterszeroy))/scalingFactor < 20) //TO DO make 15 parametric!!
+            knoblineisactive = true;
         else
         {
             knobcircleisactive = true;
@@ -1647,7 +1678,7 @@ void HUD::mouseMoveEvent(QMouseEvent *event)
         {
             QPointF diffVector_desired = (mousePressedPosition - dragPosition)/scalingFactor;
             //qDebug() << diffVector_desired.x() <<" : xPosition" << diffVector_desired.y() << " : yPosition";
-            double pitchTouchInput_desired = -diffVector_desired.y()/30;
+            double pitchTouchInput_desired = -diffVector_desired.y()/30; //compare diffVecotr.rx() = yawTouInput*30; and
             double yawTouchInput_desired = diffVector_desired.x()/30;
 
             if((std::pow(pitchTouchInput,2)+std::pow(yawTouchInput,2)) < 1)
@@ -1698,9 +1729,28 @@ void HUD::mouseMoveEvent(QMouseEvent *event)
             else
                 event->ignore();
         }
+        else if(knoblineisactive)
+        {
+            QPointF diffZoomVector_desired(0,0);
+            diffZoomVector_desired.ry() = (mousePressedPosition.y() - dragPosition.y())/scalingFactor;
+            if(std::abs(diffZoomVector_desired.y()) > 55) //TO DO, replace 55 by variable
+            {
+                //qDebug() << "before ignore" << diffZoomVector_desired.y();
+                event->ignore();
+            }
+            else
+            {
+                diffZoomVector = diffZoomVector_desired;
+                double xZoom = -diffZoomVector.y()/55; //TO DO replace 55 with variable
+                //qDebug() << xZoom;
+                emit valueXZoomChangedHUD(xZoom);
+            }
+        }
 
         else
+        {
             event->ignore();
+        }
 
 
        emit valueTouchInputChangedHUD(rollTouchInput, pitchTouchInput, yawTouchInput);
@@ -1716,6 +1766,8 @@ void HUD::mouseReleaseEvent(QMouseEvent *event)
     dragPosition.ry() = 0;
     diffVector.rx() = 0;
     diffVector.ry() = 0;
+    diffZoomVector.rx() = 0;
+    diffZoomVector.ry() = 0;
 
     alpha = 0;
     beta = 0;
@@ -1731,6 +1783,7 @@ void HUD::mouseReleaseEvent(QMouseEvent *event)
 
     knobisactive = false;
     knobcircleisactive = false;
+    knoblineisactive = false;
 
     event->accept();
 }
