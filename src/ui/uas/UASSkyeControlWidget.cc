@@ -33,6 +33,10 @@ This file is part of the PIXHAWK project
 #define QGC_SKYE_DEFAULT_SENS_DIRECT_ROT 0.5
 #define QGC_SKYE_DEFAULT_SENS_ASSIST_TRANS 0.5
 #define QGC_SKYE_DEFAULT_SENS_ASSIST_ROT 0.5
+#define QGC_SKYE_MAX_SENS_DIRECT_TRANS 1.0
+#define QGC_SKYE_MAX_SENS_DIRECT_ROT 1.0
+#define QGC_SKYE_MAX_SENS_ASSIST_TRANS 1.0
+#define QGC_SKYE_MAX_SENS_ASSIST_ROT 1.0
 
 #include <QString>
 #include <QTimer>
@@ -55,10 +59,10 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     mouseRotationEnabled(true),
     sensitivityFactorTrans(QGC_SKYE_DEFAULT_SENS_DIRECT_TRANS),
     minSensitivityFactorTrans(0.0),
-    maxSensitivityFactorTrans(1.0),
+    maxSensitivityFactorTrans(QGC_SKYE_MAX_SENS_DIRECT_TRANS),
     sensitivityFactorRot(QGC_SKYE_DEFAULT_SENS_DIRECT_ROT),
     minSensitivityFactorRot(0.0),
-    maxSensitivityFactorRot(1.0)
+    maxSensitivityFactorRot(QGC_SKYE_MAX_SENS_DIRECT_ROT)
 {
 #ifdef MAVLINK_ENABLED_SKYE
     ui.setupUi(this);
@@ -290,8 +294,8 @@ void UASSkyeControlWidget::setDirectControlMode(bool checked)
     if (checked)
     {
 #ifdef  MAVLINK_ENABLED_SKYE
-        ui.sensitivityTransSlider->setValue(QGC_SKYE_DEFAULT_SENS_DIRECT_TRANS);
-        ui.sensitivityRotSlider->setValue(QGC_SKYE_DEFAULT_SENS_DIRECT_ROT);
+        ui.sensitivityTransSlider->setValue(QGC_SKYE_DEFAULT_SENS_DIRECT_TRANS / QGC_SKYE_MAX_SENS_DIRECT_TRANS * ui.sensitivityTransSlider->maximum());
+        ui.sensitivityRotSlider->setValue(QGC_SKYE_DEFAULT_SENS_DIRECT_ROT / QGC_SKYE_MAX_SENS_DIRECT_ROT * ui.sensitivityRotSlider->maximum());
         SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
         if (mav){
             UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
@@ -313,8 +317,8 @@ void UASSkyeControlWidget::setAssistedControlMode(bool checked)
     if (checked)
     {
 #ifdef MAVLINK_ENABLED_SKYE
-        ui.sensitivityTransSlider->setValue(QGC_SKYE_DEFAULT_SENS_ASSIST_TRANS);
-        ui.sensitivityRotSlider->setValue(QGC_SKYE_DEFAULT_SENS_ASSIST_ROT);
+        ui.sensitivityTransSlider->setValue(QGC_SKYE_DEFAULT_SENS_ASSIST_TRANS / QGC_SKYE_MAX_SENS_ASSIST_TRANS * ui.sensitivityTransSlider->maximum());
+        ui.sensitivityRotSlider->setValue(QGC_SKYE_DEFAULT_SENS_ASSIST_ROT / QGC_SKYE_MAX_SENS_ASSIST_ROT * ui.sensitivityRotSlider->maximum());
         SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
         if (mav){
             UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
@@ -371,6 +375,21 @@ void UASSkyeControlWidget::setFullAutomaticControlMode(bool checked)
         }
 #endif // MAVLINK_ENABLED_SKYE
     }
+}
+
+void UASSkyeControlWidget::mouseActivated(bool success)
+{
+    if (!success)
+    {
+        inputButtonGroup->setExclusive(false);
+        ui.mouseButton->setChecked(false);
+//        foreach(QAbstractButton *inputButton, inputButtonGroup->buttons())
+//        {
+//            inputButton->setChecked(false);
+//        }
+        inputButtonGroup->setExclusive(true);
+    }
+    qDebug() << "Mouse activated is" << success;
 }
 
 void UASSkyeControlWidget::setInputMouse(bool checked)
