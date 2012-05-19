@@ -510,6 +510,7 @@ private:
     double touchXValue;
     double touchYValue;
     double touchZValue;
+    double touchXZoomValue;
     double touchRollValue;
     double touchPitchValue;
     double touchYawValue;                           //Ende Code AL

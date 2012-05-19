@@ -140,6 +140,7 @@ MainWindow::MainWindow(QWidget *parent):
     touchXValue(0),
     touchYValue(0),
     touchZValue(0),
+    touchXZoomValue(0),
     touchRollValue(0),
     touchPitchValue(0),
     touchYawValue(0)
@@ -2335,12 +2336,12 @@ void MainWindow::setTouchInputYawPitchRoll(double roll, double pitch, double yaw
 
 void MainWindow::setTouchInputXZoom(double x)
 {
-    touchXValue = x; // TO DO, make touchXZoomValue and send seperately, because it is in the camera frame
+    touchXZoomValue = x; // TO DO, make touchXZoomValue and send seperately, because it is in the camera frame
 
     //zur Sicherheit
     if(x > 1)
-        touchXValue = 1;
-    qDebug() << touchXValue << "in setTouchInputXZoom()";
+        touchXZoomValue = 1;
+    //qDebug() << touchXZoomValue << "in setTouchInputXZoom()";
 }
 
 void MainWindow::setTouchInputXYZ(double x, double y, double z)
@@ -2361,5 +2362,5 @@ void MainWindow::setTouchInputXYZ(double x, double y, double z)
 void MainWindow::emitTouchInputValues()
 {
     if(this->inputMode == UASSkyeControlWidget::QGC_INPUT_MODE_TOUCH)
-        emit valueTouchInputChanged(touchXValue, touchYValue, touchZValue, touchRollValue, touchPitchValue, touchYawValue);
+        emit valueTouchInputChanged(touchXZoomValue, touchYValue, touchZValue, touchRollValue, touchPitchValue, touchYawValue);//TO DO Fix me, overwriting problem
 }
