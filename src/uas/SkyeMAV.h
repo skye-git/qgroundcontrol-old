@@ -123,6 +123,7 @@ protected:
     double deltaXYZ[3];
     double deltaCam[3];
     double deltaNorm;
+    double deltaNorm2D;
 
     double cosPhi;
     double sinPhi;

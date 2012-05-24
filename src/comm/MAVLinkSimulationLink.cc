@@ -2122,7 +2122,7 @@ void MAVLinkSimulationLink::writeBytes(const char* data, qint64 size)
 
 
 
-                    // Set ATTITUDE also with direct control
+                    // Set ATTITUDE also with assisted control
 
                     float lastRoll = roll;
 
@@ -2130,24 +2130,41 @@ void MAVLinkSimulationLink::writeBytes(const char* data, qint64 size)
 
                     float lastYaw = yaw;
 
+                    float lastX = x;
+
+                    float lastY = y;
+
+                    float lastZ = z;
 
 
-                    roll = -3.14159*ac.rotation_x;
 
-                    pitch = 3.14159*ac.rotation_y;
+                    speedRoll = 1.5*ac.rotation_x;
 
-                    yaw = 3.14159*ac.rotation_z;
+                    speedPitch = 1.5*ac.rotation_y;
+
+                    speedYaw = 1.5*ac.rotation_z;
+
+                    speedX = 10*ac.translation_lat;
+
+                    speedY = 10*ac.translation_long;
+
+                    speedZ = 10*ac.translation_alt;
 
 
 
                     float dTime = 0.01;
 
-                    speedRoll = (roll - lastRoll)/dTime;
+                    roll = lastRoll + speedRoll*dTime;
 
-                    speedPitch = (pitch - lastPitch)/dTime;
+                    pitch = lastPitch + speedPitch*dTime;
 
-                    speedYaw = (yaw - lastYaw)/dTime;
+                    yaw = lastYaw + speedYaw*dTime;
 
+                    x = lastX + cos(yaw)*speedX*dTime - sin(yaw)*speedY*dTime;
+
+                    y = lastY + sin(yaw)*speedX*dTime + cos(yaw)*speedY*dTime;
+
+                    z = lastZ + speedZ*dTime;
                 }
 
             }
