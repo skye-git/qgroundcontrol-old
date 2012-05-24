@@ -16,9 +16,8 @@
 #define QGC_COS_LATITUDE 0.67716
 #endif
 
-#ifndef QGC_SKYE_MAX_VEL_NORM
-#define QGC_SKYE_MAX_VEL_NORM 2.0
-#endif
+#define QGC_SKYE_MAX_VEL_NORM 1.0
+#define QGC_SKYE_LOOKAHEAD 2.0
 
 SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
 UAS(mavlink, id),
@@ -230,6 +229,7 @@ void SkyeMAV::setManualControlCommands6DoF(double x , double y , double z , doub
         }else if ((mode == MAV_MODE_HALF_AUTOMATIC_DISARMED) || (mode == MAV_MODE_HALF_AUTOMATIC_ARMED))
         {
             qDebug() << "set Rotation for HAC" << a << b << c;
+            manualZVel = z;
             manualXRot = a;
             manualYRot = b;
             manualZRot = c;
@@ -459,7 +459,7 @@ uint8_t SkyeMAV::getMode()
 
 void SkyeMAV::followTrajectory()
 {
-    if (mode & MAV_MODE_FLAG_DECODE_POSITION_AUTO) // Half or Full Automatic Control
+    if (mode & MAV_MODE_FLAG_DECODE_POSITION_GUIDED) // Half or Full Automatic Control
     {
         qDebug() << "SkyeMAV::followTrajectory";
         QVector<double> trajX;
@@ -498,21 +498,31 @@ void SkyeMAV::followTrajectory()
 
         if (mode & MAV_MODE_FLAG_DECODE_POSITION_SAFETY /*&& !qIsNaN(deltaCam[0]) && !qIsNaN(deltaCam[1]) && !qIsNaN(deltaCam[2])*/)
         {
-            if (mode & MAV_MODE_FLAG_DECODE_POSITION_GUIDED) // FULL AUTOMATIC CONTROL
+            if (mode & MAV_MODE_FLAG_DECODE_POSITION_AUTO) // FULL AUTOMATIC CONTROL
             {
                 if ((sensitivityFactorTrans * deltaNorm) < QGC_SKYE_MAX_VEL_NORM)
                 {
                     qDebug() << "Send original Assisted Control for FAC";
-                    sendAssistedControlCommands(deltaCam[0],
-                                                deltaCam[1],
-                                                deltaCam[2],
-                                                manualXRot, manualYRot, manualZRot);
+                    sendAssistedControlCommands(sensitivityFactorTrans * deltaCam[0],
+                                                sensitivityFactorTrans * deltaCam[1],
+                                                sensitivityFactorTrans * deltaCam[2],
+                                                sensitivityFactorRot * manualXRot,
+                                                sensitivityFactorRot * manualYRot,
+                                                sensitivityFactorRot * manualZRot);
                 } else {
                     qDebug() << "Send reduced Assisted Control";
-                    sendAssistedControlCommands(QGC_SKYE_MAX_VEL_NORM / ((double)sensitivityFactorTrans * deltaNorm) * deltaCam[0],
-                                                QGC_SKYE_MAX_VEL_NORM / ((double)sensitivityFactorTrans * deltaNorm) * deltaCam[1],
-                                                QGC_SKYE_MAX_VEL_NORM / ((double)sensitivityFactorTrans * deltaNorm) * deltaCam[2],
-                                                manualXRot, manualYRot, manualZRot);
+                    sendAssistedControlCommands(sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm * deltaCam[0],
+                                                sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm * deltaCam[1],
+                                                sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm * deltaCam[2],
+                                                sensitivityFactorRot * manualXRot,
+                                                sensitivityFactorRot * manualYRot,
+                                                sensitivityFactorRot * manualZRot);
+                }
+                if ( deltaNorm < QGC_SKYE_LOOKAHEAD )
+                {
+                    qDebug() << "REACHED POINT" << currentTrajectoryStamp << "OF TRAJECTORY";
+                    if (trajX.size() > currentTrajectoryStamp + 1)
+                        currentTrajectoryStamp++;
                 }
             }
             else
@@ -520,17 +530,30 @@ void SkyeMAV::followTrajectory()
                 if ((sensitivityFactorTrans * deltaNorm2D) < QGC_SKYE_MAX_VEL_NORM)
                 {
                     qDebug() << "Send original Assisted Control for FAC";
-                    sendAssistedControlCommands(deltaCam[0],
-                                                deltaCam[1],
-                                                manualZVel,
-                                                manualXRot, manualYRot, manualZRot);
+                    sendAssistedControlCommands(sensitivityFactorTrans * deltaCam[0],
+                                                sensitivityFactorTrans * deltaCam[1],
+                                                sensitivityFactorTrans * manualZVel,
+                                                sensitivityFactorRot * manualXRot,
+                                                sensitivityFactorRot * manualYRot,
+                                                sensitivityFactorRot * manualZRot);
                 } else {
                     qDebug() << "Send reduced Assisted Control";
-                    sendAssistedControlCommands(QGC_SKYE_MAX_VEL_NORM / ((double)sensitivityFactorTrans * deltaNorm2D) * deltaCam[0],
-                                                QGC_SKYE_MAX_VEL_NORM / ((double)sensitivityFactorTrans * deltaNorm2D) * deltaCam[1],
-                                                manualZVel,
-                                                manualXRot, manualYRot, manualZRot);
+                    sendAssistedControlCommands(sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm2D * deltaCam[0],
+                                                sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm2D * deltaCam[1],
+                                                sensitivityFactorTrans * manualZVel,
+                                                sensitivityFactorRot * manualXRot,
+                                                sensitivityFactorRot * manualYRot,
+                                                sensitivityFactorRot * manualZRot);
                 }
+                if ( deltaNorm2D < QGC_SKYE_LOOKAHEAD )
+                {
+                    qDebug() << "REACHED POINT" << currentTrajectoryStamp << "OF TRAJECTORY";
+                    if (trajX.size() > currentTrajectoryStamp + 1)
+                        currentTrajectoryStamp++;
+                }
+
+
+
             }
 //            if ((sensitivityFactorTrans * deltaNorm) < 0.2)
 //            {
@@ -547,12 +570,7 @@ void SkyeMAV::followTrajectory()
 //            }
         }
 
-        if ( deltaNorm < 2.0 )
-        {
-            qDebug() << "REACHED POINT" << currentTrajectoryStamp << "OF TRAJECTORY";
-            if (trajX.size() > currentTrajectoryStamp + 1)
-                currentTrajectoryStamp++;
-        }
+
     }
 }
 
