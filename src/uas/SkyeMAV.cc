@@ -16,6 +16,9 @@
 #define QGC_COS_LATITUDE 0.67716
 #endif
 
+#define QGC_SKYE_MAX_VEL_NORM 1.0
+#define QGC_SKYE_LOOKAHEAD 2.0
+
 SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
 UAS(mavlink, id),
 airframe(QGC_AIRFRAME_SKYE),
@@ -226,6 +229,7 @@ void SkyeMAV::setManualControlCommands6DoF(double x , double y , double z , doub
         }else if ((mode == MAV_MODE_HALF_AUTOMATIC_DISARMED) || (mode == MAV_MODE_HALF_AUTOMATIC_ARMED))
         {
             qDebug() << "set Rotation for HAC" << a << b << c;
+            manualZVel = z;
             manualXRot = a;
             manualYRot = b;
             manualZRot = c;
@@ -455,7 +459,7 @@ uint8_t SkyeMAV::getMode()
 
 void SkyeMAV::followTrajectory()
 {
-    if (mode == MAV_MODE_HALF_AUTOMATIC_ARMED || mode == MAV_MODE_HALF_AUTOMATIC_DISARMED)
+    if (mode & MAV_MODE_FLAG_DECODE_POSITION_GUIDED) // Half or Full Automatic Control
     {
         qDebug() << "SkyeMAV::followTrajectory";
         QVector<double> trajX;
@@ -485,35 +489,88 @@ void SkyeMAV::followTrajectory()
         deltaXYZ[2] = deltaLatLngAlt[2];
 
         deltaNorm = qSqrt(deltaXYZ[0]*deltaXYZ[0] + deltaXYZ[1]*deltaXYZ[1] + deltaXYZ[2]+deltaXYZ[2]);
-//        qDebug() << "Follows point" << currentTrajectoryStamp << "deltaLat" << deltaLatLngAlt[0] << "deltaLng" << deltaLatLngAlt[1] << "deltaAlt" << deltaLatLngAlt[2]<< "altitude" << altitude;
+        deltaNorm2D = qSqrt(deltaXYZ[0]*deltaXYZ[0] + deltaXYZ[1]*deltaXYZ[1]);
+        //        qDebug() << "Follows point" << currentTrajectoryStamp << "deltaLat" << deltaLatLngAlt[0] << "deltaLng" << deltaLatLngAlt[1] << "deltaAlt" << deltaLatLngAlt[2]<< "altitude" << altitude;
         qDebug() << "deltaX" << deltaXYZ[0] << "deltaY" << deltaXYZ[1] << "deltaZ" << deltaXYZ[2] << "deltaNorm" << deltaNorm;
 
         InertialToCamera(deltaXYZ, deltaCam);
         qDebug() << "DeltaCam" << deltaCam[0] << deltaCam[1] << deltaCam[2];
 
-        if (mode & MAV_MODE_FLAG_SAFETY_ARMED)
+        if (mode & MAV_MODE_FLAG_DECODE_POSITION_SAFETY /*&& !qIsNaN(deltaCam[0]) && !qIsNaN(deltaCam[1]) && !qIsNaN(deltaCam[2])*/)
         {
-            if ((sensitivityFactorTrans * deltaNorm) < 0.2)
+            if (mode & MAV_MODE_FLAG_DECODE_POSITION_AUTO) // FULL AUTOMATIC CONTROL
             {
-                sendDirectControlCommands(deltaCam[0],
-                                          deltaCam[1],
-                                          deltaCam[2],
-                                          manualXRot, manualYRot, manualZRot);
-            } else {
-                qDebug() << "Send reduced Direct Control";
-                sendDirectControlCommands(0.2 / ((double)sensitivityFactorTrans * deltaNorm) * deltaCam[0],
-                                          0.2 / ((double)sensitivityFactorTrans * deltaNorm) * deltaCam[1],
-                                          0.2 / ((double)sensitivityFactorTrans * deltaNorm) * deltaCam[2],
-                                          manualXRot, manualYRot, manualZRot);
+                if ((sensitivityFactorTrans * deltaNorm) < QGC_SKYE_MAX_VEL_NORM)
+                {
+                    qDebug() << "Send original Assisted Control for FAC";
+                    sendAssistedControlCommands(sensitivityFactorTrans * deltaCam[0],
+                                                sensitivityFactorTrans * deltaCam[1],
+                                                sensitivityFactorTrans * deltaCam[2],
+                                                sensitivityFactorRot * manualXRot,
+                                                sensitivityFactorRot * manualYRot,
+                                                sensitivityFactorRot * manualZRot);
+                } else {
+                    qDebug() << "Send reduced Assisted Control";
+                    sendAssistedControlCommands(sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm * deltaCam[0],
+                                                sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm * deltaCam[1],
+                                                sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm * deltaCam[2],
+                                                sensitivityFactorRot * manualXRot,
+                                                sensitivityFactorRot * manualYRot,
+                                                sensitivityFactorRot * manualZRot);
+                }
+                if ( deltaNorm < QGC_SKYE_LOOKAHEAD )
+                {
+                    qDebug() << "REACHED POINT" << currentTrajectoryStamp << "OF TRAJECTORY";
+                    if (trajX.size() > currentTrajectoryStamp + 1)
+                        currentTrajectoryStamp++;
+                }
             }
+            else
+            {
+                if ((sensitivityFactorTrans * deltaNorm2D) < QGC_SKYE_MAX_VEL_NORM)
+                {
+                    qDebug() << "Send original Assisted Control for FAC";
+                    sendAssistedControlCommands(sensitivityFactorTrans * deltaCam[0],
+                                                sensitivityFactorTrans * deltaCam[1],
+                                                sensitivityFactorTrans * manualZVel,
+                                                sensitivityFactorRot * manualXRot,
+                                                sensitivityFactorRot * manualYRot,
+                                                sensitivityFactorRot * manualZRot);
+                } else {
+                    qDebug() << "Send reduced Assisted Control";
+                    sendAssistedControlCommands(sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm2D * deltaCam[0],
+                                                sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm2D * deltaCam[1],
+                                                sensitivityFactorTrans * manualZVel,
+                                                sensitivityFactorRot * manualXRot,
+                                                sensitivityFactorRot * manualYRot,
+                                                sensitivityFactorRot * manualZRot);
+                }
+                if ( deltaNorm2D < QGC_SKYE_LOOKAHEAD )
+                {
+                    qDebug() << "REACHED POINT" << currentTrajectoryStamp << "OF TRAJECTORY";
+                    if (trajX.size() > currentTrajectoryStamp + 1)
+                        currentTrajectoryStamp++;
+                }
+
+
+
+            }
+//            if ((sensitivityFactorTrans * deltaNorm) < 0.2)
+//            {
+//                sendDirectControlCommands(deltaCam[0],
+//                                          deltaCam[1],
+//                                          deltaCam[2],
+//                                          manualXRot, manualYRot, manualZRot);
+//            } else {
+//                qDebug() << "Send reduced Direct Control";
+//                sendDirectControlCommands(0.2 / ((double)sensitivityFactorTrans * deltaNorm) * deltaCam[0],
+//                                          0.2 / ((double)sensitivityFactorTrans * deltaNorm) * deltaCam[1],
+//                                          0.2 / ((double)sensitivityFactorTrans * deltaNorm) * deltaCam[2],
+//                                          manualXRot, manualYRot, manualZRot);
+//            }
         }
 
-        if ( deltaNorm < 2.0 )
-        {
-            qDebug() << "REACHED POINT" << currentTrajectoryStamp << "OF TRAJECTORY";
-            if (trajX.size() > currentTrajectoryStamp + 1)
-                currentTrajectoryStamp++;
-        }
+
     }
 }
 
