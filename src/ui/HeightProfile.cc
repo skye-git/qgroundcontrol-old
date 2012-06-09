@@ -583,11 +583,12 @@ void HeightProfile::replyFinished(QNetworkReply *reply)
     updateExtrema();
     this->update();
     emit setinfoLabelText("The elevation profile is up to date");
+    updateSplineItem(); //added
 }
 
 void HeightProfile::updateExtrema()
 {
-    minHeight = +4000; //FIXME not nice, assu
+    minHeight = +4000;
     maxHeight = -4000;
     QVector<Waypoint* > wps = currWPManager->getGlobalFrameAndNavTypeWaypointList();
     foreach(Waypoint* wp, wps)
