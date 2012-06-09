@@ -1780,6 +1780,7 @@ void HUD::mouseReleaseEvent(QMouseEvent *event)
     if(touchInputvisib)
     {
         emit valueTouchInputChangedHUD(rollTouchInput, pitchTouchInput, yawTouchInput);
+        emit valueXZoomChangedHUD(0);
         //qDebug() << "HUD.cc mouseReleaseEvent calls valueTouchInputChangedHUD with: rollTouchInput: "<< rollTouchInput << " pitchTouchInput: " << pitchTouchInput << " yawTouchInput :" << yawTouchInput;
     }
 
