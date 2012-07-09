@@ -629,6 +629,7 @@ TRANSLATIONS += es-MX.ts \
 
 # xbee support
 # libxbee only supported by linux and windows systems
+
 win32-msvc2008|win32-msvc2010|linux {
     HEADERS += src/comm/XbeeLinkInterface.h \
         src/comm/XbeeLink.h \
@@ -674,3 +675,19 @@ linux-g++|linux-g++-64{
                     ParameterCheck                      # Has to be defined for magellan usage
     }
 }                                                        # Ende Code MA (06.03.2012) ---------------
+
+win32-msvc2008|win32-msvc2010 {
+    message("Including support for 3DxWare for Windows system.")
+
+    SOURCES += thirdParty/3DMouse/MouseParameters.cpp \
+        thirdParty/3DMouse/Mouse3DInput.cpp
+
+    HEADERS  += thirdParty/3DMouse/I3dMouseParams.h \
+        thirdParty/3DMouse/MouseParameters.h \
+        thirdParty/3DMouse/Mouse3DInput.h
+
+    INCLUDEPATH += thirdParty/3DMouse
+
+    DEFINES += MOUSE_ENABLED_WIN
+
+}

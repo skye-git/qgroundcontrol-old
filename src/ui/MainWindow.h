@@ -86,6 +86,12 @@ This file is part of the QGROUNDCONTROL project
 #include "UASSkyeBatteryInfoWidget.h"       // Beginn Code MA (15.03.2012)
 #include "UASSkyeBatteryPackWidget.h"       // Ende Code MA (15.03.2012)
 
+#ifdef MOUSE_ENABLED_WIN            // Beginn Code MA (09.07.2012)
+#include <I3dMouseParams.h>
+#include <MouseParameters.h>
+#include <Mouse3DInput.h>
+#endif // MOUSE_ENABLED_WIN         // Beginn Code MA (09.07.2012)
+
 class QGCMapTool;
 class QGCMAVLinkMessageSender;
 class QGCFirmwareUpdate;
@@ -130,7 +136,7 @@ public:
 
     QList<QAction*> listLinkMenuActions(void);
 
-#ifdef MOUSE_ENABLED
+#if defined (MOUSE_ENABLED) || defined (MOUSE_ENABLED_WIN)
     /** @brief Moving average filter for mouse values */
     void filterMouseValues(double newX, double newY, double newZ, double newA, double newB, double newC);
 #endif
@@ -250,14 +256,17 @@ public slots:
 
     /** @brief Set input device to control uav */
     void setInputMode(int inputMode);
-#ifdef MOUSE_ENABLED                                        // Beginn Code MA (21.03.2012)
+#if defined (MOUSE_ENABLED) || defined (MOUSE_ENABLED_WIN)            // Beginn Code MA (21.03.2012)
     /** @brief Start 3DxWare driver for 3dMouse (3dConnexion) and initialize */
     void start3dMouse();
     /** @brief Get current mouse value and filter signal */
     void filterMouseValues();
     /** @brief Emit mouse values */
     void emitMouseValues();
-#endif // MOUSE_ENABLED                                     // Ende Code MA (21.03.2012)
+#endif // MOUSE_ENABLED  or MOUSE_ENABLED_WIN               // Ende Code MA (21.03.2012)
+#ifdef MOUSE_ENABLED_WIN									// Beginn Code MA (9.7.2012)
+    void motion3DMouse(std::vector<float>& motionData);
+#endif // MOUSE_ENABLED_WIN									// Ende Code MA (9.7.2012)
 
     /** @Collect Rotational TouchInput from HUD */                             //Beginn Code AL (11.04.12)
     void setTouchInputYawPitchRoll(double roll, double pitch, double yaw);
@@ -473,11 +482,13 @@ private:
     QProcess *process3dxDaemon;     ///< Process running 3dxDaemon 3dConnexion Mouse Driver
     /** @brief Reimplementation of X11Event to handle 3dMouse Events (magellan) */
     bool x11Event(XEvent *event);
-    bool mouseTranslationEnable;    ///< True when translations of 3dMouse are enabled
-    bool mouseRotationEnable;       ///< True when rotations of 3dMouse are enabled
+    #endif // MOUSE_ENABLED
+    #if defined (MOUSE_ENABLED) || defined (MOUSE_ENABLED_WIN)
     bool mouseInitialized;          ///< True when 3dMouse initialized successfully
     QTimer *mouseTimer;             ///< Timer calling 3dMouse
-    QTime newMouseValueTime;        ///< Time when X11 event wrote new MouseValues. Used to check X11 timeout
+    bool mouseTranslationEnable;    ///< True when translations of 3dMouse are enabled
+    bool mouseRotationEnable;       ///< True when rotations of 3dMouse are enabled
+    QTime newMouseValueTime;        ///< Time when X11/3DMouse event wrote new MouseValues. Used to check X11/3DMouse timeout
     int mouseFilterSize;            ///< Size of moving average filter of skye
     int emitMouseValuesCounter;     ///< Counts up to mouseFilterSize and than values are emited
     double *mouseRawValues;         ///< Array containing last #mouseFilterSize mouse values for each axis
@@ -493,7 +504,11 @@ private:
     double mouseAValueFiltered;     ///< Filtered mouse value
     double mouseBValueFiltered;     ///< Filtered mouse value
     double mouseCValueFiltered;     ///< Filtered mouse value
-    #endif //MOUSE_ENABLED                          // Ende Code MA 06.03.2012 ------------
+    #endif //MOUSE_ENABLED or MOUSE_ENABLED_WIN          // Ende Code MA 06.03.2012 && 09.07.2012 ------------
+
+	#ifdef MOUSE_ENABLED_WIN            // Beginn Code MA (09.07.2012)
+    Mouse3DInput *mouse;            ///< 3DMouse SDK interface for Windows 3DxWare
+	#endif // MOUSE_ENABLED_WIN
 
     void keyPressEvent(QKeyEvent *event);           // Beginn Code MA (07.03.2012)
     void keyReleaseEvent(QKeyEvent *event);

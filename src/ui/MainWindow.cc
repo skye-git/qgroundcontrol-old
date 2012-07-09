@@ -110,7 +110,7 @@ MainWindow::MainWindow(QWidget *parent):
     autoReconnect(false),
     lowPowerMode(false),
     inputMode(UASSkyeControlWidget::QGC_INPUT_MODE_NONE),
-    #ifdef MOUSE_ENABLED                                        // Beginn Code MA
+    #if defined (MOUSE_ENABLED) || defined (MOUSE_ENABLED_WIN)               // Beginn Code MA
     mouseTranslationEnable(true),
     mouseRotationEnable(true),
     mouseInitialized(false),
@@ -130,7 +130,7 @@ MainWindow::MainWindow(QWidget *parent):
     mouseAValueFiltered(0),
     mouseBValueFiltered(0),
     mouseCValueFiltered(0),
-    #endif                                                      // Ende Code MA (21.03.2012)
+    #endif // MOUSE_ENABLED or MOUSE_ENABLED_WIN             // Ende Code MA (21.03.2012 && 09.07.2012)
     keyXValue(0),
     keyYValue(0),
     keyZValue(0),
@@ -143,7 +143,7 @@ MainWindow::MainWindow(QWidget *parent):
     touchXZoomValue(0),
     touchRollValue(0),
     touchPitchValue(0),
-    touchYawValue(0)
+    touchYawValue(0)                                            // Ende Code
 {
     hide();
     emit initStatusChanged("Loading UI Settings..");
@@ -290,6 +290,12 @@ MainWindow::MainWindow(QWidget *parent):
 #ifdef MOUSE_ENABLED                    // Beginn Code MA (21.03.2012)
     //start3dMouse();
 #endif // MOUSE_ENABLED                 // Ende Code MA
+#ifdef MOUSE_ENABLED_WIN
+    mouse = new Mouse3DInput(this);
+    connect(mouse, SIGNAL(Move3d(std::vector<float>&)), this, SLOT(motion3DMouse(std::vector<float>&)));
+    //TODO: Enable Button Functions
+#endif // MOUSE_ENABLED_WIN
+
 
     show();
 }
@@ -1243,7 +1249,7 @@ void MainWindow::showDirectControl()                    //Beginn Code MA (12.04.
 {
      if(!directControlWidget)
     {
-        #ifdef MOUSE_ENABLED
+        #if defined (MOUSE_ENABLED) || defined (MOUSE_ENABLED_WIN)
         if ( mouseTimer )
             if ( mouseTimer->isActive() ) mouseTimer->stop();
         #endif // MOUSE_ENABLED
@@ -1858,12 +1864,12 @@ void MainWindow::setInputMode(int inputMode)
     {
     case 1:
             this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_MOUSE;
-            #ifdef MOUSE_ENABLED
+            #if defined (MOUSE_ENABLED) || defined (MOUSE_ENABLED_WIN)
             if ( !mouseInitialized )
             {
                 start3dMouse();
             }
-            #endif
+            #endif // MOUSE_ENABLED or MOUSE_ENABLED_WIN
             emit emitTouchInputVisibility(false);
             break;
     case 2:
@@ -1886,7 +1892,7 @@ void MainWindow::setInputMode(int inputMode)
 #endif //MAVLINK_ENABLED_SKYE
 }
 
-#ifdef MOUSE_ENABLED            // Beginn Code MA (21.03.2012)
+#if defined (MOUSE_ENABLED) || defined (MOUSE_ENABLED_WIN)            // Beginn Code MA (21.03.2012)
 void MainWindow::start3dMouse()
 {
     if (!mouseInitialized)
@@ -1904,6 +1910,7 @@ void MainWindow::start3dMouse()
 //    //        qDebug() << "Try in terminal as user root:" << processArguments.last();
 //    //    }
 
+#ifdef MOUSE_ENABLED
         Display *display = QX11Info::display();
         if(!display)
         {
@@ -1924,6 +1931,7 @@ void MainWindow::start3dMouse()
             return;
         }
         else
+#endif // MOUSE_ENABLED
         {
             qDebug() << "Initialized 3dMouse";
             mouseInitialized = true;
@@ -1970,9 +1978,10 @@ void MainWindow::start3dMouse()
         qDebug() << "3dMouse already initialized..";
     }
     emit mouseStarted(true);
-}                               // Ende Code MA (21.03.2012)
+}
+#endif // MOUSE_ENABLED or MOUSE_ENABLED_WIN        // Ende Code MA (21.03.2012)
 
-                                // Beginn Code MA (06.03.2012) -----------
+#ifdef MOUSE_ENABLED            // Beginn Code MA (06.03.2012) -----------
 bool MainWindow::x11Event(XEvent *event)
 {
 //    qDebug("XEvent occured...");
@@ -2073,7 +2082,47 @@ bool MainWindow::x11Event(XEvent *event)
     return false;   // Event will not be destroyed
 
 }
+#endif
 
+#ifdef MOUSE_ENABLED_WIN									// Begin Code MA (9.7.2012)
+void MainWindow::motion3DMouse(std::vector<float> &motionData)
+{
+    if (motionData.size() < 6) return;
+
+    qDebug() << "WIN 3d mouse" << QString::number(motionData[0]) << QString::number(motionData[1]) << QString::number(motionData[2]);
+//    emit valueMouseChanged(	(double)1.0e2f*motionData[0],
+//                            (double)1.0e2f*motionData[1],
+//                            (double)1.0e2f*motionData[2],
+//                            (double)1.0e2f*motionData[3],
+//                            (double)1.0e2f*motionData[4],
+//                            (double)1.0e2f*motionData[5]
+//							);
+
+    // Saturation and (de-)activating of motion degree
+    double max3DMouseValue = 0.01;
+    for (int i = 0; i < 6; i++) {
+
+        // Cancel value if motion is disabled
+        if ((i<3 && !mouseTranslationEnable) || (i>=3 && !mouseRotationEnable))
+        {
+            motionData[i] = 0;
+        }
+        motionData[i] = (abs(motionData[i]) < max3DMouseValue) ? motionData[i] : (max3DMouseValue*motionData[i]/abs(motionData[i]));
+    }
+
+    newMouseXValue = - motionData[ 1 ] / max3DMouseValue;
+    newMouseYValue = motionData[ 0 ] / max3DMouseValue;
+    newMouseZValue = motionData[ 2 ] / max3DMouseValue;
+    newMouseAValue = motionData[ 4 ] / max3DMouseValue;
+    newMouseBValue = motionData[ 3 ] / max3DMouseValue;
+    newMouseCValue = motionData[ 5 ] / max3DMouseValue;
+
+    newMouseValueTime = QTime::currentTime();
+}
+#endif // MOUSE_ENABLED_WIN									// Ende Code MA (9.7.2012)
+
+
+#if defined (MOUSE_ENABLED) || defined (MOUSE_ENABLED_WIN)
 void MainWindow::filterMouseValues()
 {
     if (inputMode == UASSkyeControlWidget::QGC_INPUT_MODE_MOUSE){
@@ -2193,6 +2242,8 @@ void MainWindow::emitMouseValues()
 }
 
 #endif // MOUSE_ENABLED                                     // Ende Code MA (06.03.2012) ------
+
+
 
 void MainWindow::keyPressEvent(QKeyEvent *event)            // Beginn Code MA (07.03.2012) ---------
 {
