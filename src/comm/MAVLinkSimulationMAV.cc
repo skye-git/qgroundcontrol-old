@@ -1,6 +1,7 @@
 #include <QDebug>
 #include <cmath>
 #include <qmath.h>
+#include <QGC.h>
 
 #include "MAVLinkSimulationMAV.h"
 
@@ -107,7 +108,7 @@ void MAVLinkSimulationMAV::mainloop()
         planner.handleMessage(msg);
 
         mavlink_servo_output_raw_t servos;
-        servos.time_usec = 0;
+        servos.time_boot_ms = 0;
         servos.servo1_raw = 1000;
         servos.servo2_raw = 1250;
         servos.servo3_raw = 1400;

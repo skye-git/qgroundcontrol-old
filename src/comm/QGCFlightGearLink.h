@@ -41,8 +41,9 @@ This file is part of the QGROUNDCONTROL project
 #include <LinkInterface.h>
 #include <configuration.h>
 #include "UASInterface.h"
+#include "QGCHilLink.h"
 
-class QGCFlightGearLink : public QThread
+class QGCFlightGearLink : public QGCHilLink
 {
     Q_OBJECT
     //Q_INTERFACES(QGCFlightGearLinkInterface:LinkInterface)
@@ -62,6 +63,12 @@ public:
      */
     QString getName();
 
+    /**
+     * @brief Get remote host and port
+     * @return string in format <host>:<port>
+     */
+    QString getRemoteHost();
+
     void run();
 
 public slots:
@@ -71,6 +78,7 @@ public slots:
     void setRemoteHost(const QString& host);
     /** @brief Send new control states to the simulation */
     void updateControls(uint64_t time, float rollAilerons, float pitchElevator, float yawRudder, float throttle, uint8_t systemMode, uint8_t navMode);
+    void updateActuators(uint64_t time, float act1, float act2, float act3, float act4, float act5, float act6, float act7, float act8);
 //    /** @brief Remove a host from broadcasting messages to */
 //    void removeHost(const QString& host);
     //    void readPendingDatagrams();
@@ -114,25 +122,6 @@ protected:
     void setName(QString name);
 
 signals:
-    /**
-     * @brief This signal is emitted instantly when the link is connected
-     **/
-    void flightGearConnected();
-
-    /**
-     * @brief This signal is emitted instantly when the link is disconnected
-     **/
-    void flightGearDisconnected();
-
-    /**
-     * @brief This signal is emitted instantly when the link status changes
-     **/
-    void flightGearConnected(bool connected);
-
-    /** @brief State update from FlightGear */
-    void hilStateChanged(uint64_t time_us, float roll, float pitch, float yaw, float rollspeed,
-                        float pitchspeed, float yawspeed, int32_t lat, int32_t lon, int32_t alt,
-                        int16_t vx, int16_t vy, int16_t vz, int16_t xacc, int16_t yacc, int16_t zacc);
 
 
 };

@@ -36,7 +36,9 @@ This file is part of the QGROUNDCONTROL project
 #include <MAVLinkProtocol.h>
 #include <QVector3D>
 #include "QGCMAVLink.h"
+#include "QGCHilLink.h"
 #include "QGCFlightGearLink.h"
+#include "QGCXPlaneLink.h"
 
 /**
  * @brief A generic MAVLINK-connected MAV/UAV
@@ -147,7 +149,6 @@ public:
         return yaw;
     }
     bool getSelected() const;
-
     QVector3D getNedPosGlobalOffset() const
     {
         return nedPosGlobalOffset;
@@ -335,7 +336,7 @@ protected: //COMMENTS FOR TEST UNIT
     QString shortModeText;          ///< Short textual mode description
     bool attitudeStamped;           ///< Should arriving data be timestamped with the last attitude? This helps with broken system time clocks on the MAV
     quint64 lastAttitude;           ///< Timestamp of last attitude measurement
-    QGCFlightGearLink* simulation;  ///< Hardware in the loop simulation link
+    QGCHilLink* simulation;         ///< Hardware in the loop simulation link
     bool isLocalPositionKnown;      ///< If the local position has been received for this MAV
     bool isGlobalPositionKnown;     ///< If the global position has been received for this MAV
     bool systemIsArmed;             ///< If the system is armed
@@ -364,6 +365,10 @@ public:
     /** @brief Get reference to the param manager **/
     QGCUASParamManager* getParamManager() const {
         return paramManager;
+    }
+    /** @brief Get the HIL simulation */
+    QGCHilLink* getHILSimulation() const {
+        return simulation;
     }
     // TODO Will be removed
     /** @brief Set reference to the param manager **/
@@ -434,7 +439,7 @@ public:
 
     QImage getImage();
     void requestImage();
-    int getAutopilotType() {
+    int getAutopilotType(){
         return autopilot;
     }
     QString getAutopilotTypeName()
@@ -498,8 +503,12 @@ public slots:
     /** @brief Set the specific airframe type */
     void setAirframe(int airframe)
     {
-        this->airframe = airframe;
-        emit systemSpecsChanged(uasId);
+        if((airframe >= QGC_AIRFRAME_GENERIC) && (airframe < QGC_AIRFRAME_END_OF_ENUM))
+        {
+          this->airframe = airframe;
+          emit systemSpecsChanged(uasId);
+        }
+        
     }
     /** @brief Set a new name **/
     void setUASName(const QString& name);
@@ -518,8 +527,10 @@ public slots:
     //void setWaypoint(Waypoint* wp); FIXME tbd
     /** @brief Set currently active waypoint */
     //void setWaypointActive(int id); FIXME tbd
-    /** @brief Order the robot to return home / to land on the runway **/
+    /** @brief Order the robot to return home **/
     void home();
+    /** @brief Order the robot to land **/
+    void land();
     void halt();
     void go();
 
@@ -643,9 +654,8 @@ public slots:
 
     void startDataRecording();
     void stopDataRecording();
-
+    void deleteSettings();
 signals:
-
     /** @brief The main/battery voltage has changed/was updated */
     //void voltageChanged(int uasId, double voltage); // Defined in UASInterface already
     /** @brief An actuator value has changed */
@@ -663,6 +673,8 @@ signals:
     void imageReady(UASInterface* uas);
     /** @brief HIL controls have changed */
     void hilControlsChanged(uint64_t time, float rollAilerons, float pitchElevator, float yawRudder, float throttle, uint8_t systemMode, uint8_t navMode);
+    /** @brief HIL actuator outputs have changed */
+    void hilActuatorsChanged(uint64_t time, float act1, float act2, float act3, float act4, float act5, float act6, float act7, float act8);
 
 protected:
     /** @brief Get the UNIX timestamp in milliseconds, enter microseconds */
@@ -673,6 +685,12 @@ protected:
     quint64 getUnixReferenceTime(quint64 time);
     int componentID[256];
     bool componentMulti[256];
+    bool connectionLost; ///< Flag indicates a timed out connection
+    quint64 connectionLossTime; ///< Time the connection was interrupted
+    quint64 lastVoltageWarning; ///< Time at which the last voltage warning occured
+    quint64 lastNonNullTime;    ///< The last timestamp from the MAV that was not null
+    unsigned int onboardTimeOffsetInvalidCount;     ///< Count when the offboard time offset estimation seemed wrong
+    bool hilEnabled;            ///< Set to true if HIL mode is enabled from GCS (UAS might be in HIL even if this flag is not set, this defines the GCS HIL setting)
 
 protected slots:
     /** @brief Write settings to disk */

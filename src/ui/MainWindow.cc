@@ -36,6 +36,8 @@ This file is part of the QGROUNDCONTROL project
 #include <QHostInfo>
 #include <QSplashScreen>
 #include <qmath.h>                      // Beginn nd Ende Code MA (07.03.2012)
+#include <QGCHilLink.h>
+#include <QGCHilConfiguration.h>
 
 #include "QGC.h"
 #include "MAVLinkSimulationLink.h"
@@ -508,10 +510,10 @@ void MainWindow::buildCommonWidgets()
 
     if (!mavlinkSenderWidget)
     {
-        mavlinkSenderWidget = new QDockWidget(tr("MAVLink Message Sender"), this);
-        mavlinkSenderWidget->setWidget( new QGCMAVLinkMessageSender(mavlink, this) );
-        mavlinkSenderWidget->setObjectName("MAVLINK_SENDER_DOCKWIDGET");
-        addTool(mavlinkSenderWidget, tr("MAVLink Sender"), Qt::RightDockWidgetArea);
+//        mavlinkSenderWidget = new QDockWidget(tr("MAVLink Message Sender"), this);
+//        mavlinkSenderWidget->setWidget( new QGCMAVLinkMessageSender(mavlink, this) );
+//        mavlinkSenderWidget->setObjectName("MAVLINK_SENDER_DOCKWIDGET");
+//        addTool(mavlinkSenderWidget, tr("MAVLink Sender"), Qt::RightDockWidgetArea);
     }
 
     //FIXME: memory of acceptList will never be freed again
@@ -526,12 +528,12 @@ void MainWindow::buildCommonWidgets()
 
     if (!parametersDockWidget)
     {
-        parametersDockWidget = new QDockWidget(tr("Calibration and Onboard Parameters"), this);
+        parametersDockWidget = new QDockWidget(tr("Onboard Parameters"), this);
         parametersDockWidget->setWidget( new ParameterInterface(this) );
         parametersDockWidget->setObjectName("PARAMETER_INTERFACE_DOCKWIDGET");
-        addTool(parametersDockWidget, tr("Calibration and Parameters"), Qt::RightDockWidgetArea);
+        addTool(parametersDockWidget, tr("Onboard Parameters"), Qt::RightDockWidgetArea);
     }
-	
+
     if (!hsiDockWidget)
     {
         hsiDockWidget = new QDockWidget(tr("Horizontal Situation Indicator"), this);
@@ -539,7 +541,7 @@ void MainWindow::buildCommonWidgets()
         hsiDockWidget->setObjectName("HORIZONTAL_SITUATION_INDICATOR_DOCK_WIDGET");
         addTool(hsiDockWidget, tr("Horizontal Situation"), Qt::BottomDockWidgetArea);
     }
-	
+
     if (!headDown1DockWidget)
     {
         headDown1DockWidget = new QDockWidget(tr("Flight Display"), this);
@@ -559,7 +561,7 @@ void MainWindow::buildCommonWidgets()
         headDown2DockWidget->setObjectName("HEAD_DOWN_DISPLAY_2_DOCK_WIDGET");
         addTool(headDown2DockWidget, tr("Actuator Status"), Qt::RightDockWidgetArea);
     }
-	
+
     if (!rcViewDockWidget)
     {
         rcViewDockWidget = new QDockWidget(tr("Radio Control"), this);
@@ -645,13 +647,14 @@ void MainWindow::buildCommonWidgets()
         addCentralWidget(protocolWidget, "Mavlink Generator");
     }
 
-    if (!firmwareUpdateWidget)
-    {
-        firmwareUpdateWidget    = new QGCFirmwareUpdate(this);
-        addCentralWidget(firmwareUpdateWidget, "Firmware Update");
-    }
+//    if (!firmwareUpdateWidget)
+//    {
+//        firmwareUpdateWidget    = new QGCFirmwareUpdate(this);
+//        addCentralWidget(firmwareUpdateWidget, "Firmware Update");
+//    }
 
-    if (!hudWidget) {
+    if (!hudWidget)
+    {
         hudWidget         = new HUD(320, 240, this);
         addCentralWidget(hudWidget, tr("Head Up Display"));
         connect(hudWidget, SIGNAL(valueTouchInputChangedHUD(double,double,double)), this, SLOT(setTouchInputYawPitchRoll(double,double,double))); //Beginn Ende Code AL (11.04.12)
@@ -659,20 +662,29 @@ void MainWindow::buildCommonWidgets()
         connect(this, SIGNAL(emitTouchInputVisibility(bool)), hudWidget, SLOT(setKnobndKnobRingvisible(bool))); //Beginn Ende Code AL (23.04.12)
     }
 
-    if (!dataplotWidget) {
+//    if (!configWidget)
+//    {
+//        configWidget = new QGCVehicleConfig(this);
+//        addCentralWidget(configWidget, tr("Vehicle Configuration"));
+//    }
+
+    if (!dataplotWidget)
+    {
         dataplotWidget    = new QGCDataPlot2D(this);
         addCentralWidget(dataplotWidget, tr("Logfile Plot"));
     }
 
 #ifdef QGC_OSG_ENABLED
-    if (!_3DWidget) {
+    if (!_3DWidget)
+    {
         _3DWidget         = Q3DWidgetFactory::get("PIXHAWK", this);
         addCentralWidget(_3DWidget, tr("Local 3D"));
     }
 #endif
 
 #if (defined _MSC_VER) | (defined Q_OS_MAC)
-    if (!gEarthWidget) {
+    if (!gEarthWidget)
+    {
         gEarthWidget = new QGCGoogleEarthView(this);
         addCentralWidget(gEarthWidget, tr("Google Earth"));
     }
@@ -970,13 +982,13 @@ void MainWindow::loadStyle(QGC_MAINWINDOW_STYLE style)
     }
     break;
     case QGC_MAINWINDOW_STYLE_INDOOR:
-        qApp->setStyle("plastique");
-        styleFileName = ":/images/style-mission.css";
+	qApp->setStyle("plastique");
+        styleFileName = ":files/styles/style-indoor.css";
         reloadStylesheet();
         break;
     case QGC_MAINWINDOW_STYLE_OUTDOOR:
-        qApp->setStyle("plastique");
-        styleFileName = ":/images/style-outdoor.css";
+	qApp->setStyle("plastique");
+        styleFileName = ":files/styles/style-outdoor.css";
         reloadStylesheet();
         break;
     case QGC_MAINWINDOW_STYLE_SKYE:
@@ -1014,12 +1026,12 @@ void MainWindow::reloadStylesheet()
     QFile* styleSheet = new QFile(styleFileName);
     if (!styleSheet->exists())
     {
-        styleSheet = new QFile(":/images/style-mission.css");
+        styleSheet = new QFile(":files/styles/style-indoor.css");
     }
     if (styleSheet->open(QIODevice::ReadOnly | QIODevice::Text))
     {
         QString style = QString(styleSheet->readAll());
-        style.replace("ICONDIR", QCoreApplication::applicationDirPath()+ "/images/");
+        style.replace("ICONDIR", QCoreApplication::applicationDirPath()+ "files/styles/");
         qApp->setStyleSheet(style);
     }
     else
@@ -1385,6 +1397,12 @@ void MainWindow::UASSpecsChanged(int uas)
             ui.menuUnmanned_System->setTitle(activeUAS->getUASName());
         }
     }
+    else
+    {
+        // Last system deleted
+        ui.menuUnmanned_System->setTitle(tr("No System"));
+        ui.menuUnmanned_System->setEnabled(false);
+    }
 }
 
 void MainWindow::UASCreated(UASInterface* uas)
@@ -1411,28 +1429,64 @@ void MainWindow::UASCreated(UASInterface* uas)
         switch (uas->getSystemType())
 		{
         case MAV_TYPE_GENERIC:
-            icon = QIcon(":/images/mavs/generic.svg");
+            icon = QIcon(":files/images/mavs/generic.svg");
             break;
         case MAV_TYPE_FIXED_WING:
-            icon = QIcon(":/images/mavs/fixed-wing.svg");
+            icon = QIcon(":files/images/mavs/fixed-wing.svg");
             break;
         case MAV_TYPE_QUADROTOR:
-            icon = QIcon(":/images/mavs/quadrotor.svg");
+            icon = QIcon(":files/images/mavs/quadrotor.svg");
             break;
         case MAV_TYPE_COAXIAL:
-            icon = QIcon(":/images/mavs/coaxial.svg");
+            icon = QIcon(":files/images/mavs/coaxial.svg");
             break;
         case MAV_TYPE_HELICOPTER:
-            icon = QIcon(":/images/mavs/helicopter.svg");
+            icon = QIcon(":files/images/mavs/helicopter.svg");
+            break;
+        case MAV_TYPE_ANTENNA_TRACKER:
+            icon = QIcon(":files/images/mavs/antenna-tracker.svg");
             break;
         case MAV_TYPE_GCS:
-            icon = QIcon(":/images/mavs/groundstation.svg");
+            icon = QIcon(":files/images/mavs/groundstation.svg");
+            break;
+        case MAV_TYPE_AIRSHIP:
+            icon = QIcon(":files/images/mavs/airship.svg");
+            break;
+        case MAV_TYPE_FREE_BALLOON:
+            icon = QIcon(":files/images/mavs/free-balloon.svg");
+            break;
+        case MAV_TYPE_ROCKET:
+            icon = QIcon(":files/images/mavs/rocket.svg");
+            break;
+        case MAV_TYPE_GROUND_ROVER:
+            icon = QIcon(":files/images/mavs/ground-rover.svg");
+            break;
+        case MAV_TYPE_SURFACE_BOAT:
+            icon = QIcon(":files/images/mavs/surface-boat.svg");
+            break;
+        case MAV_TYPE_SUBMARINE:
+            icon = QIcon(":files/images/mavs/submarine.svg");
+            break;
+        case MAV_TYPE_HEXAROTOR:
+            icon = QIcon(":files/images/mavs/hexarotor.svg");
+            break;
+        case MAV_TYPE_OCTOROTOR:
+            icon = QIcon(":files/images/mavs/octorotor.svg");
+            break;
+        case MAV_TYPE_TRICOPTER:
+            icon = QIcon(":files/images/mavs/tricopter.svg");
+            break;
+        case MAV_TYPE_FLAPPING_WING:
+            icon = QIcon(":files/images/mavs/flapping-wing.svg");
+            break;
+        case MAV_TYPE_KITE:
+            icon = QIcon(":files/images/mavs/kite.svg");
             break;
         case MAV_TYPE_AIRSHIP:
             icon = QIcon(":/images/skye_images/LOGO_DEF.png");
             break;
         default:
-            icon = QIcon(":/images/mavs/unknown.svg");
+            icon = QIcon(":files/images/mavs/unknown.svg");
             break;
         }
 
@@ -1493,7 +1547,7 @@ void MainWindow::UASCreated(UASInterface* uas)
             if (!detectionDockWidget)
             {
                 detectionDockWidget = new QDockWidget(tr("Object Recognition"), this);
-                detectionDockWidget->setWidget( new ObjectDetectionView("images/patterns", this) );
+                detectionDockWidget->setWidget( new ObjectDetectionView("files/images/patterns", this) );
                 detectionDockWidget->setObjectName("OBJECT_DETECTION_DOCK_WIDGET");
                 addTool(detectionDockWidget, tr("Object Recognition"), Qt::RightDockWidgetArea);
             }
@@ -1570,9 +1624,42 @@ void MainWindow::UASCreated(UASInterface* uas)
     //}
 
     if (!ui.menuConnected_Systems->isEnabled()) ui.menuConnected_Systems->setEnabled(true);
+    if (!ui.menuUnmanned_System->isEnabled()) ui.menuUnmanned_System->setEnabled(true);
+
+    // Add simulation configuration widget
+    UAS* mav = dynamic_cast<UAS*>(uas);
+
+    if (mav)
+    {
+        QGCHilConfiguration* hconf = new QGCHilConfiguration(mav->getHILSimulation(), this);
+        QString hilDockName = tr("HIL Config (%1)").arg(uas->getUASName());
+        QDockWidget* hilDock = new QDockWidget(hilDockName, this);
+        hilDock->setWidget(hconf);
+        hilDock->setObjectName(QString("HIL_CONFIG_%1").arg(uas->getUASID()));
+        addTool(hilDock, hilDockName, Qt::RightDockWidgetArea);
+    }
 
     // Reload view state in case new widgets were added
     loadViewState();
+}
+
+void MainWindow::UASDeleted(UASInterface* uas)
+{
+    if (UASManager::instance()->getUASList().count() == 0)
+    {
+        // Last system deleted
+        ui.menuUnmanned_System->setTitle(tr("No System"));
+        ui.menuUnmanned_System->setEnabled(false);
+    }
+
+    QAction* act;
+    QList<QAction*> actions = ui.menuConnected_Systems->actions();
+
+    foreach (act, actions)
+    {
+        if (act->text().contains(uas->getUASName()))
+            ui.menuConnected_Systems->removeAction(act);
+    }
 }
 
 /**
@@ -1626,7 +1713,7 @@ void MainWindow::loadViewState()
             debugConsoleDockWidget->show();
             logPlayerDockWidget->show();
             mavlinkInspectorWidget->show();
-            mavlinkSenderWidget->show();
+            //mavlinkSenderWidget->show();
             parametersDockWidget->show();
             hsiDockWidget->hide();
             headDown1DockWidget->hide();
@@ -1663,7 +1750,7 @@ void MainWindow::loadViewState()
             debugConsoleDockWidget->hide();
             logPlayerDockWidget->hide();
             mavlinkInspectorWidget->show();
-            mavlinkSenderWidget->show();
+            //mavlinkSenderWidget->show();
             parametersDockWidget->hide();
             hsiDockWidget->hide();
             headDown1DockWidget->hide();
@@ -1682,7 +1769,7 @@ void MainWindow::loadViewState()
             debugConsoleDockWidget->hide();
             logPlayerDockWidget->hide();
             mavlinkInspectorWidget->hide();
-            mavlinkSenderWidget->hide();
+            //mavlinkSenderWidget->hide();
             parametersDockWidget->hide();
             hsiDockWidget->hide();
             headDown1DockWidget->hide();

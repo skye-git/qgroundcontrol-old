@@ -30,35 +30,42 @@ win32-msvc2008|win32-msvc2010 {
 DEFINES += _TTY_NOWARN_
 
 # MAC OS X
-macx|macx-g++42|macx-g++: {
+macx|macx-g++42|macx-g++|macx-llvm: {
 
-	CONFIG += x86_64 cocoa phonon
-	CONFIG -= x86
+        CONFIG += x86_64 cocoa phonon
+        CONFIG -= x86
 
 	QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.6
 
-	INCLUDEPATH += -framework SDL
+        INCLUDEPATH += $$BASEDIR/libs/lib/Frameworks/SDL.framework/Headers
 
-	LIBS += -framework IOKit \
-		-framework SDL \
-		-framework CoreFoundation \
-		-framework ApplicationServices \
-		-lm
+        LIBS += -framework IOKit \
+                -F$$BASEDIR/libs/lib/Frameworks \
+                -framework SDL \
+                -framework CoreFoundation \
+                -framework ApplicationServices \
+                -lm
 
-	ICON = $$BASEDIR/images/icons/macx.icns
+	ICON = $$BASEDIR/files/images/icons/macx.icns
 
 	# Copy contributed files
 	QMAKE_POST_LINK += && cp -rf $$BASEDIR/files $$TARGETDIR/qgroundcontrol.app/Contents/MacOS
 	# Copy google earth starter file
-	QMAKE_POST_LINK += && cp -f $$BASEDIR/images/earth.html $$TARGETDIR/qgroundcontrol.app/Contents/MacOS
+	QMAKE_POST_LINK += && cp -f $$BASEDIR/files/images/earth.html $$TARGETDIR/qgroundcontrol.app/Contents/MacOS
 	# Copy CSS stylesheets
-	QMAKE_POST_LINK += && cp -f $$BASEDIR/images/style-mission.css $$TARGETDIR/qgroundcontrol.app/Contents/MacOS/style-indoor.css
-	QMAKE_POST_LINK += && cp -f $$BASEDIR/images/style-outdoor.css $$TARGETDIR/qgroundcontrol.app/Contents/MacOS
-	# Copy parameter tooltip files
+	QMAKE_POST_LINK += && cp -f $$BASEDIR/files/styles/style-indoor.css $$TARGETDIR/qgroundcontrol.app/Contents/MacOS/style-indoor.css
+	QMAKE_POST_LINK += && cp -f $$BASEDIR/files/styles/style-outdoor.css $$TARGETDIR/qgroundcontrol.app/Contents/MacOS
+        # Copy support files
 	QMAKE_POST_LINK += && cp -rf $$BASEDIR/files $$TARGETDIR/qgroundcontrol.app/Contents/MacOS
+        # Copy MAVLink
+        QMAKE_POST_LINK += && cp -rf $$BASEDIR/libs/mavlink $$TARGETDIR/qgroundcontrol.app/Contents/MacOS
 	# Copy libraries
 	QMAKE_POST_LINK += && mkdir -p $$TARGETDIR/qgroundcontrol.app/Contents/libs
-	QMAKE_POST_LINK += && cp -rf $$BASEDIR/lib/mac64/lib/* $$TARGETDIR/qgroundcontrol.app/Contents/libs
+	QMAKE_POST_LINK += && cp -rf $$BASEDIR/libs/lib/mac64/lib/* $$TARGETDIR/qgroundcontrol.app/Contents/libs
+        # Copy frameworks
+        QMAKE_POST_LINK += && mkdir -p $$TARGETDIR/qgroundcontrol.app/Contents/Frameworks
+        QMAKE_POST_LINK += && cp -rf $$BASEDIR/libs/lib/Frameworks/* $$TARGETDIR/qgroundcontrol.app/Contents/Frameworks
+
 
 	# Fix library paths inside executable
 	QMAKE_POST_LINK += && install_name_tool -change libOpenThreads.dylib "@executable_path/../libs/libOpenThreads.dylib" $$TARGETDIR/qgroundcontrol.app/Contents/MacOS/qgroundcontrol
@@ -116,6 +123,9 @@ macx|macx-g++42|macx-g++: {
 	# CORE OSG LIBRARY
 	QMAKE_POST_LINK += && install_name_tool -change libOpenThreads.dylib "@executable_path/../libs/libOpenThreads.dylib" $$TARGETDIR/qgroundcontrol.app/Contents/libs/libosg.dylib
 
+        # SDL Framework
+        QMAKE_POST_LINK += && install_name_tool -change "@rpath/SDL.framework/Versions/A/SDL" "@executable_path/../Frameworks/SDL.framework/Versions/A/SDL" $$TARGETDIR/qgroundcontrol.app/Contents/MacOS/qgroundcontrol
+
 	# No check for GLUT.framework since it's a MAC default
 	message("Building support for OpenSceneGraph")
 	DEPENDENCIES_PRESENT += osg
@@ -123,11 +133,12 @@ macx|macx-g++42|macx-g++: {
 	# Include OpenSceneGraph libraries
 	INCLUDEPATH += -framework GLUT \
         -framework Cocoa \
-        $$BASEDIR/lib/mac64/include
+        $$BASEDIR/libs/lib/mac64/include
 
 	LIBS += -framework GLUT \
         -framework Cocoa \
-        -L$$BASEDIR/lib/mac64/lib \
+        -L$$BASEDIR/libs/lib/mac64/lib \
+        -L$$BASEDIR/libs/lib/mac32/lib \
         -lOpenThreads \
         -losg \
         -losgViewer \
@@ -136,17 +147,17 @@ macx|macx-g++42|macx-g++: {
         -losgText \
         -losgWidget
 
-	exists(/usr/local/include/google/protobuf) {
-		message("Building support for Protocol Buffers")
-		DEPENDENCIES_PRESENT += protobuf
-		# Include Protocol Buffers libraries
-		LIBS += -L/usr/local/lib \
-            -lprotobuf \
-            -lprotobuf-lite \
-            -lprotoc
-
-		DEFINES += QGC_PROTOBUF_ENABLED
-	}
+        #exists(/usr/local/include/google/protobuf) {
+        #	message("Building support for Protocol Buffers")
+        #	DEPENDENCIES_PRESENT += protobuf
+        #	# Include Protocol Buffers libraries
+        #	LIBS += -L/usr/local/lib \
+        #    -lprotobuf \
+        #    -lprotobuf-lite \
+        #    -lprotoc
+        #
+        #	DEFINES += QGC_PROTOBUF_ENABLED
+        #}
 
 	exists(/opt/local/include/libfreenect)|exists(/usr/local/include/libfreenect) {
 		message("Building support for libfreenect")
@@ -230,8 +241,8 @@ linux-g++|linux-g++-64{
 	DESTDIR = $$TARGETDIR
 	QMAKE_POST_LINK += && cp -rf $$BASEDIR/files $$TARGETDIR
 	QMAKE_POST_LINK += && cp -rf $$BASEDIR/data $$TARGETDIR
-	QMAKE_POST_LINK += && mkdir -p $$TARGETDIR/images
-	QMAKE_POST_LINK += && cp -rf $$BASEDIR/images/Vera.ttf $$TARGETDIR/images/Vera.ttf
+	QMAKE_POST_LINK += && mkdir -p $$TARGETDIR/files/images
+	QMAKE_POST_LINK += && cp -rf $$BASEDIR/files/styles/Vera.ttf $$TARGETDIR/files/styles/Vera.ttf
 
 	# osg/osgEarth dynamic casts might fail without this compiler option.
 	# see http://osgearth.org/wiki/FAQ for details.
@@ -279,22 +290,22 @@ win32-msvc2008|win32-msvc2010 {
 		CONFIG += console
 	}
 
-	INCLUDEPATH += $$BASEDIR/lib/sdl/msvc/include \
-        $$BASEDIR/lib/opal/include \
-        $$BASEDIR/lib/msinttypes
+	INCLUDEPATH += $$BASEDIR/libs/lib/sdl/msvc/include \
+        $$BASEDIR/libs/lib/opal/include \
+        $$BASEDIR/libs/lib/msinttypes
 
-	LIBS += -L$$BASEDIR/lib/sdl/msvc/lib \
+	LIBS += -L$$BASEDIR/libs/lib/sdl/msvc/lib \
         -lSDLmain -lSDL \
         -lsetupapi
 
-	exists($$BASEDIR/lib/osg123) {
+	exists($$BASEDIR/libs/lib/osg123) {
 		message("Building support for OSG")
 		DEPENDENCIES_PRESENT += osg
 
 		# Include OpenSceneGraph
-		INCLUDEPATH += $$BASEDIR/lib/osgEarth/win32/include \
-			$$BASEDIR/lib/osgEarth_3rdparty/win32/OpenSceneGraph-2.8.2/include
-		LIBS += -L$$BASEDIR/lib/osgEarth_3rdparty/win32/OpenSceneGraph-2.8.2/lib \
+		INCLUDEPATH += $$BASEDIR/libs/lib/osgEarth/win32/include \
+			$$BASEDIR/libs/lib/osgEarth_3rdparty/win32/OpenSceneGraph-2.8.2/include
+		LIBS += -L$$BASEDIR/libs/lib/osgEarth_3rdparty/win32/OpenSceneGraph-2.8.2/lib \
 			-losg \
 			-losgViewer \
 			-losgGA \
@@ -311,11 +322,18 @@ win32-msvc2008|win32-msvc2010 {
 	TARGETDIR_WIN = $$replace(TARGETDIR,"/","\\")
 
 	CONFIG(debug, debug|release) {
-		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\lib\\sdl\\win32\\SDL.dll" "$$TARGETDIR_WIN\\debug"$$escape_expand(\\n))
+		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\libs\\lib\\sdl\\win32\\SDL.dll" "$$TARGETDIR_WIN\\debug"$$escape_expand(\\n))
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\files" "$$TARGETDIR_WIN\\debug\\files" /E /I $$escape_expand(\\n))
-		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\models" "$$TARGETDIR_WIN\\debug\\models" /E /I $$escape_expand(\\n))
-		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\images\\earth.html" "$$TARGETDIR_WIN\\debug"$$escape_expand(\\n))
-		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\thirdParty\\libxbee\\lib\\libxbee.dll" "$$TARGETDIR_WIN\\debug"$$escape_expand(\\n))
+                QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\libs\\mavlink" "$$TARGETDIR_WIN\\debug\\mavlink" /E /I $$escape_expand(\\n))
+                QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\models" "$$TARGETDIR_WIN\\debug\\models" /E /I $$escape_expand(\\n))
+
+		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\files\\images\\earth.html" "$$TARGETDIR_WIN\\debug"$$escape_expand(\\n))
+		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\libs\\thirdParty\\libxbee\\lib\\libxbee.dll" "$$TARGETDIR_WIN\\debug"$$escape_expand(\\n))
+		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\files\\images\\earth.html" "$$TARGETDIR_WIN\\debug"$$escape_expand(\\n))
+		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\libs\\thirdParty\\libxbee\\lib\\libxbee.dll" "$$TARGETDIR_WIN\\debug"$$escape_expand(\\n))
+
+		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\files\\images\\earth.html" "$$TARGETDIR_WIN\\debug"$$escape_expand(\\n))
+		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\libs\\thirdParty\\libxbee\\lib\\libxbee.dll" "$$TARGETDIR_WIN\\debug"$$escape_expand(\\n))
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$(QTDIR)\\plugins" "$$TARGETDIR_WIN\\debug" /E /I $$escape_expand(\\n))
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$(QTDIR)\\bin\\phonond4.dll" "$$TARGETDIR_WIN\\debug"$$escape_expand(\\n))
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$(QTDIR)\\bin\\QtCored4.dll" "$$TARGETDIR_WIN\\debug"$$escape_expand(\\n))
@@ -325,17 +343,22 @@ win32-msvc2008|win32-msvc2010 {
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$(QTDIR)\\bin\\QtOpenGLd4.dll" "$$TARGETDIR_WIN\\debug"$$escape_expand(\\n))
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$(QTDIR)\\bin\\QtSqld4.dll" "$$TARGETDIR_WIN\\debug"$$escape_expand(\\n))
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$(QTDIR)\\bin\\QtSvgd4.dll" "$$TARGETDIR_WIN\\debug"$$escape_expand(\\n))
+		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$(QTDIR)\\bin\\QtTestd4.dll" "$$TARGETDIR_WIN\\debug"$$escape_expand(\\n))
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$(QTDIR)\\bin\\QtWebKitd4.dll" "$$TARGETDIR_WIN\\debug"$$escape_expand(\\n))
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$(QTDIR)\\bin\\QtXmld4.dll" "$$TARGETDIR_WIN\\debug"$$escape_expand(\\n))
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$(QTDIR)\\bin\\QtXmlPatternsd4.dll" "$$TARGETDIR_WIN\\debug"$$escape_expand(\\n))
 	}
 
 	CONFIG(release, debug|release) {
-		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\lib\\sdl\\win32\\SDL.dll" "$$TARGETDIR_WIN\\release"$$escape_expand(\\n))
+		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\libs\\lib\\sdl\\win32\\SDL.dll" "$$TARGETDIR_WIN\\release"$$escape_expand(\\n))
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\files" "$$TARGETDIR_WIN\\release\\files" /E /I $$escape_expand(\\n))
+                QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\libs\\mavlink" "$$TARGETDIR_WIN\\release\\mavlink" /E /I $$escape_expand(\\n))
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\models" "$$TARGETDIR_WIN\\release\\models" /E /I $$escape_expand(\\n))
-		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\images\\earth.html" "$$TARGETDIR_WIN\\release\\earth.html" $$escape_expand(\\n))
-		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\thirdParty\\libxbee\\lib\\libxbee.dll" "$$TARGETDIR_WIN\\release"$$escape_expand(\\n))
+		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\files\\images\\earth.html" "$$TARGETDIR_WIN\\release\\earth.html" $$escape_expand(\\n))
+		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\libs\\thirdParty\\libxbee\\lib\\libxbee.dll" "$$TARGETDIR_WIN\\release"$$escape_expand(\\n))
+		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\files\\images\\earth.html" "$$TARGETDIR_WIN\\release\\earth.html" $$escape_expand(\\n))
+		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\libs\\thirdParty\\libxbee\\lib\\libxbee.dll" "$$TARGETDIR_WIN\\release"$$escape_expand(\\n))
+		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$BASEDIR_WIN\\libs\\thirdParty\\libxbee\\lib\\libxbee.dll" "$$TARGETDIR_WIN\\release"$$escape_expand(\\n))
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$(QTDIR)\\plugins" "$$TARGETDIR_WIN\\release" /E /I $$escape_expand(\\n))
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$(QTDIR)\\bin\\phonon4.dll" "$$TARGETDIR_WIN\\release"$$escape_expand(\\n))
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$(QTDIR)\\bin\\QtCore4.dll" "$$TARGETDIR_WIN\\release"$$escape_expand(\\n))
@@ -345,6 +368,7 @@ win32-msvc2008|win32-msvc2010 {
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$(QTDIR)\\bin\\QtOpenGL4.dll" "$$TARGETDIR_WIN\\release"$$escape_expand(\\n))
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$(QTDIR)\\bin\\QtSql4.dll" "$$TARGETDIR_WIN\\release"$$escape_expand(\\n))
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$(QTDIR)\\bin\\QtSvg4.dll" "$$TARGETDIR_WIN\\release"$$escape_expand(\\n))
+		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$(QTDIR)\\bin\\QtTestd4.dll" "$$TARGETDIR_WIN\\release"$$escape_expand(\\n))
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$(QTDIR)\\bin\\QtWebKit4.dll" "$$TARGETDIR_WIN\\release"$$escape_expand(\\n))
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$(QTDIR)\\bin\\QtXml4.dll" "$$TARGETDIR_WIN\\release"$$escape_expand(\\n))
 		QMAKE_POST_LINK += $$quote(xcopy /D /Y "$$(QTDIR)\\bin\\QtXmlPatterns4.dll" "$$TARGETDIR_WIN\\release"$$escape_expand(\\n))
@@ -366,10 +390,10 @@ win32-g++ {
 	# to make the internal min/max functions work
 	DEFINES += NOMINMAX
 
-	INCLUDEPATH += $$BASEDIR/lib/sdl/include \
-				$$BASEDIR/lib/opal/include
+	INCLUDEPATH += $$BASEDIR/libs/lib/sdl/include \
+				$$BASEDIR/libs/lib/opal/include
 
-	LIBS += -L$$BASEDIR/lib/sdl/win32 \
+	LIBS += -L$$BASEDIR/libs/lib/sdl/win32 \
 			-lmingw32 -lSDLmain -lSDL -mwindows \
 			-lsetupapi
 
@@ -394,14 +418,16 @@ win32-g++ {
 		# CP command is available, use it instead of copy / xcopy
 		message("Using cp to copy image and audio files to executable")
 		debug {
-			QMAKE_POST_LINK += && cp $$BASEDIR/lib/sdl/win32/SDL.dll $$TARGETDIR/debug/SDL.dll
+			QMAKE_POST_LINK += && cp $$BASEDIR/libs/lib/sdl/win32/SDL.dll $$TARGETDIR/debug/SDL.dll
 			QMAKE_POST_LINK += && cp -r $$BASEDIR/files $$TARGETDIR/debug/files
+                        QMAKE_POST_LINK += && cp -r $$BASEDIR/libs/mavlink $$TARGETDIR/debug/mavlink
 			QMAKE_POST_LINK += && cp -r $$BASEDIR/models $$TARGETDIR/debug/models
 		}
 
 		release {
-			QMAKE_POST_LINK += && cp $$BASEDIR/lib/sdl/win32/SDL.dll $$TARGETDIR/release/SDL.dll
+			QMAKE_POST_LINK += && cp $$BASEDIR/libs/lib/sdl/win32/SDL.dll $$TARGETDIR/release/SDL.dll
 			QMAKE_POST_LINK += && cp -r $$BASEDIR/files $$TARGETDIR/release/files
+                        QMAKE_POST_LINK += && cp -r $$BASEDIR/libs/mavlink $$TARGETDIR/release/mavlink
 			QMAKE_POST_LINK += && cp -r $$BASEDIR/models $$TARGETDIR/release/models
 		}
 
@@ -412,17 +438,19 @@ win32-g++ {
 		TARGETDIR_WIN = $$replace(TARGETDIR,"/","\\")
 
 		exists($$TARGETDIR/debug) {
-			QMAKE_POST_LINK += && copy /Y \"$$BASEDIR_WIN\\lib\\sdl\\win32\\SDL.dll\" \"$$TARGETDIR_WIN\\debug\\SDL.dll\"
+			QMAKE_POST_LINK += && copy /Y \"$$BASEDIR_WIN\\libs\\lib\\sdl\\win32\\SDL.dll\" \"$$TARGETDIR_WIN\\debug\\SDL.dll\"
 			QMAKE_POST_LINK += && xcopy \"$$BASEDIR_WIN\\files\" \"$$TARGETDIR_WIN\\debug\\files\\\" /S /E /Y
-			QMAKE_POST_LINK += && xcopy \"$$BASEDIR_WIN\\models\" \"$$TARGETDIR_WIN\\debug\\models\\\" /S /E /Y
-			QMAKE_POST_LINK += && copy /Y \"$$BASEDIR_WIN\\images\\earth.html\" \"$$TARGETDIR_WIN\\debug\\earth.html\"
+                        QMAKE_POST_LINK += && xcopy \"$$BASEDIR_WIN\\libs\\mavlink\" \"$$TARGETDIR_WIN\\debug\\mavlink\\\" /S /E /Y
+                        QMAKE_POST_LINK += && xcopy \"$$BASEDIR_WIN\\models\" \"$$TARGETDIR_WIN\\debug\\models\\\" /S /E /Y
+			QMAKE_POST_LINK += && copy /Y \"$$BASEDIR_WIN\\files\\images\\earth.html\" \"$$TARGETDIR_WIN\\debug\\earth.html\"
 		}
 
 		exists($$TARGETDIR/release) {
-			QMAKE_POST_LINK += && copy /Y \"$$BASEDIR_WIN\\lib\\sdl\\win32\\SDL.dll\" \"$$TARGETDIR_WIN\\release\\SDL.dll\"
+			QMAKE_POST_LINK += && copy /Y \"$$BASEDIR_WIN\\libs\\lib\\sdl\\win32\\SDL.dll\" \"$$TARGETDIR_WIN\\release\\SDL.dll\"
 			QMAKE_POST_LINK += && xcopy \"$$BASEDIR_WIN\\files\" \"$$TARGETDIR_WIN\\release\\files\\\" /S /E /Y
+                        QMAKE_POST_LINK += && xcopy \"$$BASEDIR_WIN\\libs\\mavlink\" \"$$TARGETDIR_WIN\\release\\mavlink\\\" /S /E /Y
 			QMAKE_POST_LINK += && xcopy \"$$BASEDIR_WIN\\models\" \"$$TARGETDIR_WIN\\release\\models\\\" /S /E /Y
-			QMAKE_POST_LINK += && copy /Y \"$$BASEDIR_WIN\\images\\earth.html\" \"$$TARGETDIR_WIN\\release\\earth.html\"
+			QMAKE_POST_LINK += && copy /Y \"$$BASEDIR_WIN\\files\\images\\earth.html\" \"$$TARGETDIR_WIN\\release\\earth.html\"
 		}
 
 	}
