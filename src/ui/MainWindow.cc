@@ -1450,8 +1450,10 @@ void MainWindow::UASCreated(UASInterface* uas)
             icon = QIcon(":files/images/mavs/groundstation.svg");
             break;
         case MAV_TYPE_AIRSHIP:
-            icon = QIcon(":files/images/mavs/airship.svg");
+            icon = QIcon(":/images/skye_images/LOGO_DEF.png");
             break;
+            //icon = QIcon(":files/images/mavs/airship.svg");
+            //break;
         case MAV_TYPE_FREE_BALLOON:
             icon = QIcon(":files/images/mavs/free-balloon.svg");
             break;
@@ -1481,9 +1483,6 @@ void MainWindow::UASCreated(UASInterface* uas)
             break;
         case MAV_TYPE_KITE:
             icon = QIcon(":files/images/mavs/kite.svg");
-            break;
-        case MAV_TYPE_AIRSHIP:
-            icon = QIcon(":/images/skye_images/LOGO_DEF.png");
             break;
         default:
             icon = QIcon(":files/images/mavs/unknown.svg");

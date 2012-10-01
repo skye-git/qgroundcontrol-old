@@ -50,7 +50,7 @@ OBJECTS_DIR = $${BUILDDIR}/obj
 MOC_DIR = $${BUILDDIR}/moc
 UI_DIR = $${BUILDDIR}/ui
 RCC_DIR = $${BUILDDIR}/rcc
-MAVLINK_CONF = "pixhawk"
+#MAVLINK_CONF = "pixhawk"           #MAVLINK_CONF = skye ist defined in user_config.pri
 MAVLINKPATH = $$BASEDIR/libs/mavlink/include/mavlink/v1.0
 DEFINES += MAVLINK_NO_DATA
 
@@ -223,7 +223,7 @@ FORMS += src/ui/MainWindow.ui \
     src/ui/uas/UASSkyeBatteryInfoWidget.ui \            # Code MA
     src/ui/uas/UASSkyeBatteryPackWidget.ui \            # Code MA
     src/ui/SkyeCameraReconfigure.ui \                   # Code MA
-    src/ui/DirectControlWidget.ui                       # Code MA
+    src/ui/DirectControlWidget.ui \                     # Code MA
     src/ui/mission/QGCMissionOther.ui \
     src/ui/mission/QGCMissionNavWaypoint.ui \
     src/ui/mission/QGCMissionDoJump.ui \
@@ -373,7 +373,7 @@ HEADERS += src/MG.h \
     src/ui/HeightProfile.h \
     src/ui/HeightPoint.h \
     src/ui/ElevationPoint.h \
-    src/Trajectory.h
+    src/Trajectory.h \
     src/ui/mission/QGCMissionOther.h \
     src/ui/mission/QGCMissionNavWaypoint.h \
     src/ui/mission/QGCMissionDoJump.h \
@@ -543,7 +543,7 @@ SOURCES += src/main.cc \
     src/ui/HeightProfile.cc \
     src/ui/HeightPoint.cpp \
     src/ui/ElevationPoint.cpp \
-    src/Trajectory.cc
+    src/Trajectory.cc \
     src/ui/mission/QGCMissionOther.cc \
     src/ui/mission/QGCMissionNavWaypoint.cc \
     src/ui/mission/QGCMissionDoJump.cc \

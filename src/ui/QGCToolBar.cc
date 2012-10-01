@@ -427,8 +427,10 @@ void QGCToolBar::setSystemType(UASInterface* uas, unsigned int systemType)
             symbolButton->setIcon(QIcon(":files/images/mavs/groundstation.svg"));
             break;
         case MAV_TYPE_AIRSHIP:
-            symbolButton->setIcon(QIcon(":files/images/mavs/airship.svg"));
+            symbolButton->setIcon(QIcon(":/images/skye_images/LOGO_DEF.png"));
             break;
+            //symbolButton->setIcon(QIcon(":files/images/mavs/airship.svg"));
+            //break;
         case MAV_TYPE_FREE_BALLOON:
             symbolButton->setIcon(QIcon(":files/images/mavs/free-balloon.svg"));
             break;
@@ -458,9 +460,6 @@ void QGCToolBar::setSystemType(UASInterface* uas, unsigned int systemType)
             break;
         case MAV_TYPE_KITE:
             symbolButton->setIcon(QIcon(":files/images/mavs/kite.svg"));
-            break;
-        case 7:
-            symbolButton->setIcon(QIcon(":/images/skye_images/LOGO_DEF.png"));
             break;
         default:
             symbolButton->setIcon(QIcon(":/files/images/mavs/unknown.svg"));

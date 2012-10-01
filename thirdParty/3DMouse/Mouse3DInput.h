@@ -7,7 +7,9 @@
 #include <vector>
 #include <map>
 
+#ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0501  //target at least windows XP
+#endif
 
 #include <windows.h>
 
