@@ -50,7 +50,7 @@ OBJECTS_DIR = $${BUILDDIR}/obj
 MOC_DIR = $${BUILDDIR}/moc
 UI_DIR = $${BUILDDIR}/ui
 RCC_DIR = $${BUILDDIR}/rcc
-#MAVLINK_CONF = "pixhawk"           #MAVLINK_CONF = skye ist defined in user_config.pri
+#MAVLINK_CONF = "pixhawk"           #Comment MAKREBS: MAVLINK_CONF = skye ist defined in user_config.pri
 MAVLINKPATH = $$BASEDIR/libs/mavlink/include/mavlink/v1.0
 DEFINES += MAVLINK_NO_DATA
 
@@ -119,7 +119,7 @@ contains(MAVLINK_CONF, skye) {                      ## Beginn Code MA  (15.02.12
     INCLUDEPATH -= $$MAVLINKPATH/common
 
     # SKYE SPECIAL MESSAGES
-    INCLUDEPATH += $$MAVLINKPATH/skye
+    INCLUDEPATH += $$MAVLINKPATH/newskye
     DEFINES += QGC_USE_SKYE_MESSAGES
 }                                                   ## Ende Code MA  ------------------------------------------
 
@@ -222,7 +222,7 @@ FORMS += src/ui/MainWindow.ui \
     src/ui/firmwareupdate/QGCPX4FirmwareUpdate.ui \
     src/ui/uas/UASSkyeBatteryInfoWidget.ui \            # Code MA
     src/ui/uas/UASSkyeBatteryPackWidget.ui \            # Code MA
-    src/ui/SkyeCameraReconfigure.ui \                   # Code MA
+    #src/ui/SkyeCameraReconfigure.ui \                   # Code MA
     src/ui/DirectControlWidget.ui \                     # Code MA
     src/ui/mission/QGCMissionOther.ui \
     src/ui/mission/QGCMissionNavWaypoint.ui \
@@ -367,7 +367,7 @@ HEADERS += src/MG.h \
     src/ui/uas/UASSkyeBatteryInfoWidget.h \
     src/ui/uas/UASSkyeBatteryPackWidget.h \
     src/ui/map/QGCMapRing.h \
-    src/ui/SkyeCameraReconfigure.h \
+    #src/ui/SkyeCameraReconfigure.h \
     src/ui/BluefoxReconfigure.h \
     src/ui/DirectControlWidget.h \
     src/ui/HeightProfile.h \
@@ -538,7 +538,7 @@ SOURCES += src/main.cc \
     src/ui/uas/UASSkyeBatteryInfoWidget.cpp \
     src/ui/uas/UASSkyeBatteryPackWidget.cpp \
     src/ui/map/QGCMapRing.cc \
-    src/ui/SkyeCameraReconfigure.cpp \
+    #src/ui/SkyeCameraReconfigure.cpp \
     src/ui/DirectControlWidget.cc \
     src/ui/HeightProfile.cc \
     src/ui/HeightPoint.cpp \

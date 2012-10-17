@@ -51,15 +51,6 @@ public slots:
     /** @brief Set multiplication factor for manual control */
     void setSensitivityFactorRot(float val) {sensitivityFactorRot = val;}
 
-    /** @brief Send command to take single image with camera and send it to groundstation */
-    void takeImageShot(MAV_CAM_ID cam);
-    /** Send Boolean to MAV, if motors should be homed*/
-    void sendHomingCommand();
-    /** Send configurations for bluefox camera*/
-    void sendBluefoxReconfigureCommand(mavlink_skye_cam_reconfigure_bluefox_settings_t* bluefox);
-    /** Request for current configurations for bluefox camera*/
-    void requestBluefoxSettings();
-
     void followTrajectory();
 
 signals:
@@ -75,8 +66,6 @@ signals:
     void batteryPackChanged(mavlink_skye_battery_status_t* battery);
     void reportUDPLinkFailed(QString errorStr);
 
-    /** @brief  Emit current camera reconfiguration settings **/
-    void bluefoxSettingsChanged(mavlink_skye_cam_reconfigure_bluefox_settings_t* bluefox);
 
 protected:
     /** @brief Send a Direct Control Command to MAV: */

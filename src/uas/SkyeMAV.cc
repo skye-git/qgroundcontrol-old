@@ -58,7 +58,7 @@ SkyeMAV::~SkyeMAV(void)
 
 void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
 {
-#ifdef MAVLINK_ENABLED_SKYE
+#ifdef MAVLINK_ENABLED_NEWSKYE
     if (message.sysid == uasId)  // make sure the message is for the right UAV
     {
         if (!link) return;
@@ -72,6 +72,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             emit batteryPackChanged(&battery);
         }
         break;
+#ifdef TEMP_MAVLINK_ENABLE_SKYE
         case MAVLINK_MSG_ID_SKYE_CAM_IMAGE_TRIGGERED:
         {
         // Copied from PxQuadMAV.cc
@@ -138,40 +139,19 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             }
         }
         break;
-        case MAVLINK_MSG_ID_SKYE_SCALED_PRESSURE:
-        {
-            // Save scaled pressure
-        }
-        case MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_BLUEFOX_SETTINGS:
-        {
-        mavlink_skye_cam_reconfigure_bluefox_settings_t bluefox;
-        mavlink_msg_skye_cam_reconfigure_bluefox_settings_decode(&message, &bluefox);
+#endif
 
-        emit bluefoxSettingsChanged(&bluefox);
-
-        }
         // Ignore these messages
-        case MAVLINK_MSG_ID_SKYE_TEST_MOTORS:
-        case MAVLINK_MSG_ID_SKYE_DIRECT_CONTROL:
-        case MAVLINK_MSG_ID_SKYE_ASSISTED_CONTROL:
-//        case MAVLINK_MSG_ID_SKYE_ASSISTED_RC_CONTROL:
-        case MAVLINK_MSG_ID_SKYE_MOTOR_SIGNAL:
-        case MAVLINK_MSG_ID_SKYE_MOTOR_MEASSURED_POSITION:
-        case MAVLINK_MSG_ID_SKYE_CONTROLLER_OUTPUT:
-        case MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_PROSILICA_SETTINGS:
-        case MAVLINK_MSG_ID_SKYE_CAM_RECONFIGURE_IMAGE_HANDLER:
-        case MAVLINK_MSG_ID_SKYE_CAM_TAKE_SHOT:
-        case MAVLINK_MSG_ID_SKYE_HOME_MAXON:
-        case MAVLINK_MSG_ID_SKYE_THREAD_COUNTS:
-        case MAVLINK_MSG_ID_SKYE_THREAD_USLEEP:
+        case MAVLINK_MSG_ID_MANUAL_6DOF_CONTROL:
+        case MAVLINK_MSG_ID_MANUAL_8DOF_CONTROL:
             break;
 
         default:
         {
             // Let UAS handle the default message set
             UAS::receiveMessage(link, message);
-            break;
-            }
+        }
+        break;
         }
     }
 #else
@@ -179,13 +159,13 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
     UAS::receiveMessage(link, message);
     Q_UNUSED(link);
     Q_UNUSED(message);
-#endif // MAVLINK_ENABLED_SKYE
+#endif // MAVLINK_ENABLED_NEWSKYE
 }
 
 
 void SkyeMAV::setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4)
 {
-#ifdef MAVLINK_ENABLED_SKYE
+#ifdef MAVLINK_ENABLED_NEWSKYE
 
     sendTestphaseControlCommands(Thrust1, Thrust2, Thrust3, Thrust4, Orientation1, Orientation2, Orientation3, Orientation4);
     qDebug() << "sendTestphaseControlCommands aufgerufen " << Thrust1;
@@ -200,12 +180,12 @@ void SkyeMAV::setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrus
     Q_UNUSED(Orientation3);
     Q_UNUSED(Orientation4);
 
-#endif // MAVLINK_ENABLED_SKYE
+#endif // MAVLINK_ENABLED_NEWSKYE
 }
 
 void SkyeMAV::setManualControlCommands6DoF(double x , double y , double z , double a , double b, double c)
 {
-#ifdef MAVLINK_ENABLED_SKYE
+#ifdef MAVLINK_ENABLED_NEWSKYE
 //    qDebug() << "Recent Mode: " << mode << ": " << getShortModeTextFor(mode);
 
 #ifdef QGC_SKYE_USE_SQUARE_OUT
@@ -246,13 +226,13 @@ void SkyeMAV::setManualControlCommands6DoF(double x , double y , double z , doub
     Q_UNUSED(a);
     Q_UNUSED(b);
     Q_UNUSED(c);
-#endif // MAVLINK_ENABLED_SKYE
+#endif // MAVLINK_ENABLED_NEWSKYE
 }
 
 //AL (06.03.12)
 void SkyeMAV::sendTestphaseControlCommands(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 )
 {
-#ifdef MAVLINK_ENABLED_SKYE
+#ifdef MAVLINK_ENABLED_NEWSKYE
     // Scale values (The Testphase widget is designed that no scaling is needed from UI to the machine the value shouldn't change)
     //double thrustScaling = 1.0f;
     //double orientationScaling = 1.0f;
@@ -268,81 +248,73 @@ void SkyeMAV::sendTestphaseControlCommands(int Thrust1 , int Thrust2 , int Thrus
 
     mavlink_message_t message;
 
-    mavlink_msg_skye_test_motors_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (int)manual1Thrust, (int)manual2Thrust, (int)manual3Thrust,(int)manual4Thrust, (int)manual1Orientation, (int)manual2Orientation, (int)manual3Orientation,(int)manual4Orientation);
+    mavlink_msg_manual_8dof_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (int16_t)manual1Thrust, (int16_t)manual2Thrust, (int16_t)manual3Thrust,(int16_t)manual4Thrust, (int16_t)manual1Orientation, (int16_t)manual2Orientation, (int16_t)manual3Orientation,(int16_t)manual4Orientation);
     sendMessage(message);
     qDebug() << __FILE__ << __LINE__ << ": SENT TESTPHASE CONTROL MESSAGE: 1Thrust" << manual1Thrust << " 2Thrust: " << manual2Thrust << " 3Thrust: " << manual3Thrust << " 4Thrust: " << manual4Thrust << " 1Orientation: " << manual1Orientation << " 2Orientation: " << manual2Orientation << " 3Orientation: " << manual3Orientation << " 4Orientation: " << manual4Orientation;
 
     //emit attitudeThrustSetPointChanged(this, roll, pitch, yaw, thrust, MG::TIME::getGroundTimeNow());
 
 
-#endif // MAVLINK_ENABLED_SKYE
+#endif // MAVLINK_ENABLED_NEWSKYE
 }
 
 //AL (06.03.12)
 
 void SkyeMAV::sendDirectControlCommands(double xThrust, double yThrust, double zThrust, double xMoment, double yMoment, double zMoment)
 {
-#ifdef MAVLINK_ENABLED_SKYE
+#ifdef MAVLINK_ENABLED_NEWSKYE
     // Scale values
     float thrustScaling = sensitivityFactorTrans;
     float momentScaling = sensitivityFactorRot;
     
-    manualXThrust = xThrust * thrustScaling;
-    manualYThrust = yThrust * thrustScaling;
-    manualZThrust = zThrust * thrustScaling;
-    manualXMoment = xMoment * momentScaling;
-    manualYMoment = yMoment * momentScaling;
-    manualZMoment = zMoment * momentScaling;
+    manualXThrust = xThrust * thrustScaling * 1000;
+    manualYThrust = yThrust * thrustScaling * 1000;
+    manualZThrust = zThrust * thrustScaling * 1000;
+    manualXMoment = xMoment * momentScaling * 1000;
+    manualYMoment = yMoment * momentScaling * 1000;
+    manualZMoment = zMoment * momentScaling * 1000;
     
     mavlink_message_t message;
     
-    mavlink_msg_skye_direct_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (float)manualXThrust, (float)manualYThrust, (float)manualZThrust, (float)manualXMoment, (float)manualYMoment, (float)manualZMoment);
+    mavlink_msg_manual_6dof_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (int16_t)(manualXThrust), (int16_t)(manualYThrust), (int16_t)(manualZThrust), (int16_t)(manualXMoment), (int16_t)(manualYMoment), (int16_t)(manualZMoment));
     sendMessage(message);
 //    qDebug() << __FILE__ << __LINE__ << ": SENT DIRECT CONTROL MESSAGE: xThrust" << manualXThrust << " yThrust: " << manualYThrust << " zThrust: " << manualZThrust << " xMoment: " << manualXMoment << " yMoment: " << manualYMoment << " zMoment: " << manualZMoment;
     
     //emit attitudeThrustSetPointChanged(this, roll, pitch, yaw, thrust, MG::TIME::getGroundTimeNow());
     
-#endif // MAVLINK_ENABLED_SKYE
+#endif // MAVLINK_ENABLED_NEWSKYE
 }
 
 
 void SkyeMAV::sendAssistedControlCommands(double xVel, double yVel, double zVel, double xRot, double yRot, double zRot)
 {
-#ifdef MAVLINK_ENABLED_SKYE
+#ifdef MAVLINK_ENABLED_NEWSKYE
     // Scale values
     float velScaling = sensitivityFactorTrans;
     float rotScaling = sensitivityFactorRot;
 //    qDebug() << rotScaling << "ROTSCALING";
-    manualXVel = xVel * velScaling;
-    manualYVel = yVel * velScaling;
-    manualZVel = zVel * velScaling;
-    manualXRot = xRot * rotScaling;
-    manualYRot = yRot * rotScaling;
-    manualZRot = zRot * rotScaling;
+    manualXVel = xVel * velScaling * 1000;
+    manualYVel = yVel * velScaling * 1000;
+    manualZVel = zVel * velScaling * 1000;
+    manualXRot = xRot * rotScaling * 1000;
+    manualYRot = yRot * rotScaling * 1000;
+    manualZRot = zRot * rotScaling * 1000;
     
     mavlink_message_t message;
     
-    mavlink_msg_skye_assisted_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (float)manualXVel, (float)manualYVel, (float)manualZVel, (float)manualXRot, (float)manualYRot, (float)manualZRot);
+    mavlink_msg_manual_6dof_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (int16_t)manualXVel, (int16_t)manualYVel, (int16_t)manualZVel, (int16_t)manualXRot, (int16_t)manualYRot, (int16_t)manualZRot);
     sendMessage(message);
 //    qDebug() << __FILE__ << __LINE__ << ": SENT ASSISTED CONTROL MESSAGE: x velocity" << manualXVel << " y velocity: " << manualYVel << " z velocity: " << manualZVel << " x rotation: " << manualXRot << " y rotation: " << manualYRot << " z rotation: " << manualZRot;
     
     //emit attitudeThrustSetPointChanged(this, roll, pitch, yaw, thrust, MG::TIME::getGroundTimeNow());
     
-#endif // MAVLINK_ENABLED_SKYE
+#endif // MAVLINK_ENABLED_NEWSKYE
 }
 
-void SkyeMAV::takeImageShot(MAV_CAM_ID cam)
-{
-#ifdef MAVLINK_ENABLED_SKYE
-    mavlink_message_t message;
-    mavlink_msg_skye_cam_take_shot_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, cam, true);
-    sendMessage(message);
-#endif // MAVLINK_ENABLED_SKYE
-}
 
 QImage SkyeMAV::getImage()          // Function copied from UAS.cc (pixhawk)
 {
-#ifdef MAVLINK_ENABLED_SKYE
+#ifdef TEMP_MAVLINK_ENABLED_NEWSKYE
 
     //qDebug() << "getImage: IMAGE TYPE:" << imageType;
 
@@ -395,61 +367,6 @@ QImage SkyeMAV::getImage()          // Function copied from UAS.cc (pixhawk)
     return QImage();
 #endif
 
-}
-
-void SkyeMAV::sendHomingCommand()
-{
-#ifdef MAVLINK_ENABLED_SKYE
-    mavlink_message_t message;
-    uint8_t homing = 1;
-
-    mavlink_msg_skye_home_maxon_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, homing);
-    sendMessage(message);
-    qDebug() << __FILE__ << __LINE__ << ": SENT HOMING COMMAND MESSAGE";
-#endif // MAVLINK_ENABLED_SKYE
-}
-
-void SkyeMAV::sendBluefoxReconfigureCommand(mavlink_skye_cam_reconfigure_bluefox_settings_t* bluefox)
-{
-    int sentViaUDP = 0;
-    foreach (LinkInterface* link, *links)
-    {
-        if ( dynamic_cast<UDPLink*>(link) )
-        {
-        mavlink_message_t message;
-        mavlink_msg_skye_cam_reconfigure_bluefox_settings_encode(mavlink->getSystemId(), mavlink->getComponentId(), &message, bluefox);
-        sendMessage(link, message);
-        sentViaUDP++;
-        qDebug() << "Sent Bluefox Reconfigure Command to" << name << "via UDPlink";
-        }
-    }
-    if (!sentViaUDP)
-    {
-        qDebug() << "Sending via UDP failed";
-        emit reportUDPLinkFailed("Sending via UDP failed. Not connected.");
-    }
-}
-
-void SkyeMAV::requestBluefoxSettings()
-{
-    int sentViaUDP = 0;
-    foreach (LinkInterface* link, *links)
-    {
-        if ( dynamic_cast<UDPLink*>(link) )
-        {
-            // TODO
-//        mavlink_message_t message;
-//        mavlink_msg_skye_request_cam_reconfigure_settings_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, bluefox);
-//        sendMessage(link, message);
-//        sentViaUDP++;
-//        qDebug() << "Requested Bluefox Configureations to" << name << "via UDPlink";
-        }
-    }
-    if (!sentViaUDP)
-    {
-        qDebug() << "Sending via UDP failed";
-        emit reportUDPLinkFailed("Sending via UDP failed. Not connected.");
-    }
 }
 
 uint8_t SkyeMAV::getMode()

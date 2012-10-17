@@ -88,22 +88,22 @@ void MAVLinkSimulationMAV::mainloop()
 
     if (flying) {
         sys_state = MAV_STATE_ACTIVE;
-#ifdef MAVLINK_ENABLED_SKYE
+#ifdef MAVLINK_ENABLED_NEWSKYE
         sys_mode = MAV_MODE_DIRECT_CONTROL_ARMED;
 #else
         sys_mode = MAV_MODE_AUTO_ARMED;
-#endif // MAVLINK_ENABLED_SKYE
+#endif // MAVLINK_ENABLED_NEWSKYE
         nav_mode = 0;
     }
 
     // 1 Hz execution
     if (timer1Hz <= 0) {
         mavlink_message_t msg;
-#ifdef MAVLINK_ENABLED_SKYE
+#ifdef MAVLINK_ENABLED_NEWSKYE
         mavlink_msg_heartbeat_pack(systemid, MAV_COMP_ID_IMU, &msg, MAV_TYPE_AIRSHIP, MAV_AUTOPILOT_SKYE, MAV_MODE_MANUAL_ARMED, 0, MAV_STATE_ACTIVE);
 #else
         mavlink_msg_heartbeat_pack(systemid, MAV_COMP_ID_IMU, &msg, MAV_TYPE_FIXED_WING, MAV_AUTOPILOT_ARDUPILOTMEGA, MAV_MODE_GUIDED_ARMED, 0, MAV_STATE_ACTIVE);
-#endif // MAVLINK_ENABLED_SKYE
+#endif // MAVLINK_ENABLED_NEWSKYE
         link->sendMAVLinkMessage(&msg);
         planner.handleMessage(msg);
 
@@ -245,7 +245,7 @@ void MAVLinkSimulationMAV::mainloop()
         link->sendMAVLinkMessage(&msg);
 
 
-#ifdef MAVLINK_ENABLED_SKYE                     // Beginn Code MA (07.03.2012) ------------ TEMPORARY !!!
+#ifdef TEMP_MAVLINK_ENABLED_NEWSKYE                     // Beginn Code MA (07.03.2012) ------------ TEMPORARY !!!
         // RETURN DIRECT CONTROL MESSAGE
         mavlink_skye_direct_control_t direct;
         direct.thrust_x = thrustX;
@@ -560,6 +560,7 @@ void MAVLinkSimulationMAV::handleMessage(const mavlink_message_t& msg)
     }
 
         break;                                  // Beginn Code MA (07.03.2012)
+#ifdef TEMP_MAVLINK_ENABLED_NEWSKYE
         case MAVLINK_MSG_ID_SKYE_DIRECT_CONTROL: {
             mavlink_skye_direct_control_t dc;
             mavlink_msg_skye_direct_control_decode(&msg, &dc);
@@ -611,5 +612,6 @@ void MAVLinkSimulationMAV::handleMessage(const mavlink_message_t& msg)
             }
         }
         break;
+#endif
         }
 }

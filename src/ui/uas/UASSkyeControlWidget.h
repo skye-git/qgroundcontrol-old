@@ -84,7 +84,6 @@ public slots:
 signals:
     void changedMode(int);
     void changedInput(int);
-    void triggeredImageShot(MAV_CAM_ID);
     void changedSensitivityTransFactor(float);
     void changedSensitivityRotFactor(float);
 
@@ -107,12 +106,6 @@ signals:
         void setInputTouch(bool checked);
         /** @brief Set Keyboard as active inpute device */
         void setInputKeyboard(bool checked);
-        /** @brief Trigger image shot with left Bluefox Camera */
-        void triggerLeftBluefoxImageShot();
-        /** @brief Trigger image shot with right Bluefox Camera */
-        void triggerRightBluefoxImageShot();
-        /** @brief Trigger image shot with Prosilica Camera */
-        void triggerProsilicaImageShot();
         /** @brief Set new (float)sensitivityFactorTrans by int */
         void setSensitivityFactorTrans(int val);
         /** @brief Set new (float)sensitivityFactorRot by int */

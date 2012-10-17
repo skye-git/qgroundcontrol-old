@@ -233,7 +233,7 @@ MainWindow::MainWindow(QWidget *parent):
 
     testphaseWidget = 0;                                            //Start Ende Code AL (19.03.12)
     directControlWidget = 0;                                        //Start Ende Code AL (19.03.12)
-    skyeCameraReconfigureWidget = 0;                                //Beginn und Ende Code MA (20.03.2012)
+    //skyeCameraReconfigureWidget = 0;                                //Beginn und Ende Code MA (20.03.2012)
 
     // Connect link
     if (autoReconnect)
@@ -435,7 +435,7 @@ void MainWindow::buildCommonWidgets()
         addTool(controlDockWidget, tr("Control"), Qt::LeftDockWidgetArea);
     }
 
-#ifdef MAVLINK_ENABLED_SKYE
+#ifdef MAVLINK_ENABLED_NEWSKYE
     if (!skyeControlDockWidget)         // Beginn Code MA (06.03.2012) -----------------------
     {
         skyeControlDockWidget = new QDockWidget(tr("Skye Control"), this);
@@ -452,7 +452,7 @@ void MainWindow::buildCommonWidgets()
             addTool(skyeControlDockWidget, tr("Skye Control"), Qt::RightDockWidgetArea);
         }
     }                                   // Ende Code MA (06.03.2012) --------------------------
-#endif // MAVLINK_ENABLED_SKYE
+#endif // MAVLINK_ENABLED_NEWSKYE
 
     if (!listDockWidget)
     {
@@ -1183,8 +1183,8 @@ void MainWindow::connectCommonActions()
     connect(ui.actionTestphase, SIGNAL(triggered()), this, SLOT(showTestphase()));                  //Ende Code AL ----------------------
     ui.actionDirectControl->setVisible(true);                                                       //Beginn Code MA (12.04.12)----------
     connect(ui.actionDirectControl, SIGNAL(triggered()), this, SLOT(showDirectControl()));          //Ende Code MA ----------------------
-    ui.actionCamera_Reconfigure->setVisible(true);                                                  //Beginn Code MA (20.03.12)----------
-    connect(ui.actionCamera_Reconfigure, SIGNAL(triggered()), this, SLOT(showSkyeCamReconfig()));   //Ende Code MA ----------------------
+    //ui.actionCamera_Reconfigure->setVisible(true);                                                  //Beginn Code MA (20.03.12)----------
+    //connect(ui.actionCamera_Reconfigure, SIGNAL(triggered()), this, SLOT(showSkyeCamReconfig()));   //Ende Code MA ----------------------
 }
 
 void MainWindow::showHelp()
@@ -1273,20 +1273,20 @@ void MainWindow::showDirectControl()                    //Beginn Code MA (12.04.
 
 }   //Ende Code MA
 
-void MainWindow::showSkyeCamReconfig()                    //Beginn Code MA (20.01.12)
-{
-     if(!skyeCameraReconfigureWidget)
-    {
-        skyeCameraReconfigureWidget = new SkyeCameraReconfigure(this);
-    }
-    skyeCameraReconfigureWidget->show();
-    skyeCameraReconfigureWidget->activateWindow();
-
-//    else
+//void MainWindow::showSkyeCamReconfig()                    //Beginn Code MA (20.01.12)
+//{
+//     if(!skyeCameraReconfigureWidget)
 //    {
-//        testphaseWidget->raise();
+//        skyeCameraReconfigureWidget = new SkyeCameraReconfigure(this);
 //    }
-}                                                   //Ende Code MA (20.01.12)
+//    skyeCameraReconfigureWidget->show();
+//    skyeCameraReconfigureWidget->activateWindow();
+
+////    else
+////    {
+////        testphaseWidget->raise();
+////    }
+//}                                                   //Ende Code MA (20.01.12)
 
 void MainWindow::showSettings()
 {
@@ -1368,7 +1368,7 @@ void MainWindow::setActiveUAS(UASInterface* uas)
     ui.menuUnmanned_System->setTitle(uas->getUASName());
     if (!ui.menuUnmanned_System->isEnabled()) ui.menuUnmanned_System->setEnabled(true);
 
-#ifdef MAVLINK_ENABLED_SKYE         // Begin Code MA (06.03.2012) [similar JoystickInput] -------------
+#ifdef MAVLINK_ENABLED_NEWSKYE         // Begin Code MA (06.03.2012) [similar JoystickInput] -------------
     // Connect input to (skye) Mavlink messages
     SkyeMAV* tmp = 0;
     tmp = dynamic_cast<SkyeMAV*>(UASManager::instance()->getActiveUAS());
@@ -1384,7 +1384,7 @@ void MainWindow::setActiveUAS(UASInterface* uas)
         connect(this, SIGNAL(valueKeyboardChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
         connect(this, SIGNAL(valueTouchInputChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
     }
-#endif // MAVLINK_ENABLED_SKYE      // Ende Code MA (27.02.2012) ---------------------------
+#endif // MAVLINK_ENABLED_NEWSKYE      // Ende Code MA (27.02.2012) ---------------------------
 }
 
 void MainWindow::UASSpecsChanged(int uas)
@@ -1945,7 +1945,7 @@ QList<QAction*> MainWindow::listLinkMenuActions(void)
 
 void MainWindow::setInputMode(int inputMode)
 {
-#ifdef MAVLINK_ENABLED_SKYE
+#ifdef MAVLINK_ENABLED_NEWSKYE
     switch (inputMode)
     {
     case 1:
@@ -1975,7 +1975,7 @@ void MainWindow::setInputMode(int inputMode)
 //    qDebug() << "New Input: " << inputMode;
 #else
     qDebug() << "Changing input mode only available for SKYE";
-#endif //MAVLINK_ENABLED_SKYE
+#endif //MAVLINK_ENABLED_NEWSKYE
 }
 
 #if defined (MOUSE_ENABLED) || defined (MOUSE_ENABLED_WIN)            // Beginn Code MA (21.03.2012)
@@ -2077,10 +2077,10 @@ bool MainWindow::x11Event(XEvent *event)
         return false;
     }
     qDebug() << "Following X11event";
-#ifdef MAVLINK_ENABLED_SKYE
+#ifdef MAVLINK_ENABLED_NEWSKYE
     if (inputMode == UASSkyeControlWidget::QGC_INPUT_MODE_MOUSE)
     {
-#endif // MAVLINK_ENABLED_SKYE
+#endif // MAVLINK_ENABLED_NEWSKYE
     MagellanFloatEvent MagellanEvent;
     double maxMagellanValue = 350;              // Valid for Space Navigator for Notebooks
 
@@ -2158,13 +2158,13 @@ bool MainWindow::x11Event(XEvent *event)
     break;
     }
    }
-    #ifdef MAVLINK_ENABLED_SKYE
+    #ifdef MAVLINK_ENABLED_NEWSKYE
     }else
     {
         qDebug() << "Skipped 3dMouse input.. Input mode is " << inputMode;
     }
 
-    #endif // MAVLINK_ENABLED_SKYE
+    #endif // MAVLINK_ENABLED_NEWSKYE
     return false;   // Event will not be destroyed
 
 }
