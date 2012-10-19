@@ -2486,6 +2486,7 @@ void MainWindow::setTouchInputXYZ(double x, double y, double z)
         touchXValue = x;
         touchYValue = y;
         touchZValue = z;
+        qDebug() << "XXXXX        " << x << "      y    " << y;
 
     //zur Sicherheit
     if(x > 1)
@@ -2499,5 +2500,7 @@ void MainWindow::setTouchInputXYZ(double x, double y, double z)
 void MainWindow::emitTouchInputValues()
 {
     if(this->inputMode == UASSkyeControlWidget::QGC_INPUT_MODE_TOUCH)
-        emit valueTouchInputChanged(touchXZoomValue, touchYValue, touchZValue, touchRollValue, touchPitchValue, touchYawValue);//TO DO Fix me, overwriting problem
-}
+        //--> FIXME: HUD-Zoom-Slider and Map-Ring are not compatibel
+//        emit valueTouchInputChanged(touchXZoomValue, touchYValue, touchZValue, touchRollValue, touchPitchValue, touchYawValue);//TO DO Fix me, overwriting problem
+        emit valueTouchInputChanged(touchXValue, touchYValue, touchZValue, touchRollValue, touchPitchValue, touchYawValue);//TO DO Fix me, overwriting problem
+        }
