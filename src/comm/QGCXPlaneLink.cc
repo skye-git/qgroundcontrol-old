@@ -42,11 +42,14 @@ This file is part of the QGROUNDCONTROL project
 
 QGCXPlaneLink::QGCXPlaneLink(UASInterface* mav, QString remoteHost, QHostAddress localHost, quint16 localPort) :
     mav(mav),
+    remoteHost(QHostAddress("127.0.0.1")),
+    remotePort(49000),
     socket(NULL),
     process(NULL),
     terraSync(NULL),
     airframeID(QGCXPlaneLink::AIRFRAME_UNKNOWN),
-    xPlaneConnected(false)
+    xPlaneConnected(false),
+    xPlaneVersion(0)
 {
     this->localHost = localHost;
     this->localPort = localPort/*+mav->getUASID()*/;
@@ -71,6 +74,8 @@ void QGCXPlaneLink::loadSettings()
     settings.sync();
     settings.beginGroup("QGC_XPLANE_LINK");
     setRemoteHost(settings.value("REMOTE_HOST", QString("%1:%2").arg(remoteHost.toString()).arg(remotePort)).toString());
+    setVersion(settings.value("XPLANE_VERSION", 10).toInt());
+    selectPlane(settings.value("AIRFRAME", "default").toString());
     settings.endGroup();
 }
 
@@ -80,8 +85,43 @@ void QGCXPlaneLink::storeSettings()
     QSettings settings;
     settings.beginGroup("QGC_XPLANE_LINK");
     settings.setValue("REMOTE_HOST", QString("%1:%2").arg(remoteHost.toString()).arg(remotePort));
+    settings.setValue("XPLANE_VERSION", xPlaneVersion);
+    settings.setValue("AIRFRAME", airframeName);
     settings.endGroup();
     settings.sync();
+}
+
+void QGCXPlaneLink::setVersion(const QString& version)
+{
+    unsigned int oldVersion = xPlaneVersion;
+    if (version.contains("9"))
+    {
+        xPlaneVersion = 9;
+    }
+    else if (version.contains("10"))
+    {
+        xPlaneVersion = 10;
+    }
+    else if (version.contains("11"))
+    {
+        xPlaneVersion = 11;
+    }
+    else if (version.contains("12"))
+    {
+        xPlaneVersion = 12;
+    }
+
+    if (oldVersion != xPlaneVersion)
+    {
+        emit versionChanged(QString("X-Plane %1").arg(xPlaneVersion));
+    }
+}
+
+void QGCXPlaneLink::setVersion(unsigned int version)
+{
+    bool changed = (xPlaneVersion != version);
+    xPlaneVersion = version;
+    if (changed) emit versionChanged(QString("X-Plane %1").arg(xPlaneVersion));
 }
 
 
@@ -137,6 +177,9 @@ QString QGCXPlaneLink::getRemoteHost()
  */
 void QGCXPlaneLink::setRemoteHost(const QString& newHost)
 {
+    if (newHost.length() == 0)
+        return;
+
     if (newHost.contains(":"))
     {
         //qDebug() << "HOST: " << newHost.split(":").first();
@@ -167,6 +210,7 @@ void QGCXPlaneLink::setRemoteHost(const QString& newHost)
         {
             // Add newHost
             remoteHost = info.addresses().first();
+            if (remotePort == 0) remotePort = 49000;
         }
     }
 
@@ -321,6 +365,9 @@ void QGCXPlaneLink::writeBytes(const char* data, qint64 size)
  **/
 void QGCXPlaneLink::readBytes()
 {
+    // Only emit updates on attitude message
+    bool emitUpdate = false;
+
     const qint64 maxLength = 65536;
     char data[maxLength];
     QHostAddress sender;
@@ -388,12 +435,13 @@ void QGCXPlaneLink::readBytes()
                 pitchspeed = p.f[1];
                 yawspeed = p.f[0];
             }
-            else if (p.index == 17)
+            else if ((xPlaneVersion == 10 && p.index == 17) || (xPlaneVersion == 9 && p.index == 18))
             {
                 //qDebug() << "HDNG" << "pitch" << p.f[0] << "roll" << p.f[1] << "hding true" << p.f[2] << "hding mag" << p.f[3];
                 pitch = p.f[0] / 180.0f * M_PI;
                 roll = p.f[1] / 180.0f * M_PI;
                 yaw = p.f[2] / 180.0f * M_PI;
+                emitUpdate = true;
             }
 
 //            else if (p.index == 19)
@@ -449,9 +497,12 @@ void QGCXPlaneLink::readBytes()
     }
 
     // Send updated state
-    emit hilStateChanged(QGC::groundTimeUsecs(), roll, pitch, yaw, rollspeed,
+    if (emitUpdate)
+    {
+        emit hilStateChanged(QGC::groundTimeUsecs(), roll, pitch, yaw, rollspeed,
                          pitchspeed, yawspeed, lat*1E7, lon*1E7, alt*1E3,
                          vx, vy, vz, xacc*1000, yacc*1000, zacc*1000);
+    }
 
     if (!oldConnectionState && xPlaneConnected)
     {
@@ -535,22 +586,28 @@ void QGCXPlaneLink::selectPlane(const QString& plane)
 
     if (plane.contains("QRO"))
     {
-        if (plane.contains("MK"))
+        if (plane.contains("MK") && airframeID != AIRFRAME_QUAD_X_MK_10INCH_I2C)
         {
             airframeID = AIRFRAME_QUAD_X_MK_10INCH_I2C;
+            emit airframeChanged("QRO_X / MK");
         }
-        else if (plane.contains("ARDRONE"))
+        else if (plane.contains("ARDRONE") && airframeID != AIRFRAME_QUAD_X_ARDRONE)
         {
             airframeID = AIRFRAME_QUAD_X_ARDRONE;
+            emit airframeChanged("QRO_X / ARDRONE");
         }
         else
         {
+            bool changed = (airframeID != AIRFRAME_QUAD_DJI_F450_PWM);
             airframeID = AIRFRAME_QUAD_DJI_F450_PWM;
+            if (changed) emit airframeChanged("QRO_X / DJI-F450 / PWM");
         }
     }
     else
     {
+        bool changed = (airframeID != AIRFRAME_UNKNOWN);
         airframeID = AIRFRAME_UNKNOWN;
+        if (changed) emit airframeChanged("X Plane default");
     }
 }
 
