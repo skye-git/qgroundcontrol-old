@@ -17,14 +17,6 @@
 SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
 UAS(mavlink, id),
 airframe(QGC_AIRFRAME_SKYE),
-manual1Thrust(0),
-manual2Thrust(0),
-manual3Thrust(0),
-manual4Thrust(0),
-manual1Orientation(0),
-manual2Orientation(0),
-manual3Orientation(0),
-manual4Orientation(0),
 manualXThrust(0),
 manualYThrust(0),
 manualZThrust(0),
@@ -157,27 +149,6 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
 #endif // MAVLINK_ENABLED_NEWSKYE
 }
 
-
-void SkyeMAV::setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4)
-{
-#ifdef MAVLINK_ENABLED_NEWSKYE
-
-    sendManualControlCommands8DoF(Thrust1, Thrust2, Thrust3, Thrust4, Orientation1, Orientation2, Orientation3, Orientation4);
-    qDebug() << "sendTestphaseControlCommands aufgerufen " << Thrust1;
-
-#else
-    Q_UNUSED(Thrust1);
-    Q_UNUSED(Thrust2);
-    Q_UNUSED(Thrust3);
-    Q_UNUSED(Thrust4);
-    Q_UNUSED(Orientation1);
-    Q_UNUSED(Orientation2);
-    Q_UNUSED(Orientation3);
-    Q_UNUSED(Orientation4);
-
-#endif // MAVLINK_ENABLED_NEWSKYE
-}
-
 void SkyeMAV::setManualControlCommands6DoF(double x , double y , double z , double a , double b, double c)
 {
 #ifdef MAVLINK_ENABLED_NEWSKYE
@@ -247,7 +218,26 @@ void SkyeMAV::sendManualControlCommands6DoF(double x, double y, double z, double
 #endif // MAVLINK_ENABLED_NEWSKYE
 }
 
-//AL (06.03.12)
+void SkyeMAV::setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4)
+{
+#ifdef MAVLINK_ENABLED_NEWSKYE
+
+    sendManualControlCommands8DoF(Thrust1, Thrust2, Thrust3, Thrust4, Orientation1, Orientation2, Orientation3, Orientation4);
+    qDebug() << "sendTestphaseControlCommands aufgerufen " << Thrust1;
+
+#else
+    Q_UNUSED(Thrust1);
+    Q_UNUSED(Thrust2);
+    Q_UNUSED(Thrust3);
+    Q_UNUSED(Thrust4);
+    Q_UNUSED(Orientation1);
+    Q_UNUSED(Orientation2);
+    Q_UNUSED(Orientation3);
+    Q_UNUSED(Orientation4);
+
+#endif // MAVLINK_ENABLED_NEWSKYE
+}
+
 void SkyeMAV::sendManualControlCommands8DoF(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 )
 {
 #ifdef MAVLINK_ENABLED_NEWSKYE

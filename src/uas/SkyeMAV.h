@@ -75,15 +75,6 @@ protected:
 
     int airframe;                   ///< The airframe type
 
-    int manual1Thrust;          ///< Thrust for Motor 1 set by human pilot
-    int manual2Thrust;          ///< Thrust for Motor 2 set by human pilot
-    int manual3Thrust;          ///< Thrust for Motor 3 set by human pilot
-    int manual4Thrust;          ///< Thrust for Motor 4 set by human pilot
-    int manual1Orientation;     ///< Orientation for Motor 1 set by human pilot
-    int manual2Orientation;     ///< Orientation for Motor 2 set by human pilot
-    int manual3Orientation;     ///< Orientation for Motor 3 set by human pilot
-    int manual4Orientation;     ///< Orientation for Motor 4 set by human pilot
-
     double manualXThrust;      ///< X Thrust set by human pilot
     double manualYThrust;      ///< Y Thrust set by human pilot
     double manualZThrust;      ///< Z Thrust set by human pilot
