@@ -2255,10 +2255,12 @@ void MainWindow::filterMouseValues()
             double sum = 0;
             for (int k=0; k<mouseFilterSize; k++)
             {
-    //            qDebug() << "i = " << i << ", k =" << k;
                 sum += mouseRawValues[i*mouseFilterSize+k];
             }
-    //        qDebug() << "MAF: Axis:" << i << "Sum value: " << sum;
+
+            // Use cubic multiplier for smoother motions
+            sum = qPow(sum, 3);
+
             switch (i)
             {
             case 0:
