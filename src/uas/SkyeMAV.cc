@@ -181,29 +181,35 @@ void SkyeMAV::setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrus
 void SkyeMAV::setManualControlCommands6DoF(double x , double y , double z , double a , double b, double c)
 {
 #ifdef MAVLINK_ENABLED_NEWSKYE
-//    qDebug() << "Recent Mode: " << mode << ": " << getShortModeTextFor(mode);
 
-    //if (mode & MAV_MODE_FLAG_DECODE_POSITION_SAFETY)
+    if (mode == MAV_MODE_FULL_AUTOMATIC_ARMED)
     {
-        if ((mode == MAV_MODE_DIRECT_CONTROL_DISARMED) || (mode == MAV_MODE_DIRECT_CONTROL_ARMED))
-        {
-            sendDirectControlCommands(x, y, z, a, b, c);
-            qDebug() << "SkyeMAV.cc l.190, sendDirectControlCommands(x,y,z,a,b,c): "<< x <<":"<< y <<":" << z <<":" << a <<":" << b <<":" << c;
-        }else if ((mode == MAV_MODE_ASSISTED_CONTROL_DISARMED) || (mode == MAV_MODE_ASSISTED_CONTROL_ARMED))
-        {
-            sendAssistedControlCommands(x, y, z, a, b, c);
-        }else if ((mode == MAV_MODE_HALF_AUTOMATIC_DISARMED) || (mode == MAV_MODE_HALF_AUTOMATIC_ARMED))
-        {
-            qDebug() << "set Rotation for HAC" << a << b << c;
-            manualZVel = z;
-            manualXRot = a;
-            manualYRot = b;
-            manualZRot = c;
-        }else
-        {
-            qDebug() << "6DOF MANUAL CONTROL: IGNORING COMMANDS: Set mode to MANUAL and CUSTOM to send 6 DoF Mouse commands!";
-        }
+        manualXRot = a * sensitivityFactorRot;
+        manualYRot = b * sensitivityFactorRot;
+        manualZRot = c * sensitivityFactorRot;
+        qDebug() << "Set manual rotation for FAC" << a << b << c;
+
+    }else if (mode == MAV_MODE_HALF_AUTOMATIC_ARMED)
+    {
+        manualZVel = z * sensitivityFactorTrans;
+        manualXRot = a * sensitivityFactorRot;
+        manualYRot = b * sensitivityFactorRot;
+        manualZRot = c * sensitivityFactorRot;
+        qDebug() << "Set lift and manual rotation for HAC" << z << a << b << c;
+
+    }else if (mode == MAV_MODE_DIRECT_CONTROL_ARMED || MAV_MODE_ASSISTED_CONTROL_ARMED)
+    {
+        manualXVel = x * sensitivityFactorTrans;
+        manualYVel = y * sensitivityFactorTrans;
+        manualZVel = z * sensitivityFactorTrans;
+        manualXRot = a * sensitivityFactorRot;
+        manualYRot = b * sensitivityFactorRot;
+        manualZRot = c * sensitivityFactorRot;
+        sendManualControlCommands6DoF(manualXVel, manualYVel, manualZVel, manualXRot, manualYRot, manualZRot);
+        //    qDebug() << __FILE__ << __LINE__ << ": SENT 6DOF CONTROL MESSAGE: x velocity" << manualXVel << " y velocity: " << manualYVel << " z velocity: " << manualZVel << " x rotation: " << manualXRot << " y rotation: " << manualYRot << " z rotation: " << manualZRot;
     }
+
+
 
 #else
     Q_UNUSED(x);
@@ -212,6 +218,31 @@ void SkyeMAV::setManualControlCommands6DoF(double x , double y , double z , doub
     Q_UNUSED(a);
     Q_UNUSED(b);
     Q_UNUSED(c);
+#endif // MAVLINK_ENABLED_NEWSKYE
+}
+
+void SkyeMAV::sendManualControlCommands6DoF(double x, double y, double z, double phi, double theta, double psi)
+{
+#ifdef MAVLINK_ENABLED_NEWSKYE
+
+    x = 1000 * x;
+    y = 1000 * y;
+    z = 1000 * z;
+    phi = 1000 * phi;
+    theta = 1000 * theta;
+    psi = 1000 * theta;
+
+    mavlink_message_t message;
+    mavlink_msg_manual_6dof_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (int16_t)x, (int16_t)y, (int16_t)z, (int16_t)phi, (int16_t)theta, (int16_t)psi);
+    sendMessage(message);
+
+#else
+    Q_UNUSED(x);
+    Q_UNUSED(y);
+    Q_UNUSED(z);
+    Q_UNUSED(phi);
+    Q_UNUSED(theta);
+    Q_UNUSED(psi);
 #endif // MAVLINK_ENABLED_NEWSKYE
 }
 
@@ -241,59 +272,6 @@ void SkyeMAV::sendTestphaseControlCommands(int Thrust1 , int Thrust2 , int Thrus
     //emit attitudeThrustSetPointChanged(this, roll, pitch, yaw, thrust, MG::TIME::getGroundTimeNow());
 
 
-#endif // MAVLINK_ENABLED_NEWSKYE
-}
-
-//AL (06.03.12)
-
-void SkyeMAV::sendDirectControlCommands(double xThrust, double yThrust, double zThrust, double xMoment, double yMoment, double zMoment)
-{
-#ifdef MAVLINK_ENABLED_NEWSKYE
-    // Scale values
-    float thrustScaling = sensitivityFactorTrans;
-    float momentScaling = sensitivityFactorRot;
-    
-    manualXThrust = xThrust * thrustScaling * 1000;
-    manualYThrust = yThrust * thrustScaling * 1000;
-    manualZThrust = zThrust * thrustScaling * 1000;
-    manualXMoment = xMoment * momentScaling * 1000;
-    manualYMoment = yMoment * momentScaling * 1000;
-    manualZMoment = zMoment * momentScaling * 1000;
-    
-    mavlink_message_t message;
-    
-    mavlink_msg_manual_6dof_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (int16_t)(manualXThrust), (int16_t)(manualYThrust), (int16_t)(manualZThrust), (int16_t)(manualXMoment), (int16_t)(manualYMoment), (int16_t)(manualZMoment));
-    sendMessage(message);
-//    qDebug() << __FILE__ << __LINE__ << ": SENT DIRECT CONTROL MESSAGE: xThrust" << manualXThrust << " yThrust: " << manualYThrust << " zThrust: " << manualZThrust << " xMoment: " << manualXMoment << " yMoment: " << manualYMoment << " zMoment: " << manualZMoment;
-    
-    //emit attitudeThrustSetPointChanged(this, roll, pitch, yaw, thrust, MG::TIME::getGroundTimeNow());
-    
-#endif // MAVLINK_ENABLED_NEWSKYE
-}
-
-
-void SkyeMAV::sendAssistedControlCommands(double xVel, double yVel, double zVel, double xRot, double yRot, double zRot)
-{
-#ifdef MAVLINK_ENABLED_NEWSKYE
-    // Scale values
-    float velScaling = sensitivityFactorTrans;
-    float rotScaling = sensitivityFactorRot;
-//    qDebug() << rotScaling << "ROTSCALING";
-    manualXVel = xVel * velScaling * 1000;
-    manualYVel = yVel * velScaling * 1000;
-    manualZVel = zVel * velScaling * 1000;
-    manualXRot = xRot * rotScaling * 1000;
-    manualYRot = yRot * rotScaling * 1000;
-    manualZRot = zRot * rotScaling * 1000;
-    
-    mavlink_message_t message;
-    
-    mavlink_msg_manual_6dof_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (int16_t)manualXVel, (int16_t)manualYVel, (int16_t)manualZVel, (int16_t)manualXRot, (int16_t)manualYRot, (int16_t)manualZRot);
-    sendMessage(message);
-//    qDebug() << __FILE__ << __LINE__ << ": SENT ASSISTED CONTROL MESSAGE: x velocity" << manualXVel << " y velocity: " << manualYVel << " z velocity: " << manualZVel << " x rotation: " << manualXRot << " y rotation: " << manualYRot << " z rotation: " << manualZRot;
-    
-    //emit attitudeThrustSetPointChanged(this, roll, pitch, yaw, thrust, MG::TIME::getGroundTimeNow());
-    
 #endif // MAVLINK_ENABLED_NEWSKYE
 }
 
@@ -403,23 +381,23 @@ void SkyeMAV::followTrajectory()
         {
             if (mode & MAV_MODE_FLAG_DECODE_POSITION_AUTO) // FULL AUTOMATIC CONTROL
             {
-                if ((sensitivityFactorTrans * deltaNorm) < QGC_SKYE_MAX_VEL_NORM)
+                if (deltaNorm < QGC_SKYE_MAX_VEL_NORM / sensitivityFactorTrans)
                 {
-                    qDebug() << "Send original Assisted Control for FAC";
-                    sendAssistedControlCommands(sensitivityFactorTrans * deltaCam[0],
+                    qDebug() << "Send original 6DOF manual control command for FAC";
+                    sendManualControlCommands6DoF(sensitivityFactorTrans * deltaCam[0],
                                                 sensitivityFactorTrans * deltaCam[1],
                                                 sensitivityFactorTrans * deltaCam[2],
-                                                sensitivityFactorRot * manualXRot,
-                                                sensitivityFactorRot * manualYRot,
-                                                sensitivityFactorRot * manualZRot);
+                                                manualXRot,
+                                                manualYRot,
+                                                manualZRot);
                 } else {
-                    qDebug() << "Send reduced Assisted Control";
-                    sendAssistedControlCommands(sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm * deltaCam[0],
+                    qDebug() << "Send original 6DOF manual control command for FAC";
+                    sendManualControlCommands6DoF(sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm * deltaCam[0],
                                                 sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm * deltaCam[1],
                                                 sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm * deltaCam[2],
-                                                sensitivityFactorRot * manualXRot,
-                                                sensitivityFactorRot * manualYRot,
-                                                sensitivityFactorRot * manualZRot);
+                                                manualXRot,
+                                                manualYRot,
+                                                manualZRot);
                 }
                 if ( deltaNorm < QGC_SKYE_LOOKAHEAD )
                 {
@@ -428,25 +406,25 @@ void SkyeMAV::followTrajectory()
                         currentTrajectoryStamp++;
                 }
             }
-            else
+            else        // HALF AUTOMATIC CONTROL
             {
-                if ((sensitivityFactorTrans * deltaNorm2D) < QGC_SKYE_MAX_VEL_NORM)
+                if (deltaNorm2D < QGC_SKYE_MAX_VEL_NORM / sensitivityFactorTrans)
                 {
-                    qDebug() << "Send original Assisted Control for FAC";
-                    sendAssistedControlCommands(sensitivityFactorTrans * deltaCam[0],
+                    qDebug() << "Send original 6DOF manual control command for HAC";
+                    sendManualControlCommands6DoF(sensitivityFactorTrans * deltaCam[0],
                                                 sensitivityFactorTrans * deltaCam[1],
-                                                sensitivityFactorTrans * manualZVel,
-                                                sensitivityFactorRot * manualXRot,
-                                                sensitivityFactorRot * manualYRot,
-                                                sensitivityFactorRot * manualZRot);
+                                                manualZVel,
+                                                manualXRot,
+                                                manualYRot,
+                                                manualZRot);
                 } else {
-                    qDebug() << "Send reduced Assisted Control";
-                    sendAssistedControlCommands(sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm2D * deltaCam[0],
+                    qDebug() << "Send reduced 6DOF manual control command for HAC";
+                    sendManualControlCommands6DoF(sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm2D * deltaCam[0],
                                                 sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm2D * deltaCam[1],
-                                                sensitivityFactorTrans * manualZVel,
-                                                sensitivityFactorRot * manualXRot,
-                                                sensitivityFactorRot * manualYRot,
-                                                sensitivityFactorRot * manualZRot);
+                                                manualZVel,
+                                                manualXRot,
+                                                manualYRot,
+                                                manualZRot);
                 }
                 if ( deltaNorm2D < QGC_SKYE_LOOKAHEAD )
                 {
@@ -454,26 +432,11 @@ void SkyeMAV::followTrajectory()
                     if (trajX.size() > currentTrajectoryStamp + 1)
                         currentTrajectoryStamp++;
                 }
-
-
-
             }
-//            if ((sensitivityFactorTrans * deltaNorm) < 0.2)
-//            {
-//                sendDirectControlCommands(deltaCam[0],
-//                                          deltaCam[1],
-//                                          deltaCam[2],
-//                                          manualXRot, manualYRot, manualZRot);
-//            } else {
-//                qDebug() << "Send reduced Direct Control";
-//                sendDirectControlCommands(0.2 / ((double)sensitivityFactorTrans * deltaNorm) * deltaCam[0],
-//                                          0.2 / ((double)sensitivityFactorTrans * deltaNorm) * deltaCam[1],
-//                                          0.2 / ((double)sensitivityFactorTrans * deltaNorm) * deltaCam[2],
-//                                          manualXRot, manualYRot, manualZRot);
-//            }
         }
-
-
+    }else
+    {
+        qDebug() << "MAV is disarmed: Arm to follow trajectory.";
     }
 }
 
@@ -509,5 +472,5 @@ void SkyeMAV::updateTrigonometry()
     fromItoC[6] = cosPhi*sinTheta*cosPsi + sinPhi*sinPsi;
     fromItoC[7] = cosPhi*sinTheta*sinPsi - sinPhi*cosPsi;
     fromItoC[8] = cosPhi*cosTheta;
-    qDebug() << "I to C" << fromItoC[0] << fromItoC[1] << fromItoC[2] << fromItoC[3] << fromItoC[4] << fromItoC[5] << fromItoC[6] << fromItoC[7] << fromItoC[8];
+//    qDebug() << "I to C" << fromItoC[0] << fromItoC[1] << fromItoC[2] << fromItoC[3] << fromItoC[4] << fromItoC[5] << fromItoC[6] << fromItoC[7] << fromItoC[8];
 }

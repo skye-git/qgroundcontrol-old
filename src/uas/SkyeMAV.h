@@ -42,7 +42,7 @@ public slots:
     }
     /** @brief Receive a MAVLink message from this MAV */
     void receiveMessage(LinkInterface* link, mavlink_message_t message);
-    /** @brief Send the 6 DOF command (from 3d Mouse) to MAV */
+    /** @brief Send the 6 DOF command (from 3d Mouse or Touch Input) to MAV */
     void setManualControlCommands6DoF(double x , double y , double z , double a , double b, double c);
     /** @brief Send the 8 DOF command (from Testphase Widget) to MAV */
     void setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 ); //AL (06.03.12)
@@ -68,12 +68,8 @@ signals:
 
 
 protected:
-    /** @brief Send a Direct Control Command to MAV: */
-    void sendDirectControlCommands(double xThrust, double yThrust, double zThrust, double xMoment, double yMoment, double zMoment);
-    /** @brief Send a Assisted Control Command to MAV: */
-    void sendAssistedControlCommands(double xVel, double yVel, double zVel, double xRot, double yRot, double zRot);
-    /** @brief Send a Testphase Control Command to MAV: */
-    void sendHalfAutomaticControlCommands(double xVel, double yVel, double zVel, double xRot, double yRot, double zRot);
+    /** Send a Manual 6DoF Control Command to MAV */
+    void sendManualControlCommands6DoF(double x, double y, double z, double phi, double theta, double psi);
     /** @brief Send a Testphase Control Command to MAV: */
     void sendTestphaseControlCommands(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 );
 
