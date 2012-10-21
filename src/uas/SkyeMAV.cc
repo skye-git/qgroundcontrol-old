@@ -162,7 +162,7 @@ void SkyeMAV::setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrus
 {
 #ifdef MAVLINK_ENABLED_NEWSKYE
 
-    sendTestphaseControlCommands(Thrust1, Thrust2, Thrust3, Thrust4, Orientation1, Orientation2, Orientation3, Orientation4);
+    sendManualControlCommands8DoF(Thrust1, Thrust2, Thrust3, Thrust4, Orientation1, Orientation2, Orientation3, Orientation4);
     qDebug() << "sendTestphaseControlCommands aufgerufen " << Thrust1;
 
 #else
@@ -209,8 +209,6 @@ void SkyeMAV::setManualControlCommands6DoF(double x , double y , double z , doub
         //    qDebug() << __FILE__ << __LINE__ << ": SENT 6DOF CONTROL MESSAGE: x velocity" << manualXVel << " y velocity: " << manualYVel << " z velocity: " << manualZVel << " x rotation: " << manualXRot << " y rotation: " << manualYRot << " z rotation: " << manualZRot;
     }
 
-
-
 #else
     Q_UNUSED(x);
     Q_UNUSED(y);
@@ -235,6 +233,9 @@ void SkyeMAV::sendManualControlCommands6DoF(double x, double y, double z, double
     mavlink_message_t message;
     mavlink_msg_manual_6dof_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (int16_t)x, (int16_t)y, (int16_t)z, (int16_t)phi, (int16_t)theta, (int16_t)psi);
     sendMessage(message);
+    qDebug() << __FILE__ << __LINE__ << ": SENT 6DOF CONTROL MESSAGE:" << x << y << z << phi << theta << psi;
+
+
 
 #else
     Q_UNUSED(x);
@@ -247,30 +248,23 @@ void SkyeMAV::sendManualControlCommands6DoF(double x, double y, double z, double
 }
 
 //AL (06.03.12)
-void SkyeMAV::sendTestphaseControlCommands(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 )
+void SkyeMAV::sendManualControlCommands8DoF(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 )
 {
 #ifdef MAVLINK_ENABLED_NEWSKYE
-    // Scale values (The Testphase widget is designed that no scaling is needed from UI to the machine the value shouldn't change)
-    //double thrustScaling = 1.0f;
-    //double orientationScaling = 1.0f;
-
-    manual1Thrust = Thrust1;//*thrustScaling;
-    manual2Thrust = Thrust2;//*thrustScaling;
-    manual3Thrust = Thrust3;//*thrustScaling;
-    manual4Thrust = Thrust4;//*thrustScaling;
-    manual1Orientation = Orientation1;//*orientationScaling;
-    manual2Orientation = Orientation2;//*orientationScaling;
-    manual3Orientation = Orientation3;//*orientationScaling;
-    manual4Orientation = Orientation4;//*orientationScaling;
 
     mavlink_message_t message;
 
-    mavlink_msg_manual_8dof_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (int16_t)manual1Thrust, (int16_t)manual2Thrust, (int16_t)manual3Thrust,(int16_t)manual4Thrust, (int16_t)manual1Orientation, (int16_t)manual2Orientation, (int16_t)manual3Orientation,(int16_t)manual4Orientation);
+    mavlink_msg_manual_8dof_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId,
+                                         (int16_t)Thrust1,
+                                         (int16_t)Thrust2,
+                                         (int16_t)Thrust3,
+                                         (int16_t)Thrust4,
+                                         (int16_t)Orientation1,
+                                         (int16_t)Orientation2,
+                                         (int16_t)Orientation3,
+                                         (int16_t)Orientation4);
     sendMessage(message);
-    qDebug() << __FILE__ << __LINE__ << ": SENT TESTPHASE CONTROL MESSAGE: 1Thrust" << manual1Thrust << " 2Thrust: " << manual2Thrust << " 3Thrust: " << manual3Thrust << " 4Thrust: " << manual4Thrust << " 1Orientation: " << manual1Orientation << " 2Orientation: " << manual2Orientation << " 3Orientation: " << manual3Orientation << " 4Orientation: " << manual4Orientation;
-
-    //emit attitudeThrustSetPointChanged(this, roll, pitch, yaw, thrust, MG::TIME::getGroundTimeNow());
-
+    qDebug() << __FILE__ << __LINE__ << ": SENT 8DOF CONTROL MESSAGE: 1Thrust" << Thrust1 << " 2Thrust: " << Thrust2 << " 3Thrust: " << Thrust3 << " 4Thrust: " << Thrust4 << " 1Orientation: " << Orientation1 << " 2Orientation: " << Orientation2 << " 3Orientation: " << Orientation3 << " 4Orientation: " << Orientation4;
 
 #endif // MAVLINK_ENABLED_NEWSKYE
 }
@@ -434,9 +428,6 @@ void SkyeMAV::followTrajectory()
                 }
             }
         }
-    }else
-    {
-        qDebug() << "MAV is disarmed: Arm to follow trajectory.";
     }
 }
 

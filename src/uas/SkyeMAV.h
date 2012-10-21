@@ -71,7 +71,7 @@ protected:
     /** Send a Manual 6DoF Control Command to MAV */
     void sendManualControlCommands6DoF(double x, double y, double z, double phi, double theta, double psi);
     /** @brief Send a Testphase Control Command to MAV: */
-    void sendTestphaseControlCommands(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 );
+    void sendManualControlCommands8DoF(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 );
 
     int airframe;                   ///< The airframe type
 

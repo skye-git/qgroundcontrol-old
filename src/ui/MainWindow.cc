@@ -2477,7 +2477,7 @@ void MainWindow::setTouchInputXZoom(double x)
 {
     touchXZoomValue = x; // TO DO, make touchXZoomValue and send seperately, because it is in the camera frame
 
-    //zur Sicherheit
+    //Ensure Saturation
     if(x > 1)
         touchXZoomValue = 1;
     //qDebug() << touchXZoomValue << "in setTouchInputXZoom()";
@@ -2488,9 +2488,8 @@ void MainWindow::setTouchInputXYZ(double x, double y, double z)
         touchXValue = x;
         touchYValue = y;
         touchZValue = z;
-        qDebug() << "XXXXX        " << x << "      y    " << y;
 
-    //zur Sicherheit
+    //Ensure Saturation
     if(x > 1)
         touchXValue = 1;
     if(y > 1)
