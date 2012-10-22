@@ -195,7 +195,7 @@ void SkyeMAV::sendManualControlCommands6DoF(double x, double y, double z, double
 #ifdef QGC_USE_SKYE_INTERFACE
 
     mavlink_message_t message;
-    mavlink_msg_setpoint_6dof_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (int16_t)x, (int16_t)y, (int16_t)z, (int16_t)phi, (int16_t)theta, (int16_t)psi);
+    mavlink_msg_setpoint_6dof_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (float)x, (float)y, (float)z, (float)phi, (float)theta, (float)psi);
     sendMessage(message);
     qDebug() << __FILE__ << __LINE__ << ": SENT 6DOF CONTROL MESSAGE:" << x << y << z << phi << theta << psi;
 
@@ -238,14 +238,14 @@ void SkyeMAV::sendManualControlCommands8DoF(int Thrust1 , int Thrust2 , int Thru
     mavlink_message_t message;
 
     mavlink_msg_setpoint_8dof_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId,
-                                         (int16_t)Thrust1,
-                                         (int16_t)Thrust2,
-                                         (int16_t)Thrust3,
-                                         (int16_t)Thrust4,
-                                         (int16_t)Orientation1,
-                                         (int16_t)Orientation2,
-                                         (int16_t)Orientation3,
-                                         (int16_t)Orientation4);
+                                         (float)Thrust1,
+                                         (float)Thrust2,
+                                         (float)Thrust3,
+                                         (float)Thrust4,
+                                         (float)Orientation1,
+                                         (float)Orientation2,
+                                         (float)Orientation3,
+                                         (float)Orientation4);
     sendMessage(message);
     qDebug() << __FILE__ << __LINE__ << ": SENT 8DOF CONTROL MESSAGE: 1Thrust" << Thrust1 << " 2Thrust: " << Thrust2 << " 3Thrust: " << Thrust3 << " 4Thrust: " << Thrust4 << " 1Orientation: " << Orientation1 << " 2Orientation: " << Orientation2 << " 3Orientation: " << Orientation3 << " 4Orientation: " << Orientation4;
 

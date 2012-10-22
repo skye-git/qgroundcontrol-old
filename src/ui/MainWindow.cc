@@ -1559,8 +1559,8 @@ void MainWindow::UASCreated(UASInterface* uas)
                 addTool(watchdogControlDockWidget, tr("Process Control"), Qt::BottomDockWidgetArea);
             }
         }
-
-        if (uas->getAutopilotType() == MAV_AUTOPILOT_SKYE)
+#ifdef QGC_USE_SKYE_INTERFACE
+        if (uas->getAutopilotType() == MAV_AUTOPILOT_PX4)
         {
             // Dock widget
             if (!skyeBatteryInfoDockWidget)
@@ -1571,6 +1571,7 @@ void MainWindow::UASCreated(UASInterface* uas)
                 addTool(skyeBatteryInfoDockWidget, tr("Battery Info"), Qt::RightDockWidgetArea);
             }
         }
+#endif
 
         // Change the view only if this is the first UAS
 
@@ -1609,14 +1610,18 @@ void MainWindow::UASCreated(UASInterface* uas)
             }
             else
             {
-                if (uas->getAutopilotType() == MAV_AUTOPILOT_SKYE)      // Beginn Code MA (15.03.2012)
+#ifdef QGC_USE_SKYE_INTERFACE
+                if (uas->getAutopilotType() == MAV_AUTOPILOT_PX4)      // Beginn Code MA (15.03.2012)
                 {
                     loadSkyeView();
                 }
                 else
                 {                               // Ende Code MA (15.03.2012)
+#endif
                     loadOperatorView();
+#ifdef QGC_USE_SKYE_INTERFACE
                 }
+#endif
             }
         }
 

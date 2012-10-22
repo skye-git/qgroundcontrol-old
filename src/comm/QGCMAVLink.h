@@ -40,7 +40,11 @@ This file is part of the QGROUNDCONTROL project
 
 #ifdef QGC_USE_SKYE_MESSAGES            // Beginn Code MA (16.03.2012)
 #include <skye.h>
-#endif                                  // Ende Code MA (16.03.2012)
+#endif    // Ende Code MA (16.03.2012)
+
+#ifdef QGC_USE_SKYE_INTERFACE
+#include <QGC_skye_enums.h>
+#endif // QGC_USE_SKYE_INTERFACE
 
 
 #endif // QGCMAVLINK_H

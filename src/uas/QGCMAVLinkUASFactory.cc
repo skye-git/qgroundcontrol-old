@@ -89,7 +89,7 @@ UASInterface* QGCMAVLinkUASFactory::createUAS(MAVLinkProtocol* mavlink, LinkInte
 		}
 #endif
 #ifdef QGC_USE_SKYE_INTERFACE                    // Beginn Code MA (16.02.2012) copied AL (03.03.12)
-        case MAV_AUTOPILOT_SKYE:
+        case MAV_AUTOPILOT_PX4:
                 {
                         SkyeMAV* mav = new SkyeMAV(mavlink,sysid);
                         mav->setSystemType((int)heartbeat->type);

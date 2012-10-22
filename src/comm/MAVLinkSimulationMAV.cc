@@ -100,7 +100,7 @@ void MAVLinkSimulationMAV::mainloop()
     if (timer1Hz <= 0) {
         mavlink_message_t msg;
 #ifdef QGC_USE_SKYE_INTERFACE
-        mavlink_msg_heartbeat_pack(systemid, MAV_COMP_ID_IMU, &msg, MAV_TYPE_AIRSHIP, MAV_AUTOPILOT_SKYE, MAV_MODE_MANUAL_ARMED, 0, MAV_STATE_ACTIVE);
+        //mavlink_msg_heartbeat_pack(systemid, MAV_COMP_ID_IMU, &msg, MAV_TYPE_AIRSHIP, MAV_AUTOPILOT_SKYE, MAV_MODE_MANUAL_ARMED, 0, MAV_STATE_ACTIVE);
 #else
         mavlink_msg_heartbeat_pack(systemid, MAV_COMP_ID_IMU, &msg, MAV_TYPE_FIXED_WING, MAV_AUTOPILOT_ARDUPILOTMEGA, MAV_MODE_GUIDED_ARMED, 0, MAV_STATE_ACTIVE);
 #endif // QGC_USE_SKYE_INTERFACE
