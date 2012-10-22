@@ -63,7 +63,7 @@ signals:
      *          current Recent current of accu pack in ampere
      *          percent Estimated remaining battery, -1 when not estimated
     **/
-    void batteryPackChanged(mavlink_skye_battery_status_t* battery);
+    void batteryPackChanged(mavlink_battery_status_t* battery);
     void reportUDPLinkFailed(QString errorStr);
 
 

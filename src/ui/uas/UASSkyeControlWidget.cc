@@ -64,7 +64,7 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     minSensitivityFactorRot(0.0),
     maxSensitivityFactorRot(QGC_SKYE_MAX_SENS_DIRECT_ROT)
 {
-#ifdef MAVLINK_ENABLED_NEWSKYE
+#ifdef QGC_USE_SKYE_INTERFACE
     ui.setupUi(this);
 
     // Uncheck and group buttons to enable exclusiv checkable
@@ -122,12 +122,12 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     // TODO: set correct margins instead of min height
     this->setMinimumHeight(220);
 
-#endif //MAVLINK_ENABLED_NEWSKYE
+#endif //QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::setUAS(UASInterface* uas)
 {
-#ifdef MAVLINK_ENABLED_NEWSKYE
+#ifdef QGC_USE_SKYE_INTERFACE
     if (this->uasId!= 0)
     {
         UASInterface* oldUAS = UASManager::instance()->getUASForId(this->uasId);
@@ -172,18 +172,18 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
     }
 
 
-#endif // MAVLINK_ENABLED_NEWSKYE
+#endif // QGC_USE_SKYE_INTERFACE
 }
 
 UASSkyeControlWidget::~UASSkyeControlWidget()
 {
-#ifdef MAVLINK_ENABLED_NEWSKYE
-#endif // MAVLINK_ENABLED_NEWSKYE
+#ifdef QGC_USE_SKYE_INTERFACE
+#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::updateStatemachine()
 {
-#ifdef MAVLINK_ENABLED_NEWSKYE
+#ifdef QGC_USE_SKYE_INTERFACE
 
     if (engineOn)
     {
@@ -193,7 +193,7 @@ void UASSkyeControlWidget::updateStatemachine()
     {
         ui.controlButton->setText(tr("ARM SYSTEM"));
     }
-#endif // MAVLINK_ENABLED_NEWSKYE
+#endif // QGC_USE_SKYE_INTERFACE
 }
 
 ///**
@@ -202,7 +202,7 @@ void UASSkyeControlWidget::updateStatemachine()
 // */
 //void UASSkyeControlWidget::setBackgroundColor(QColor color)
 //{
-//#ifdef MAVLINK_ENABLED_NEWSKYE
+//#ifdef QGC_USE_SKYE_INTERFACE
 //    // UAS color
 //    QColor uasColor = color;
 //    QString colorstyle;
@@ -216,12 +216,12 @@ void UASSkyeControlWidget::updateStatemachine()
 //    palette.setBrush(QPalette::Window, QBrush(uasColor));
 //    setPalette(palette);
 //    setAutoFillBackground(true);
-//#endif // MAVLINK_ENABLED_NEWSKYE
+//#endif // QGC_USE_SKYE_INTERFACE
 //}
 
 void UASSkyeControlWidget::updateMode(int uas,int baseMode)
 {
-#ifdef MAVLINK_ENABLED_NEWSKYE
+#ifdef QGC_USE_SKYE_INTERFACE
     if ((uasId == uas) && ((int)uasMode != baseMode))
     {
         uasMode = (unsigned int)baseMode;
@@ -259,12 +259,12 @@ void UASSkyeControlWidget::updateMode(int uas,int baseMode)
 
 
     }
-#endif // MAVLINK_ENABLED_NEWSKYE
+#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::updateState(int state)
 {
-#ifdef MAVLINK_ENABLED_NEWSKYE
+#ifdef QGC_USE_SKYE_INTERFACE
     switch (state)
     {
     case (int)MAV_STATE_ACTIVE:
@@ -286,14 +286,14 @@ void UASSkyeControlWidget::updateState(int state)
         ui.fullAutomaticControlButton->setEnabled(true);
         break;
     }
-#endif // MAVLINK_ENABLED_NEWSKYE
+#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::setDirectControlMode(bool checked)
 {
     if (checked)
     {
-#ifdef  MAVLINK_ENABLED_NEWSKYE
+#ifdef  QGC_USE_SKYE_INTERFACE
         ui.sensitivityTransSlider->setValue(QGC_SKYE_DEFAULT_SENS_DIRECT_TRANS / QGC_SKYE_MAX_SENS_DIRECT_TRANS * ui.sensitivityTransSlider->maximum());
         ui.sensitivityRotSlider->setValue(QGC_SKYE_DEFAULT_SENS_DIRECT_ROT / QGC_SKYE_MAX_SENS_DIRECT_ROT * ui.sensitivityRotSlider->maximum());
         SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
@@ -308,7 +308,7 @@ void UASSkyeControlWidget::setDirectControlMode(bool checked)
         {
             ui.lastActionLabel->setText("Active UAS is no SKYE!");
         }
-#endif  // MAVLINK_ENABLED_NEWSKYE
+#endif  // QGC_USE_SKYE_INTERFACE
     }
 }
 
@@ -316,7 +316,7 @@ void UASSkyeControlWidget::setAssistedControlMode(bool checked)
 {
     if (checked)
     {
-#ifdef MAVLINK_ENABLED_NEWSKYE
+#ifdef QGC_USE_SKYE_INTERFACE
         ui.sensitivityTransSlider->setValue(QGC_SKYE_DEFAULT_SENS_ASSIST_TRANS / QGC_SKYE_MAX_SENS_ASSIST_TRANS * ui.sensitivityTransSlider->maximum());
         ui.sensitivityRotSlider->setValue(QGC_SKYE_DEFAULT_SENS_ASSIST_ROT / QGC_SKYE_MAX_SENS_ASSIST_ROT * ui.sensitivityRotSlider->maximum());
         SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
@@ -331,7 +331,7 @@ void UASSkyeControlWidget::setAssistedControlMode(bool checked)
         {
             ui.lastActionLabel->setText("UAS is no SKYE!");
         }
-#endif // MAVLINK_ENABLED_NEWSKYE
+#endif // QGC_USE_SKYE_INTERFACE
     }
 }
 
@@ -339,7 +339,7 @@ void UASSkyeControlWidget::setHalfAutomaticControlMode(bool checked)
 {
     if (checked)
     {
-#ifdef MAVLINK_ENABLED_NEWSKYE
+#ifdef QGC_USE_SKYE_INTERFACE
         SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
         if (mav){
             UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
@@ -352,7 +352,7 @@ void UASSkyeControlWidget::setHalfAutomaticControlMode(bool checked)
         {
             ui.lastActionLabel->setText("UAS is no SKYE!");
         }
-#endif // MAVLINK_ENABLED_NEWSKYE
+#endif // QGC_USE_SKYE_INTERFACE
     }
 }
 
@@ -360,7 +360,7 @@ void UASSkyeControlWidget::setFullAutomaticControlMode(bool checked)
 {
     if (checked)
     {
-#ifdef MAVLINK_ENABLED_NEWSKYE
+#ifdef QGC_USE_SKYE_INTERFACE
         SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
         if (mav){
             UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
@@ -373,7 +373,7 @@ void UASSkyeControlWidget::setFullAutomaticControlMode(bool checked)
         {
             ui.lastActionLabel->setText("UAS is no SKYE!");
         }
-#endif // MAVLINK_ENABLED_NEWSKYE
+#endif // QGC_USE_SKYE_INTERFACE
     }
 }
 
@@ -394,7 +394,7 @@ void UASSkyeControlWidget::mouseActivated(bool success)
 
 void UASSkyeControlWidget::setInputMouse(bool checked)
 {
-#ifdef MAVLINK_ENABLED_NEWSKYE
+#ifdef QGC_USE_SKYE_INTERFACE
     if (checked)
     {
         inputMode = QGC_INPUT_MODE_MOUSE;
@@ -402,36 +402,36 @@ void UASSkyeControlWidget::setInputMouse(bool checked)
         ui.lastActionLabel->setText(tr("3dMouse activated!"));
     }
     updateStyleSheet();
-#endif // MAVLINK_ENABLED_NEWSKYE
+#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::setInputTouch(bool checked)
 {
-#ifdef MAVLINK_ENABLED_NEWSKYE
+#ifdef QGC_USE_SKYE_INTERFACE
     if (checked)
     {
         inputMode = QGC_INPUT_MODE_TOUCH;
         emit changedInput(inputMode);
         ui.lastActionLabel->setText(tr("Touchscreen activated!"));
     }
-#endif // MAVLINK_ENABLED_NEWSKYE
+#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::setInputKeyboard(bool checked)
 {
-#ifdef MAVLINK_ENABLED_NEWSKYE
+#ifdef QGC_USE_SKYE_INTERFACE
     if (checked)
     {
         inputMode = QGC_INPUT_MODE_KEYBOARD;
         emit changedInput(inputMode);
         ui.lastActionLabel->setText(tr("Keyboard activated!"));
     }
-#endif // MAVLINK_ENABLED_NEWSKYE
+#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::transmitMode(int mode)
 {
-#ifdef MAVLINK_ENABLED_NEWSKYE
+#ifdef QGC_USE_SKYE_INTERFACE
     UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
     if (mav)
     {
@@ -444,12 +444,12 @@ void UASSkyeControlWidget::transmitMode(int mode)
     {
         ui.lastActionLabel->setText("No UAS activated!");
     }
-#endif // MAVLINK_ENABLED_NEWSKYE
+#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::cycleContextButton()
 {
-#ifdef MAVLINK_ENABLED_NEWSKYE
+#ifdef QGC_USE_SKYE_INTERFACE
     UAS* mav = dynamic_cast<UAS*>(UASManager::instance()->getUASForId(this->uasId));
     if (mav)
     {
@@ -474,7 +474,7 @@ void UASSkyeControlWidget::cycleContextButton()
         QTimer::singleShot(200, this, SLOT(updateStatemachine()));
 
     }
-#endif // MAVLINK_ENABLED_NEWSKYE
+#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::updateStyleSheet()

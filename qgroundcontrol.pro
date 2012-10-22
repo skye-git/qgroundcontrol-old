@@ -50,7 +50,7 @@ OBJECTS_DIR = $${BUILDDIR}/obj
 MOC_DIR = $${BUILDDIR}/moc
 UI_DIR = $${BUILDDIR}/ui
 RCC_DIR = $${BUILDDIR}/rcc
-#MAVLINK_CONF = "pixhawk"           #Comment MAKREBS: MAVLINK_CONF = skye ist defined in user_config.pri
+#MAVLINK_CONF = "pixhawk"           #Comment MAKREBS: FIXME: Temporarely removed
 MAVLINKPATH = $$BASEDIR/libs/mavlink/include/mavlink/v1.0
 DEFINES += MAVLINK_NO_DATA
 
@@ -114,14 +114,15 @@ isEmpty(MAVLINK_CONF) {
     #DEFINES += 'MAVLINK_CONF="$${MAVLINK_CONF}.h"'
     DEFINES += $$sprintf('QGC_USE_%1_MESSAGES', $$upper($$MAVLINK_CONF))
 }
-contains(MAVLINK_CONF, skye) {                      ## Beginn Code MA  (15.02.12) copied AL (03.02.12)------------------------------------------
-    # Remove the default set - it is included anyway
-    INCLUDEPATH -= $$MAVLINKPATH/common
+DEFINES += QGC_USE_SKYE_INTERFACE
+#contains(MAVLINK_CONF, skye) {                      ## Beginn Code MA  (15.02.12) copied AL (03.02.12)------------------------------------------
+#    # Remove the default set - it is included anyway
+#    INCLUDEPATH -= $$MAVLINKPATH/common
 
-    # SKYE SPECIAL MESSAGES
-    INCLUDEPATH += $$MAVLINKPATH/newskye
-    DEFINES += QGC_USE_SKYE_MESSAGES
-}                                                   ## Ende Code MA  ------------------------------------------
+#    # SKYE SPECIAL MESSAGES
+#    INCLUDEPATH += $$MAVLINKPATH/skye
+#    DEFINES += QGC_USE_SKYE_MESSAGES
+#}                                                   ## Ende Code MA  ------------------------------------------
 
 # Include general settings for QGroundControl
 # necessary as last include to override any non-acceptable settings

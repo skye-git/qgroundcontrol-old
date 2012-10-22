@@ -28,7 +28,7 @@ MAVLinkDecoder::MAVLinkDecoder(MAVLinkProtocol* protocol, QObject *parent) :
     messageFilter.insert(MAVLINK_MSG_ID_MISSION_COUNT, false);
     messageFilter.insert(MAVLINK_MSG_ID_MISSION_ACK, false);
     messageFilter.insert(MAVLINK_MSG_ID_DATA_STREAM, false);
-    #if defined MAVLINK_ENABLED_PIXHAWK || defined MAVLINK_ENABLED_NEWSKYE
+    #if defined MAVLINK_ENABLED_PIXHAWK || defined QGC_USE_SKYE_INTERFACE
 //    qDebug() << "Filtering MAVLINK_MSG_ID_ENCAPSULATED_DATA and MAVLINK_MSG_ID_DATA_TRANSMISSION_HANDSHAKE in MAVLinkDecoder";
     messageFilter.insert(MAVLINK_MSG_ID_GPS_STATUS, false);
     #ifdef MAVLINK_MSG_ID_ENCAPSULATED_DATA

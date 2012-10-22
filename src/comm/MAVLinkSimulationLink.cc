@@ -165,7 +165,7 @@ void MAVLinkSimulationLink::run()
 
     system.base_mode = MAV_MODE_PREFLIGHT;
     system.custom_mode = MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED;
-#ifdef MAVLINK_ENABLED_NEWSKYE
+#ifdef QGC_USE_SKYE_INTERFACE
     system.type = MAV_TYPE_AIRSHIP;
 #else
     system.custom_mode = MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED;
@@ -534,9 +534,9 @@ void MAVLinkSimulationLink::mainloop()
         }
         rcCounter++;
 
-#ifdef MAVLINK_ENABLED_NEWSKYE
+#ifdef QGC_USE_SKYE_INTERFACE
         // RETURN 6 DOF CONTROL MSG
-        mavlink_manual_6dof_control_t manual;
+        mavlink_setpoint_6dof_t manual;
         manual.x = thrustX;
         manual.y = thrustY;
         manual.z = thrustZ;
@@ -544,14 +544,14 @@ void MAVLinkSimulationLink::mainloop()
         manual.pitch = momentY;
         manual.yaw = momentZ;
         manual.target_system = systemId;
-        mavlink_msg_manual_6dof_control_encode(systemId, MAV_COMP_ID_IMU, &msg, &manual);
+        mavlink_msg_setpoint_6dof_encode(systemId, MAV_COMP_ID_IMU, &msg, &manual);
         bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
         //add data into datastream
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 
         // RETURN MANUAL 8DOF COMMAND (Testphase)
-        mavlink_manual_8dof_control_t manual_8dof;
+        mavlink_setpoint_8dof_t manual_8dof;
         manual_8dof.motor_1 = thrust1;
         manual_8dof.motor_2 = thrust2;
         manual_8dof.motor_3 = thrust3;
@@ -561,7 +561,7 @@ void MAVLinkSimulationLink::mainloop()
         manual_8dof.motor_7 = orientation3;
         manual_8dof.motor_8 = orientation4;
         manual_8dof.target_system = systemId;
-        mavlink_msg_manual_8dof_control_encode(systemId, MAV_COMP_ID_IMU, &msg, &manual_8dof);
+        mavlink_msg_setpoint_8dof_encode(systemId, MAV_COMP_ID_IMU, &msg, &manual_8dof);
         bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
         //add data into datastream
         memcpy(stream+streampointer,buffer, bufferlength);
@@ -571,7 +571,7 @@ void MAVLinkSimulationLink::mainloop()
         if (battery_pack_id >= 4){
             battery_pack_id = 0;
         }
-        mavlink_skye_battery_status_t battery;
+        mavlink_battery_status_t battery;
         battery.accu_id = battery_pack_id;
         battery.voltage_cell_1 = 1000*(3 + sin(time_boot*0.01));
         battery.voltage_cell_2 = 1000*(3 + cos(time_boot*0.01));
@@ -579,7 +579,7 @@ void MAVLinkSimulationLink::mainloop()
         battery.voltage_cell_4 = 1000*(3 + cos(time_boot*0.01));
         battery.current_battery = 100*2.12;
         battery.battery_remaining = (int8_t)floor((float)(100 - 0.0005*time_boot));
-        mavlink_msg_skye_battery_status_encode(systemId, MAV_COMP_ID_IMU, &msg, &battery);
+        mavlink_msg_battery_status_encode(systemId, MAV_COMP_ID_IMU, &msg, &battery);
         bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
         //add data into datastream
         memcpy(stream+streampointer,buffer, bufferlength);
@@ -679,7 +679,7 @@ void MAVLinkSimulationLink::mainloop()
         // HEARTBEAT
 
         // Pack message and get size of encoded byte string
-#ifdef MAVLINK_ENABLED_NEWSKYE                                         // Begin Code MA (24.02.2012)
+#ifdef QGC_USE_SKYE_INTERFACE                                         // Begin Code MA (24.02.2012)
         messageSize = mavlink_msg_heartbeat_pack(systemId, componentId, &msg, system.type, MAV_AUTOPILOT_SKYE, system.base_mode, system.custom_mode, system.system_status);
 #else                                                               // Ende Code MA
         messageSize = mavlink_msg_heartbeat_pack(systemId, componentId, &msg, system.type, MAV_AUTOPILOT_ARDUPILOTMEGA, system.base_mode, system.custom_mode, system.system_status);
@@ -691,7 +691,7 @@ void MAVLinkSimulationLink::mainloop()
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 
-#ifdef TEMP_MAVLINK_ENABLED_NEWSKYE
+#ifdef TEMP_QGC_USE_SKYE_INTERFACE
         uint8_t type = MAVLINK_DATA_STREAM_IMG_RAW8U;  //MAVLINK_DATA_STREAM_IMG_RAW8U;
         uint8_t payload = 253;
         uint16_t width = 66;    // 92 //463
@@ -715,7 +715,7 @@ void MAVLinkSimulationLink::mainloop()
     // 20 HZ TASKS
     if (rate20hzCounter == 1000 / rate / 20) {
 
-#ifdef TEMP_MAVLINK_ENABLED_NEWSKYE
+#ifdef TEMP_QGC_USE_SKYE_INTERFACE
         seqnr++;
         if (seqnr <= 16)
         {
@@ -803,7 +803,7 @@ void MAVLinkSimulationLink::writeBytes(const char* data, qint64 size)
                 mavlink_msg_set_mode_decode(&msg, &mode);
                 // Set mode indepent of mode.target
                 system.base_mode = mode.base_mode;
-#ifdef MAVLINK_ENABLED_NEWSKYE                             // Beginn Code MA (13.03.2012)
+#ifdef QGC_USE_SKYE_INTERFACE                             // Beginn Code MA (13.03.2012)
                 if (system.base_mode & MAV_MODE_FLAG_DECODE_POSITION_SAFETY)
                 {
                     system.system_status = MAV_STATE_ACTIVE;
@@ -973,9 +973,9 @@ void MAVLinkSimulationLink::writeBytes(const char* data, qint64 size)
             break;
 
             // Beginn Code MA (09.03.2012)
-            case MAVLINK_MSG_ID_MANUAL_6DOF_CONTROL: {
-                mavlink_manual_6dof_control_t m6c;
-                mavlink_msg_manual_6dof_control_decode(&msg, &m6c);
+            case MAVLINK_MSG_ID_SETPOINT_6DOF: {
+                mavlink_setpoint_6dof_t m6c;
+                mavlink_msg_setpoint_6dof_decode(&msg, &m6c);
                 if (m6c.target_system == this->systemId) {
                     thrustX = m6c.x;
                     thrustY = m6c.y;
@@ -992,12 +992,12 @@ void MAVLinkSimulationLink::writeBytes(const char* data, qint64 size)
                     float lastY = y;
                     float lastZ = z;
 
-                    speedRoll = 3.5*m6c.roll/1000;
-                    speedPitch = 3.5*m6c.pitch/1000;
-                    speedYaw = 3.5*m6c.yaw/1000;
-                    speedX = 10*m6c.x/1000;
-                    speedY = 10*m6c.y/1000;
-                    speedZ = 10*m6c.z/1000;
+                    speedRoll = 3.5*m6c.roll;
+                    speedPitch = 3.5*m6c.pitch;
+                    speedYaw = 3.5*m6c.yaw;
+                    speedX = 10*m6c.x;
+                    speedY = 10*m6c.y;
+                    speedZ = 10*m6c.z;
 
                     float dTime = 0.01;
                     roll = lastRoll + speedRoll*dTime;
@@ -1010,9 +1010,9 @@ void MAVLinkSimulationLink::writeBytes(const char* data, qint64 size)
                }
             }
             break;
-            case MAVLINK_MSG_ID_MANUAL_8DOF_CONTROL: {
-                mavlink_manual_8dof_control_t m8c;
-                mavlink_msg_manual_8dof_control_decode(&msg, &m8c);
+            case MAVLINK_MSG_ID_SETPOINT_8DOF: {
+                mavlink_setpoint_8dof_t m8c;
+                mavlink_msg_setpoint_8dof_decode(&msg, &m8c);
                 if (m8c.target_system == this->systemId) {
                     thrust1 = m8c.motor_1;        //Testphase Control
                     thrust2 = m8c.motor_2;

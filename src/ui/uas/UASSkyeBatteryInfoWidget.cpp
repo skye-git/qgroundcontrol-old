@@ -48,13 +48,13 @@ void UASSkyeBatteryInfoWidget::setActiveUAS(UASInterface *uas)
     if (mav)
     {
         uasId = mav->getUASID();
-        connect(mav, SIGNAL(batteryPackChanged(mavlink_skye_battery_status_t*)), this, SLOT(changeBatteryPack(mavlink_skye_battery_status_t*)));
+        connect(mav, SIGNAL(batteryPackChanged(mavlink_battery_status_t*)), this, SLOT(changeBatteryPack(mavlink_battery_status_t*)));
     }
 }
 
-void UASSkyeBatteryInfoWidget::changeBatteryPack(mavlink_skye_battery_status_t* battery)
+void UASSkyeBatteryInfoWidget::changeBatteryPack(mavlink_battery_status_t* battery)
 {
-//    qDebug()<<"Message SKYE_BATTERY_STATUS received";
+//    qDebug()<<"Message battery_status received";
     MAV_SKYE_BATTERY_PACK_ID packId = (MAV_SKYE_BATTERY_PACK_ID)battery->accu_id;
     double voltage1 = (double)battery->voltage_cell_1/1000;
     double voltage2 = (double)battery->voltage_cell_2/1000;

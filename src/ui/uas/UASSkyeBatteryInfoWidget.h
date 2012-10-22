@@ -23,7 +23,7 @@ public slots:
     /** @brief Set the system this widget controls */
     void setActiveUAS(UASInterface* uas);
     /** @brief New values for battery pack **/
-    void changeBatteryPack(mavlink_skye_battery_status_t* battery);
+    void changeBatteryPack(mavlink_battery_status_t* battery);
 
 private:
     Ui::UASSkyeBatteryInfoWidget *ui;

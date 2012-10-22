@@ -45,16 +45,16 @@ SkyeMAV::~SkyeMAV(void)
 
 void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
 {
-#ifdef MAVLINK_ENABLED_NEWSKYE
+#ifdef QGC_USE_SKYE_INTERFACE
     if (message.sysid == uasId)  // make sure the message is for the right UAV
     {
         if (!link) return;
         switch (message.msgid)
         {
-        case MAVLINK_MSG_ID_SKYE_BATTERY_STATUS:
+        case MAVLINK_MSG_ID_BATTERY_STATUS:
         {
-            mavlink_skye_battery_status_t battery;
-            mavlink_msg_skye_battery_status_decode(&message, &battery);
+            mavlink_battery_status_t battery;
+            mavlink_msg_battery_status_decode(&message, &battery);
 
             emit batteryPackChanged(&battery);
         }
@@ -129,8 +129,8 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
 #endif
 
         // Ignore these messages
-        case MAVLINK_MSG_ID_MANUAL_6DOF_CONTROL:
-        case MAVLINK_MSG_ID_MANUAL_8DOF_CONTROL:
+        case MAVLINK_MSG_ID_SETPOINT_6DOF:
+        case MAVLINK_MSG_ID_SETPOINT_8DOF:
             break;
 
         default:
@@ -146,12 +146,12 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
     UAS::receiveMessage(link, message);
     Q_UNUSED(link);
     Q_UNUSED(message);
-#endif // MAVLINK_ENABLED_NEWSKYE
+#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void SkyeMAV::setManualControlCommands6DoF(double x , double y , double z , double a , double b, double c)
 {
-#ifdef MAVLINK_ENABLED_NEWSKYE
+#ifdef QGC_USE_SKYE_INTERFACE
 
     if (mode == MAV_MODE_FULL_AUTOMATIC_ARMED)
     {
@@ -187,22 +187,15 @@ void SkyeMAV::setManualControlCommands6DoF(double x , double y , double z , doub
     Q_UNUSED(a);
     Q_UNUSED(b);
     Q_UNUSED(c);
-#endif // MAVLINK_ENABLED_NEWSKYE
+#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void SkyeMAV::sendManualControlCommands6DoF(double x, double y, double z, double phi, double theta, double psi)
 {
-#ifdef MAVLINK_ENABLED_NEWSKYE
-
-    x = 1000 * x;
-    y = 1000 * y;
-    z = 1000 * z;
-    phi = 1000 * phi;
-    theta = 1000 * theta;
-    psi = 1000 * theta;
+#ifdef QGC_USE_SKYE_INTERFACE
 
     mavlink_message_t message;
-    mavlink_msg_manual_6dof_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (int16_t)x, (int16_t)y, (int16_t)z, (int16_t)phi, (int16_t)theta, (int16_t)psi);
+    mavlink_msg_setpoint_6dof_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (int16_t)x, (int16_t)y, (int16_t)z, (int16_t)phi, (int16_t)theta, (int16_t)psi);
     sendMessage(message);
     qDebug() << __FILE__ << __LINE__ << ": SENT 6DOF CONTROL MESSAGE:" << x << y << z << phi << theta << psi;
 
@@ -215,12 +208,12 @@ void SkyeMAV::sendManualControlCommands6DoF(double x, double y, double z, double
     Q_UNUSED(phi);
     Q_UNUSED(theta);
     Q_UNUSED(psi);
-#endif // MAVLINK_ENABLED_NEWSKYE
+#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void SkyeMAV::setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4)
 {
-#ifdef MAVLINK_ENABLED_NEWSKYE
+#ifdef QGC_USE_SKYE_INTERFACE
 
     sendManualControlCommands8DoF(Thrust1, Thrust2, Thrust3, Thrust4, Orientation1, Orientation2, Orientation3, Orientation4);
     qDebug() << "sendTestphaseControlCommands aufgerufen " << Thrust1;
@@ -235,16 +228,16 @@ void SkyeMAV::setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrus
     Q_UNUSED(Orientation3);
     Q_UNUSED(Orientation4);
 
-#endif // MAVLINK_ENABLED_NEWSKYE
+#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void SkyeMAV::sendManualControlCommands8DoF(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 )
 {
-#ifdef MAVLINK_ENABLED_NEWSKYE
+#ifdef QGC_USE_SKYE_INTERFACE
 
     mavlink_message_t message;
 
-    mavlink_msg_manual_8dof_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId,
+    mavlink_msg_setpoint_8dof_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId,
                                          (int16_t)Thrust1,
                                          (int16_t)Thrust2,
                                          (int16_t)Thrust3,
@@ -256,13 +249,13 @@ void SkyeMAV::sendManualControlCommands8DoF(int Thrust1 , int Thrust2 , int Thru
     sendMessage(message);
     qDebug() << __FILE__ << __LINE__ << ": SENT 8DOF CONTROL MESSAGE: 1Thrust" << Thrust1 << " 2Thrust: " << Thrust2 << " 3Thrust: " << Thrust3 << " 4Thrust: " << Thrust4 << " 1Orientation: " << Orientation1 << " 2Orientation: " << Orientation2 << " 3Orientation: " << Orientation3 << " 4Orientation: " << Orientation4;
 
-#endif // MAVLINK_ENABLED_NEWSKYE
+#endif // QGC_USE_SKYE_INTERFACE
 }
 
 
 QImage SkyeMAV::getImage()          // Function copied from UAS.cc (pixhawk)
 {
-#ifdef TEMP_MAVLINK_ENABLED_NEWSKYE
+#ifdef TEMP_QGC_USE_SKYE_INTERFACE
 
     //qDebug() << "getImage: IMAGE TYPE:" << imageType;
 

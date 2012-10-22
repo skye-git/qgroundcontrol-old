@@ -482,8 +482,8 @@ public:
         case MAV_AUTOPILOT_FP:
             return "FP";
             break;
-        case MAV_AUTOPILOT_SKYE: //Start Code AL (03.03.12)-----------
-            return "SKYE";
+        case MAV_AUTOPILOT_PX4: //Start Code AL (03.03.12), Mod MA (22.10.12)-----------
+            return "PX4";
                 break;           //Ende Code AL
         default:
             return "";
