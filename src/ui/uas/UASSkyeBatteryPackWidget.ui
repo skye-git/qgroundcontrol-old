@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>260</width>
+    <width>289</width>
     <height>140</height>
    </rect>
   </property>
@@ -67,6 +67,12 @@
           <number>3</number>
          </property>
         </widget>
+       </item>
+       <item>
+        <widget class="QLCDNumber" name="lcdNumberVoltage5"/>
+       </item>
+       <item>
+        <widget class="QLCDNumber" name="lcdNumberVoltage6"/>
        </item>
        <item>
         <widget class="Line" name="line">

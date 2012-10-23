@@ -60,8 +60,10 @@ void UASSkyeBatteryInfoWidget::changeBatteryPack(mavlink_battery_status_t* batte
     double voltage2 = (double)battery->voltage_cell_2/1000;
     double voltage3 = (double)battery->voltage_cell_3/1000;
     double voltage4 = (double)battery->voltage_cell_4/1000;
+    double voltage5 = (double)battery->voltage_cell_5/1000;
+    double voltage6 = (double)battery->voltage_cell_6/1000;
     double current = (double)battery->current_battery/100;
     int remaining = battery->battery_remaining;
     if( batteryPacks.value(packId))
-        batteryPacks.value(packId)->changeBatteryStatus( voltage1, voltage2, voltage3, voltage4, current, remaining);
+        batteryPacks.value(packId)->changeBatteryStatus( voltage1, voltage2, voltage3, voltage4, voltage5, voltage6, current, remaining);
 }
