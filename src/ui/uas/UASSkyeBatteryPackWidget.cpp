@@ -59,25 +59,70 @@ void UASSkyeBatteryPackWidget::changeBatteryStatus(double voltage1, double volta
     ui->lcdNumberVoltage2->display(voltage2);
     ui->lcdNumberVoltage3->display(voltage3);
     ui->lcdNumberVoltage4->display(voltage4);
-    ui->lcdNumberVoltage3->display(voltage5);
-    ui->lcdNumberVoltage4->display(voltage6);
+    ui->lcdNumberVoltage5->display(voltage5);
+    ui->lcdNumberVoltage6->display(voltage6);
     ui->lcdNumberCurrent->display(current);
     ui->progressBarRemaining->setValue(remaining);
 
 
-    int actualVoltage;
-    if (voltage1 >= 0)
-        actualVoltage++;
-    //if (voltage2 )
+    int priorVoltage;
+    priorVoltage = batteryCells;
+    if (voltage1 > 0)
+        batteryCells = 1;
+    if (voltage2 > 0)
+        batteryCells = 2;
+    if (voltage3 > 0)
+        batteryCells = 3;
+    if (voltage4 > 0)
+        batteryCells = 4;
+    if (voltage5 > 0)
+        batteryCells = 5;
+    if (voltage6 > 0)
+        batteryCells = 6;
+    if (priorVoltage != batteryCells)
+        updateVoltageVisibility();
 
 
     // TODO: change styleSheet if value is low
 }
 
-void UASSkyeBatteryPackWidget::updateVoltageVisibility(double voltage, QLCDNumber *lcdNumber)
+void UASSkyeBatteryPackWidget::updateVoltageVisibility()
 {
-    if (voltage < 0)
-        lcdNumber->hide();
-    else
-        lcdNumber->show();
+    ui->lcdNumberVoltage1->hide();
+    ui->lcdNumberVoltage2->hide();
+    ui->lcdNumberVoltage3->hide();
+    ui->lcdNumberVoltage4->hide();
+    ui->lcdNumberVoltage5->hide();
+    ui->lcdNumberVoltage6->hide();
+
+    switch (batteryCells)
+    {
+    case 6:
+    {
+        ui->lcdNumberVoltage6->show();
+    }
+    case 5:
+    {
+        ui->lcdNumberVoltage5->show();
+    }
+    case 4:
+    {
+        ui->lcdNumberVoltage4->show();
+    }
+    case 3:
+    {
+        ui->lcdNumberVoltage3->show();
+    }
+    case 2:
+    {
+        ui->lcdNumberVoltage2->show();
+    }
+    case 1:
+    {
+        ui->lcdNumberVoltage1->show();
+        break;
+    }
+    default:
+        break;
+    }
 }
