@@ -17,7 +17,7 @@ http://github.com/skye-git/qgroundcontrol
 ******************************************************************************
 
 See README for basic installation!
-If you want to use skye mavlink messages, rename user_config.pri.dist to user_config.pri
+If you are using Windows, you can use the official 3dConnexion 3d mouse driver.
 If you are using Linux, you can additionally use 3dConnexion 3d mouse:
 
 Linux:
