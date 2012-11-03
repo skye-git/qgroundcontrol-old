@@ -97,7 +97,7 @@ UAS::UAS(MAVLinkProtocol* protocol, int id) : UASInterface(),
     paramManager(NULL),
     attitudeStamped(false),
     lastAttitude(0),
-    simulation(new QGCXPlaneLink(this)),
+    simulation(0),
     isLocalPositionKnown(false),
     isGlobalPositionKnown(false),
     systemIsArmed(false),
@@ -2271,18 +2271,13 @@ void UAS::setParameter(const int component, const QString& id, const QVariant& v
         for (unsigned int i = 0; i < sizeof(p.param_id); i++)
         {
             // String characters
-            if ((int)i < id.length() && i < (sizeof(p.param_id) - 1))
+            if ((int)i < id.length())
             {
                 p.param_id[i] = id.toAscii()[i];
             }
-            //        // Null termination at end of string or end of buffer
-            //        else if ((int)i == id.length() || i == (sizeof(p.param_id) - 1))
-            //        {
-            //            p.param_id[i] = '\0';
-            //        }
-            // Zero fill
             else
             {
+                // Fill rest with zeros
                 p.param_id[i] = 0;
             }
         }
@@ -2447,7 +2442,7 @@ void UAS::disarmSystem()
 * Set the manual control commands.
 * This can only be done if the system has manual inputs enabled and is armed.
 */
-void UAS::setManualControlCommands(double roll, double pitch, double yaw, double thrust)
+void UAS::setManualControlCommands(double roll, double pitch, double yaw, double thrust, int xHat, int yHat, int buttons)
 {
     // Scale values
     double rollPitchScaling = 1.0f * 1000.0f;
@@ -2462,10 +2457,8 @@ void UAS::setManualControlCommands(double roll, double pitch, double yaw, double
     // If system has manual inputs enabled and is armed
     if(((mode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) && (mode & MAV_MODE_FLAG_DECODE_POSITION_SAFETY)) || (mode & MAV_MODE_FLAG_HIL_ENABLED))
     {
-        // XXX FIXME ADD BUTTON SUPPORT
-        quint16 buttons = 0;
         mavlink_message_t message;
-        mavlink_msg_manual_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (float)manualRollAngle, (float)manualPitchAngle, (float)manualThrust, (float)manualYawAngle, buttons);
+        mavlink_msg_manual_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (float)manualPitchAngle, (float)manualRollAngle, (float)manualThrust, (float)manualYawAngle, buttons);
         sendMessage(message);
         //qDebug() << __FILE__ << __LINE__ << ": SENT MANUAL CONTROL MESSAGE: roll" << manualRollAngle << " pitch: " << manualPitchAngle << " yaw: " << manualYawAngle << " thrust: " << manualThrust;
 
@@ -2602,11 +2595,47 @@ bool UAS::emergencyKILL()
 }
 
 /**
-* If enabled, connect the fligth gear link.
+* If enabled, connect the flight gear link.
 */
-void UAS::enableHil(bool enable)
+void UAS::enableHilFlightGear(bool enable, QString options)
 {
+    QGCFlightGearLink* link = dynamic_cast<QGCFlightGearLink*>(simulation);
+    if (!link || !simulation) {
+        // Delete wrong sim
+        if (simulation) {
+            stopHil();
+            delete simulation;
+        }
+        simulation = new QGCFlightGearLink(this, options);
+    }
     // Connect Flight Gear Link
+    link = dynamic_cast<QGCFlightGearLink*>(simulation);
+    link->setStartupArguments(options);
+    if (enable)
+    {
+        startHil();
+    }
+    else
+    {
+        stopHil();
+    }
+}
+
+/**
+* If enabled, connect the X-plane gear link.
+*/
+void UAS::enableHilXPlane(bool enable)
+{
+    QGCXPlaneLink* link = dynamic_cast<QGCXPlaneLink*>(simulation);
+    if (!link || !simulation) {
+        if (simulation) {
+            stopHil();
+            delete simulation;
+        }
+        qDebug() << "CREATED NEW XPLANE LINK";
+        simulation = new QGCXPlaneLink(this);
+    }
+    // Connect X-Plane Link
     if (enable)
     {
         startHil();
@@ -2676,7 +2705,7 @@ void UAS::startHil()
 */
 void UAS::stopHil()
 {
-    simulation->disconnectSimulation();
+    if (simulation) simulation->disconnectSimulation();
     mavlink_message_t msg;
     mavlink_msg_set_mode_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, this->getUASID(), mode & !MAV_MODE_FLAG_HIL_ENABLED, navMode);
     sendMessage(msg);

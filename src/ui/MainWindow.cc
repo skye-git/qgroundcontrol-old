@@ -38,6 +38,7 @@ This file is part of the QGROUNDCONTROL project
 #include <qmath.h>                      // Beginn nd Ende Code MA (07.03.2012)
 #include <QGCHilLink.h>
 #include <QGCHilConfiguration.h>
+#include <QGCHilFlightGearConfiguration.h>
 
 #include "QGC.h"
 #include "MAVLinkSimulationLink.h"
@@ -662,11 +663,11 @@ void MainWindow::buildCommonWidgets()
         connect(this, SIGNAL(emitTouchInputVisibility(bool)), hudWidget, SLOT(setKnobndKnobRingvisible(bool))); //Beginn Ende Code AL (23.04.12)
     }
 
-//    if (!configWidget)
-//    {
-//        configWidget = new QGCVehicleConfig(this);
-//        addCentralWidget(configWidget, tr("Vehicle Configuration"));
-//    }
+    if (!configWidget)
+    {
+        configWidget = new QGCVehicleConfig(this);
+        addCentralWidget(configWidget, tr("Vehicle Configuration"));
+    }
 
     if (!dataplotWidget)
     {
@@ -739,6 +740,26 @@ void MainWindow::showCentralWidget()
     QAction* act = qobject_cast<QAction *>(sender());
     QWidget* widget = qVariantValue<QWidget *>(act->data());
     centerStack->setCurrentWidget(widget);
+}
+
+void MainWindow::showHILConfigurationWidget(UASInterface* uas)
+{
+    // Add simulation configuration widget
+    UAS* mav = dynamic_cast<UAS*>(uas);
+
+    if (mav)
+    {
+        QGCHilConfiguration* hconf = new QGCHilConfiguration(mav, this);
+        QString hilDockName = tr("HIL Config (%1)").arg(uas->getUASName());
+        QDockWidget* hilDock = new QDockWidget(hilDockName, this);
+        hilDock->setWidget(hconf);
+        hilDock->setObjectName(QString("HIL_CONFIG_%1").arg(uas->getUASID()));
+        addTool(hilDock, hilDockName, Qt::RightDockWidgetArea);
+
+    }
+
+    // Reload view state in case new widgets were added
+    loadViewState();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -822,10 +843,14 @@ void MainWindow::loadCustomWidget(const QString& fileName, bool singleinstance)
 
 void MainWindow::loadCustomWidgetsFromDefaults(const QString& systemType, const QString& autopilotType)
 {
-    QString defaultsDir = qApp->applicationDirPath() + "/files/" + autopilotType.toLower() + "/" + systemType.toLower() + "/widgets/";
+    QString defaultsDir = qApp->applicationDirPath() + "/files/" + autopilotType.toLower() + "/widgets/";
+    QString platformDir = qApp->applicationDirPath() + "/files/" + autopilotType.toLower() + "/" + systemType.toLower() + "/widgets/";
 
     QDir widgets(defaultsDir);
     QStringList files = widgets.entryList();
+    QDir platformWidgets(platformDir);
+    files.append(platformWidgets.entryList());
+
     if (files.count() == 0)
     {
         qDebug() << "No default custom widgets for system " << systemType << "autopilot" << autopilotType << " found";
@@ -1629,19 +1654,6 @@ void MainWindow::UASCreated(UASInterface* uas)
 
     if (!ui.menuConnected_Systems->isEnabled()) ui.menuConnected_Systems->setEnabled(true);
     if (!ui.menuUnmanned_System->isEnabled()) ui.menuUnmanned_System->setEnabled(true);
-
-    // Add simulation configuration widget
-    UAS* mav = dynamic_cast<UAS*>(uas);
-
-    if (mav)
-    {
-        QGCHilConfiguration* hconf = new QGCHilConfiguration(mav->getHILSimulation(), this);
-        QString hilDockName = tr("HIL Config (%1)").arg(uas->getUASName());
-        QDockWidget* hilDock = new QDockWidget(hilDockName, this);
-        hilDock->setWidget(hconf);
-        hilDock->setObjectName(QString("HIL_CONFIG_%1").arg(uas->getUASID()));
-        addTool(hilDock, hilDockName, Qt::RightDockWidgetArea);
-    }
 
     // Reload view state in case new widgets were added
     loadViewState();

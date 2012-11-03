@@ -482,9 +482,9 @@ public:
         case MAV_AUTOPILOT_FP:
             return "FP";
             break;
-        case MAV_AUTOPILOT_PX4: //Start Code AL (03.03.12), Mod MA (22.10.12)-----------
+        case MAV_AUTOPILOT_PX4:
             return "PX4";
-                break;           //Ende Code AL
+            break;
         default:
             return "";
             break;
@@ -535,7 +535,9 @@ public slots:
     void go();
 
     /** @brief Enable / disable HIL */
-    void enableHil(bool enable);
+    void enableHilFlightGear(bool enable, QString options);
+    void enableHilXPlane(bool enable);
+
 
     /** @brief Send the full HIL state to the MAV */
 
@@ -571,7 +573,7 @@ public slots:
     void disarmSystem();
 
     /** @brief Set the values for the manual control of the vehicle */
-    void setManualControlCommands(double roll, double pitch, double yaw, double thrust);
+    void setManualControlCommands(double roll, double pitch, double yaw, double thrust, int xHat, int yHat, int buttons);
     /** @brief Receive a button pressed event from an input device, e.g. joystick */
     void receiveButton(int buttonIndex);
 
