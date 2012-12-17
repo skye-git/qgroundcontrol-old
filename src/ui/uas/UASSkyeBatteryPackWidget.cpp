@@ -2,6 +2,7 @@
 #include "UASSkyeBatteryPackWidget.h"
 #include "ui_UASSkyeBatteryPackWidget.h"
 
+
 UASSkyeBatteryPackWidget::UASSkyeBatteryPackWidget(QWidget *parent, MAV_SKYE_BATTERY_PACK_ID pack) :
     QWidget(parent),
     ui(new Ui::UASSkyeBatteryPackWidget),
@@ -126,3 +127,4 @@ void UASSkyeBatteryPackWidget::updateVoltageVisibility()
         break;
     }
 }
+

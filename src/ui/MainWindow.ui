@@ -72,7 +72,6 @@
     <addaction name="actionJoystickSettings"/>
     <addaction name="actionTestphase"/>
     <addaction name="actionDirectControl"/>
-    <addaction name="actionCamera_Reconfigure"/>
     <addaction name="actionSettings"/>
     <addaction name="menuPreferences"/>
     <addaction name="separator"/>
@@ -511,18 +510,6 @@
    </property>
    <property name="text">
     <string>Testphase</string>
-   </property>
-  </action>
-  <action name="actionCamera_Reconfigure">
-   <property name="icon">
-    <iconset resource="../../qgroundcontrol.qrc">
-     <normaloff>:/general/images/skye_images/input/fotoapparat.png</normaloff>:/general/images/skye_images/input/fotoapparat.png</iconset>
-   </property>
-   <property name="text">
-    <string>Camera Reconfigure</string>
-   </property>
-   <property name="toolTip">
-    <string>Set camera settings</string>
    </property>
   </action>
   <action name="actionDirectControl">

@@ -78,14 +78,20 @@ public:
     const QString& getShortMode() const;
     /** @brief Translate from mode id to text */
     static QString getShortModeTextFor(int id);
-    /** @brief Get the current state of active UAS */       // Beginn Code MA (13.03.2012)
-    int getUASState();
-    /** @brief Get the current mode of active UAS */
-    uint8_t getUASMode();                             // Ende Code MA (13.03.2012)
     /** @brief Translate from mode id to audio text */
     static QString getAudioModeTextFor(int id);
     /** @brief Get the unique system id */
     int getUASID() const;
+    /** @brief Get the current state of active UAS */   // Beginn Code MA (13.03.2012)
+    int getUASState() const
+    {
+        return status;
+    }
+    /** @brief Get the current mode of active UAS */
+    uint8_t getUASMode() const
+    {
+        return mode;
+    }                                                   // Ende Code MA (13.03.2012)
     /** @brief Get the airframe */
     int getAirframe() const
     {
@@ -577,6 +583,9 @@ public slots:
     /** @brief Receive a button pressed event from an input device, e.g. joystick */
     void receiveButton(int buttonIndex);
 
+    /** @brief Set the values for the 6dof manual control of the vehicle */
+    void setManual6DOFControlCommands(double x, double y, double z, double roll, double pitch, double yaw);
+
     /** @brief Add a link associated with this robot */
     void addLink(LinkInterface* link);
     /** @brief Remove a link associated with this robot */
@@ -669,7 +678,6 @@ signals:
     void loadChanged(UASInterface* uas, double load);
     /** @brief Propagate a heartbeat received from the system */
     //void heartbeat(UASInterface* uas); // Defined in UASInterface already
-    /** @brief A new campera image is ready in file system */
     void imageStarted(quint64 timestamp);
     /** @brief A new camera image has arrived */
     void imageReady(UASInterface* uas);

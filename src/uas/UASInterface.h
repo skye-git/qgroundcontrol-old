@@ -46,9 +46,9 @@ This file is part of the QGROUNDCONTROL project
 
 #ifdef QGC_PROTOBUF_ENABLED
 #include <tr1/memory>
-#ifdef QGC_USE_PIXHAWK_MESSAGES
+//#ifdef QGC_USE_PIXHAWK_MESSAGES
 #include <pixhawk/pixhawk.pb.h>
-#endif
+//#endif
 #endif
 
 /**

@@ -42,9 +42,7 @@ This file is part of the QGROUNDCONTROL project
 #include <skye.h>
 #endif    // Ende Code MA (16.03.2012)
 
-#ifdef QGC_USE_SKYE_INTERFACE
-#include <QGC_skye_enums.h>
-#endif // QGC_USE_SKYE_INTERFACE
+#include <Skye_enums.h>
 
 
 #endif // QGCMAVLINK_H

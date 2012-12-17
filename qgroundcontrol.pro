@@ -50,7 +50,7 @@ OBJECTS_DIR = $${BUILDDIR}/obj
 MOC_DIR = $${BUILDDIR}/moc
 UI_DIR = $${BUILDDIR}/ui
 RCC_DIR = $${BUILDDIR}/rcc
-#MAVLINK_CONF = "pixhawk"           #Comment MAKREBS: FIXME: Temporarely removed
+MAVLINK_CONF = "pixhawk"
 MAVLINKPATH = $$BASEDIR/libs/mavlink/include/mavlink/v1.0
 DEFINES += MAVLINK_NO_DATA
 
@@ -114,15 +114,9 @@ isEmpty(MAVLINK_CONF) {
     #DEFINES += 'MAVLINK_CONF="$${MAVLINK_CONF}.h"'
     DEFINES += $$sprintf('QGC_USE_%1_MESSAGES', $$upper($$MAVLINK_CONF))
 }
-DEFINES += QGC_USE_SKYE_INTERFACE
-#contains(MAVLINK_CONF, skye) {                      ## Beginn Code MA  (15.02.12) copied AL (03.02.12)------------------------------------------
-#    # Remove the default set - it is included anyway
-#    INCLUDEPATH -= $$MAVLINKPATH/common
 
-#    # SKYE SPECIAL MESSAGES
-#    INCLUDEPATH += $$MAVLINKPATH/skye
-#    DEFINES += QGC_USE_SKYE_MESSAGES
-#}                                                   ## Ende Code MA  ------------------------------------------
+# Use special interface for Project Skye
+    DEFINES += QGC_USE_SKYE_INTERFACE
 
 # Include general settings for QGroundControl
 # necessary as last include to override any non-acceptable settings
@@ -173,13 +167,13 @@ FORMS += src/ui/MainWindow.ui \
     src/ui/CommSettings.ui \
     src/ui/SerialSettings.ui \
     src/ui/UASControl.ui \
-    src/ui/UASSkyeControl.ui \  # Beginn Ende Code MA (06.03.2012)
+    src/ui/UASSkyeControl.ui \ # Beginn Ende Code MA (06.03.2012)
     src/ui/UASList.ui \
     src/ui/UASInfo.ui \
     src/ui/Linechart.ui \
     src/ui/UASView.ui \
     src/ui/ParameterInterface.ui \
-    src/ui/WaypointList.ui \    
+    src/ui/WaypointList.ui \
     src/ui/ObjectDetectionView.ui \
     src/ui/JoystickWidget.ui \
     src/ui/TestphaseWidget.ui \ #Beginn Ende Code AL (01.03)------------------------------------
@@ -221,10 +215,9 @@ FORMS += src/ui/MainWindow.ui \
     src/ui/firmwareupdate/QGCFirmwareUpdateWidget.ui \
     src/ui/QGCPluginHost.ui \
     src/ui/firmwareupdate/QGCPX4FirmwareUpdate.ui \
-    src/ui/uas/UASSkyeBatteryInfoWidget.ui \            # Code MA
-    src/ui/uas/UASSkyeBatteryPackWidget.ui \            # Code MA
-    #src/ui/SkyeCameraReconfigure.ui \                   # Code MA
-    src/ui/DirectControlWidget.ui \                     # Code MA
+    src/ui/uas/UASSkyeBatteryInfoWidget.ui \    # Code MA
+    src/ui/uas/UASSkyeBatteryPackWidget.ui \    # Code MA
+    src/ui/DirectControlWidget.ui \             # Code MA
     src/ui/mission/QGCMissionOther.ui \
     src/ui/mission/QGCMissionNavWaypoint.ui \
     src/ui/mission/QGCMissionDoJump.ui \
@@ -294,7 +287,7 @@ HEADERS += src/MG.h \
     src/ui/ObjectDetectionView.h \
     src/input/JoystickInput.h \
     src/ui/JoystickWidget.h \
-    src/ui/TestphaseWidget.h \      #Beginn Ende Code AL (01.03.12) ------------------------------------
+    src/ui/TestphaseWidget.h \      #Beginn Ende Code AL (01.03.12)
     src/ui/DebugConsole.h \
     src/ui/HDDisplay.h \
     src/ui/MAVLinkSettingsWidget.h \
@@ -367,16 +360,14 @@ HEADERS += src/MG.h \
     src/ui/firmwareupdate/QGCFirmwareUpdateWidget.h \
     src/ui/QGCPluginHost.h \
     src/ui/firmwareupdate/QGCPX4FirmwareUpdate.h \
-    src/ui/uas/UASSkyeBatteryInfoWidget.h \
+    src/ui/uas/UASSkyeBatteryInfoWidget.h \             # Begin Code MA
     src/ui/uas/UASSkyeBatteryPackWidget.h \
     src/ui/map/QGCMapRing.h \
-    #src/ui/SkyeCameraReconfigure.h \
-    src/ui/BluefoxReconfigure.h \
     src/ui/DirectControlWidget.h \
     src/ui/HeightProfile.h \
     src/ui/HeightPoint.h \
     src/ui/ElevationPoint.h \
-    src/Trajectory.h \
+    src/Trajectory.h \                                  # Ende Code MA
     src/ui/mission/QGCMissionOther.h \
     src/ui/mission/QGCMissionNavWaypoint.h \
     src/ui/mission/QGCMissionDoJump.h \
@@ -393,9 +384,9 @@ HEADERS += src/MG.h \
     src/ui/QGCVehicleConfig.h \
     src/comm/QGCHilLink.h \
     src/ui/QGCHilConfiguration.h \
-    src/QGC_skye_enums.h \
     src/ui/QGCHilFlightGearConfiguration.h \
-    src/ui/QGCHilXPlaneConfiguration.h
+    src/ui/QGCHilXPlaneConfiguration.h \
+    src/ui/uas/Skye_enums.h
 
 # Google Earth is only supported on Mac OS and Windows with Visual Studio Compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010::HEADERS += src/ui/map3D/QGCGoogleEarthView.h
@@ -486,7 +477,7 @@ SOURCES += src/main.cc \
     src/uas/PxQuadMAV.cc \
     src/uas/ArduPilotMegaMAV.cc \
     src/uas/senseSoarMAV.cpp \
-    src/uas/SkyeMAV.cc \                    #Beginn Code AL (03.03.12)
+    src/uas/SkyeMAV.cc \                    #Beginn Ende Code AL (03.03.12)
     src/ui/watchdog/WatchdogControl.cc \
     src/ui/watchdog/WatchdogProcessView.cc \
     src/ui/watchdog/WatchdogView.cc \
@@ -541,15 +532,14 @@ SOURCES += src/main.cc \
     src/ui/firmwareupdate/QGCFirmwareUpdateWidget.cc \
     src/ui/QGCPluginHost.cc \
     src/ui/firmwareupdate/QGCPX4FirmwareUpdate.cc \
-    src/ui/uas/UASSkyeBatteryInfoWidget.cpp \
+    src/ui/uas/UASSkyeBatteryInfoWidget.cpp \       # Beginn Code MA
     src/ui/uas/UASSkyeBatteryPackWidget.cpp \
     src/ui/map/QGCMapRing.cc \
-    #src/ui/SkyeCameraReconfigure.cpp \
     src/ui/DirectControlWidget.cc \
     src/ui/HeightProfile.cc \
     src/ui/HeightPoint.cpp \
     src/ui/ElevationPoint.cpp \
-    src/Trajectory.cc \
+    src/Trajectory.cc \                             # Ende Code MA
     src/ui/mission/QGCMissionOther.cc \
     src/ui/mission/QGCMissionNavWaypoint.cc \
     src/ui/mission/QGCMissionDoJump.cc \
@@ -564,7 +554,6 @@ SOURCES += src/main.cc \
     src/ui/mission/QGCMissionDoStartSearch.cc \
     src/ui/mission/QGCMissionDoFinishSearch.cc \
     src/ui/QGCVehicleConfig.cc \
-    src/comm/QGCHilLink.cc \
     src/ui/QGCHilConfiguration.cc \
     src/ui/QGCHilFlightGearConfiguration.cc \
     src/ui/QGCHilXPlaneConfiguration.cc
@@ -651,7 +640,6 @@ TRANSLATIONS += es-MX.ts \
 
 # xbee support
 # libxbee only supported by linux and windows systems
-
 win32-msvc2008|win32-msvc2010|linux {
     HEADERS += src/comm/XbeeLinkInterface.h \
         src/comm/XbeeLink.h \
@@ -667,49 +655,36 @@ win32-msvc2008|win32-msvc2010|linux {
     LIBS += -Llibs/thirdParty/libxbee/lib \
         -llibxbee
 }
-linux-g++|linux-g++-64{
-exists(thirdParty/libxbee/lib/libxbee.so){
-    HEADERS += src/comm/XbeeLinkInterface.h \
-        src/comm/XbeeLink.h \
-        src/comm/HexSpinBox.h \
-        src/ui/XbeeConfigurationWindow.h \
-        src/comm/CallConv.h
-    SOURCES += src/comm/XbeeLink.cpp \
-        src/comm/HexSpinBox.cpp \
-        src/ui/XbeeConfigurationWindow.cpp
-    DEFINES += XBEELINK
-    INCLUDEPATH += thirdParty/libxbee
-# TO DO: build library when it does not exist already
-    LIBS += -LthirdParty/libxbee/lib \
-        -lxbee
-}}
 
+###################################################################
+#### --- 3DConnexion 3d Mice support (e.g. spacenavigator) --- ####
+###################################################################
 
-# 3DConnexion 3d Mice support                           # Beginn Code MA (06.03.2012) ----------
-# xdrvlib only supported by linux (X11) systems
-# TO DO: Use SDL for 3DConnexion support for Windows and Mac as a Joystick input
+# xdrvlib only supported by linux (theoretical all X11) systems
+# You have to install the official 3DxWare driver for linux to use 3D mouse support on linux systems!
 linux-g++|linux-g++-64{
     exists(/usr/local/lib/libxdrvlib.so){
         message("Including support for Magellan 3DxWare for linux system.")
+        SOURCES  += src/input/Mouse6dofInput.cpp
+        HEADERS  += src/input/Mouse6dofInput.h
         LIBS += -L/usr/local/lib/ -lxdrvlib
         INCLUDEPATH *= /usr/local/include
-        DEFINES += MOUSE_ENABLED \
-                    ParameterCheck                      # Has to be defined for magellan usage
+        DEFINES += MOUSE_ENABLED_LINUX \
+                    ParameterCheck                      # Hack: Has to be defined for magellan usage
     }
-}                                                        # Ende Code MA (06.03.2012) ---------------
+}
 
+# Support for Windows systems
+# You have to install the official 3DxWare driver for Windows to use the 3D mouse support on Windows systems!
 win32-msvc2008|win32-msvc2010 {
     message("Including support for 3DxWare for Windows system.")
-
-    SOURCES += thirdParty/3DMouse/MouseParameters.cpp \
-        thirdParty/3DMouse/Mouse3DInput.cpp
-
-    HEADERS  += thirdParty/3DMouse/I3dMouseParams.h \
-        thirdParty/3DMouse/MouseParameters.h \
-        thirdParty/3DMouse/Mouse3DInput.h
-
-    INCLUDEPATH += thirdParty/3DMouse
-
+    SOURCES  += libs/thirdParty/3DMouse/win/MouseParameters.cpp \
+                libs/thirdParty/3DMouse/win/Mouse3DInput.cpp \
+                src/input/Mouse6dofInput.cpp
+    HEADERS  += libs/thirdParty/3DMouse/win/I3dMouseParams.h \
+                libs/thirdParty/3DMouse/win/MouseParameters.h \
+                libs/thirdParty/3DMouse/win/Mouse3DInput.h \
+                src/input/Mouse6dofInput.h
+    INCLUDEPATH += libs/thirdParty/3DMouse/win
     DEFINES += MOUSE_ENABLED_WIN
-
 }

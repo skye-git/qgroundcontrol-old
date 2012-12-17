@@ -24,8 +24,6 @@ private:
 
     int batteryCells;           ///< Number of cells in LiPo Accu (4 = 14.8V, 6 = 22.2V)
 
-protected:
-
 };
 
 #endif // UASSKYEBATTERYPACKWIDGET_H

@@ -299,12 +299,14 @@ void HUD::setActiveUAS(UASInterface* uas)
             disconnect(u, SIGNAL(imageReady(UASInterface*)), this, SLOT(copyImage()));
         }
 
+#ifdef QGC_USE_SKYE_INTERFACE
         // Try to disconnect mode from SKYE (not implemented for other uas yet)
         SkyeMAV* mav = dynamic_cast<SkyeMAV*>(this->uas);
         if (mav)
         {
             disconnect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
         }
+#endif //QGC_USE_SKYE_INTERFACE
     }
 
     if (uas) {
@@ -333,6 +335,7 @@ void HUD::setActiveUAS(UASInterface* uas)
             qDebug() << "imageReady connected to HUD";
         }
 
+#ifdef QGC_USE_SKYE_INTERFACE
         // Try to connect mode of Skye (not yet implemented for other uas)
         SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uas);
         if (mav)
@@ -340,6 +343,7 @@ void HUD::setActiveUAS(UASInterface* uas)
             connect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
             updateMode(mav->getUASID(), mav->getUASMode());
         }
+#endif // QGC_USE_SKYE_INTERFACE
     }
 }
 

@@ -35,8 +35,6 @@ This file is part of the QGROUNDCONTROL project
 #include <QStatusBar>
 #include <QStackedWidget>
 #include <QSettings>
-#include <QProcess>                     // Beginn Ende Code MA (08.03.2012)
-#include <QTime>                        // Beginn Ende Code MA (14.04.2012)
 #include <qlist.h>
 
 #include "ui_MainWindow.h"
@@ -45,21 +43,23 @@ This file is part of the QGROUNDCONTROL project
 #include "UASInterface.h"
 #include "UASManager.h"
 #include "UASControlWidget.h"
-#include "UASSkyeControlWidget.h"       // Beginn Ende Code MA (06.03.2012)
+#include "UASSkyeControlWidget.h" // Beginn Ende Code MA (06.03.2012)
 #include "Linecharts.h"
 #include "UASInfoWidget.h"
 #include "WaypointList.h"
-//#include "CameraView.h"               // Not used Code MA (19.03.2012)
+#include "CameraView.h"
 #include "UASListWidget.h"
 #include "MAVLinkProtocol.h"
 #include "MAVLinkSimulationLink.h"
 #include "ObjectDetectionView.h"
 #include "HUD.h"
+#include "TestphaseWidget.h"            // Beginn Ende Code AL (01.03.12)
+#include "DirectControlWidget.h"        // Beginn Ende Code MA (12.04.12)
 #include "JoystickWidget.h"
-#include "TestphaseWidget.h"                //Beginn Ende Code AL (01.03.12)
-#include "DirectControlWidget.h"            //Beginn Ende Code MA (12.04.12)
-//#include "SkyeCameraReconfigure.h"          //Beginn Ende Code MA (20.03.2012)
 #include "input/JoystickInput.h"
+#if (defined MOUSE_ENABLED_WIN) | (defined MOUSE_ENABLED_LINUX)
+#include "Mouse6dofInput.h"
+#endif // MOUSE_ENABLED_WIN
 #include "DebugConsole.h"
 #include "ParameterInterface.h"
 #include "XMLCommProtocolWidget.h"
@@ -84,14 +84,8 @@ This file is part of the QGROUNDCONTROL project
 #include "QGCMAVLinkLogPlayer.h"
 #include "QGCVehicleConfig.h"
 #include "MAVLinkDecoder.h"
-#include "UASSkyeBatteryInfoWidget.h"       // Beginn Code MA (15.03.2012)
-#include "UASSkyeBatteryPackWidget.h"       // Ende Code MA (15.03.2012)
-
-#ifdef MOUSE_ENABLED_WIN            // Beginn Code MA (09.07.2012)
-#include <I3dMouseParams.h>
-#include <MouseParameters.h>
-#include <Mouse3DInput.h>
-#endif // MOUSE_ENABLED_WIN         // Beginn Code MA (09.07.2012)
+#include "UASSkyeBatteryInfoWidget.h" // Beginn Code MA (15.03.2012)
+#include "UASSkyeBatteryPackWidget.h" // Ende Code MA (15.03.2012)
 
 class QGCMapTool;
 class QGCMAVLinkMessageSender;
@@ -115,7 +109,7 @@ public:
         QGC_MAINWINDOW_STYLE_NATIVE,
         QGC_MAINWINDOW_STYLE_INDOOR,
         QGC_MAINWINDOW_STYLE_OUTDOOR,
-        QGC_MAINWINDOW_STYLE_SKYE              //Beginn Ende Code AL (14.03.12)
+        QGC_MAINWINDOW_STYLE_SKYE
     };
 
     /** @brief Get current visual style */
@@ -137,11 +131,6 @@ public:
 
     QList<QAction*> listLinkMenuActions(void);
 
-#if defined (MOUSE_ENABLED) || defined (MOUSE_ENABLED_WIN)
-    /** @brief Moving average filter for mouse values */
-    void filterMouseValues(double newX, double newY, double newZ, double newA, double newB, double newC);
-#endif
-
 public slots:
 
     /** @brief Shows a status message on the bottom status bar */
@@ -155,12 +144,10 @@ public slots:
 
     /** @brief Show the application settings */
     void showSettings();
-    /** @brief Show the TestphaseWidget */              //Beginn Code AL (01.03.12)------------------
-    void showTestphase();                               //Ende Code AL--------------------
-    /** @brief Show the DirectControlWidget */          //Beginn Code MA (12.04.12)------------------
-    void showDirectControl();                           //Ende Code MA--------------------
-    ///** @brief Show the Camera Reconfigure Widget */    //Beginn Code MA (20.03.12)------------------
-    //void showSkyeCamReconfig();                         //Ende Code MA--------------------
+    /** @brief Show the TestphaseWidget */      //Beginn Code AL (01.03.12)------------------
+    void showTestphase();                       //Ende Code AL--------------------
+    /** @brief Show the DirectControlWidget */  //Beginn Code MA (12.04.12)------------------
+    void showDirectControl();                   //Ende Code MA--------------------
     /** @brief Add a communication link */
     void addLink();
     void addLink(LinkInterface* link);
@@ -186,8 +173,9 @@ public slots:
     void loadEngineerView();
     /** @brief Load view for operator */
     void loadOperatorView();
-    /** @brief Load view for skye */ //Beginn Code AL (01.03.12)----------------------------------------
-    void loadSkyeView();             //Ende Code AL-----------------------------------------------------
+    /** @brief Load view for skye operator */
+    void loadSkyeView(); //Ende Code AL-----------------------------------------------------
+    /** @brief Load MAVLink XML generator view */
     /** @brief Load MAVLink XML generator view */
     void loadMAVLinkView();
     /** @brief Load firmware update view */
@@ -215,7 +203,7 @@ public slots:
     /** @brief Switch to outdoor mission style */
     void loadOutdoorStyle();
     /** @brief Switch to skye mission style */
-    void loadSkyeStyle();                               //Beginn Ende Code AL (14.03.12)
+    void loadSkyeStyle(); //Beginn Ende Code AL (14.03.12)
     /** @brief Load a specific style */
     void loadStyle(QGC_MAINWINDOW_STYLE style);
 
@@ -260,58 +248,30 @@ public slots:
     /** @brief Update the window name */
     void configureWindowName();
 
-    /** @brief Set input device to control uav */
-    void setInputMode(int inputMode);
-#if defined (MOUSE_ENABLED) || defined (MOUSE_ENABLED_WIN)            // Beginn Code MA (21.03.2012)
-    /** @brief Start 3DxWare driver for 3dMouse (3dConnexion) and initialize */
-    void start3dMouse();
-    /** @brief Get current mouse value and filter signal */
-    void filterMouseValues();
-    /** @brief Emit mouse values */
-    void emitMouseValues();
-#endif // MOUSE_ENABLED  or MOUSE_ENABLED_WIN               // Ende Code MA (21.03.2012)
-#ifdef MOUSE_ENABLED_WIN									// Beginn Code MA (9.7.2012)
-    void motion3DMouse(std::vector<float>& motionData);
-#endif // MOUSE_ENABLED_WIN									// Ende Code MA (9.7.2012)
+    /** @brief Set input device to control uav */       // Begin Code MA
+    void setInputMode(int inputMode);                   // Ende Code MA
 
-    /** @Collect Rotational TouchInput from HUD */                             //Beginn Code AL (11.04.12)
+
+    /** @Collect Rotational TouchInput from HUD */      // Beginn Code AL (11.04.12)
     void setTouchInputYawPitchRoll(double roll, double pitch, double yaw);
     /** @Collect Translational TouchInput from HUD */
     void setTouchInputXZoom(double x);
     /** @Collect TouchInput from QGCMapTool */
     void setTouchInputXYZ(double x, double y, double z);
     /** @brief Emit TouchInput values */
-    void emitTouchInputValues();                                    //Ende Code AL (11.04.12)
-
+    void emitTouchInputValues();                        // Ende Code AL (11.04.12)
 
 
 signals:
     void initStatusChanged(const QString& message);
+    /** @brief Forward X11Event to catch 3DMouse inputs */
+    void x11EventOccured(XEvent *event);
+    /** @brief Emits bool whether TouchInput Interface is shown or not */   // Beginn code AL(10.04.2012)
+    void emitTouchInputVisibility(bool);
+    /** @brief Emits new contol values for UAS given by keyboard in range [-1, 1] */
+    void valueTouchInputChanged(double xValue, double yValue, double zValue, double rollValue, double pitchValue, double yawValue); //Ende Code AL(11.04.12)
 
-    /**
-    * @brief Emits new values of 3d mouse device
-    *
-    * @param xValue Translational motion of 3dmouse along x axis, scaled to in range [-1, 1]
-    * @param yValue Translational motion of 3dmouse along x axis, scaled to in range [-1, 1]
-    * @param zValue Translational motion of 3dmouse along x axis, scaled to in range [-1, 1]
-    * @param aValue Rotational motion of 3dmouse, scaled to in range [-1, 1]
-    * @param bValue Rotational motion of 3dmouse, scaled to in range [-1, 1]
-    * @param cValue Rotational motion of 3dmouse, scaled to in range [-1, 1]
-    *
-    */
-    void valueMouseChanged(double xValue, double yValue, double zValue, double aValue, double bValue, double cValue);   // Beginn und Ende Code MA (06.03.2012)
-    /** @brief Translational degrees of 3dMouse are activated/disactivated */                                           // Beginn Code MA (18.03.2012)
-    void mouseTranslationEnabledChanged(bool transEnabled);
-    /** @brief Rotational degrees of 3dMouse are activated/disactivated */
-    void mouseRotationEnabledChanged(bool rotEnabled);
-    /** @brief Signal when successfully initialized and started 3dMouse input */
-    void mouseStarted(bool success);                                                                                    // Ende Code MA (18.03.2012)
-    /** @brief Emits new contol values for UAS given by keyboard in range [-1, 1] */
-    void valueKeyboardChanged(double xValue, double yValue, double zValue, double rollValue, double pitchValue, double yawValue);   // Beginn und Ende Code MA (07.03.2012)
-    /** @brief Emits bool whether TouchInput Interface is shown or not */
-    void emitTouchInputVisibility(bool);                                                                                 // Beginn und Ende code AL(10.04.2012)
-    /** @brief Emits new contol values for UAS given by keyboard in range [-1, 1] */
-    void valueTouchInputChanged(double xValue, double yValue, double zValue, double rollValue, double pitchValue, double yawValue); //Beginn und Ende Code AL(11.04.12)
+
 
 public:
     QGCMAVLinkLogPlayer* getLogPlayer()
@@ -452,11 +412,22 @@ protected:
 
     // Popup widgets
     JoystickWidget* joystickWidget;
-    TestphaseWidget* testphaseWidget;                       //Beginn Ende Code AL (01.03.12)
-    DirectControlWidget* directControlWidget;               //Beginn Ende Code MA (12.04.12)
-    //SkyeCameraReconfigure* skyeCameraReconfigureWidget;     //Beginn Ende Code MA (20.03.12)
 
     JoystickInput* joystick;
+    TestphaseWidget* testphaseWidget;                      //Beginn Ende Code AL (01.03.12)
+    DirectControlWidget* directControlWidget;              //Beginn Ende Code MA (12.04.12)
+
+#ifdef MOUSE_ENABLED_WIN
+    /** @brief 3d Mouse support (WIN only) */
+    Mouse3DInput* mouseInput;               ///< 3dConnexion 3dMouse SDK
+    Mouse6dofInput* mouse;                  ///< Implementation for 3dMouse input
+#endif // MOUSE_ENABLED_WIN
+
+#ifdef MOUSE_ENABLED_LINUX
+    /** @brief Reimplementation of X11Event to handle 3dMouse Events (magellan) */
+    bool x11Event(XEvent *event);
+    Mouse6dofInput* mouse;                  ///< Implementation for 3dMouse input
+#endif // MOUSE_ENABLED_LINUX
 
     /** User interface actions **/
     QAction* connectUASAct;
@@ -481,52 +452,9 @@ protected:
 private:
     Ui::MainWindow ui;
     UASSkyeControlWidget::QGC_INPUT_MODE inputMode; // Beginn Ende Code MA (07.03.2012)
+
     QString getWindowStateKey();
     QString getWindowGeometryKey();
-
-    // Event handler for 3dConnexion 3DMouse        //  Beginn Code MA 06.03.2012 ----------
-    #ifdef MOUSE_ENABLED
-    QProcess *process3dxDaemon;     ///< Process running 3dxDaemon 3dConnexion Mouse Driver
-    /** @brief Reimplementation of X11Event to handle 3dMouse Events (magellan) */
-    bool x11Event(XEvent *event);
-    #endif // MOUSE_ENABLED
-    #if defined (MOUSE_ENABLED) || defined (MOUSE_ENABLED_WIN)
-    bool mouseInitialized;          ///< True when 3dMouse initialized successfully
-    QTimer *mouseTimer;             ///< Timer calling 3dMouse
-    bool mouseTranslationEnable;    ///< True when translations of 3dMouse are enabled
-    bool mouseRotationEnable;       ///< True when rotations of 3dMouse are enabled
-    QTime newMouseValueTime;        ///< Time when X11/3DMouse event wrote new MouseValues. Used to check X11/3DMouse timeout
-    int mouseFilterSize;            ///< Size of moving average filter of skye
-    int emitMouseValuesCounter;     ///< Counts up to mouseFilterSize and than values are emited
-    double *mouseRawValues;         ///< Array containing last #mouseFilterSize mouse values for each axis
-    double newMouseXValue;          ///< New mouse value read from 3dMouse device
-    double newMouseYValue;          ///< New mouse value read from 3dMouse device
-    double newMouseZValue;          ///< New mouse value read from 3dMouse device
-    double newMouseAValue;          ///< New mouse value read from 3dMouse device
-    double newMouseBValue;          ///< New mouse value read from 3dMouse device
-    double newMouseCValue;          ///< New mouse value read from 3dMouse device
-    double mouseXValueFiltered;     ///< Filtered mouse value
-    double mouseYValueFiltered;     ///< Filtered mouse value
-    double mouseZValueFiltered;     ///< Filtered mouse value
-    double mouseAValueFiltered;     ///< Filtered mouse value
-    double mouseBValueFiltered;     ///< Filtered mouse value
-    double mouseCValueFiltered;     ///< Filtered mouse value
-    #endif //MOUSE_ENABLED or MOUSE_ENABLED_WIN          // Ende Code MA 06.03.2012 && 09.07.2012 ------------
-
-	#ifdef MOUSE_ENABLED_WIN            // Beginn Code MA (09.07.2012)
-    Mouse3DInput *mouse;            ///< 3DMouse SDK interface for Windows 3DxWare
-	#endif // MOUSE_ENABLED_WIN
-
-    void keyPressEvent(QKeyEvent *event);           // Beginn Code MA (07.03.2012)
-    void keyReleaseEvent(QKeyEvent *event);
-    void handleKeyEvents(QKeyEvent *event, bool keyPressed);         // Ende Code MA (07.03.2012)
-
-    double keyXValue;        ///< X value caused by keyboard input (S,W)
-    double keyYValue;        ///< Y value caused by keyboard input (A,D)
-    double keyZValue;        ///< Z value caused by keyboard input (R,F)
-    double keyRollValue;     ///< Roll value caused by keyboard input (???)
-    double keyPitchValue;    ///< Pitch value caused by keyboard input (down, up)
-    double keyYawValue;      ///< Yaw value caused by keyboard input (left, right)
 
     QTimer touchInputTimer;                         //Beginn code AL (11.04.12)
     double touchXValue;

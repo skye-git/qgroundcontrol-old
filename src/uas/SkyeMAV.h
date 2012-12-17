@@ -5,7 +5,7 @@
 #include <QTimer>
 #include <QVector>
 #include "UAS.h"
-#include "BluefoxReconfigure.h"
+//#include "BluefoxReconfigure.h"
 
 class SkyeMAV : public UAS
 {

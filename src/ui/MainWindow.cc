@@ -35,7 +35,6 @@ This file is part of the QGROUNDCONTROL project
 #include <QTimer>
 #include <QHostInfo>
 #include <QSplashScreen>
-#include <qmath.h>                      // Beginn nd Ende Code MA (07.03.2012)
 #include <QGCHilLink.h>
 #include <QGCHilConfiguration.h>
 #include <QGCHilFlightGearConfiguration.h>
@@ -48,6 +47,7 @@ This file is part of the QGROUNDCONTROL project
 #include "CommConfigurationWindow.h"
 #include "QGCWaypointListMulti.h"
 #include "MainWindow.h"
+#include "JoystickWidget.h"
 #include "GAudioOutput.h"
 #include "QGCToolWidget.h"
 #include "QGCMAVLinkLogPlayer.h"
@@ -57,7 +57,6 @@ This file is part of the QGROUNDCONTROL project
 #include "QGCMAVLinkMessageSender.h"
 #include "QGCRGBDView.h"
 #include "QGCFirmwareUpdate.h"
-#include "SkyeMAV.h"
 
 #ifdef QGC_OSG_ENABLED
 #include "Q3DWidgetFactory.h"
@@ -69,16 +68,6 @@ This file is part of the QGROUNDCONTROL project
 
 
 #include "LogCompressor.h"
-
-#ifdef MOUSE_ENABLED                    // Beginn Code MA (06.03.2012)
-#include <QX11Info>
-#include <X11/Xlib.h>
-#undef Success              // Eigen library doesn't work if Success is defined
-extern "C"
-{
-#include "xdrvlib.h"
-}
-#endif // MOUSE_ENABLED                 // Ende Code MA (06.03.2012)
 
 MainWindow* MainWindow::instance(QSplashScreen* screen)
 {
@@ -111,42 +100,8 @@ MainWindow::MainWindow(QWidget *parent):
     centerStackActionGroup(new QActionGroup(this)),
     styleFileName(QCoreApplication::applicationDirPath() + "/style-indoor.css"),
     autoReconnect(false),
-    lowPowerMode(false),
-    inputMode(UASSkyeControlWidget::QGC_INPUT_MODE_NONE),
-    #if defined (MOUSE_ENABLED) || defined (MOUSE_ENABLED_WIN)               // Beginn Code MA
-    mouseTranslationEnable(true),
-    mouseRotationEnable(true),
-    mouseInitialized(false),
-    mouseTimer(NULL),
-    mouseFilterSize(5),
-    emitMouseValuesCounter(0),
-    mouseRawValues(NULL),
-    newMouseXValue(0),
-    newMouseYValue(0),
-    newMouseZValue(0),
-    newMouseAValue(0),
-    newMouseBValue(0),
-    newMouseCValue(0),
-    mouseXValueFiltered(0),
-    mouseYValueFiltered(0),
-    mouseZValueFiltered(0),
-    mouseAValueFiltered(0),
-    mouseBValueFiltered(0),
-    mouseCValueFiltered(0),
-    #endif // MOUSE_ENABLED or MOUSE_ENABLED_WIN             // Ende Code MA (21.03.2012 && 09.07.2012)
-    keyXValue(0),
-    keyYValue(0),
-    keyZValue(0),
-    keyPitchValue(0),
-    keyYawValue(0),
-    keyRollValue(0),
-    touchXValue(0),
-    touchYValue(0),
-    touchZValue(0),
-    touchXZoomValue(0),
-    touchRollValue(0),
-    touchPitchValue(0),
-    touchYawValue(0)                                            // Ende Code
+    lowPowerMode(false)//,
+    //inputMode(UASSkyeControlWidget::QGC_INPUT_MODE_NONE)
 {
     hide();
     emit initStatusChanged("Loading UI Settings..");
@@ -194,7 +149,6 @@ MainWindow::MainWindow(QWidget *parent):
 	centerStackActionGroup->setExclusive(true);
 
     centerStack = new QStackedWidget(this);
-//    qDebug() << "MinimumWidth of censterStack" << centerStack->minimumWidth();
     centerStack->setMinimumWidth(100);          // Code Add MA (08.05.2012)
     setCentralWidget(centerStack);
 
@@ -227,14 +181,27 @@ MainWindow::MainWindow(QWidget *parent):
 
     connect(LinkManager::instance(), SIGNAL(newLink(LinkInterface*)), this, SLOT(addLink(LinkInterface*)));
 
+    testphaseWidget = 0;                                            //Start Ende Code AL (19.03.12)
+    directControlWidget = 0;                                        //Start Ende Code AL (19.03.12)
+
     // Connect user interface devices
     emit initStatusChanged("Initializing joystick interface.");
     joystickWidget = 0;
-    //joystick = new JoystickInput();                               // Modified Code MA (13.03.2012) ----- Disabled JoystickThread
+    joystick = new JoystickInput();
 
-    testphaseWidget = 0;                                            //Start Ende Code AL (19.03.12)
-    directControlWidget = 0;                                        //Start Ende Code AL (19.03.12)
-    //skyeCameraReconfigureWidget = 0;                                //Beginn und Ende Code MA (20.03.2012)
+#ifdef MOUSE_ENABLED_WIN
+    emit initStatusChanged("Initializing 3D mouse interface.");
+
+    mouseInput = new Mouse3DInput(this);
+    mouse = new Mouse6dofInput(mouseInput);
+#endif //MOUSE_ENABLED_WIN
+
+#if MOUSE_ENABLED_LINUX
+    emit initStatusChanged("Initializing 3D mouse interface.");
+
+    mouse = new Mouse6dofInput(this);
+    connect(this, SIGNAL(x11EventOccured(XEvent*)), mouse, SLOT(handleX11Event(XEvent*)));
+#endif //MOUSE_ENABLED_LINUX
 
     // Connect link
     if (autoReconnect)
@@ -290,16 +257,6 @@ MainWindow::MainWindow(QWidget *parent):
     connect(&touchInputTimer, SIGNAL(timeout()), this, SLOT(emitTouchInputValues()));           //Beginn Code AL (11.04.12)
     touchInputTimer.start(200);                                                                 //Ende Code AL (11.04.12)
 
-#ifdef MOUSE_ENABLED                    // Beginn Code MA (21.03.2012)
-    //start3dMouse();
-#endif // MOUSE_ENABLED                 // Ende Code MA
-#ifdef MOUSE_ENABLED_WIN
-    mouse = new Mouse3DInput(this);
-    connect(mouse, SIGNAL(Move3d(std::vector<float>&)), this, SLOT(motion3DMouse(std::vector<float>&)));
-    //TODO: Enable Button Functions
-#endif // MOUSE_ENABLED_WIN
-
-
     show();
 }
 
@@ -315,11 +272,10 @@ MainWindow::~MainWindow()
 //        simulationLink->deleteLater();
 //        simulationLink = NULL;
 //    }
-
     if (joystick)
     {
-//        delete joystick;
-//        joystick = NULL;
+        delete joystick;
+        joystick = NULL;
     }
 
     // Get and delete all dockwidgets and contained
@@ -436,8 +392,8 @@ void MainWindow::buildCommonWidgets()
         addTool(controlDockWidget, tr("Control"), Qt::LeftDockWidgetArea);
     }
 
-#ifdef QGC_USE_SKYE_INTERFACE
-    if (!skyeControlDockWidget)         // Beginn Code MA (06.03.2012) -----------------------
+//#ifdef QGC_USE_SKYE_INTERFACE
+    if (!skyeControlDockWidget) // Beginn Code MA (06.03.2012) -----------------------
     {
         skyeControlDockWidget = new QDockWidget(tr("Skye Control"), this);
         skyeControlDockWidget->setObjectName("SKYE_CONTROL_DOCKWIDGET");
@@ -446,14 +402,15 @@ void MainWindow::buildCommonWidgets()
         UASSkyeControlWidget *uasSkyeControl = dynamic_cast<UASSkyeControlWidget*>(skyeControlDockWidget->widget());
         if (uasSkyeControl)
         {
+            //FIXME: INPUT MODES and 3DMOUSE DE-/ACTIVATION
             connect(uasSkyeControl, SIGNAL(changedInput(int)), this, SLOT(setInputMode(int)));
             connect(this, SIGNAL(mouseTranslationEnabledChanged(bool)), uasSkyeControl, SLOT(changeMouseTranslationEnabled(bool)));
             connect(this, SIGNAL(mouseRotationEnabledChanged(bool)), uasSkyeControl, SLOT(changeMouseRotationEnabled(bool)));
             connect(this, SIGNAL(mouseStarted(bool)), uasSkyeControl, SLOT(mouseActivated(bool)));
             addTool(skyeControlDockWidget, tr("Skye Control"), Qt::RightDockWidgetArea);
         }
-    }                                   // Ende Code MA (06.03.2012) --------------------------
-#endif // QGC_USE_SKYE_INTERFACE
+    } // Ende Code MA (06.03.2012) --------------------------
+//#endif // QGC_USE_SKYE_INTERFACE
 
     if (!listDockWidget)
     {
@@ -534,7 +491,7 @@ void MainWindow::buildCommonWidgets()
         parametersDockWidget->setObjectName("PARAMETER_INTERFACE_DOCKWIDGET");
         addTool(parametersDockWidget, tr("Onboard Parameters"), Qt::RightDockWidgetArea);
     }
-
+	
     if (!hsiDockWidget)
     {
         hsiDockWidget = new QDockWidget(tr("Horizontal Situation Indicator"), this);
@@ -542,7 +499,7 @@ void MainWindow::buildCommonWidgets()
         hsiDockWidget->setObjectName("HORIZONTAL_SITUATION_INDICATOR_DOCK_WIDGET");
         addTool(hsiDockWidget, tr("Horizontal Situation"), Qt::BottomDockWidgetArea);
     }
-
+	
     if (!headDown1DockWidget)
     {
         headDown1DockWidget = new QDockWidget(tr("Flight Display"), this);
@@ -562,7 +519,7 @@ void MainWindow::buildCommonWidgets()
         headDown2DockWidget->setObjectName("HEAD_DOWN_DISPLAY_2_DOCK_WIDGET");
         addTool(headDown2DockWidget, tr("Actuator Status"), Qt::RightDockWidgetArea);
     }
-
+	
     if (!rcViewDockWidget)
     {
         rcViewDockWidget = new QDockWidget(tr("Radio Control"), this);
@@ -582,7 +539,7 @@ void MainWindow::buildCommonWidgets()
         connect(this, SIGNAL(emitTouchInputVisibility(bool)), headUpDockWidgetHelper, SLOT(setKnobndKnobRingvisible(bool))); //Beginn Ende Code AL (10.04.12)
         connect(headUpDockWidgetHelper, SIGNAL(valueTouchInputChangedHUD(double,double,double)), this, SLOT(setTouchInputYawPitchRoll(double,double,double))); //Beginn Ende Code AL (11.04.12)
         connect(headUpDockWidgetHelper, SIGNAL(valueXZoomChangedHUD(double)), this, SLOT(setTouchInputXZoom(double))); // 18.05.12
-     }
+    }
 
     if (!video1DockWidget)
     {
@@ -659,7 +616,7 @@ void MainWindow::buildCommonWidgets()
         hudWidget         = new HUD(320, 240, this);
         addCentralWidget(hudWidget, tr("Head Up Display"));
         connect(hudWidget, SIGNAL(valueTouchInputChangedHUD(double,double,double)), this, SLOT(setTouchInputYawPitchRoll(double,double,double))); //Beginn Ende Code AL (11.04.12)
-        connect(hudWidget, SIGNAL(valueXZoomChangedHUD(double)), this, SLOT(setTouchInputXZoom(double)));
+        connect(hudWidget, SIGNAL(valueXZoomChangedHUD(double)), this, SLOT(setTouchInputXZoom(double))); // Beginn Ende Code AL
         connect(this, SIGNAL(emitTouchInputVisibility(bool)), hudWidget, SLOT(setKnobndKnobRingvisible(bool))); //Beginn Ende Code AL (23.04.12)
     }
 
@@ -992,6 +949,7 @@ void MainWindow::loadSkyeStyle()                            //Code AL (14.03.12)
     loadStyle(QGC_MAINWINDOW_STYLE_SKYE);
 }
 
+
 void MainWindow::loadStyle(QGC_MAINWINDOW_STYLE style)
 {
     switch (style) {
@@ -1016,10 +974,10 @@ void MainWindow::loadStyle(QGC_MAINWINDOW_STYLE style)
         styleFileName = ":files/styles/style-outdoor.css";
         reloadStylesheet();
         break;
-    case QGC_MAINWINDOW_STYLE_SKYE:
+    case QGC_MAINWINDOW_STYLE_SKYE:                 // Begin Code AL
         qApp->setStyle("plastique");
         styleFileName = ":/images/style-skye.css";
-        reloadStylesheet();
+        reloadStylesheet();                         // Ende Code AL
     }
     currentStyle = style;
 }
@@ -1168,7 +1126,6 @@ void MainWindow::connectCommonActions()
     connect(ui.actionPilotsView, SIGNAL(triggered()), this, SLOT(loadPilotView()));
     connect(ui.actionEngineersView, SIGNAL(triggered()), this, SLOT(loadEngineerView()));
     connect(ui.actionOperatorsView, SIGNAL(triggered()), this, SLOT(loadOperatorView()));
-    connect(ui.actionSkyeView, SIGNAL(triggered()), this, SLOT(loadSkyeView()));                        //Beginn und Ende Code AL (01.03.12)------------------------------
     connect(ui.actionUnconnectedView, SIGNAL(triggered()), this, SLOT(loadUnconnectedView()));
 
     connect(ui.actionFirmwareUpdateView, SIGNAL(triggered()), this, SLOT(loadFirmwareUpdateView()));
@@ -1208,8 +1165,7 @@ void MainWindow::connectCommonActions()
     connect(ui.actionTestphase, SIGNAL(triggered()), this, SLOT(showTestphase()));                  //Ende Code AL ----------------------
     ui.actionDirectControl->setVisible(true);                                                       //Beginn Code MA (12.04.12)----------
     connect(ui.actionDirectControl, SIGNAL(triggered()), this, SLOT(showDirectControl()));          //Ende Code MA ----------------------
-    //ui.actionCamera_Reconfigure->setVisible(true);                                                  //Beginn Code MA (20.03.12)----------
-    //connect(ui.actionCamera_Reconfigure, SIGNAL(triggered()), this, SLOT(showSkyeCamReconfig()));   //Ende Code MA ----------------------
+
 }
 
 void MainWindow::showHelp()
@@ -1286,10 +1242,11 @@ void MainWindow::showDirectControl()                    //Beginn Code MA (12.04.
 {
      if(!directControlWidget)
     {
-        #if defined (MOUSE_ENABLED) || defined (MOUSE_ENABLED_WIN)
-        if ( mouseTimer )
-            if ( mouseTimer->isActive() ) mouseTimer->stop();
-        #endif // MOUSE_ENABLED
+//        #if defined (MOUSE_ENABLED_LINUX) || defined (MOUSE_ENABLED_WIN)
+/** FIXME: Deactivate all input devices!! */
+//         if ( mouseTimer )
+//            if ( mouseTimer->isActive() ) mouseTimer->stop();
+//        #endif // MOUSE_ENABLED_LINUX or MOUSE_ENABLED_WIN
 
         directControlWidget = new DirectControlWidget(this);
     }
@@ -1297,21 +1254,6 @@ void MainWindow::showDirectControl()                    //Beginn Code MA (12.04.
     directControlWidget->activateWindow();
 
 }   //Ende Code MA
-
-//void MainWindow::showSkyeCamReconfig()                    //Beginn Code MA (20.01.12)
-//{
-//     if(!skyeCameraReconfigureWidget)
-//    {
-//        skyeCameraReconfigureWidget = new SkyeCameraReconfigure(this);
-//    }
-//    skyeCameraReconfigureWidget->show();
-//    skyeCameraReconfigureWidget->activateWindow();
-
-////    else
-////    {
-////        testphaseWidget->raise();
-////    }
-//}                                                   //Ende Code MA (20.01.12)
 
 void MainWindow::showSettings()
 {
@@ -1392,21 +1334,16 @@ void MainWindow::setActiveUAS(UASInterface* uas)
     // Enable and rename menu
     ui.menuUnmanned_System->setTitle(uas->getUASName());
     if (!ui.menuUnmanned_System->isEnabled()) ui.menuUnmanned_System->setEnabled(true);
-
 #ifdef QGC_USE_SKYE_INTERFACE         // Begin Code MA (06.03.2012) [similar JoystickInput] -------------
     // Connect input to (skye) Mavlink messages
     SkyeMAV* tmp = 0;
     tmp = dynamic_cast<SkyeMAV*>(UASManager::instance()->getActiveUAS());
     if (tmp) {
-        disconnect(this, SIGNAL(valueMouseChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
-        disconnect(this, SIGNAL(valueKeyboardChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
         disconnect(this, SIGNAL(valueTouchInputChanged(double, double, double, double, double, double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));// Beginn und Ende Code AL (26.03.12)
     }
 
     tmp = dynamic_cast<SkyeMAV*>(uas);
     if(tmp) {
-        connect(this, SIGNAL(valueMouseChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
-        connect(this, SIGNAL(valueKeyboardChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
         connect(this, SIGNAL(valueTouchInputChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
     }
 #endif // QGC_USE_SKYE_INTERFACE      // Ende Code MA (27.02.2012) ---------------------------
@@ -1475,10 +1412,8 @@ void MainWindow::UASCreated(UASInterface* uas)
             icon = QIcon(":files/images/mavs/groundstation.svg");
             break;
         case MAV_TYPE_AIRSHIP:
-            icon = QIcon(":/images/skye_images/LOGO_DEF.png");
+            icon = QIcon(":files/images/mavs/airship.svg");
             break;
-            //icon = QIcon(":files/images/mavs/airship.svg");
-            //break;
         case MAV_TYPE_FREE_BALLOON:
             icon = QIcon(":files/images/mavs/free-balloon.svg");
             break;
@@ -1584,19 +1519,6 @@ void MainWindow::UASCreated(UASInterface* uas)
                 addTool(watchdogControlDockWidget, tr("Process Control"), Qt::BottomDockWidgetArea);
             }
         }
-#ifdef QGC_USE_SKYE_INTERFACE
-        if (uas->getAutopilotType() == MAV_AUTOPILOT_PX4)
-        {
-            // Dock widget
-            if (!skyeBatteryInfoDockWidget)
-            {
-                skyeBatteryInfoDockWidget = new QDockWidget("Detailed Battery Info", this);
-                skyeBatteryInfoDockWidget->setWidget( new UASSkyeBatteryInfoWidget);
-                skyeBatteryInfoDockWidget->setObjectName("SKYE_BATTERY_INFO_DOCKWIDGET");
-                addTool(skyeBatteryInfoDockWidget, tr("Battery Info"), Qt::RightDockWidgetArea);
-            }
-        }
-#endif
 
         // Change the view only if this is the first UAS
 
@@ -1623,7 +1545,8 @@ void MainWindow::UASCreated(UASInterface* uas)
                     loadPilotView();
                     break;
                 case VIEW_SKYE:         //Beginn Code AL (01.03.12)---------------------------------------
-                    loadSkyeView();     //Ende Code AL ---------------------------------------------------
+                    loadSkyeView();
+                    break;              //Ende Code AL ---------------------------------------------------
                 case VIEW_UNCONNECTED:
                     loadUnconnectedView();
                     break;
@@ -1634,7 +1557,6 @@ void MainWindow::UASCreated(UASInterface* uas)
                 }
             }
             else
-            {
 #ifdef QGC_USE_SKYE_INTERFACE
                 if (uas->getAutopilotType() == MAV_AUTOPILOT_PX4)      // Beginn Code MA (15.03.2012)
                 {
@@ -1642,11 +1564,8 @@ void MainWindow::UASCreated(UASInterface* uas)
                 }
                 else
                 {                               // Ende Code MA (15.03.2012)
-#endif
-                    loadOperatorView();
-#ifdef QGC_USE_SKYE_INTERFACE
-                }
-#endif
+#endif //QGC_USE_SKYE_INTERFACE
+                loadOperatorView();
             }
         }
 
@@ -1894,6 +1813,7 @@ void MainWindow::loadSkyeView()                         //Beginn Code AL (01.03.
     }
 }                                                       //Ende Code AL---------------------------------------------
 
+
 void MainWindow::loadUnconnectedView()
 {
     if (currentView != VIEW_UNCONNECTED)
@@ -1959,6 +1879,13 @@ QList<QAction*> MainWindow::listLinkMenuActions(void)
     return ui.menuNetwork->actions();
 }
 
+#ifdef MOUSE_ENABLED_LINUX
+bool MainWindow::x11Event(XEvent *event)
+{
+    emit x11EventOccured(event);
+    //qDebug("XEvent occured...");
+    return false;
+}
 
 void MainWindow::setInputMode(int inputMode)
 {
@@ -1989,492 +1916,16 @@ void MainWindow::setInputMode(int inputMode)
             break;
     }
     statusBar()->showMessage("Set new Input mode", 20000);
-//    qDebug() << "New Input: " << inputMode;
+// qDebug() << "New Input: " << inputMode;
 #else
     qDebug() << "Changing input mode only available for SKYE";
 #endif //QGC_USE_SKYE_INTERFACE
 }
 
-#if defined (MOUSE_ENABLED) || defined (MOUSE_ENABLED_WIN)            // Beginn Code MA (21.03.2012)
-void MainWindow::start3dMouse()
-{
-    if (!mouseInitialized)
-    {
-//        // man visudo --> then you can omit giving password (success not guarantied..)
-//        qDebug() << "Starting 3DxWare Daemon for 3dConnexion 3dMouse";
-//        QString processProgramm = "gksudo";
-//        QStringList processArguments;
-//        processArguments << "/etc/3DxWare/daemon/3dxsrv -d usb";
-//        process3dxDaemon = new QProcess();
-//        process3dxDaemon->start(processProgramm, processArguments);
-//    //    process3dxDaemon->waitForFinished();
-//    //    {
-//    //        qDebug() << "... continuing without 3DxWare. May not be initialized properly!";
-//    //        qDebug() << "Try in terminal as user root:" << processArguments.last();
-//    //    }
-
-#ifdef MOUSE_ENABLED
-        Display *display = QX11Info::display();
-        if(!display)
-        {
-            qDebug() << "Cannot open display!" << endl;
-        }
-        if ( !MagellanInit( display, winId() ) )
-        {
-            QMessageBox msgBox;
-            msgBox.setIcon(QMessageBox::Information);
-            msgBox.setText(tr("No 3DxWare driver is running."));
-            msgBox.setInformativeText(tr("Enter in Terminal 'sudo /etc/3DxWare/daemon/3dxsrv -d usb'"));
-            msgBox.setStandardButtons(QMessageBox::Ok);
-            msgBox.setDefaultButton(QMessageBox::Ok);
-            msgBox.exec();
-
-            emit mouseStarted(false);
-            qDebug() << "No 3DxWare driver is running!";
-            return;
-        }
-        else
-#endif // MOUSE_ENABLED
-        {
-            qDebug() << "Initialized 3dMouse";
-            mouseInitialized = true;
-
-            if (mouseFilterSize<1)
-            {
-                mouseFilterSize = 1;
-            }
-
-//            delete mouseTimer;
-            mouseTimer = new QTimer(this);
-            connect(mouseTimer, SIGNAL(timeout()),this, SLOT(filterMouseValues()));
-            int mouseEmitFrequency = 5;                                             // Emit 3dMouse with 5Hz
-            int mouseFilterInterval = 1000 / mouseEmitFrequency / mouseFilterSize;  // in msec (40msec = 25Hz)
-            qDebug() << "Start mouseTimer with interval" << mouseFilterInterval;
-            mouseTimer->start(mouseFilterInterval);         // Filter 3dMouse values with 25Hz
-
-            if (mouseRawValues == NULL)
-            {
-                qDebug() << "Allocate space for filter values all six DoF of 3dMouse";
-                // Allocate space for all six DoF of 3dMouse
-
-                mouseRawValues = new double[6*mouseFilterSize];
-                for (int i=0; i<6; i++)
-                    for (int k=0; k<mouseFilterSize; k++)
-                        mouseRawValues[i*mouseFilterSize+k] = 0;
-                newMouseXValue = 0;
-                newMouseYValue = 0;
-                newMouseZValue = 0;
-                newMouseAValue = 0;
-                newMouseBValue = 0;
-                newMouseCValue = 0;
-                mouseXValueFiltered = 0;
-                mouseYValueFiltered = 0;
-                mouseZValueFiltered = 0;
-                mouseAValueFiltered = 0;
-                mouseBValueFiltered = 0;
-                mouseCValueFiltered = 0;
-            }
-        }
-    }
-    else
-    {
-        qDebug() << "3dMouse already initialized..";
-    }
-    emit mouseStarted(true);
-}
-#endif // MOUSE_ENABLED or MOUSE_ENABLED_WIN        // Ende Code MA (21.03.2012)
-
-#ifdef MOUSE_ENABLED            // Beginn Code MA (06.03.2012) -----------
-bool MainWindow::x11Event(XEvent *event)
-{
-//    qDebug("XEvent occured...");
-    if (!mouseInitialized)
-    {
-//        qDebug() << "3dMouse not initialized. Cancelled handling X11event for 3dMouse";
-        return false;
-    }
-    qDebug() << "Following X11event";
-#ifdef QGC_USE_SKYE_INTERFACE
-    if (inputMode == UASSkyeControlWidget::QGC_INPUT_MODE_MOUSE)
-    {
-#endif // QGC_USE_SKYE_INTERFACE
-    MagellanFloatEvent MagellanEvent;
-    double maxMagellanValue = 350;              // Valid for Space Navigator for Notebooks
-
-    Display *display = QX11Info::display();
-    if(!display)
-    {
-        qDebug() << "Cannot open display!" << endl;
-    }
-
-   switch (event->type)
-   {
-    case ClientMessage:
-          switch( MagellanTranslateEvent( display, event, &MagellanEvent, 1.0, 1.0 ) )
-           {
-            case MagellanInputMotionEvent :
-                 MagellanRemoveMotionEvents( display );
-//                 qDebug("3D Mouse Motion Detected!");
-                 for (int i = 0; i < 6; i++) {  // Saturation
-//                     if (MagellanEvent.MagellanData[i] < (0-maxMagellanValue))
-//                     {
-//                         MagellanEvent.MagellanData[i] = - maxMagellanValue;
-//                     }else if (MagellanEvent.MagellanData[i] > maxMagellanValue)
-//                     {
-//                         MagellanEvent.MagellanData[i] = maxMagellanValue;
-//                     }
-                     // Cancel value if motion is disabled
-                     if ((i<3 && !mouseTranslationEnable) || (i>=3 && !mouseRotationEnable))
-                     {
-                         MagellanEvent.MagellanData[i] = 0;
-                     }
-                     MagellanEvent.MagellanData[i] = (abs(MagellanEvent.MagellanData[i]) < maxMagellanValue) ? MagellanEvent.MagellanData[i] : (maxMagellanValue*MagellanEvent.MagellanData[i]/abs(MagellanEvent.MagellanData[i]));
-                 }
-//                 emit valueMouseChanged(MagellanEvent.MagellanData[ MagellanZ ] / maxMagellanValue,
-//                                        MagellanEvent.MagellanData[ MagellanX ] / maxMagellanValue,
-//                                        - MagellanEvent.MagellanData[ MagellanY ] / maxMagellanValue,
-//                                        MagellanEvent.MagellanData[ MagellanC ] / maxMagellanValue,
-//                                        MagellanEvent.MagellanData[ MagellanA ] / maxMagellanValue,
-//                                        - MagellanEvent.MagellanData[ MagellanB ] / maxMagellanValue);
-
-                 newMouseXValue = MagellanEvent.MagellanData[ MagellanZ ] / maxMagellanValue;
-                 newMouseYValue = MagellanEvent.MagellanData[ MagellanX ] / maxMagellanValue;
-                 newMouseZValue = - MagellanEvent.MagellanData[ MagellanY ] / maxMagellanValue;
-                 newMouseAValue = MagellanEvent.MagellanData[ MagellanC ] / maxMagellanValue;
-                 newMouseBValue = MagellanEvent.MagellanData[ MagellanA ] / maxMagellanValue;
-                 newMouseCValue = - MagellanEvent.MagellanData[ MagellanB ] / maxMagellanValue;
-
-                 newMouseValueTime = QTime::currentTime();
-
-            return false;
-            break;
-
-            case MagellanInputButtonPressEvent :
-                qDebug() << "MagellanInputButtonPressEvent called with button " << MagellanEvent.MagellanButton;
-                switch (MagellanEvent.MagellanButton)
-                {
-                case 1:
-                {
-                    mouseRotationEnable = !mouseRotationEnable;
-                    emit mouseRotationEnabledChanged(mouseRotationEnable);
-                    qDebug() << "Emitted Rotation " << (bool)mouseRotationEnable;
-                    break;
-                }
-                case 2:
-                {
-                    mouseTranslationEnable = !mouseTranslationEnable;
-                    emit mouseTranslationEnabledChanged(mouseTranslationEnable);
-                    qDebug() << "Emitted translation" << (bool)mouseTranslationEnable;
-                    break;
-                }
-                default:
-                    break;
-            }
-    default:
-    return false;
-    break;
-    }
-   }
-    #ifdef QGC_USE_SKYE_INTERFACE
-    }else
-    {
-        qDebug() << "Skipped 3dMouse input.. Input mode is " << inputMode;
-    }
-
-    #endif // QGC_USE_SKYE_INTERFACE
-    return false;   // Event will not be destroyed
-
-}
-#endif
-
-#ifdef MOUSE_ENABLED_WIN									// Begin Code MA (9.7.2012)
-void MainWindow::motion3DMouse(std::vector<float> &motionData)
-{
-    if (motionData.size() < 6) return;
-
-    qDebug() << "WIN 3d mouse" << QString::number(motionData[0]) << QString::number(motionData[1]) << QString::number(motionData[2]);
-//    emit valueMouseChanged(	(double)1.0e2f*motionData[0],
-//                            (double)1.0e2f*motionData[1],
-//                            (double)1.0e2f*motionData[2],
-//                            (double)1.0e2f*motionData[3],
-//                            (double)1.0e2f*motionData[4],
-//                            (double)1.0e2f*motionData[5]
-//							);
-
-    // Saturation and (de-)activating of motion degree
-    double max3DMouseValue = 0.01;
-    for (int i = 0; i < 6; i++) {
-
-        // Cancel value if motion is disabled
-        if ((i<3 && !mouseTranslationEnable) || (i>=3 && !mouseRotationEnable))
-        {
-            motionData[i] = 0;
-        }
-        motionData[i] = (abs(motionData[i]) < max3DMouseValue) ? motionData[i] : (max3DMouseValue*motionData[i]/abs(motionData[i]));
-    }
-
-    newMouseXValue = - motionData[ 1 ] / max3DMouseValue;
-    newMouseYValue = motionData[ 0 ] / max3DMouseValue;
-    newMouseZValue = motionData[ 2 ] / max3DMouseValue;
-    newMouseAValue = motionData[ 4 ] / max3DMouseValue;
-    newMouseBValue = motionData[ 3 ] / max3DMouseValue;
-    newMouseCValue = motionData[ 5 ] / max3DMouseValue;
-
-    newMouseValueTime = QTime::currentTime();
-}
-#endif // MOUSE_ENABLED_WIN									// Ende Code MA (9.7.2012)
+#endif // MOUSE_ENABLED_LINUX
 
 
-#if defined (MOUSE_ENABLED) || defined (MOUSE_ENABLED_WIN)
-void MainWindow::filterMouseValues()
-{
-    if (inputMode == UASSkyeControlWidget::QGC_INPUT_MODE_MOUSE){
-    // Shift stored input values
-    for (int i=0; i<6; i++)
-    {
-        if (mouseFilterSize > 1)
-        {
-            for (int k=(mouseFilterSize-1); k>0; k--)
-            {
-                mouseRawValues[i*mouseFilterSize+k] = mouseRawValues[i*mouseFilterSize+k - 1];
-            }
-        }
-    }
-
-    // Safety passage in case X11event stops
-    QTime now = QTime::currentTime();
-    if (newMouseValueTime.msecsTo(now) > 200)
-    {
-//        qDebug() << "Cancelled last 3dMouse Motion (timeout: " << newMouseValueTime.msecsTo(now) << ")";
-        for (int i=0; i<6*mouseFilterSize; i++){
-            mouseRawValues[i] = 0;
-        }
-        mouseXValueFiltered = 0;
-        mouseYValueFiltered = 0;
-        mouseZValueFiltered = 0;
-        mouseAValueFiltered = 0;
-        mouseBValueFiltered = 0;
-        mouseCValueFiltered = 0;
-
-    } else {
-//        qDebug() << "3dMouse motion accepted (timeout: " << newMouseValueTime.msecsTo(now) << ")";
-        mouseRawValues[0*mouseFilterSize] = newMouseXValue;
-        mouseRawValues[1*mouseFilterSize] = newMouseYValue;
-        mouseRawValues[2*mouseFilterSize] = newMouseZValue;
-        mouseRawValues[3*mouseFilterSize] = newMouseAValue;
-        mouseRawValues[4*mouseFilterSize] = newMouseBValue;
-        mouseRawValues[5*mouseFilterSize] = newMouseCValue;
-
-
-        // Moving Average Filter
-        for (int i=0; i<6; i++)
-        {
-            double sum = 0;
-            for (int k=0; k<mouseFilterSize; k++)
-            {
-                sum += mouseRawValues[i*mouseFilterSize+k];
-            }
-
-            // Use cubic multiplier for smoother motions
-            sum = qPow(sum, 3);
-
-            switch (i)
-            {
-            case 0:
-                    {
-                    mouseXValueFiltered = sum/mouseFilterSize;
-                    break;
-                    }
-            case 1:
-                    {
-                    mouseYValueFiltered = sum/mouseFilterSize;
-                    break;
-                    }
-            case 2:
-                    {
-                    mouseZValueFiltered = sum/mouseFilterSize;
-                    break;
-                    }
-            case 3:
-                    {
-                    mouseAValueFiltered = sum/mouseFilterSize;
-                    break;
-                    }
-            case 4:
-                    {
-                    mouseBValueFiltered = sum/mouseFilterSize;
-                    break;
-                    }
-            case 5:
-                    {
-                    mouseCValueFiltered = sum/mouseFilterSize;
-                    break;
-                    }
-            default:
-                qDebug() << "Moving Average Filter failed!";
-                break;
-            }
-            // Scale to norm = 1
-    //        double normTrans = sqrt((mouseXValueFiltered*mouseXValueFiltered) + (mouseYValueFiltered*mouseYValueFiltered) + (mouseZValueFiltered*mouseZValueFiltered));
-    //        mouseXValueFiltered = mouseXValueFiltered/normTrans;
-    //        mouseYValueFiltered = mouseYValueFiltered/normTrans;
-    //        mouseZValueFiltered = mouseZValueFiltered/normTrans;
-    //        double normRot = sqrt((mouseAValueFiltered*mouseAValueFiltered) + (mouseBValueFiltered*mouseBValueFiltered) + (mouseCValueFiltered*mouseCValueFiltered));
-    //        mouseAValueFiltered = mouseAValueFiltered/normRot;
-    //        mouseBValueFiltered = mouseBValueFiltered/normRot;
-    //        mouseCValueFiltered = mouseCValueFiltered/normRot;
-        }
-    }
-    emitMouseValuesCounter++;
-    if (emitMouseValuesCounter >= mouseFilterSize)
-    {
-//        qDebug() << "Emitted mouse values";
-        emitMouseValuesCounter = 0;
-        emitMouseValues();
-    }
-    }
-}
-
-void MainWindow::emitMouseValues()
-{
-    emit valueMouseChanged(mouseXValueFiltered,
-                      mouseYValueFiltered,
-                      mouseZValueFiltered,
-                      mouseAValueFiltered,
-                      mouseBValueFiltered,
-                      mouseCValueFiltered
-                      );
-}
-
-#endif // MOUSE_ENABLED                                     // Ende Code MA (06.03.2012) ------
-
-
-
-void MainWindow::keyPressEvent(QKeyEvent *event)            // Beginn Code MA (07.03.2012) ---------
-{
-    if (inputMode == UASSkyeControlWidget::QGC_INPUT_MODE_KEYBOARD)
-    {
-        qDebug() << "Key pressed and accepted!";
-        handleKeyEvents(event, true);
-    }
-    else
-    {
-        // Let base class implementation handle the event
-        event->ignore();
-    }
-}                                                           // Ende Code MA (07.03.2012) ------------
-
-void MainWindow::keyReleaseEvent(QKeyEvent *event)
-{
-    if (inputMode == UASSkyeControlWidget::QGC_INPUT_MODE_KEYBOARD)
-    {
-        qDebug() << "Key released and accepted!";
-        handleKeyEvents(event, false);
-    }
-    else
-    {
-        // Let base class implementation handle the event
-        event->ignore();
-    }
-}
-
-void MainWindow::handleKeyEvents(QKeyEvent *event, bool keyPressed)
-{
-    //int keyDirection = keyPressed ? 1 : -1;
-
-    switch (event->key())
-    {
-    // Translational motion
-    case Qt::Key_S:
-        // minus x
-        if (keyPressed)
-            keyXValue = (keyXValue > -0.9) ? (keyXValue - 0.25) : (-1);
-        else
-            keyXValue = 0;
-        break;
-    case Qt::Key_W:
-        // plus x
-        if (keyPressed)
-            keyXValue = (keyXValue < 0.9) ? (keyXValue + 0.25) : 1;
-        else
-            keyXValue = 0;
-        break;
-    case Qt::Key_A:
-        // minus y
-        if (keyPressed)
-            keyYValue = (keyYValue > -0.9) ? (keyYValue - 0.25) : (-1);
-        else
-            keyYValue = 0;
-        break;
-    case Qt::Key_D:
-        // plus y
-        if (keyPressed)
-            keyYValue = (keyYValue < 0.9) ? (keyYValue + 0.25) : 1;
-        else
-            keyYValue = 0;
-        break;
-    case Qt::Key_R:
-        // minus z
-        if (keyPressed)
-            keyZValue = (keyZValue > -0.9) ? (keyZValue - 0.25) : (-1);
-        else
-            keyZValue = 0;
-        break;
-    case Qt::Key_F:
-        // plus z
-        if (keyPressed)
-            keyZValue = (keyZValue < 0.9) ? (keyZValue + 0.25) : 1;
-        else
-            keyZValue = 0;
-        break;
-
-    // Rotational motion
-    case Qt::Key_Down:
-        // minus pitch
-        if (keyPressed)
-            keyPitchValue = (keyPitchValue > -0.9) ? (keyPitchValue - 0.25) : (-1);
-        else
-            keyPitchValue = 0;
-        break;
-    case Qt::Key_Up:
-        // plus pitch
-        if (keyPressed)
-        keyPitchValue = (keyPitchValue < 0.9) ? (keyPitchValue + 0.25) : 1;
-    else
-        keyPitchValue = 0;
-        break;
-    case Qt::Key_Left:
-        // minus yaw
-        if (keyPressed)
-            keyYawValue = (keyYawValue > -0.9) ? (keyYawValue - 0.25) : (-1);
-        else
-            keyYawValue = 0;
-        break;
-    case Qt::Key_Right:
-        // plus yaw
-        if (keyPressed)
-        keyYawValue = (keyYawValue < 0.9) ? (keyYawValue + 0.25) : 1;
-    else
-        keyYawValue = 0;
-        break;
-
-        // Special keys
-    case Qt::Key_Space:
-        // reset roll?
-        break;
-    case Qt::Key_Enter:
-        // reset roll and pitch
-        break;
-    default:
-        event->ignore();
-        break;
-
-
-    }
-
-    emit valueKeyboardChanged(keyXValue, keyYValue, keyZValue, keyRollValue, keyPitchValue, keyYawValue);
-}
-
+                                                                // Beginn Code AL
 void MainWindow::setTouchInputYawPitchRoll(double roll, double pitch, double yaw)
 {
     touchRollValue = roll;
@@ -2519,6 +1970,6 @@ void MainWindow::emitTouchInputValues()
 {
     if(this->inputMode == UASSkyeControlWidget::QGC_INPUT_MODE_TOUCH)
         //--> FIXME: HUD-Zoom-Slider and Map-Ring are not compatibel
-//        emit valueTouchInputChanged(touchXZoomValue, touchYValue, touchZValue, touchRollValue, touchPitchValue, touchYawValue);//TO DO Fix me, overwriting problem
+// emit valueTouchInputChanged(touchXZoomValue, touchYValue, touchZValue, touchRollValue, touchPitchValue, touchYawValue);//TO DO Fix me, overwriting problem
         emit valueTouchInputChanged(touchXValue, touchYValue, touchZValue, touchRollValue, touchPitchValue, touchYawValue);//TO DO Fix me, overwriting problem
-        }
+}                                                               // Ende Code AL
