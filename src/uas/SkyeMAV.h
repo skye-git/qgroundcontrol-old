@@ -15,6 +15,12 @@ public:
     SkyeMAV(MAVLinkProtocol* mavlink, int id);
     ~SkyeMAV();
 
+    enum QGC_INPUT_MODE {
+        QGC_INPUT_MODE_NONE,
+        QGC_INPUT_MODE_MOUSE,
+        QGC_INPUT_MODE_TOUCH,
+        QGC_INPUT_MODE_KEYBOARD
+    };
 
     /** @brief Get the airframe */
     int getAirframe() const
@@ -26,7 +32,15 @@ public:
     /** @brief Get mode */
     uint8_t getMode();
     /** @brief */
-    int getCurrentTrajectoryStamp() { return currentTrajectoryStamp; }
+    int getCurrentTrajectoryStamp()
+    {
+        return currentTrajectoryStamp;
+    }
+    /** @brief Get activated input mode for this uas */
+    QGC_INPUT_MODE getInputMode()
+    {
+        return inputMode;
+    }
 
 private:
     /** @brief Transforms a Vector from inertial to uas coordinates */
@@ -43,7 +57,7 @@ public slots:
     /** @brief Receive a MAVLink message from this MAV */
     void receiveMessage(LinkInterface* link, mavlink_message_t message);
     /** @brief Send the 6 DOF command (from 3d Mouse or Touch Input) to MAV */
-    void setManualControlCommands6DoF(double x , double y , double z , double a , double b, double c);
+    void setManual6DOFControlCommands(double x , double y , double z , double a , double b, double c);
     /** @brief Send the 8 DOF command (from Testphase Widget) to MAV */
     void setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 ); //AL (06.03.12)
     /** @brief Set multiplication factor for manual control */
@@ -52,6 +66,12 @@ public slots:
     void setSensitivityFactorRot(float val) {sensitivityFactorRot = val;}
 
     void followTrajectory();
+    /** @brief Set active Input Mode for this UAS */
+    void setInputMode(SkyeMAV::QGC_INPUT_MODE input){inputMode = input;}
+    /** @brief Report de-/activation of rotative 3DMouse input */
+    void changeMouseRotationActive(bool active){emit mouseButtonRotationChanged(active);}
+    /** @brief Report de-/activation of translative 3DMouse input */
+    void changeMouseTranslationActive(bool active){emit mouseButtonTranslationChanged(active);}
 
 signals:
     /** @brief Emit new detailed accu info for one accu pack
@@ -65,6 +85,8 @@ signals:
     **/
     void batteryPackChanged(mavlink_battery_status_t* battery);
     void reportUDPLinkFailed(QString errorStr);
+    void mouseButtonRotationChanged(bool active);
+    void mouseButtonTranslationChanged(bool active);
 
 
 protected:
@@ -108,6 +130,8 @@ protected:
     double cosPsi;
     double sinPsi;
     double fromItoC[9];
+
+    QGC_INPUT_MODE inputMode;
 };
 
 #endif // SKYEMAV_H

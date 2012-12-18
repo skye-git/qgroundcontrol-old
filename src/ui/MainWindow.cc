@@ -100,8 +100,7 @@ MainWindow::MainWindow(QWidget *parent):
     centerStackActionGroup(new QActionGroup(this)),
     styleFileName(QCoreApplication::applicationDirPath() + "/style-indoor.css"),
     autoReconnect(false),
-    lowPowerMode(false)//,
-    //inputMode(UASSkyeControlWidget::QGC_INPUT_MODE_NONE)
+    lowPowerMode(false)
 {
     hide();
     emit initStatusChanged("Loading UI Settings..");
@@ -402,11 +401,13 @@ void MainWindow::buildCommonWidgets()
         UASSkyeControlWidget *uasSkyeControl = dynamic_cast<UASSkyeControlWidget*>(skyeControlDockWidget->widget());
         if (uasSkyeControl)
         {
+            /*
             //FIXME: INPUT MODES and 3DMOUSE DE-/ACTIVATION
             connect(uasSkyeControl, SIGNAL(changedInput(int)), this, SLOT(setInputMode(int)));
             connect(this, SIGNAL(mouseTranslationEnabledChanged(bool)), uasSkyeControl, SLOT(changeMouseTranslationEnabled(bool)));
             connect(this, SIGNAL(mouseRotationEnabledChanged(bool)), uasSkyeControl, SLOT(changeMouseRotationEnabled(bool)));
             connect(this, SIGNAL(mouseStarted(bool)), uasSkyeControl, SLOT(mouseActivated(bool)));
+            */
             addTool(skyeControlDockWidget, tr("Skye Control"), Qt::RightDockWidgetArea);
         }
     } // Ende Code MA (06.03.2012) --------------------------
@@ -1339,12 +1340,12 @@ void MainWindow::setActiveUAS(UASInterface* uas)
     SkyeMAV* tmp = 0;
     tmp = dynamic_cast<SkyeMAV*>(UASManager::instance()->getActiveUAS());
     if (tmp) {
-        disconnect(this, SIGNAL(valueTouchInputChanged(double, double, double, double, double, double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));// Beginn und Ende Code AL (26.03.12)
+        disconnect(this, SIGNAL(valueTouchInputChanged(double, double, double, double, double, double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));// Beginn und Ende Code AL (26.03.12)
     }
 
     tmp = dynamic_cast<SkyeMAV*>(uas);
     if(tmp) {
-        connect(this, SIGNAL(valueTouchInputChanged(double,double,double,double,double,double)), tmp, SLOT(setManualControlCommands6DoF(double,double,double,double,double,double)));
+        connect(this, SIGNAL(valueTouchInputChanged(double,double,double,double,double,double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
     }
 #endif // QGC_USE_SKYE_INTERFACE      // Ende Code MA (27.02.2012) ---------------------------
 }
@@ -1887,6 +1888,7 @@ bool MainWindow::x11Event(XEvent *event)
     return false;
 }
 
+/*
 void MainWindow::setInputMode(int inputMode)
 {
 #ifdef QGC_USE_SKYE_INTERFACE
@@ -1894,7 +1896,7 @@ void MainWindow::setInputMode(int inputMode)
     {
     case 1:
             this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_MOUSE;
-            #if defined (MOUSE_ENABLED) || defined (MOUSE_ENABLED_WIN)
+            #if defined (MOUSE_ENABLED_LINUX) || defined (MOUSE_ENABLED_WIN)
             if ( !mouseInitialized )
             {
                 start3dMouse();
@@ -1921,6 +1923,7 @@ void MainWindow::setInputMode(int inputMode)
     qDebug() << "Changing input mode only available for SKYE";
 #endif //QGC_USE_SKYE_INTERFACE
 }
+*/
 
 #endif // MOUSE_ENABLED_LINUX
 
@@ -1968,8 +1971,16 @@ void MainWindow::setTouchInputXYZ(double x, double y, double z)
 
 void MainWindow::emitTouchInputValues()
 {
-    if(this->inputMode == UASSkyeControlWidget::QGC_INPUT_MODE_TOUCH)
-        //--> FIXME: HUD-Zoom-Slider and Map-Ring are not compatibel
-// emit valueTouchInputChanged(touchXZoomValue, touchYValue, touchZValue, touchRollValue, touchPitchValue, touchYawValue);//TO DO Fix me, overwriting problem
-        emit valueTouchInputChanged(touchXValue, touchYValue, touchZValue, touchRollValue, touchPitchValue, touchYawValue);//TO DO Fix me, overwriting problem
+#ifdef QGC_USE_SKYE_INTERFACE
+    SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getActiveUAS());
+    if (mav)
+    {
+        if(mav->getInputMode() == SkyeMAV::QGC_INPUT_MODE_TOUCH)
+        {
+            //--> FIXME: HUD-Zoom-Slider and Map-Ring are not compatibel
+    // emit valueTouchInputChanged(touchXZoomValue, touchYValue, touchZValue, touchRollValue, touchPitchValue, touchYawValue);//TO DO Fix me, overwriting problem
+            emit valueTouchInputChanged(touchXValue, touchYValue, touchZValue, touchRollValue, touchPitchValue, touchYawValue);//TO DO Fix me, overwriting problem
+        }
+    }
+#endif // QGC_USE_SKYE_INTERFACE
 }                                                               // Ende Code AL

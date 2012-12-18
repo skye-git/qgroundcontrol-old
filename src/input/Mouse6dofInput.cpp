@@ -127,7 +127,12 @@ void Mouse6dofInput::setActiveUAS(UASInterface* uas)
         if(tmp)
         {
             disconnect(this, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
-            // Todo: disconnect button mapping
+            SkyeMAV* mav = dynamic_cast<SkyeMAV*>(tmp);
+            if(mav)
+            {
+                disconnect(this, SIGNAL(mouseRotationActiveChanged(bool)), tmp, SLOT(changeMouseRotationActive(bool)));
+                disconnect(this, SIGNAL(mouseTranslationActiveChanged(bool)), tmp, SLOT(changeMouseTranslationActive(bool)));
+            }
         }
     }
 
@@ -135,8 +140,16 @@ void Mouse6dofInput::setActiveUAS(UASInterface* uas)
 
     tmp = dynamic_cast<UAS*>(this->uas);
     if(tmp) {
-                connect(this, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
-                // Todo: connect button mapping
+        connect(this, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
+        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(tmp);
+        if(mav)
+        {
+            connect(this, SIGNAL(mouseRotationActiveChanged(bool)), mav, SLOT(changeMouseRotationActive(bool)));
+            connect(this, SIGNAL(mouseTranslationActiveChanged(bool)), mav, SLOT(changeMouseTranslationActive(bool)));
+
+            emit mouseRotationActiveChanged(this->rotationActive);
+            emit mouseTranslationActiveChanged(this->translationActive);
+        }
     }
     if (!isRunning())
     {
@@ -183,7 +196,16 @@ void Mouse6dofInput::run()
             if (cValue > 1.0) cValue = 1.0;
             if (cValue < -1.0) cValue = -1.0;
 
-            emit mouse6dofChanged(xValue, yValue, zValue, aValue, bValue, cValue);
+            SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uas);
+            if (mav)
+            {
+                if (mav->getInputMode() == SkyeMAV::QGC_INPUT_MODE_MOUSE)
+                {
+                    emit mouse6dofChanged(xValue, yValue, zValue, aValue, bValue, cValue);
+                }
+            }else{
+                emit mouse6dofChanged(xValue, yValue, zValue, aValue, bValue, cValue);
+            }
         }
 
         // Sleep, update rate of 3d mouse is approx. 50 Hz (1000 ms / 50 = 20 ms)

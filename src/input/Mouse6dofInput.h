@@ -16,6 +16,7 @@
 #endif //MOUSE_ENABLED_WIN
 
 #include "UASInterface.h"
+#include "SkyeMAV.h"
 
 class Mouse6dofInput : public QThread
 {

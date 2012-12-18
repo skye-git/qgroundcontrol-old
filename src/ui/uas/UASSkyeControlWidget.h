@@ -44,6 +44,7 @@ This file is part of the QGROUNDCONTROL project
 #include <ui_UASSkyeControl.h>
 #include <UASInterface.h>
 //#include "Ui_UASSkyeControl.h"
+#include "SkyeMAV.h"
 
 /**
  * @brief Widget controlling one (skye) MAV
@@ -55,13 +56,6 @@ class UASSkyeControlWidget : public QWidget
 public:
     UASSkyeControlWidget(QWidget *parent = 0);
     ~UASSkyeControlWidget();
-
-    enum QGC_INPUT_MODE {
-        QGC_INPUT_MODE_NONE,
-        QGC_INPUT_MODE_MOUSE,
-        QGC_INPUT_MODE_TOUCH,
-        QGC_INPUT_MODE_KEYBOARD
-    };
 
 public slots:
     /** @brief Set the system this widget controls */
@@ -76,6 +70,8 @@ public slots:
     void updateState(int state);
     /** @brief Update internal state machine */
     void updateStatemachine();
+    /** @brief Update input buttons */
+    void updateInput(SkyeMAV::QGC_INPUT_MODE input);
     /** @brief Update 3dMouse button image */
     void changeMouseTranslationEnabled(bool transEnabled);
     /** @brief Update 3dMouse button image */
@@ -83,7 +79,7 @@ public slots:
 
 signals:
     void changedMode(int);
-    void changedInput(int);
+    void changedInput(SkyeMAV::QGC_INPUT_MODE);
     void changedSensitivityTransFactor(float);
     void changedSensitivityRotFactor(float);
 
@@ -116,7 +112,7 @@ signals:
         int uasId;                          ///< Reference to the current uas
         unsigned int uasMode;               ///< Current uas mode
         bool engineOn;                      ///< Engine state
-        QGC_INPUT_MODE inputMode;           ///< Current device for input
+        SkyeMAV::QGC_INPUT_MODE inputMode;           ///< Current device for input
         bool mouseTranslationEnabled;       ///< True when translational motions enabled
         bool mouseRotationEnabled;          ///< True when rotational motions enabled
         float sensitivityFactorTrans;       ///< Gain rotational manual inputs.

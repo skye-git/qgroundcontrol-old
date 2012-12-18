@@ -248,9 +248,6 @@ public slots:
     /** @brief Update the window name */
     void configureWindowName();
 
-    /** @brief Set input device to control uav */       // Begin Code MA
-    void setInputMode(int inputMode);                   // Ende Code MA
-
 
     /** @Collect Rotational TouchInput from HUD */      // Beginn Code AL (11.04.12)
     void setTouchInputYawPitchRoll(double roll, double pitch, double yaw);
@@ -451,7 +448,6 @@ protected:
 
 private:
     Ui::MainWindow ui;
-    UASSkyeControlWidget::QGC_INPUT_MODE inputMode; // Beginn Ende Code MA (07.03.2012)
 
     QString getWindowStateKey();
     QString getWindowGeometryKey();

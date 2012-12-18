@@ -47,14 +47,13 @@ This file is part of the PIXHAWK project
 
 #include "UASSkyeControlWidget.h"
 #include "UASManager.h"
-#include "SkyeMAV.h"
 #include "QGC.h"
 
 UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     uasId(0),
     uasMode(0),
     engineOn(false),
-    inputMode(QGC_INPUT_MODE_NONE),
+    inputMode(SkyeMAV::QGC_INPUT_MODE_NONE),
     mouseTranslationEnabled(true),
     mouseRotationEnabled(true),
     sensitivityFactorTrans(QGC_SKYE_DEFAULT_SENS_DIRECT_TRANS),
@@ -78,9 +77,9 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     modeButtonGroup->addButton((ui.halfAutomaticControlButton));
     modeButtonGroup->addButton((ui.fullAutomaticControlButton));
 
-    ui.mouseButton->setChecked(inputMode == QGC_INPUT_MODE_MOUSE);
-    ui.touchButton->setChecked(inputMode == QGC_INPUT_MODE_TOUCH);
-    ui.keyboardButton->setChecked(inputMode == QGC_INPUT_MODE_KEYBOARD);
+    ui.mouseButton->setChecked(inputMode == SkyeMAV::QGC_INPUT_MODE_MOUSE);
+    ui.touchButton->setChecked(inputMode == SkyeMAV::QGC_INPUT_MODE_TOUCH);
+    ui.keyboardButton->setChecked(inputMode == SkyeMAV::QGC_INPUT_MODE_KEYBOARD);
     inputButtonGroup = new QButtonGroup;
     inputButtonGroup->addButton(ui.mouseButton);
     inputButtonGroup->addButton((ui.touchButton));
@@ -138,7 +137,9 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         {
             disconnect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
             disconnect(mav, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
-
+            disconnect(this, SIGNAL(changedInput(SkyeMAV::QGC_INPUT_MODE)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
+            disconnect(mav, SIGNAL(mouseButtonRotationChanged(bool)), this, SLOT(changeMouseRotationEnabled(bool)));
+            disconnect(mav, SIGNAL(mouseButtonTranslationChanged(bool)), this, SLOT(changeMouseTranslationEnabled(bool)));
 
             disconnect(ui.bluefoxLeftButton, SIGNAL(clicked()), this, SLOT(triggerLeftBluefoxImageShot()));
             disconnect(ui.bluefoxRightButton, SIGNAL(clicked()), this, SLOT(triggerRightBluefoxImageShot()));
@@ -155,12 +156,16 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
 
         updateMode(mav->getUASID(), mav->getUASMode());
         updateState(mav->getUASState());
+        updateInput(mav->getInputMode());
 
         // Connect user interface controls
         connect(ui.controlButton, SIGNAL(clicked()), this, SLOT(cycleContextButton()));
         connect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
         connect(mav, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
+        connect(mav, SIGNAL(mouseButtonRotationChanged(bool)), this, SLOT(changeMouseRotationEnabled(bool)));
+        connect(mav, SIGNAL(mouseButtonTranslationChanged(bool)), this, SLOT(changeMouseTranslationEnabled(bool)));
 
+        connect(this, SIGNAL(changedInput(SkyeMAV::QGC_INPUT_MODE)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
         connect(this, SIGNAL(changedSensitivityTransFactor(float)), mav, SLOT(setSensitivityFactorTrans(float)));
         connect(this, SIGNAL(changedSensitivityRotFactor(float)), mav, SLOT(setSensitivityFactorRot(float)));
         emit changedSensitivityTransFactor(sensitivityFactorTrans);
@@ -289,6 +294,31 @@ void UASSkyeControlWidget::updateState(int state)
 #endif // QGC_USE_SKYE_INTERFACE
 }
 
+void UASSkyeControlWidget::updateInput(SkyeMAV::QGC_INPUT_MODE input)
+{
+#ifdef QGC_USE_SKYE_INTERFACE
+    switch ((int)input)
+    {
+    case (int)SkyeMAV::QGC_INPUT_MODE_NONE:
+        inputButtonGroup->setExclusive(false);
+        ui.mouseButton->setChecked(false);
+        ui.touchButton->setChecked(false);
+        ui.keyboardButton->setChecked(false);
+        inputButtonGroup->setExclusive(true);
+        break;
+    case (int)SkyeMAV::QGC_INPUT_MODE_MOUSE:
+        ui.mouseButton->setChecked(true);
+        break;
+    case (int)SkyeMAV::QGC_INPUT_MODE_TOUCH:
+        ui.touchButton->setChecked(true);
+        break;
+    case (int)SkyeMAV::QGC_INPUT_MODE_KEYBOARD:
+        ui.keyboardButton->setChecked(true);
+        break;
+    }
+#endif // QGC_USE_SKYE_INTERFACE
+}
+
 void UASSkyeControlWidget::setDirectControlMode(bool checked)
 {
     if (checked)
@@ -397,7 +427,7 @@ void UASSkyeControlWidget::setInputMouse(bool checked)
 #ifdef QGC_USE_SKYE_INTERFACE
     if (checked)
     {
-        inputMode = QGC_INPUT_MODE_MOUSE;
+        inputMode = SkyeMAV::QGC_INPUT_MODE_MOUSE;
         emit changedInput(inputMode);
         ui.lastActionLabel->setText(tr("3dMouse activated!"));
     }
@@ -410,7 +440,7 @@ void UASSkyeControlWidget::setInputTouch(bool checked)
 #ifdef QGC_USE_SKYE_INTERFACE
     if (checked)
     {
-        inputMode = QGC_INPUT_MODE_TOUCH;
+        inputMode = SkyeMAV::QGC_INPUT_MODE_TOUCH;
         emit changedInput(inputMode);
         ui.lastActionLabel->setText(tr("Touchscreen activated!"));
     }
@@ -422,7 +452,7 @@ void UASSkyeControlWidget::setInputKeyboard(bool checked)
 #ifdef QGC_USE_SKYE_INTERFACE
     if (checked)
     {
-        inputMode = QGC_INPUT_MODE_KEYBOARD;
+        inputMode = SkyeMAV::QGC_INPUT_MODE_KEYBOARD;
         emit changedInput(inputMode);
         ui.lastActionLabel->setText(tr("Keyboard activated!"));
     }

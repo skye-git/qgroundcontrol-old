@@ -15,23 +15,24 @@
 #define QGC_SKYE_LOOKAHEAD 2.0
 
 SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
-UAS(mavlink, id),
-airframe(QGC_AIRFRAME_SKYE),
-manualXThrust(0),
-manualYThrust(0),
-manualZThrust(0),
-manualXMoment(0),
-manualYMoment(0),
-manualZMoment(0),
-manualXVel(0),
-manualYVel(0),
-manualZVel(0),
-manualXRot(0),
-manualYRot(0),
-manualZRot(0),
-sensitivityFactorTrans(0),
-sensitivityFactorRot(0),
-currentTrajectoryStamp(0)
+    UAS(mavlink, id),
+    airframe(QGC_AIRFRAME_SKYE),
+    manualXThrust(0),
+    manualYThrust(0),
+    manualZThrust(0),
+    manualXMoment(0),
+    manualYMoment(0),
+    manualZMoment(0),
+    manualXVel(0),
+    manualYVel(0),
+    manualZVel(0),
+    manualXRot(0),
+    manualYRot(0),
+    manualZRot(0),
+    sensitivityFactorTrans(0),
+    sensitivityFactorRot(0),
+    currentTrajectoryStamp(0),
+    inputMode(QGC_INPUT_MODE_NONE)
 {
     imagePacketsArrived = 0;
     this->setUASName("SKYE");
@@ -149,7 +150,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
 #endif // QGC_USE_SKYE_INTERFACE
 }
 
-void SkyeMAV::setManualControlCommands6DoF(double x , double y , double z , double a , double b, double c)
+void SkyeMAV::setManual6DOFControlCommands(double x , double y , double z , double a , double b, double c)
 {
 #ifdef QGC_USE_SKYE_INTERFACE
 
