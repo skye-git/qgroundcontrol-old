@@ -145,7 +145,7 @@ void HeightProfile::activeUASSet(UASInterface *uas)
         // Connect the waypoint manager / data storage to the UI
         connect(currWPManager, SIGNAL(waypointEditableListChanged(int)), this, SLOT(updateWaypointList(int)));
         connect(currWPManager, SIGNAL(waypointEditableChanged(int, Waypoint*)), this, SLOT(updateWaypoint(int,Waypoint*)));
-        connect(this, SIGNAL(waypointChanged(Waypoint*)), currWPManager, SLOT(notifyOfChangeEditable(Waypoint*)));
+        //FIXME: connect(this, SIGNAL(waypointChanged(Waypoint*)), currWPManager, SLOT(notifyOfChangeEditable(Waypoint*)));
         updateSelectedSystem(uas->getUASID());
 
         // Delete all waypoints and add waypoint from new system

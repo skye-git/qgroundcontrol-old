@@ -141,9 +141,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
             disconnect(mav, SIGNAL(mouseButtonRotationChanged(bool)), this, SLOT(changeMouseRotationEnabled(bool)));
             disconnect(mav, SIGNAL(mouseButtonTranslationChanged(bool)), this, SLOT(changeMouseTranslationEnabled(bool)));
 
-            disconnect(ui.bluefoxLeftButton, SIGNAL(clicked()), this, SLOT(triggerLeftBluefoxImageShot()));
-            disconnect(ui.bluefoxRightButton, SIGNAL(clicked()), this, SLOT(triggerRightBluefoxImageShot()));
-            disconnect(ui.prosilicaButton, SIGNAL(clicked()), this, SLOT(triggerProsilicaImageShot()));
+
         }
     }
 
@@ -171,12 +169,6 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         emit changedSensitivityTransFactor(sensitivityFactorTrans);
         emit changedSensitivityRotFactor(sensitivityFactorRot);
 
-        // FIXME: Connect SkyeMAV and activate touch
-
-
-        connect(ui.bluefoxLeftButton, SIGNAL(clicked()), this, SLOT(triggerLeftBluefoxImageShot()));
-        connect(ui.bluefoxRightButton, SIGNAL(clicked()), this, SLOT(triggerRightBluefoxImageShot()));
-        connect(ui.prosilicaButton, SIGNAL(clicked()), this, SLOT(triggerProsilicaImageShot()));
     }
 
 

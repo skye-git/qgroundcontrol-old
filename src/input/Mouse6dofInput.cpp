@@ -130,6 +130,7 @@ void Mouse6dofInput::setActiveUAS(UASInterface* uas)
             disconnect(this, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
             disconnect(this, SIGNAL(mouseRotationActiveChanged(bool)), mav, SLOT(changeMouseRotationActive(bool)));
             disconnect(this, SIGNAL(mouseTranslationActiveChanged(bool)), mav, SLOT(changeMouseTranslationActive(bool)));
+            disconnect(mav, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(updateInputMode(SkyeMAV::QGC_INPUT_MODE)));
         }else{
             tmp = dynamic_cast<UAS*>(this->uas);
             if(tmp)
@@ -148,7 +149,6 @@ void Mouse6dofInput::setActiveUAS(UASInterface* uas)
         connect(this, SIGNAL(mouseRotationActiveChanged(bool)), mav, SLOT(changeMouseRotationActive(bool)));
         connect(this, SIGNAL(mouseTranslationActiveChanged(bool)), mav, SLOT(changeMouseTranslationActive(bool)));
         connect(mav, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(updateInputMode(SkyeMAV::QGC_INPUT_MODE)));
-
 
         emit mouseRotationActiveChanged(this->rotationActive);
         emit mouseTranslationActiveChanged(this->translationActive);

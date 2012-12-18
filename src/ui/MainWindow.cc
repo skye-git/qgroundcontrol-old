@@ -101,7 +101,14 @@ MainWindow::MainWindow(QWidget *parent):
     styleFileName(QCoreApplication::applicationDirPath() + "/style-indoor.css"),
     autoReconnect(false),
     lowPowerMode(false),
-    inputMode(SkyeMAV::QGC_INPUT_MODE_NONE)     // FIXME: Remove asap, Code MA
+    inputMode(SkyeMAV::QGC_INPUT_MODE_NONE),     // FIXME: Remove asap, Code MA
+    touchXValue(0),
+    touchYValue(0),
+    touchZValue(0),
+    touchXZoomValue(0),
+    touchRollValue(0),
+    touchPitchValue(0),
+    touchYawValue(0)
 {
     hide();
     emit initStatusChanged("Loading UI Settings..");
@@ -402,10 +409,6 @@ void MainWindow::buildCommonWidgets()
         UASSkyeControlWidget *uasSkyeControl = dynamic_cast<UASSkyeControlWidget*>(skyeControlDockWidget->widget());
         if (uasSkyeControl)
         {
-
-            //FIXME: INPUT MODES and 3DMOUSE DE-/ACTIVATION
-            connect(uasSkyeControl, SIGNAL(changedInput(int)), this, SLOT(setInputMode(int)));
-
             addTool(skyeControlDockWidget, tr("Skye Control"), Qt::RightDockWidgetArea);
         }
     } // Ende Code MA (06.03.2012) --------------------------
@@ -1338,11 +1341,13 @@ void MainWindow::setActiveUAS(UASInterface* uas)
     SkyeMAV* tmp = 0;
     tmp = dynamic_cast<SkyeMAV*>(UASManager::instance()->getActiveUAS());
     if (tmp) {
+        disconnect(tmp, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
         disconnect(this, SIGNAL(valueTouchInputChanged(double, double, double, double, double, double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));// Beginn und Ende Code AL (26.03.12)
     }
 
     tmp = dynamic_cast<SkyeMAV*>(uas);
     if(tmp) {
+        connect(tmp, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
         connect(this, SIGNAL(valueTouchInputChanged(double,double,double,double,double,double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
     }
 #endif // QGC_USE_SKYE_INTERFACE      // Ende Code MA (27.02.2012) ---------------------------
