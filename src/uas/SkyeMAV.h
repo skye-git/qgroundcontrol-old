@@ -67,7 +67,7 @@ public slots:
 
     void followTrajectory();
     /** @brief Set active Input Mode for this UAS */
-    void setInputMode(SkyeMAV::QGC_INPUT_MODE input){inputMode = input;}
+    void setInputMode(SkyeMAV::QGC_INPUT_MODE input);
     /** @brief Report de-/activation of rotative 3DMouse input */
     void changeMouseRotationActive(bool active){emit mouseButtonRotationChanged(active);}
     /** @brief Report de-/activation of translative 3DMouse input */
@@ -87,6 +87,7 @@ signals:
     void reportUDPLinkFailed(QString errorStr);
     void mouseButtonRotationChanged(bool active);
     void mouseButtonTranslationChanged(bool active);
+    void inputModeChanged(SkyeMAV::QGC_INPUT_MODE);
 
 
 protected:

@@ -38,6 +38,11 @@ public:
 protected:
     void init();
 
+#ifdef MOUSE_ENABLED_LINUX
+    QWidget* parentWidget;
+    Display* display;
+#endif // MOUSE_ENABLED_LINUX
+
     UASInterface* uas;
     bool done;
     bool mouseActive;
@@ -89,6 +94,8 @@ public slots:
     /** @brief Get an XEvent to check it for an 3DMouse event (motion or button) */
     void handleX11Event(XEvent* event);
 #endif //MOUSE_ENABLED_LINUX
+    /** @brief Input mode changed. Start 3dMouse if requested. */
+    void updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode);
 
 };
 

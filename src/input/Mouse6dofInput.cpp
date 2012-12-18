@@ -60,11 +60,12 @@ Mouse6dofInput::Mouse6dofInput(QWidget* parent) :
     zValue(0.0),
     aValue(0.0),
     bValue(0.0),
-    cValue(0.0)
+    cValue(0.0),
+    parentWidget(parent)
 {
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setActiveUAS(UASInterface*)));
 
-    if (!mouseActive)
+    if (true)       //(!mouseActive)
     {
 //        // man visudo --> then you can omit giving password (success not guarantied..)
 //        qDebug() << "Starting 3DxWare Daemon for 3dConnexion 3dMouse";
@@ -123,34 +124,43 @@ void Mouse6dofInput::setActiveUAS(UASInterface* uas)
     UAS* tmp = 0;
     if (this->uas)
     {
-        tmp = dynamic_cast<UAS*>(this->uas);
-        if(tmp)
+        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(tmp);
+        if(mav)
         {
-            disconnect(this, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
-            SkyeMAV* mav = dynamic_cast<SkyeMAV*>(tmp);
-            if(mav)
+            disconnect(this, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
+            disconnect(this, SIGNAL(mouseRotationActiveChanged(bool)), mav, SLOT(changeMouseRotationActive(bool)));
+            disconnect(this, SIGNAL(mouseTranslationActiveChanged(bool)), mav, SLOT(changeMouseTranslationActive(bool)));
+        }else{
+            tmp = dynamic_cast<UAS*>(this->uas);
+            if(tmp)
             {
-                disconnect(this, SIGNAL(mouseRotationActiveChanged(bool)), tmp, SLOT(changeMouseRotationActive(bool)));
-                disconnect(this, SIGNAL(mouseTranslationActiveChanged(bool)), tmp, SLOT(changeMouseTranslationActive(bool)));
+                disconnect(this, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
             }
         }
     }
 
     this->uas = uas;
 
-    tmp = dynamic_cast<UAS*>(this->uas);
-    if(tmp) {
-        connect(this, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
-        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(tmp);
-        if(mav)
-        {
-            connect(this, SIGNAL(mouseRotationActiveChanged(bool)), mav, SLOT(changeMouseRotationActive(bool)));
-            connect(this, SIGNAL(mouseTranslationActiveChanged(bool)), mav, SLOT(changeMouseTranslationActive(bool)));
+    SkyeMAV* mav = dynamic_cast<SkyeMAV*>(tmp);
+    if(mav)
+    {
+        connect(this, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
+        connect(this, SIGNAL(mouseRotationActiveChanged(bool)), mav, SLOT(changeMouseRotationActive(bool)));
+        connect(this, SIGNAL(mouseTranslationActiveChanged(bool)), mav, SLOT(changeMouseTranslationActive(bool)));
+        connect(mav, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(updateInputMode(SkyeMAV::QGC_INPUT_MODE)));
 
-            emit mouseRotationActiveChanged(this->rotationActive);
-            emit mouseTranslationActiveChanged(this->translationActive);
+
+        emit mouseRotationActiveChanged(this->rotationActive);
+        emit mouseTranslationActiveChanged(this->translationActive);
+    }else{
+
+        tmp = dynamic_cast<UAS*>(this->uas);
+        if(tmp)
+        {
+            connect(this, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
         }
     }
+
     if (!isRunning())
     {
         start();
@@ -281,7 +291,7 @@ void Mouse6dofInput::handleX11Event(XEvent *event)
 
     MagellanFloatEvent MagellanEvent;
 
-    Display *display = QX11Info::display();
+    display = QX11Info::display();
     if(!display)
     {
         qDebug() << "Cannot open display!" << endl;
@@ -350,3 +360,40 @@ void Mouse6dofInput::handleX11Event(XEvent *event)
     }
 }
 #endif //MOUSE_ENABLED_LINUX
+
+
+void Mouse6dofInput::updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
+{
+    if (inputMode == SkyeMAV::QGC_INPUT_MODE_MOUSE)
+    {
+        ///////////////// Reinitialize 3DMouse //////////////////
+        display = QX11Info::display();
+        if(!display)
+        {
+            qDebug() << "Cannot open display!" << endl;
+        }
+        if ( !MagellanInit( display, parentWidget->winId() ) )
+        {
+            QMessageBox msgBox;
+            msgBox.setIcon(QMessageBox::Information);
+            msgBox.setText(tr("No 3DxWare driver is running."));
+            msgBox.setInformativeText(tr("Enter in Terminal 'sudo /etc/3DxWare/daemon/3dxsrv -d usb' and then restart QGroundControl."));
+            msgBox.setStandardButtons(QMessageBox::Ok);
+            msgBox.setDefaultButton(QMessageBox::Ok);
+            msgBox.exec();
+
+            qDebug() << "No 3DxWare driver is running!";
+            return;
+        }
+        else
+        {
+            qDebug() << "Initialized 3dMouse";
+            mouseActive = true;
+        }
+    }
+    else
+    {
+        MagellanClose(display);
+        mouseActive = false;
+    }
+}

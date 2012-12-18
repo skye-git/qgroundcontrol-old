@@ -169,7 +169,7 @@ void SkyeMAV::setManual6DOFControlCommands(double x , double y , double z , doub
         manualZRot = c * sensitivityFactorRot;
         qDebug() << "Set lift and manual rotation for HAC" << z << a << b << c;
 
-    }else if (mode == MAV_MODE_DIRECT_CONTROL_ARMED || MAV_MODE_ASSISTED_CONTROL_ARMED)
+    }else if (mode == MAV_MODE_DIRECT_CONTROL_ARMED || mode == MAV_MODE_ASSISTED_CONTROL_ARMED)
     {
         manualXVel = x * sensitivityFactorTrans;
         manualYVel = y * sensitivityFactorTrans;
@@ -448,4 +448,11 @@ void SkyeMAV::updateTrigonometry()
     fromItoC[7] = cosPhi*sinTheta*sinPsi - sinPhi*cosPsi;
     fromItoC[8] = cosPhi*cosTheta;
 //    qDebug() << "I to C" << fromItoC[0] << fromItoC[1] << fromItoC[2] << fromItoC[3] << fromItoC[4] << fromItoC[5] << fromItoC[6] << fromItoC[7] << fromItoC[8];
+}
+
+
+void SkyeMAV::setInputMode(SkyeMAV::QGC_INPUT_MODE input)
+{
+    inputMode = input;
+    emit inputModeChanged(inputMode);
 }

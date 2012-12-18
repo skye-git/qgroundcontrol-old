@@ -257,6 +257,9 @@ public slots:
     void setTouchInputXYZ(double x, double y, double z);
     /** @brief Emit TouchInput values */
     void emitTouchInputValues();                        // Ende Code AL (11.04.12)
+    /** @brief Set input mode, as this is still needed for the touch interface.
+        FIXME: Remove that asap to separate touch interface */
+    void setInputMode(SkyeMAV::QGC_INPUT_MODE inputMode);
 
 
 signals:
@@ -448,6 +451,8 @@ protected:
 
 private:
     Ui::MainWindow ui;
+
+    SkyeMAV::QGC_INPUT_MODE inputMode; // FIXME: Remove asap.. Beginn Ende Code MA (07.03.2012)
 
     QString getWindowStateKey();
     QString getWindowGeometryKey();

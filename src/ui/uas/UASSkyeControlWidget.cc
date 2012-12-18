@@ -171,6 +171,9 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         emit changedSensitivityTransFactor(sensitivityFactorTrans);
         emit changedSensitivityRotFactor(sensitivityFactorRot);
 
+        // FIXME: Connect SkyeMAV and activate touch
+
+
         connect(ui.bluefoxLeftButton, SIGNAL(clicked()), this, SLOT(triggerLeftBluefoxImageShot()));
         connect(ui.bluefoxRightButton, SIGNAL(clicked()), this, SLOT(triggerRightBluefoxImageShot()));
         connect(ui.prosilicaButton, SIGNAL(clicked()), this, SLOT(triggerProsilicaImageShot()));

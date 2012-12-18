@@ -100,7 +100,8 @@ MainWindow::MainWindow(QWidget *parent):
     centerStackActionGroup(new QActionGroup(this)),
     styleFileName(QCoreApplication::applicationDirPath() + "/style-indoor.css"),
     autoReconnect(false),
-    lowPowerMode(false)
+    lowPowerMode(false),
+    inputMode(SkyeMAV::QGC_INPUT_MODE_NONE)     // FIXME: Remove asap, Code MA
 {
     hide();
     emit initStatusChanged("Loading UI Settings..");
@@ -401,13 +402,10 @@ void MainWindow::buildCommonWidgets()
         UASSkyeControlWidget *uasSkyeControl = dynamic_cast<UASSkyeControlWidget*>(skyeControlDockWidget->widget());
         if (uasSkyeControl)
         {
-            /*
+
             //FIXME: INPUT MODES and 3DMOUSE DE-/ACTIVATION
             connect(uasSkyeControl, SIGNAL(changedInput(int)), this, SLOT(setInputMode(int)));
-            connect(this, SIGNAL(mouseTranslationEnabledChanged(bool)), uasSkyeControl, SLOT(changeMouseTranslationEnabled(bool)));
-            connect(this, SIGNAL(mouseRotationEnabledChanged(bool)), uasSkyeControl, SLOT(changeMouseRotationEnabled(bool)));
-            connect(this, SIGNAL(mouseStarted(bool)), uasSkyeControl, SLOT(mouseActivated(bool)));
-            */
+
             addTool(skyeControlDockWidget, tr("Skye Control"), Qt::RightDockWidgetArea);
         }
     } // Ende Code MA (06.03.2012) --------------------------
@@ -1888,32 +1886,35 @@ bool MainWindow::x11Event(XEvent *event)
     return false;
 }
 
-/*
-void MainWindow::setInputMode(int inputMode)
+
+void MainWindow::setInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
 {
 #ifdef QGC_USE_SKYE_INTERFACE
-    switch (inputMode)
+    switch ((int)inputMode)
     {
-    case 1:
-            this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_MOUSE;
+    case (int)SkyeMAV::QGC_INPUT_MODE_MOUSE:
+            this->inputMode = SkyeMAV::QGC_INPUT_MODE_MOUSE;
+            /*
             #if defined (MOUSE_ENABLED_LINUX) || defined (MOUSE_ENABLED_WIN)
             if ( !mouseInitialized )
             {
                 start3dMouse();
             }
             #endif // MOUSE_ENABLED or MOUSE_ENABLED_WIN
+            */
             emit emitTouchInputVisibility(false);
             break;
-    case 2:
-            this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_TOUCH;
+    case (int)SkyeMAV::QGC_INPUT_MODE_TOUCH:
+            this->inputMode = SkyeMAV::QGC_INPUT_MODE_TOUCH;
             emit emitTouchInputVisibility(true);
             break;
-    case 3:
-            this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_KEYBOARD;
+    case (int)SkyeMAV::QGC_INPUT_MODE_KEYBOARD:
+            this->inputMode = SkyeMAV::QGC_INPUT_MODE_KEYBOARD;
             emit emitTouchInputVisibility(false);
             break;
     default:
-            this->inputMode = UASSkyeControlWidget::QGC_INPUT_MODE_NONE;
+            this->inputMode = SkyeMAV::QGC_INPUT_MODE_NONE;
+            emit emitTouchInputVisibility(false);
             qDebug() << "No input device set!";
             break;
     }
@@ -1923,7 +1924,7 @@ void MainWindow::setInputMode(int inputMode)
     qDebug() << "Changing input mode only available for SKYE";
 #endif //QGC_USE_SKYE_INTERFACE
 }
-*/
+
 
 #endif // MOUSE_ENABLED_LINUX
 
