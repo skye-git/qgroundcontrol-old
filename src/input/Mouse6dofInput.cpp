@@ -269,7 +269,7 @@ void Mouse6dofInput::button3DMouseDown(int button)
     case 2:
     {
             translationActive = !translationActive;
-            emit mouseTranslationEnabledChanged(translationActive);
+            emit mouseTranslationActiveChanged(translationActive);
             qDebug() << "Changed 3DMouse Translation to" << (bool)translationActive;
         break;
     }
@@ -364,6 +364,16 @@ void Mouse6dofInput::handleX11Event(XEvent *event)
 
 void Mouse6dofInput::updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
 {
+#ifdef MOUSE_ENABLED_WIN
+    if (inputMode == SkyeMAV::QGC_INPUT_MODE_MOUSE)
+    {
+        mouseActive = true;
+    }else{
+        mouseActive = false;
+    }
+#endif //MOUSE_ENABLED_WIN
+
+#ifdef MOUSE_ENABLED_LINUX
     if (inputMode == SkyeMAV::QGC_INPUT_MODE_MOUSE)
     {
         ///////////////// Reinitialize 3DMouse //////////////////
@@ -396,4 +406,5 @@ void Mouse6dofInput::updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
         MagellanClose(display);
         mouseActive = false;
     }
+#endif // MOUSE_ENABLED_LINUX
 }

@@ -264,8 +264,10 @@ public slots:
 
 signals:
     void initStatusChanged(const QString& message);
+#ifdef MOUSE_ENABLED_LINUX
     /** @brief Forward X11Event to catch 3DMouse inputs */
     void x11EventOccured(XEvent *event);
+#endif //MOUSE_ENABLED_LINUX
     /** @brief Emits bool whether TouchInput Interface is shown or not */   // Beginn code AL(10.04.2012)
     void emitTouchInputVisibility(bool);
     /** @brief Emits new contol values for UAS given by keyboard in range [-1, 1] */
