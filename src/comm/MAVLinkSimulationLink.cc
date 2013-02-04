@@ -602,6 +602,7 @@ void MAVLinkSimulationLink::mainloop()
 //        }
 //        statusCounter++;
 
+/*
         static int detectionCounter = 6;
         if (detectionCounter % 10 == 0) {
 #ifdef MAVLINK_ENABLED_PIXHAWK
@@ -645,11 +646,12 @@ void MAVLinkSimulationLink::mainloop()
 #endif
         }
         detectionCounter++;
-
+*/
 
 
         status.voltage_battery = voltage * 1000; // millivolts
-        status.load = 33 * detectionCounter % 1000;
+        status.load = 33 * 1000;
+        //status.load = 33 * detectionCounter % 1000;
 
         // Pack message and get size of encoded byte string
         messageSize = mavlink_msg_sys_status_encode(systemId, componentId, &msg, &status);
