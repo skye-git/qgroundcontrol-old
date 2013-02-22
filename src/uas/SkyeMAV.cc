@@ -154,14 +154,14 @@ void SkyeMAV::setManual6DOFControlCommands(double x , double y , double z , doub
 {
 #ifdef QGC_USE_SKYE_INTERFACE
 
-    if (mode == MAV_MODE_FULL_AUTOMATIC_ARMED)
+    if (mode & MAV_MODE_FLAG_GUIDED_ENABLED)
     {
         manualXRot = a * sensitivityFactorRot;
         manualYRot = b * sensitivityFactorRot;
         manualZRot = c * sensitivityFactorRot;
         qDebug() << "Set manual rotation for FAC" << a << b << c;
 
-    }else if (mode == MAV_MODE_HALF_AUTOMATIC_ARMED)
+    }else if (mode & MAV_MODE_FLAG_AUTO_ENABLED)
     {
         manualZVel = z * sensitivityFactorTrans;
         manualXRot = a * sensitivityFactorRot;
@@ -169,7 +169,7 @@ void SkyeMAV::setManual6DOFControlCommands(double x , double y , double z , doub
         manualZRot = c * sensitivityFactorRot;
         qDebug() << "Set lift and manual rotation for HAC" << z << a << b << c;
 
-    }else if (mode == MAV_MODE_DIRECT_CONTROL_ARMED || mode == MAV_MODE_ASSISTED_CONTROL_ARMED)
+    }else if (mode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED)
     {
         manualXVel = x * sensitivityFactorTrans;
         manualYVel = y * sensitivityFactorTrans;
@@ -199,8 +199,6 @@ void SkyeMAV::sendManualControlCommands6DoF(double x, double y, double z, double
     mavlink_msg_setpoint_6dof_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (float)x, (float)y, (float)z, (float)phi, (float)theta, (float)psi);
     sendMessage(message);
     qDebug() << __FILE__ << __LINE__ << ": SENT 6DOF CONTROL MESSAGE:" << x << y << z << phi << theta << psi;
-
-
 
 #else
     Q_UNUSED(x);
