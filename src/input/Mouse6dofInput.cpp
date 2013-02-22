@@ -231,9 +231,9 @@ void Mouse6dofInput::motion3DMouse(std::vector<float> &motionData)
 
     if (translationActive)
     {
-        xValue = (double)1.0e2f*motionData[ 1 ] / mouse3DMax;
-        yValue = (double)1.0e2f*motionData[ 0 ] / mouse3DMax;
-        zValue = (double)1.0e2f*motionData[ 2 ] / mouse3DMax;
+        xValue = -(double)(0.05e2f*motionData[ 1 ] / mouse3DMax);
+        yValue = (double)(0.05e2f*motionData[ 0 ] / mouse3DMax);
+        zValue = (double)(0.05e2f*motionData[ 2 ] / mouse3DMax);
     }else{
         xValue = 0;
         yValue = 0;
@@ -241,9 +241,9 @@ void Mouse6dofInput::motion3DMouse(std::vector<float> &motionData)
     }
     if (rotationActive)
     {
-        aValue = (double)1.0e2f*motionData[ 4 ] / mouse3DMax;
-        bValue = (double)1.0e2f*motionData[ 3 ] / mouse3DMax;
-        cValue = (double)1.0e2f*motionData[ 5 ] / mouse3DMax;
+        aValue = -(double)(0.05e2f*motionData[ 4 ] / mouse3DMax);
+        bValue = (double)(0.05e2f*motionData[ 3 ] / mouse3DMax);
+        cValue = (double)(0.05e2f*motionData[ 5 ] / mouse3DMax);
     }else{
         aValue = 0;
         bValue = 0;
@@ -269,7 +269,7 @@ void Mouse6dofInput::button3DMouseDown(int button)
     case 2:
     {
             translationActive = !translationActive;
-            emit mouseTranslationEnabledChanged(translationActive);
+            emit mouseTranslationActiveChanged(translationActive);
             qDebug() << "Changed 3DMouse Translation to" << (bool)translationActive;
         break;
     }
@@ -364,6 +364,16 @@ void Mouse6dofInput::handleX11Event(XEvent *event)
 
 void Mouse6dofInput::updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
 {
+#ifdef MOUSE_ENABLED_WIN
+    if (inputMode == SkyeMAV::QGC_INPUT_MODE_MOUSE)
+    {
+        mouseActive = true;
+    }else{
+        mouseActive = false;
+    }
+#endif //MOUSE_ENABLED_WIN
+
+#ifdef MOUSE_ENABLED_LINUX
     if (inputMode == SkyeMAV::QGC_INPUT_MODE_MOUSE)
     {
         ///////////////// Reinitialize 3DMouse //////////////////
@@ -399,4 +409,5 @@ void Mouse6dofInput::updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
             mouseActive = false;
         }
     }
+#endif // MOUSE_ENABLED_LINUX
 }

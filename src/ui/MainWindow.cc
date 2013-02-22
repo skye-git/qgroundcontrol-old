@@ -1890,7 +1890,7 @@ bool MainWindow::x11Event(XEvent *event)
     //qDebug("XEvent occured...");
     return false;
 }
-
+#endif // MOUSE_ENABLED_LINUX
 
 void MainWindow::setInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
 {
@@ -1931,7 +1931,7 @@ void MainWindow::setInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
 }
 
 
-#endif // MOUSE_ENABLED_LINUX
+
 
 
                                                                 // Beginn Code AL
