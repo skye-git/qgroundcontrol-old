@@ -393,7 +393,10 @@ void Mouse6dofInput::updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
     }
     else
     {
-        MagellanClose(display);
-        mouseActive = false;
+        if (mouseActive)
+        {
+            MagellanClose(display);
+            mouseActive = false;
+        }
     }
 }
