@@ -76,6 +76,8 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     modeButtonGroup->addButton(ui.assistedControlButton);
     modeButtonGroup->addButton((ui.halfAutomaticControlButton));
     modeButtonGroup->addButton((ui.fullAutomaticControlButton));
+    ui.halfAutomaticControlButton->hide();
+    ui.fullAutomaticControlButton->hide();
 
     ui.mouseButton->setChecked(inputMode == SkyeMAV::QGC_INPUT_MODE_MOUSE);
     ui.touchButton->setChecked(inputMode == SkyeMAV::QGC_INPUT_MODE_TOUCH);
@@ -84,6 +86,7 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     inputButtonGroup->addButton(ui.mouseButton);
     inputButtonGroup->addButton((ui.touchButton));
     inputButtonGroup->addButton((ui.keyboardButton));
+    ui.keyboardButton->hide();
 
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 
@@ -271,10 +274,10 @@ void UASSkyeControlWidget::updateState(int state)
         engineOn = true;
         ui.controlButton->setText(tr("DISARM SYSTEM"));
         ui.controlButton->setStyleSheet("* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DD0044, stop: 1 #AA0022); border-color: yellow; color: yellow }");
-        ui.directControlButton->setDisabled(true);
-        ui.assistedControlButton->setDisabled(true);
-        ui.halfAutomaticControlButton->setDisabled(true);
-        ui.fullAutomaticControlButton->setDisabled(true);
+//        ui.directControlButton->setDisabled(true);
+//        ui.assistedControlButton->setDisabled(true);
+//        ui.halfAutomaticControlButton->setDisabled(true);
+//        ui.fullAutomaticControlButton->setDisabled(true);
         break;
     case (int)MAV_STATE_STANDBY:
         engineOn = false;
