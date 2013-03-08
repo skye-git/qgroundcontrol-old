@@ -804,20 +804,23 @@ void MAVLinkSimulationLink::writeBytes(const char* data, qint64 size)
                 mavlink_set_mode_t mode;
                 mavlink_msg_set_mode_decode(&msg, &mode);
                 // Set mode indepent of mode.target
-                system.base_mode = mode.base_mode;
+
 #ifdef QGC_USE_SKYE_INTERFACE                             // Beginn Code MA (13.03.2012)
                 if (system.base_mode & MAV_MODE_FLAG_DECODE_POSITION_SAFETY)
                 {
+                    system.base_mode = mode.base_mode;
                     system.system_status = MAV_STATE_ACTIVE;
                 }
                 else
                 {
                     system.system_status = MAV_STATE_STANDBY;
+                    system.base_mode = MAV_MODE_PREFLIGHT;
                 }
 
 #endif                                                  // Ende Code MA
             }
             break;
+
             case MAVLINK_MSG_ID_SET_LOCAL_POSITION_SETPOINT:
             {
                 mavlink_set_local_position_setpoint_t set;
@@ -843,6 +846,20 @@ void MAVLinkSimulationLink::writeBytes(const char* data, qint64 size)
                 mavlink_msg_command_long_decode(&msg, &action);
 
                 qDebug() << "SIM" << "received action" << action.command << "for system" << action.target_system;
+
+                if (action.command == MAV_CMD_DO_SET_MODE)
+                {
+                    if ((int)action.param1 & MAV_MODE_FLAG_DECODE_POSITION_SAFETY)
+                    {
+                        system.base_mode = (int)action.param1;
+                        system.system_status = MAV_STATE_ACTIVE;
+                    }
+                    else
+                    {
+                        system.system_status = MAV_STATE_STANDBY;
+                        system.base_mode = MAV_MODE_PREFLIGHT;
+                    }
+                }
 
                 // FIXME MAVLINKV10PORTINGNEEDED
 //                switch (action.action) {

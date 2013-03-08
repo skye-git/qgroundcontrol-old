@@ -230,7 +230,9 @@ void UASSkyeControlWidget::updateMode(int uas,int baseMode)
         QString gray  = "* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #999999, stop: 1 #444444)}";
 		if (uasMode == MAV_MODE_PREFLIGHT)
         {
-            // Nothing to do
+            ui.directControlButton->setStyleSheet(gray);
+            ui.rateControlButton->setStyleSheet(gray);
+            ui.attitudeControlButton->setStyleSheet(gray);
 		}
         if ((uasMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) || (uasMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE))
         {
@@ -337,9 +339,9 @@ void UASSkyeControlWidget::setDirectControlMode()
     if (engineOn) {
         newMode = newMode | MAV_MODE_FLAG_SAFETY_ARMED;
 
-//    if ( !(uasMode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED) ) {
+    if ( !(uasMode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED) || (uasMode & MAV_MODE_FLAG_STABILIZE_ENABLED) ) {
         newMode = newMode | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
-//    }
+    }
 
     transmitMode(newMode);
 
@@ -387,7 +389,7 @@ void UASSkyeControlWidget::setAttitudeControlMode()
         if ( (uasMode & MAV_MODE_FLAG_CUSTOM_MODE_ENABLED) || !(uasMode & MAV_MODE_FLAG_STABILIZE_ENABLED) ) {
             newMode |= MAV_MODE_FLAG_STABILIZE_ENABLED;
         } else {
-            newMode |= MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
+            newMode |= MAV_MODE_FLAG_CUSTOM_MODE_ENABLED | MAV_MODE_FLAG_STABILIZE_ENABLED;
         }
 
         transmitMode(newMode);

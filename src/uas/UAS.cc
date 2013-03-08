@@ -2845,16 +2845,20 @@ QString UAS::getShortModeTextFor(int id)
     // BASE MODE DECODING
     if (modeid & (uint8_t)MAV_MODE_FLAG_DECODE_POSITION_AUTO)
     {
-        mode += "AUTO";
+        mode += "|AUTO";
     }
     else if (modeid & (uint8_t)MAV_MODE_FLAG_DECODE_POSITION_GUIDED)
     {
         mode += "|STABILIZED";
     }
-//    if (modeid & (uint8_t)MAV_MODE_FLAG_DECODE_POSITION_STABILIZE)
-//    {
-//        mode += "|STAB";
-//    }
+    if (modeid & (uint8_t)MAV_MODE_FLAG_DECODE_POSITION_STABILIZE)
+    {
+        mode += "|STAB";
+    }
+    if (modeid & (uint8_t)MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE)
+    {
+        mode += "|RATE";
+    }
     else if (modeid & (uint8_t)MAV_MODE_FLAG_DECODE_POSITION_TEST)
     {
         mode += "|TEST";
