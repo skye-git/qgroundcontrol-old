@@ -332,30 +332,47 @@ void UASSkyeControlWidget::updateInput(SkyeMAV::QGC_INPUT_MODE input)
 void UASSkyeControlWidget::setDirectControlMode()
 {
 #ifdef  QGC_USE_SKYE_INTERFACE
+
+    uint8_t newMode = MAV_MODE_PREFLIGHT;
+    if (engineOn) {
+        newMode = newMode | MAV_MODE_FLAG_SAFETY_ARMED;
+
+//    if ( !(uasMode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED) ) {
+        newMode = newMode | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
+//    }
+
+    transmitMode(newMode);
+
     QString white = "* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DDDDDD, stop: 1 #999999)}";
-	if ( !(uasMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) ) {
-		transmitMode(MAV_MODE_FLAG_DECODE_POSITION_MANUAL);
-
-	} else {
-
-        transmitMode(MAV_MODE_PREFLIGHT);
-    }
     ui.directControlButton->setStyleSheet(white);
+
+    } else {
+        ui.lastActionLabel->setText("Arm system first");
+    }
+
 #endif  // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::setRateControlMode()
 {
 #ifdef QGC_USE_SKYE_INTERFACE
-    QString white = "* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DDDDDD, stop: 1 #999999)}";
+    uint8_t newMode = MAV_MODE_PREFLIGHT;
+    if (engineOn) {
+        newMode = newMode | MAV_MODE_FLAG_SAFETY_ARMED;
 
-	if ( !(uasMode & MAV_MODE_FLAG_CUSTOM_MODE_ENABLED) ) {
-        transmitMode(MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_CUSTOM_MODE_ENABLED);
-	} else {
+        if ( !(uasMode & MAV_MODE_FLAG_CUSTOM_MODE_ENABLED) ) {
+            newMode |= MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
+        } else {
+            newMode |= MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
+        }
 
-        transmitMode(MAV_MODE_PREFLIGHT);
-	}
-    ui.rateControlButton->setStyleSheet(white);
+        transmitMode(newMode);
+
+        QString white = "* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DDDDDD, stop: 1 #999999)}";
+        ui.rateControlButton->setStyleSheet(white);
+    } else {
+        ui.lastActionLabel->setText("Arm system first");
+    }
 
 #endif // QGC_USE_SKYE_INTERFACE
 }
@@ -363,15 +380,24 @@ void UASSkyeControlWidget::setRateControlMode()
 void UASSkyeControlWidget::setAttitudeControlMode()
 {
 #ifdef QGC_USE_SKYE_INTERFACE
-    QString white = "* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DDDDDD, stop: 1 #999999)}";
+    uint8_t newMode = MAV_MODE_PREFLIGHT;
+    if (engineOn) {
+        newMode = newMode | MAV_MODE_FLAG_SAFETY_ARMED;
 
-    if ( (uasMode & MAV_MODE_FLAG_CUSTOM_MODE_ENABLED) || !(uasMode & MAV_MODE_FLAG_STABILIZE_ENABLED) ) {
-        transmitMode(MAV_MODE_FLAG_STABILIZE_ENABLED);
-	} else {
+        if ( (uasMode & MAV_MODE_FLAG_CUSTOM_MODE_ENABLED) || !(uasMode & MAV_MODE_FLAG_STABILIZE_ENABLED) ) {
+            newMode |= MAV_MODE_FLAG_STABILIZE_ENABLED;
+        } else {
+            newMode |= MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
+        }
 
-        transmitMode(MAV_MODE_PREFLIGHT);
-	}
-    ui.attitudeControlButton->setStyleSheet(white);
+        transmitMode(newMode);
+
+        QString white = "* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DDDDDD, stop: 1 #999999)}";
+        ui.attitudeControlButton->setStyleSheet(white);
+
+    } else {
+        ui.lastActionLabel->setText("Arm system first");
+    }
 
 //    if (checked)
 //    {
@@ -517,7 +543,7 @@ void UASSkyeControlWidget::cycleContextButton()
 //            if (uasMode)
 //            {
                 mav->armSystem();
-				mav->setModeCommand(uasMode & MAV_MODE_FLAG_SAFETY_ARMED);
+                mav->setModeCommand(uasMode | MAV_MODE_FLAG_SAFETY_ARMED);
 
                 ui.lastActionLabel->setText(QString("Enabled motors on %1").arg(mav->getUASName()));
 //            } else {
@@ -526,7 +552,7 @@ void UASSkyeControlWidget::cycleContextButton()
 
         } else {
             mav->disarmSystem();
-			mav->setModeCommand((uasMode | MAV_MODE_FLAG_SAFETY_ARMED) - MAV_MODE_FLAG_SAFETY_ARMED);
+            mav->setModeCommand(0);
             ui.lastActionLabel->setText(QString("Disabled motors on %1").arg(mav->getUASName()));
         }
         // Update state now and in several intervals when MAV might have changed state
