@@ -251,6 +251,19 @@ void SkyeMAV::sendManualControlCommands8DoF(int Thrust1 , int Thrust2 , int Thru
 #endif // QGC_USE_SKYE_INTERFACE
 }
 
+void SkyeMAV::setModeCommand(int mode)
+{
+#ifdef QGC_USE_SKYE_INTERFACE
+	mavlink_message_t message;
+
+	mavlink_msg_command_long_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId,
+								  (uint8_t)MAV_COMP_ID_ALL, MAV_CMD_DO_SET_MODE, 1, mode, 0, 0, 0, 0, 0, 0);
+
+	sendMessage(message);
+
+#endif //QGC_USE_SKYE_INTERFACE
+}
+
 
 QImage SkyeMAV::getImage()          // Function copied from UAS.cc (pixhawk)
 {

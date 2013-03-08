@@ -64,6 +64,8 @@ public slots:
     void setSensitivityFactorTrans(float val) {sensitivityFactorTrans = val;}
     /** @brief Set multiplication factor for manual control */
     void setSensitivityFactorRot(float val) {sensitivityFactorRot = val;}
+    /** @brief Send mode via mavlink command */
+    void setModeCommand(int mode);
 
     void followTrajectory();
     /** @brief Set active Input Mode for this UAS */

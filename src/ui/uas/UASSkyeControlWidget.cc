@@ -67,15 +67,14 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     ui.setupUi(this);
 
     // Uncheck and group buttons to enable exclusiv checkable
-    ui.directControlButton->setChecked(uasMode & MAV_MODE_DIRECT_CONTROL_DISARMED);
-    ui.assistedControlButton->setChecked(uasMode & MAV_MODE_ASSISTED_CONTROL_DISARMED);
-    ui.halfAutomaticControlButton->setChecked(uasMode & MAV_MODE_HALF_AUTOMATIC_DISARMED);
-    ui.fullAutomaticControlButton->setChecked(uasMode & MAV_MODE_FULL_AUTOMATIC_DISARMED);
-    modeButtonGroup = new QButtonGroup;
-    modeButtonGroup->addButton(ui.directControlButton);
-    modeButtonGroup->addButton(ui.assistedControlButton);
-    modeButtonGroup->addButton((ui.halfAutomaticControlButton));
-    modeButtonGroup->addButton((ui.fullAutomaticControlButton));
+//    ui.directControlButton->setChecked(uasMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL);
+//    ui.rateControlButton->setChecked(uasMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE);
+//    ui.attitudeControlButton->setChecked(uasMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE);
+//    ui.halfAutomaticControlButton->setChecked(uasMode & MAV_MODE_HALF_AUTOMATIC_DISARMED);
+//    ui.fullAutomaticControlButton->setChecked(uasMode & MAV_MODE_FULL_AUTOMATIC_DISARMED);
+    ui.directControlButton->setCheckable(false);
+    ui.rateControlButton->setCheckable(false);
+	ui.attitudeControlButton->setCheckable(false);
     ui.halfAutomaticControlButton->hide();
     ui.fullAutomaticControlButton->hide();
 
@@ -90,10 +89,9 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
 
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 
-    connect(ui.directControlButton, SIGNAL(clicked(bool)), this, SLOT(setDirectControlMode(bool)));
-    connect(ui.assistedControlButton, SIGNAL(clicked(bool)), this, SLOT(setAssistedControlMode(bool)));
-    connect(ui.halfAutomaticControlButton, SIGNAL(clicked(bool)), this, SLOT(setHalfAutomaticControlMode(bool)));
-    connect(ui.fullAutomaticControlButton, SIGNAL(clicked(bool)), this, SLOT(setFullAutomaticControlMode(bool)));
+    connect(ui.directControlButton, SIGNAL(clicked()), this, SLOT(setDirectControlMode()));
+    connect(ui.rateControlButton, SIGNAL(clicked()), this, SLOT(setRateControlMode()));
+	connect(ui.attitudeControlButton, SIGNAL(clicked()), this, SLOT(setAttitudeControlMode()));
 
     connect(ui.mouseButton, SIGNAL(clicked(bool)), this, SLOT(setInputMouse(bool)));
     connect(ui.touchButton, SIGNAL(clicked(bool)), this, SLOT(setInputTouch(bool)));
@@ -228,37 +226,50 @@ void UASSkyeControlWidget::updateMode(int uas,int baseMode)
     if ((uasId == uas) && ((int)uasMode != baseMode))
     {
         uasMode = (unsigned int)baseMode;
-        switch (uasMode)
+        QString green = "* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #004433, stop: 1 #228822)}";
+        QString gray  = "* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #999999, stop: 1 #444444)}";
+		if (uasMode == MAV_MODE_PREFLIGHT)
         {
-        case MAV_MODE_PREFLIGHT:
+            // Nothing to do
+		}
+        if ((uasMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) || (uasMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE))
         {
-            uncheckAllModeButtons();
-        }break;
-        case MAV_MODE_DIRECT_CONTROL_DISARMED:
-        case MAV_MODE_DIRECT_CONTROL_ARMED:
-        {
-            ui.directControlButton->setChecked(true);
-        }break;
-        case MAV_MODE_ASSISTED_CONTROL_DISARMED:
-        case MAV_MODE_ASSISTED_CONTROL_ARMED:
-        {
-            ui.assistedControlButton->setChecked(true);
-        }break;
-        case MAV_MODE_HALF_AUTOMATIC_DISARMED:
-        case MAV_MODE_HALF_AUTOMATIC_ARMED:
-        {
-            ui.halfAutomaticControlButton->setChecked(true);
-        }break;
-        case MAV_MODE_FULL_AUTOMATIC_DISARMED:
-        case MAV_MODE_FULL_AUTOMATIC_ARMED:
-        {
-            ui.fullAutomaticControlButton->setChecked(true);
-        }break;
-        default:
-        {
-            uncheckAllModeButtons();
-        }break;
+            ui.directControlButton->setStyleSheet(green);
+		} else {
+            ui.directControlButton->setStyleSheet(gray);
+		}
+
+
+		if (uasMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE)
+		{
+			if (uasMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE)
+			{
+                ui.rateControlButton->setStyleSheet(green);
+                ui.attitudeControlButton->setStyleSheet(gray);
+			} else {
+                ui.rateControlButton->setStyleSheet(green);
+                ui.attitudeControlButton->setStyleSheet(green);
+			}
+        } else {
+            ui.rateControlButton->setStyleSheet(gray);
+            ui.attitudeControlButton->setStyleSheet(gray);
         }
+
+//        case MAV_MODE_HALF_AUTOMATIC_DISARMED:
+//        case MAV_MODE_HALF_AUTOMATIC_ARMED:
+//        {
+//            ui.halfAutomaticControlButton->setChecked(true);
+//        }break;
+//        case MAV_MODE_FULL_AUTOMATIC_DISARMED:
+//        case MAV_MODE_FULL_AUTOMATIC_ARMED:
+//        {
+//            ui.fullAutomaticControlButton->setChecked(true);
+//        }break;
+//        default:
+//        {
+//            uncheckAllModeButtons();
+//        }break;
+//        }
 
 
     }
@@ -275,7 +286,7 @@ void UASSkyeControlWidget::updateState(int state)
         ui.controlButton->setText(tr("DISARM SYSTEM"));
         ui.controlButton->setStyleSheet("* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DD0044, stop: 1 #AA0022); border-color: yellow; color: yellow }");
 //        ui.directControlButton->setDisabled(true);
-//        ui.assistedControlButton->setDisabled(true);
+//        ui.rateControlButton->setDisabled(true);
 //        ui.halfAutomaticControlButton->setDisabled(true);
 //        ui.fullAutomaticControlButton->setDisabled(true);
         break;
@@ -283,10 +294,11 @@ void UASSkyeControlWidget::updateState(int state)
         engineOn = false;
         ui.controlButton->setText(tr("ARM SYSTEM"));
         ui.controlButton->setStyleSheet("* { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00DD44, stop: 1 #11AA22); }");
-        ui.directControlButton->setEnabled(true);
-        ui.assistedControlButton->setEnabled(true);
-        ui.halfAutomaticControlButton->setEnabled(true);
-        ui.fullAutomaticControlButton->setEnabled(true);
+//        ui.directControlButton->setEnabled(true);
+//        ui.rateControlButton->setEnabled(true);
+//        ui.attitudeControlButton->setEnabled(true);
+//        ui.halfAutomaticControlButton->setEnabled(true);
+//        ui.fullAutomaticControlButton->setEnabled(true);
         break;
     }
 #endif // QGC_USE_SKYE_INTERFACE
@@ -317,93 +329,111 @@ void UASSkyeControlWidget::updateInput(SkyeMAV::QGC_INPUT_MODE input)
 #endif // QGC_USE_SKYE_INTERFACE
 }
 
-void UASSkyeControlWidget::setDirectControlMode(bool checked)
+void UASSkyeControlWidget::setDirectControlMode()
 {
-    if (checked)
-    {
 #ifdef  QGC_USE_SKYE_INTERFACE
-        ui.sensitivityTransSlider->setValue(QGC_SKYE_DEFAULT_SENS_DIRECT_TRANS / QGC_SKYE_MAX_SENS_DIRECT_TRANS * ui.sensitivityTransSlider->maximum());
-        ui.sensitivityRotSlider->setValue(QGC_SKYE_DEFAULT_SENS_DIRECT_ROT / QGC_SKYE_MAX_SENS_DIRECT_ROT * ui.sensitivityRotSlider->maximum());
-        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
-        if (mav){
-            UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
-            if (mav->isArmed())
-                transmitMode(MAV_MODE_DIRECT_CONTROL_ARMED);
-            else
-                transmitMode(MAV_MODE_DIRECT_CONTROL_DISARMED);
-        }
-        else
-        {
-            ui.lastActionLabel->setText("Active UAS is no SKYE!");
-        }
+    QString white = "* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DDDDDD, stop: 1 #999999)}";
+	if ( !(uasMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) ) {
+		transmitMode(MAV_MODE_FLAG_DECODE_POSITION_MANUAL);
+
+	} else {
+
+        transmitMode(MAV_MODE_PREFLIGHT);
+    }
+    ui.directControlButton->setStyleSheet(white);
 #endif  // QGC_USE_SKYE_INTERFACE
-    }
 }
 
-void UASSkyeControlWidget::setAssistedControlMode(bool checked)
+void UASSkyeControlWidget::setRateControlMode()
 {
-    if (checked)
-    {
 #ifdef QGC_USE_SKYE_INTERFACE
-        ui.sensitivityTransSlider->setValue(QGC_SKYE_DEFAULT_SENS_ASSIST_TRANS / QGC_SKYE_MAX_SENS_ASSIST_TRANS * ui.sensitivityTransSlider->maximum());
-        ui.sensitivityRotSlider->setValue(QGC_SKYE_DEFAULT_SENS_ASSIST_ROT / QGC_SKYE_MAX_SENS_ASSIST_ROT * ui.sensitivityRotSlider->maximum());
-        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
-        if (mav){
-            UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
-            if (mav->isArmed())
-                transmitMode(MAV_MODE_ASSISTED_CONTROL_ARMED);
-            else
-                transmitMode(MAV_MODE_ASSISTED_CONTROL_DISARMED);
-        }
-        else
-        {
-            ui.lastActionLabel->setText("UAS is no SKYE!");
-        }
+    QString white = "* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DDDDDD, stop: 1 #999999)}";
+
+	if ( !(uasMode & MAV_MODE_FLAG_CUSTOM_MODE_ENABLED) ) {
+        transmitMode(MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_CUSTOM_MODE_ENABLED);
+	} else {
+
+        transmitMode(MAV_MODE_PREFLIGHT);
+	}
+    ui.rateControlButton->setStyleSheet(white);
+
 #endif // QGC_USE_SKYE_INTERFACE
-    }
 }
 
-void UASSkyeControlWidget::setHalfAutomaticControlMode(bool checked)
+void UASSkyeControlWidget::setAttitudeControlMode()
 {
-    if (checked)
-    {
 #ifdef QGC_USE_SKYE_INTERFACE
-        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
-        if (mav){
-            UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
-            if (mav->isArmed())
-                transmitMode(MAV_MODE_HALF_AUTOMATIC_ARMED);
-            else
-                transmitMode(MAV_MODE_HALF_AUTOMATIC_DISARMED);
-        }
-        else
-        {
-            ui.lastActionLabel->setText("UAS is no SKYE!");
-        }
+    QString white = "* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DDDDDD, stop: 1 #999999)}";
+
+    if ( (uasMode & MAV_MODE_FLAG_CUSTOM_MODE_ENABLED) || !(uasMode & MAV_MODE_FLAG_STABILIZE_ENABLED) ) {
+        transmitMode(MAV_MODE_FLAG_STABILIZE_ENABLED);
+	} else {
+
+        transmitMode(MAV_MODE_PREFLIGHT);
+	}
+    ui.attitudeControlButton->setStyleSheet(white);
+
+//    if (checked)
+//    {
+//        ui.sensitivityTransSlider->setValue(QGC_SKYE_DEFAULT_SENS_ASSIST_TRANS / QGC_SKYE_MAX_SENS_ASSIST_TRANS * ui.sensitivityTransSlider->maximum());
+//        ui.sensitivityRotSlider->setValue(QGC_SKYE_DEFAULT_SENS_ASSIST_ROT / QGC_SKYE_MAX_SENS_ASSIST_ROT * ui.sensitivityRotSlider->maximum());
+//        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
+//        if (mav){
+//            UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
+//            if (mav->isArmed())
+//                transmitMode(MAV_MODE_FLAG_DECODE_POSITION_STABILIZE & MAV_MODE_FLAG_DECODE_POSITION_SAFETY);
+//            else
+//                transmitMode(MAV_MODE_FLAG_DECODE_POSITION_STABILIZE);
+//        }
+//        else
+//        {
+//            ui.lastActionLabel->setText("UAS is no SKYE!");
+//        }
+//    }
 #endif // QGC_USE_SKYE_INTERFACE
-    }
 }
 
-void UASSkyeControlWidget::setFullAutomaticControlMode(bool checked)
-{
-    if (checked)
-    {
-#ifdef QGC_USE_SKYE_INTERFACE
-        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
-        if (mav){
-            UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
-            if (mav->isArmed())
-                transmitMode(MAV_MODE_FULL_AUTOMATIC_ARMED);
-            else
-                transmitMode(MAV_MODE_FULL_AUTOMATIC_DISARMED);
-        }
-        else
-        {
-            ui.lastActionLabel->setText("UAS is no SKYE!");
-        }
-#endif // QGC_USE_SKYE_INTERFACE
-    }
-}
+//void UASSkyeControlWidget::setHalfAutomaticControlMode(bool checked)
+//{
+//    if (checked)
+//    {
+//#ifdef QGC_USE_SKYE_INTERFACE
+//        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
+//        if (mav){
+//            UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
+//            if (mav->isArmed())
+//                transmitMode(MAV_MODE_HALF_AUTOMATIC_ARMED);
+//            else
+//                transmitMode(MAV_MODE_HALF_AUTOMATIC_DISARMED);
+//        }
+//        else
+//        {
+//            ui.lastActionLabel->setText("UAS is no SKYE!");
+//        }
+//#endif // QGC_USE_SKYE_INTERFACE
+//    }
+//}
+
+//void UASSkyeControlWidget::setFullAutomaticControlMode(bool checked)
+//{
+//    if (checked)
+//    {
+//#ifdef QGC_USE_SKYE_INTERFACE
+//        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
+//        if (mav){
+//            UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
+//            if (mav->isArmed())
+//                transmitMode(MAV_MODE_FULL_AUTOMATIC_ARMED);
+//            else
+//                transmitMode(MAV_MODE_FULL_AUTOMATIC_DISARMED);
+//        }
+//        else
+//        {
+//            ui.lastActionLabel->setText("UAS is no SKYE!");
+//        }
+//#endif // QGC_USE_SKYE_INTERFACE
+//    }
+//}
 
 void UASSkyeControlWidget::mouseActivated(bool success)
 {
@@ -464,6 +494,7 @@ void UASSkyeControlWidget::transmitMode(int mode)
     if (mav)
     {
         mav->setMode(mode);
+
         QString modeStr = UAS::getShortModeTextFor(mode);
 
         ui.lastActionLabel->setText(QString("Sent mode %1 to %2").arg(modeStr).arg(mav->getUASName()));
@@ -478,21 +509,24 @@ void UASSkyeControlWidget::transmitMode(int mode)
 void UASSkyeControlWidget::cycleContextButton()
 {
 #ifdef QGC_USE_SKYE_INTERFACE
-    UAS* mav = dynamic_cast<UAS*>(UASManager::instance()->getUASForId(this->uasId));
+	SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
     if (mav)
     {
         if (!engineOn)
         {
-            if (uasMode)
-            {
+//            if (uasMode)
+//            {
                 mav->armSystem();
+				mav->setModeCommand(uasMode & MAV_MODE_FLAG_SAFETY_ARMED);
+
                 ui.lastActionLabel->setText(QString("Enabled motors on %1").arg(mav->getUASName()));
-            } else {
-                ui.lastActionLabel->setText("Set mode before!");
-            }
+//            } else {
+//                ui.lastActionLabel->setText("Set mode before!");
+//            }
 
         } else {
             mav->disarmSystem();
+			mav->setModeCommand((uasMode | MAV_MODE_FLAG_SAFETY_ARMED) - MAV_MODE_FLAG_SAFETY_ARMED);
             ui.lastActionLabel->setText(QString("Disabled motors on %1").arg(mav->getUASName()));
         }
         // Update state now and in several intervals when MAV might have changed state
@@ -558,14 +592,14 @@ void UASSkyeControlWidget::changeMouseRotationEnabled(bool rotEnabled)
 
 void UASSkyeControlWidget::uncheckAllModeButtons()
 {
-    modeButtonGroup->setExclusive(false);
-    QAbstractButton* checkedButton = modeButtonGroup->checkedButton();
-    if (checkedButton)
-    {
-        checkedButton->toggle();
-        ui.lastActionLabel->setText("No mode set!");
-    }
-    modeButtonGroup->setExclusive(true);
+////    modeButtonGroup->setExclusive(false);
+//    QAbstractButton* checkedButton = modeButtonGroup->checkedButton();
+//    if (checkedButton)
+//    {
+//        checkedButton->toggle();
+//        ui.lastActionLabel->setText("No mode set!");
+//    }
+////    modeButtonGroup->setExclusive(true);
 }
 
 void UASSkyeControlWidget::setSensitivityFactorTrans(int val)

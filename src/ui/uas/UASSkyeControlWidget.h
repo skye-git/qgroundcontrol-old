@@ -86,14 +86,16 @@ signals:
     protected slots:
 //        /** @brief Set the background color for the widget */
 //        void setBackgroundColor(QColor color);
-        /** @brief Set uasMode to Direct Control */
-        void setDirectControlMode(bool checked);
-        /** @brief Set uasMode to Assisted Control */
-        void setAssistedControlMode(bool checked);
-        /** @brief Set uasMode to Half Automatic Control */
-        void setHalfAutomaticControlMode(bool checked);
-        /** @brief Set uasMode to Full Automatic Control */
-        void setFullAutomaticControlMode(bool checked);
+        /** @brief Set Direct Control */
+        void setDirectControlMode();
+        /** @brief Set Rate Control */
+        void setRateControlMode();
+        /** @brief Set Attitude Control */
+        void setAttitudeControlMode();
+//        /** @brief Set uasMode to Half Automatic Control */
+//        void setHalfAutomaticControlMode(bool checked);
+//        /** @brief Set uasMode to Full Automatic Control */
+//        void setFullAutomaticControlMode(bool checked);
         /** @brief 3dMouse activated */
         void mouseActivated(bool success);
         /** @brief Set 3d Mouse as active inpute device */

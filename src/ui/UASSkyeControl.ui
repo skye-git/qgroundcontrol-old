@@ -65,32 +65,10 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Direct Control Mode (no stabilization: force control)</string>
+        <string>Enable Manual Moment Input</string>
        </property>
        <property name="text">
-        <string>DC</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="assistedControlButton">
-       <property name="minimumSize">
-        <size>
-         <width>35</width>
-         <height>35</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Assisted Control Mode (stabalized: Velocity control)</string>
-       </property>
-       <property name="text">
-        <string>AC</string>
+        <string>MAN</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -99,6 +77,50 @@
         <bool>false</bool>
        </property>
        <property name="autoExclusive">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="rateControlButton">
+       <property name="minimumSize">
+        <size>
+         <width>35</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Enable Rate Controller</string>
+       </property>
+       <property name="text">
+        <string>RATE</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="autoExclusive">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="attitudeControlButton">
+       <property name="minimumSize">
+        <size>
+         <width>35</width>
+         <height>35</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Enable Attitude Controller</string>
+       </property>
+       <property name="text">
+        <string>ATT</string>
+       </property>
+       <property name="checkable">
         <bool>true</bool>
        </property>
       </widget>
@@ -127,7 +149,7 @@
         <bool>false</bool>
        </property>
        <property name="autoExclusive">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -152,7 +174,7 @@
         <bool>true</bool>
        </property>
        <property name="autoExclusive">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
