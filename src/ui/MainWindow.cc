@@ -412,6 +412,23 @@ void MainWindow::buildCommonWidgets()
             addTool(skyeControlDockWidget, tr("Skye Control"), Qt::RightDockWidgetArea);
         }
     } // Ende Code MA (06.03.2012) --------------------------
+
+    if (!ledControlDockWidget)         // Beginn Code MA (23.03.2013) -----------------------
+    {
+        ledControlDockWidget = new QDockWidget(tr("Skye LED"), this);
+        ledControlDockWidget->setObjectName("LED_CONTROL_DOCKWIDGET");
+        ledControlDockWidget->setWidget( new LedControlWidget(this) );
+
+        LedControlWidget *ledControl = dynamic_cast<LedControlWidget*>(ledControlDockWidget->widget());
+        if (ledControl)
+        {
+//            connect(uasSkyeControl, SIGNAL(changedInput(int)), this, SLOT(setInputMode(int)));
+//            connect(this, SIGNAL(mouseTranslationEnabledChanged(bool)), uasSkyeControl, SLOT(changeMouseTranslationEnabled(bool)));
+//            connect(this, SIGNAL(mouseRotationEnabledChanged(bool)), uasSkyeControl, SLOT(changeMouseRotationEnabled(bool)));
+//            connect(this, SIGNAL(mouseStarted(bool)), uasSkyeControl, SLOT(mouseActivated(bool)));
+            addTool(ledControlDockWidget, tr("Skye LED Control"), Qt::RightDockWidgetArea);
+        }
+    }                                   // Ende Code MA (23.03.2013) --------------------------
 //#endif // QGC_USE_SKYE_INTERFACE
 
     if (!listDockWidget)

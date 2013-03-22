@@ -44,6 +44,7 @@ This file is part of the QGROUNDCONTROL project
 #include "UASManager.h"
 #include "UASControlWidget.h"
 #include "UASSkyeControlWidget.h" // Beginn Ende Code MA (06.03.2012)
+#include "ledControl/LedControlWidget.h"
 #include "Linecharts.h"
 #include "UASInfoWidget.h"
 #include "WaypointList.h"
@@ -377,6 +378,7 @@ protected:
     // Dock widgets
     QPointer<QDockWidget> controlDockWidget;
     QPointer<QDockWidget> skyeControlDockWidget;        // Beginn Ende Code MA (06.03.2012)
+    QPointer<QDockWidget> ledControlDockWidget;
     QPointer<QDockWidget> controlParameterWidget;
     QPointer<QDockWidget> infoDockWidget;
     QPointer<QDockWidget> cameraDockWidget;
