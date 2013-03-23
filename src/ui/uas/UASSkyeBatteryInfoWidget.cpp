@@ -55,14 +55,14 @@ void UASSkyeBatteryInfoWidget::setActiveUAS(UASInterface *uas)
 void UASSkyeBatteryInfoWidget::changeBatteryPack(mavlink_battery_status_t* battery)
 {
 //    qDebug()<<"Message battery_status received";
-    MAV_SKYE_BATTERY_PACK_ID packId = (MAV_SKYE_BATTERY_PACK_ID)battery->accu_id;
-    double voltage1 = (double)battery->voltage_cell_1/1000;
-    double voltage2 = (double)battery->voltage_cell_2/1000;
-    double voltage3 = (double)battery->voltage_cell_3/1000;
-    double voltage4 = (double)battery->voltage_cell_4/1000;
-    double voltage5 = (double)battery->voltage_cell_5/1000;
-    double voltage6 = (double)battery->voltage_cell_6/1000;
-    double current = (double)battery->current_battery/100;
+    MAV_SKYE_BATTERY_PACK_ID packId = (MAV_SKYE_BATTERY_PACK_ID)(battery->accu_id+1);
+    double voltage1 = (double)battery->voltage_cell_1/1000.0;
+    double voltage2 = (double)battery->voltage_cell_2/1000.0;
+    double voltage3 = (double)battery->voltage_cell_3/1000.0;
+    double voltage4 = (double)battery->voltage_cell_4/1000.0;
+    double voltage5 = (double)battery->voltage_cell_5/1000.0;
+    double voltage6 = (double)battery->voltage_cell_6/1000.0;
+    double current = (double)battery->current_battery/100.0;
     int remaining = battery->battery_remaining;
     if( batteryPacks.value(packId))
         batteryPacks.value(packId)->changeBatteryStatus( voltage1, voltage2, voltage3, voltage4, voltage5, voltage6, current, remaining);
