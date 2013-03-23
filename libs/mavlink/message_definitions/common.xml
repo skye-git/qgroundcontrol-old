@@ -1582,8 +1582,17 @@
                <field type="uint64_t" name="transfer_uid">Unique transfer ID</field>
                <field type="uint8_t" name="result">0: OK, 1: not permitted, 2: bad path / file name, 3: no space left on device</field>
           </message>
+          <message id="146" name="LED_CONTROL">
+               <description>Control single LED or LED array</description>
+               <field type="uint8_t" name="led_id">Led ID</field>
+               <field type="uint8_t" name="red">Red color component for 24bit color</field>
+               <field type="uint8_t" name="green">Red color component for 24bit color</field>
+               <field type="uint8_t" name="blue">Red color component for 24bit color</field>
+               <field type="uint8_t" name="mode">0: Constant light, 1: Blink on/off, 2: Pulsate, 3: Colorloop, 4: Disco</field>
+               <field type="float" name="frequency">Frequency parameter, Hz</field>
+          </message>
           <message id="147" name="BATTERY_STATUS">
-               <description>Transmitte battery informations for a accu pack.</description>
+               <description>Transmit battery informations for a accu pack.</description>
                <field type="uint8_t" name="accu_id">Accupack ID</field>
                <field type="uint16_t" name="voltage_cell_1">Battery voltage of cell 1, in millivolts (1 = 1 millivolt)</field>
                <field type="uint16_t" name="voltage_cell_2">Battery voltage of cell 2, in millivolts (1 = 1 millivolt), -1: no cell</field>
