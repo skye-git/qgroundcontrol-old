@@ -23,8 +23,8 @@ This file is part of the PIXHAWK project
 
 #include "LedControlWidget.h"
 #include "ui_LedControlWidget.h"
-#include "UASManager.h"
-#include "SkyeMAV.h"
+
+#include <QStringList>
 
 #define COLOR_DEPTH 255   // 16bit
 #define COLOR_DEPTH_RATIO 1
@@ -36,7 +36,10 @@ LedControlWidget::LedControlWidget(QWidget *parent) :
     red(0),
     green(0),
     blue(0),
+    mode(LED_CONTROL_MODE_CONSTANT),
+    frequency(0.0),
     dialog(new QColorDialog)
+
 {
     ui->setupUi(this);
 
@@ -45,22 +48,35 @@ LedControlWidget::LedControlWidget(QWidget *parent) :
 
     // connect color dialog
     connect(ui->ledColorButton, SIGNAL(pressed()), this, SLOT(openColorDialog()));
-    connect(dialog, SIGNAL(currentColorChanged(QColor)), this, SLOT(updateColor(QColor)));
+    connect(dialog, SIGNAL(currentColorChanged(QColor)), this, SLOT(changeColor(QColor)));
     dialog->setOption(QColorDialog::NoButtons);
 
     // connect color spinboxes
     connect(this, SIGNAL(redColorChanged(int)), ui->spinBoxRed, SLOT(setValue(int)));
     connect(this, SIGNAL(greenColorChanged(int)), ui->spinBoxGreen, SLOT(setValue(int)));
     connect(this, SIGNAL(blueColorChanged(int)), ui->spinBoxBlue, SLOT(setValue(int)));
-    connect(ui->spinBoxRed, SIGNAL(valueChanged(int)), this, SLOT(changedColorRed(int)));
-    connect(ui->spinBoxGreen, SIGNAL(valueChanged(int)), this, SLOT(changedColorGreen(int)));
-    connect(ui->spinBoxBlue, SIGNAL(valueChanged(int)), this, SLOT(changedColorBlue(int)));
+    connect(ui->spinBoxRed, SIGNAL(valueChanged(int)), this, SLOT(changeColorRed(int)));
+    connect(ui->spinBoxGreen, SIGNAL(valueChanged(int)), this, SLOT(changeColorGreen(int)));
+    connect(ui->spinBoxBlue, SIGNAL(valueChanged(int)), this, SLOT(changeColorBlue(int)));
 
     // set range of color spinboxes
     ui->spinBoxRed->setRange(0,COLOR_DEPTH);
     ui->spinBoxGreen->setRange(0,COLOR_DEPTH);
     ui->spinBoxBlue->setRange(0,COLOR_DEPTH);
 
+    // offer mode settings according to LED_CONTROL_MODE enumerator
+    // ui->comboBoxMode->insertItems(0, QStringList() << "CONSTANT" << "BLINK" << "PULS" << "RAINBOW" << "DISCO");
+    ui->comboBoxMode->insertItem(LED_CONTROL_MODE_CONSTANT, GetNameForLedColorMode(LED_CONTROL_MODE_CONSTANT));
+    ui->comboBoxMode->insertItem(LED_CONTROL_MODE_BLINK, GetNameForLedColorMode(LED_CONTROL_MODE_BLINK));
+    ui->comboBoxMode->insertItem(LED_CONTROL_MODE_PULS, GetNameForLedColorMode(LED_CONTROL_MODE_PULS));
+    ui->comboBoxMode->insertItem(LED_CONTROL_MODE_RAINBOW, GetNameForLedColorMode(LED_CONTROL_MODE_RAINBOW));
+    ui->comboBoxMode->insertItem(LED_CONTROL_MODE_DISCO, GetNameForLedColorMode(LED_CONTROL_MODE_DISCO));
+    connect(ui->comboBoxMode, SIGNAL(activated(int)), this, SLOT(changeMode(int)));
+
+    // initialize frequency spinbox
+    ui->doubleSpinBoxFrequency->setRange(0.0, 100.0);
+    ui->doubleSpinBoxFrequency->setSingleStep(0.1);
+    connect(ui->doubleSpinBoxFrequency, SIGNAL(valueChanged(double)), this, SLOT(changeFrequency(double)));
 }
 
 LedControlWidget::~LedControlWidget()
@@ -90,11 +106,14 @@ void LedControlWidget::setUAS(UASInterface* uas)
     {
         this->uasId = mav->getUASID();
 
-        // connect skye
+        // start timer and initial submit
+        timeOfSubmit.start();
+        emit transmitColor(0, (uint8_t)red, (uint8_t)green, (uint8_t)blue, mode, (float)frequency);
+
+        // connect color submit
         connect(this, SIGNAL(transmitColor(uint8_t,uint8_t,uint8_t,uint8_t,uint8_t,float)),
                 mav, SLOT(sendLedColor(uint8_t,uint8_t,uint8_t,uint8_t,uint8_t,float)));
     }
-
 
 #endif // QGC_USE_SKYE_INTERFACE
 }
@@ -104,49 +123,107 @@ void LedControlWidget::openColorDialog()
     dialog->open();
 }
 
-void LedControlWidget::updateColor(QColor newColor)
+void LedControlWidget::changeColor(QColor newColor)
 {
     if (color != newColor)
     {
         color = newColor;
-        red = color.red() * COLOR_DEPTH_RATIO;
-        green = color.green() * COLOR_DEPTH_RATIO;
-        blue = color.blue() * COLOR_DEPTH_RATIO;
+        red = color.red();
+        green = color.green();
+        blue = color.blue();
         emit redColorChanged(red);
         emit greenColorChanged(green);
         emit blueColorChanged(blue);
 
-        uint8_t mode = 0;
-        float frequency = 0.0f;
-        emit transmitColor(0, (uint8_t)red, (uint8_t)green, (uint8_t)blue, mode, frequency );
+        sendColor();
     }
 
 }
 
+void LedControlWidget::changeColorRed(int newRed)
+{
+    if (red != newRed)
+    {
+        red = newRed;
+        color.setRed(newRed);
+        sendColor();
+    }
+}
+
+void LedControlWidget::changeColorGreen(int newGreen)
+{
+    if (green != newGreen)
+    {
+        green = newGreen;
+        color.setGreen(newGreen);
+        sendColor();
+    }
+}
+
+void LedControlWidget::changeColorBlue(int newBlue)
+{
+    if (blue != newBlue)
+    {
+        blue = newBlue;
+        color.setBlue(newBlue);
+        sendColor();
+    }
+}
+
+void LedControlWidget::changeMode(int newMode)
+{
+    mode = (LED_CONTROL_MODE)newMode;
+    sendColor();
+}
+
+void LedControlWidget::changeFrequency(double newFrequency)
+{
+    frequency = newFrequency;
+    sendColor();
+}
+
+void LedControlWidget::sendColor()
+{
+    if (this->uasId)
+    {
+        // rate limit transmission to 200ms (5Hz)
+        if (timeOfSubmit.elapsed() > 200)
+        {
+            timeOfSubmit.restart();
+            emit transmitColor(0, (uint8_t)red, (uint8_t)green, (uint8_t)blue, mode, (float)frequency);
+        }
+    }
+}
+
+
 void LedControlWidget::updateWidget()
 {
-
+    // TODO: make color visible
 }
 
-void LedControlWidget::changedColorRed(int newRed)
+QString LedControlWidget::GetNameForLedColorMode(LED_CONTROL_MODE m)
 {
-    color.setRed(newRed);
-    emit colorChanged(color);
-}
-
-void LedControlWidget::changedColorGreen(int newGreen)
-{
-    color.setGreen(newGreen);
-    emit colorChanged(color);
-}
-
-void LedControlWidget::changedColorBlue(int newBlue)
-{
-    color.setBlue(newBlue);
-    emit colorChanged(color);
-}
-
-void LedControlWidget::sendColor(QColor newColor)
-{
-
+    QString modeName;
+    switch(m)
+    {
+    case LED_CONTROL_MODE_CONSTANT:
+        modeName = "CONSTANT";
+        break;
+    case LED_CONTROL_MODE_BLINK:
+        modeName = "BLINK";
+        break;
+    case LED_CONTROL_MODE_PULS:
+        modeName = "PULS";
+        break;
+    case LED_CONTROL_MODE_RAINBOW:
+        modeName = "RAINBOW";
+        break;
+    case LED_CONTROL_MODE_DISCO:
+        modeName = "DISCO";
+        break;
+    default:
+        modeName = "unsupported";
+        break;
+    }
+    return modeName;
 }

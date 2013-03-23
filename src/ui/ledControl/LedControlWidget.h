@@ -4,7 +4,12 @@
 #include <QWidget>
 #include <QColor>
 #include <QColorDialog>
+#include <QTime>
+#include <QString>
 #include <UASInterface.h>
+
+#include "UASManager.h"
+#include "SkyeMAV.h"
 
 namespace Ui {
 class LedControlWidget;
@@ -31,24 +36,35 @@ private slots:
     /** show live color dialog */
     void openColorDialog();
     /** update color */
-    void updateColor(QColor newColor);
-    void changedColorRed(int newRed);
-    void changedColorGreen(int newGreen);
-    void changedColorBlue(int newBlue);
-    /** update widget style */
+    void changeColor(QColor newColor);
+    void changeColorRed(int newRed);
+    void changeColorGreen(int newGreen);
+    void changeColorBlue(int newBlue);
+    /** update mode */
+    void changeMode(int newMode);
+    /** update frequency */
+    void changeFrequency (double newFrequency);
+    /** update widget style according to color */
     void updateWidget();
     /** Send new color to UAS */
-    void sendColor(QColor newColor);
+    void sendColor();
 
 private:
+    QString GetNameForLedColorMode(LED_CONTROL_MODE m);
+
     Ui::LedControlWidget *ui;
     int uasId;                          ///< Reference to the current uas
     QColor color;                       ///< current color in QColor format
-    uint16_t red;                       ///< current 16bit red RGB part for led color
-    uint16_t green;                     ///< current 16bit red RGB part for led color
-    uint16_t blue;                      ///< current 16bit red RGB part for led color
+    int red;                            ///< current red RGB part for led color
+    int green;                          ///< current green RGB part for led color
+    int blue;                           ///< current blue RGB part for led color
+
+    LED_CONTROL_MODE mode;              ///< current led control mode
+    double frequency;                   ///< current frequency for led color change
 
     QColorDialog *dialog;               ///< Dialog to choose color
+
+    QTime timeOfSubmit;                 ///< Time of last submit
 };
 
 #endif // LEDCONTROLWIDGET_H

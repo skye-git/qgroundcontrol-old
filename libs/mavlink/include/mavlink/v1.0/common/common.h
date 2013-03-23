@@ -412,6 +412,20 @@ enum MAV_SEVERITY
 };
 #endif
 
+/** @brief Possible led color modes for LED_CONTROL message */
+#ifndef HAVE_ENUM_LED_CONTROL_MODE
+#define HAVE_ENUM_LED_CONTROL_MODE
+enum LED_CONTROL_MODE
+{
+	LED_CONTROL_MODE_CONSTANT=0, /* Constant light using color values | */
+	LED_CONTROL_MODE_BLINK=1, /* Switsch led on/off with given color and frequency | */
+	LED_CONTROL_MODE_PULS=2, /* Dim led like a pulser with given color and frequency | */
+	LED_CONTROL_MODE_RAINBOW=3, /* Iterate color wheel with given frequency | */
+	LED_CONTROL_MODE_DISCO=4, /* Disco mode (random puls, blink, color switch) considering given frequency | */
+	LED_CONTROL_MODE_ENUM_END=5, /*  | */
+};
+#endif
+
 // MESSAGE DEFINITIONS
 #include "./mavlink_msg_heartbeat.h"
 #include "./mavlink_msg_sys_status.h"

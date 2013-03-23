@@ -883,6 +883,24 @@
                     <description>Useful non-operational messages that can assist in debugging. These should not occur during normal operation.</description>
                </entry>
           </enum>
+                    <enum name="LED_CONTROL_MODE">
+               <description>Possible led color modes for LED_CONTROL message</description>
+               <entry value="0" name="LED_CONTROL_MODE_CONSTANT">
+                    <description>Constant light using color values</description>
+               </entry>
+               <entry value="1" name="LED_CONTROL_MODE_BLINK">
+                    <description>Switsch led on/off with given color and frequency</description>
+               </entry>
+               <entry value="2" name="LED_CONTROL_MODE_PULS">
+                    <description>Dim led like a pulser with given color and frequency</description>
+               </entry>
+               <entry value="3" name="LED_CONTROL_MODE_RAINBOW">
+                    <description>Iterate color wheel with given frequency</description>
+               </entry>
+               <entry value="4" name="LED_CONTROL_MODE_DISCO">
+                    <description>Disco mode (random puls, blink, color switch) considering given frequency</description>
+               </entry>
+          </enum>
      </enums>
      <messages>
           <message id="0" name="HEARTBEAT">
@@ -1588,7 +1606,7 @@
                <field type="uint8_t" name="red">Red color component for 24bit color</field>
                <field type="uint8_t" name="green">Red color component for 24bit color</field>
                <field type="uint8_t" name="blue">Red color component for 24bit color</field>
-               <field type="uint8_t" name="mode">0: Constant light, 1: Blink on/off, 2: Pulsate, 3: Colorloop, 4: Disco</field>
+               <field type="uint8_t" name="mode">Compare LED_CONTROL_MODE enumerator - 0: Constant light, 1: Blink on/off, 2: Pulsate, 3: Colorloop, 4: Disco</field>
                <field type="float" name="frequency">Frequency parameter, Hz</field>
           </message>
           <message id="147" name="BATTERY_STATUS">

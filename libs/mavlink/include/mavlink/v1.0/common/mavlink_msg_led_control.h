@@ -9,7 +9,7 @@ typedef struct __mavlink_led_control_t
  uint8_t red; ///< Red color component for 24bit color
  uint8_t green; ///< Red color component for 24bit color
  uint8_t blue; ///< Red color component for 24bit color
- uint8_t mode; ///< 0: Constant light, 1: Blink on/off, 2: Pulsate, 3: Colorloop, 4: Disco
+ uint8_t mode; ///< Compare LED_CONTROL_MODE enumerator - 0: Constant light, 1: Blink on/off, 2: Pulsate, 3: Colorloop, 4: Disco
 } mavlink_led_control_t;
 
 #define MAVLINK_MSG_ID_LED_CONTROL_LEN 9
@@ -40,7 +40,7 @@ typedef struct __mavlink_led_control_t
  * @param red Red color component for 24bit color
  * @param green Red color component for 24bit color
  * @param blue Red color component for 24bit color
- * @param mode 0: Constant light, 1: Blink on/off, 2: Pulsate, 3: Colorloop, 4: Disco
+ * @param mode Compare LED_CONTROL_MODE enumerator - 0: Constant light, 1: Blink on/off, 2: Pulsate, 3: Colorloop, 4: Disco
  * @param frequency Frequency parameter, Hz
  * @return length of the message in bytes (excluding serial stream start sign)
  */
@@ -83,7 +83,7 @@ static inline uint16_t mavlink_msg_led_control_pack(uint8_t system_id, uint8_t c
  * @param red Red color component for 24bit color
  * @param green Red color component for 24bit color
  * @param blue Red color component for 24bit color
- * @param mode 0: Constant light, 1: Blink on/off, 2: Pulsate, 3: Colorloop, 4: Disco
+ * @param mode Compare LED_CONTROL_MODE enumerator - 0: Constant light, 1: Blink on/off, 2: Pulsate, 3: Colorloop, 4: Disco
  * @param frequency Frequency parameter, Hz
  * @return length of the message in bytes (excluding serial stream start sign)
  */
@@ -138,7 +138,7 @@ static inline uint16_t mavlink_msg_led_control_encode(uint8_t system_id, uint8_t
  * @param red Red color component for 24bit color
  * @param green Red color component for 24bit color
  * @param blue Red color component for 24bit color
- * @param mode 0: Constant light, 1: Blink on/off, 2: Pulsate, 3: Colorloop, 4: Disco
+ * @param mode Compare LED_CONTROL_MODE enumerator - 0: Constant light, 1: Blink on/off, 2: Pulsate, 3: Colorloop, 4: Disco
  * @param frequency Frequency parameter, Hz
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
@@ -216,7 +216,7 @@ static inline uint8_t mavlink_msg_led_control_get_blue(const mavlink_message_t* 
 /**
  * @brief Get field mode from led_control message
  *
- * @return 0: Constant light, 1: Blink on/off, 2: Pulsate, 3: Colorloop, 4: Disco
+ * @return Compare LED_CONTROL_MODE enumerator - 0: Constant light, 1: Blink on/off, 2: Pulsate, 3: Colorloop, 4: Disco
  */
 static inline uint8_t mavlink_msg_led_control_get_mode(const mavlink_message_t* msg)
 {
