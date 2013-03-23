@@ -467,3 +467,11 @@ void SkyeMAV::setInputMode(SkyeMAV::QGC_INPUT_MODE input)
     inputMode = input;
     emit inputModeChanged(inputMode);
 }
+
+void SkyeMAV::sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t blue, uint8_t mode, float frequency)
+{
+    mavlink_message_t msg;
+    mavlink_msg_led_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, ledId, red, green, blue, mode, frequency);
+    sendMessage(msg);
+    qDebug("Sent LED Color Message");
+}

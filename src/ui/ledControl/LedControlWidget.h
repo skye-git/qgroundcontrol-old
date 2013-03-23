@@ -19,18 +19,27 @@ public:
     ~LedControlWidget();
 
 signals:
+    void colorChanged(QColor);
     void redColorChanged(int);
     void greenColorChanged(int);
     void blueColorChanged(int);
+    void transmitColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t blue, uint8_t mode, float frequency);
 
 private slots:
+    /** set active UAS */
+    void setUAS(UASInterface* uas);
     /** show live color dialog */
     void openColorDialog();
     /** update color */
     void updateColor(QColor newColor);
+    void changedColorRed(int newRed);
+    void changedColorGreen(int newGreen);
+    void changedColorBlue(int newBlue);
     /** update widget style */
     void updateWidget();
-    
+    /** Send new color to UAS */
+    void sendColor(QColor newColor);
+
 private:
     Ui::LedControlWidget *ui;
     int uasId;                          ///< Reference to the current uas
