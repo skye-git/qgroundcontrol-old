@@ -30,7 +30,7 @@
       <item>
        <widget class="QSlider" name="SliderThrust1">
         <property name="maximum">
-         <number>200</number>
+         <number>1000</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -40,7 +40,7 @@
       <item>
        <widget class="QSpinBox" name="spinBoxThrust1">
         <property name="maximum">
-         <number>200</number>
+         <number>1000</number>
         </property>
        </widget>
       </item>
@@ -90,7 +90,7 @@
       <item>
        <widget class="QSlider" name="SliderThrust2">
         <property name="maximum">
-         <number>200</number>
+         <number>1000</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -100,7 +100,7 @@
       <item>
        <widget class="QSpinBox" name="spinBoxThrust2">
         <property name="maximum">
-         <number>200</number>
+         <number>1000</number>
         </property>
        </widget>
       </item>
@@ -150,7 +150,7 @@
       <item>
        <widget class="QSlider" name="SliderThrust3">
         <property name="maximum">
-         <number>200</number>
+         <number>1000</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -160,7 +160,7 @@
       <item>
        <widget class="QSpinBox" name="spinBoxThrust3">
         <property name="maximum">
-         <number>200</number>
+         <number>1000</number>
         </property>
        </widget>
       </item>
@@ -210,7 +210,7 @@
       <item>
        <widget class="QSlider" name="SliderThrust4">
         <property name="maximum">
-         <number>200</number>
+         <number>1000</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -220,7 +220,7 @@
       <item>
        <widget class="QSpinBox" name="spinBoxThrust4">
         <property name="maximum">
-         <number>200</number>
+         <number>1000</number>
         </property>
        </widget>
       </item>

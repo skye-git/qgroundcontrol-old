@@ -111,19 +111,19 @@ void TestphaseWidget::closeEvent(QCloseEvent *event)
 
 void TestphaseWidget::setUAS(UASInterface* mav)
 {
-    if (uas != 0)
-    {
-        disconnect(this, SIGNAL(valueTestphaseChanged(double,double,double,double,double,double)), uas, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
-        disconnect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
-    }
+//    if (uas != 0)
+//    {
+//        disconnect(this, SIGNAL(valueTestphaseChanged(double,double,double,double,double,double)), uas, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
+//        disconnect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
+//    }
 
-    uas = dynamic_cast<SkyeMAV*>(mav);
-    if (uas)
-    {
-        connect(this, SIGNAL(valueTestphaseChanged(double,double,double,double,double,double)), uas, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
-        connect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
-        updateState(uas->getUASState());
-    }
+//    uas = dynamic_cast<SkyeMAV*>(mav);
+//    if (uas)
+//    {
+//        connect(this, SIGNAL(valueTestphaseChanged(double,double,double,double,double,double)), uas, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
+//        connect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
+//        updateState(uas->getUASState());
+//    }
 }
 
 void TestphaseWidget::emitValues()
@@ -188,7 +188,7 @@ void TestphaseWidget::cycleContextButton()
             uas->armSystem();
             //m_ui->controlButton->setText(tr("DISARMSYSTEM"));
             //m_ui->controlButton->setStyleSheet("* { background-color: rgb(255,125,100) }");
-            uas->setMode(MAV_MODE_TESTPHASE_ARMED);
+//            uas->setMode(MAV_MODE_TESTPHASE_ARMED);
             engineOn=true;
         } else {
             emit valueTestphaseChanged( 0, 0, 0, 0, 0, 0, 0, 0);
