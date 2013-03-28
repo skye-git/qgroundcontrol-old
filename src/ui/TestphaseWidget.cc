@@ -131,7 +131,7 @@ void TestphaseWidget::emitValues()
     //qDebug()<<"AL:in emitValues"<<m_ui->spinBoxOrientation1->value() << "AL emit valueTestphaseChanged should be called next.";
     if (uas && this->isVisible())
     {
-        if (uas->getMode() == MAV_MODE_TESTPHASE_ARMED)
+        if (uas->getMode() & MAV_MODE_FLAG_SAFETY_ARMED)
         {
             emit valueTestphaseChanged(m_ui->SliderThrust1->value(), m_ui->SliderThrust2->value(), m_ui->SliderThrust3->value(), m_ui->SliderThrust4->value(), m_ui->spinBoxOrientation1->value(), m_ui->spinBoxOrientation2->value(), m_ui->spinBoxOrientation3->value(), m_ui->spinBoxOrientation4->value());
 //            qDebug()<<"AL:emit should have been called now. Thrust for Motor1 is"<< m_ui->SliderThrust1->value();
