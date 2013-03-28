@@ -71,6 +71,8 @@ LedControlWidget::LedControlWidget(QWidget *parent) :
     ui->comboBoxMode->insertItem(LED_CONTROL_MODE_PULS, GetNameForLedColorMode(LED_CONTROL_MODE_PULS));
     ui->comboBoxMode->insertItem(LED_CONTROL_MODE_RAINBOW, GetNameForLedColorMode(LED_CONTROL_MODE_RAINBOW));
     ui->comboBoxMode->insertItem(LED_CONTROL_MODE_DISCO, GetNameForLedColorMode(LED_CONTROL_MODE_DISCO));
+    ui->comboBoxMode->insertItem(LED_CONTROL_MODE_POWER, GetNameForLedColorMode(LED_CONTROL_MODE_POWER));
+    ui->comboBoxMode->insertItem(LED_CONTROL_MODE_SPEED, GetNameForLedColorMode(LED_CONTROL_MODE_SPEED));
     connect(ui->comboBoxMode, SIGNAL(activated(int)), this, SLOT(changeMode(int)));
 
     // initialize frequency spinbox
@@ -220,6 +222,12 @@ QString LedControlWidget::GetNameForLedColorMode(LED_CONTROL_MODE m)
         break;
     case LED_CONTROL_MODE_DISCO:
         modeName = "DISCO";
+        break;
+    case LED_CONTROL_MODE_POWER:
+        modeName = "POWER";
+        break;
+    case LED_CONTROL_MODE_SPEED:
+        modeName = "SPEED";
         break;
     default:
         modeName = "unsupported";

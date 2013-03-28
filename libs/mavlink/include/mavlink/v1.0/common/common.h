@@ -422,7 +422,9 @@ enum LED_CONTROL_MODE
 	LED_CONTROL_MODE_PULS=2, /* Dim led like a pulser with given color and frequency | */
 	LED_CONTROL_MODE_RAINBOW=3, /* Iterate color wheel with given frequency | */
 	LED_CONTROL_MODE_DISCO=4, /* Disco mode (random puls, blink, color switch) considering given frequency | */
-	LED_CONTROL_MODE_ENUM_END=5, /*  | */
+	LED_CONTROL_MODE_POWER=5, /* Color proportional to given thrust (sum of all motors) | */
+	LED_CONTROL_MODE_SPEED=6, /* Color proportional to measured angular velocity | */
+	LED_CONTROL_MODE_ENUM_END=7, /*  | */
 };
 #endif
 

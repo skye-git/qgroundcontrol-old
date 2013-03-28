@@ -900,6 +900,12 @@
                <entry value="4" name="LED_CONTROL_MODE_DISCO">
                     <description>Disco mode (random puls, blink, color switch) considering given frequency</description>
                </entry>
+               <entry value="5" name="LED_CONTROL_MODE_POWER">
+                    <description>Color proportional to given thrust (sum of all motors)</description>
+               </entry>
+               <entry value="6" name="LED_CONTROL_MODE_SPEED">
+                    <description>Color proportional to measured angular velocity</description>
+               </entry>
           </enum>
      </enums>
      <messages>
