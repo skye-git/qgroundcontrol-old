@@ -218,8 +218,8 @@ void Mouse6dofInput::run()
             }
         }
 
-        // Sleep, update rate of 3d mouse is approx. 50 Hz (1000 ms / 50 = 20 ms)
-        QGC::SLEEP::msleep(20);
+        // Sleep - Update rate of 3d mouse is approx. 20 Hz (1000 ms / 20 Hz = 50 ms)
+        QGC::SLEEP::msleep(50);
     }
 }
 

@@ -262,7 +262,7 @@ MainWindow::MainWindow(QWidget *parent):
     emit initStatusChanged("Done.");
 
     connect(&touchInputTimer, SIGNAL(timeout()), this, SLOT(emitTouchInputValues()));           //Beginn Code AL (11.04.12)
-    touchInputTimer.start(200);                                                                 //Ende Code AL (11.04.12)
+    touchInputTimer.start(50);                                                                 //Ende Code AL (11.04.12)
 
     show();
 }
