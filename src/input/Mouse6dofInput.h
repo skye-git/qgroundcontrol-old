@@ -37,6 +37,12 @@ public:
 
 protected:
     void init();
+    /** Progressive incremention */
+    double progressive(double value);
+    /** Saturation to 1.0 */
+    double saturate(double value);
+    /** 1: greater than zero, 0: equal zero, -1 else */
+    int sign(double value);
 
 #ifdef MOUSE_ENABLED_LINUX
     QWidget* parentWidget;

@@ -187,24 +187,21 @@ void Mouse6dofInput::run()
 
         if (mouseActive)
         {
-            // Bound x value
-            if (xValue > 1.0) xValue = 1.0;
-            if (xValue < -1.0) xValue = -1.0;
-            // Bound x value
-            if (yValue > 1.0) yValue = 1.0;
-            if (yValue < -1.0) yValue = -1.0;
-            // Bound x value
-            if (zValue > 1.0) zValue = 1.0;
-            if (zValue < -1.0) zValue = -1.0;
-            // Bound x value
-            if (aValue > 1.0) aValue = 1.0;
-            if (aValue < -1.0) aValue = -1.0;
-            // Bound x value
-            if (bValue > 1.0) bValue = 1.0;
-            if (bValue < -1.0) bValue = -1.0;
-            // Bound x value
-            if (cValue > 1.0) cValue = 1.0;
-            if (cValue < -1.0) cValue = -1.0;
+            // Use progressive sensibility
+            xValue = progressive(xValue);
+            yValue = progressive(yValue);
+            zValue = progressive(zValue);
+            aValue = progressive(aValue);
+            bValue = progressive(bValue);
+            cValue = progressive(cValue);
+
+            // Bound value to +/-1
+            xValue = saturate(xValue);
+            yValue = saturate(yValue);
+            zValue = saturate(zValue);
+            aValue = saturate(aValue);
+            bValue = saturate(bValue);
+            cValue = saturate(cValue);
 
             SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uas);
             if (mav)
@@ -410,4 +407,25 @@ void Mouse6dofInput::updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
         }
     }
 #endif // MOUSE_ENABLED_LINUX
+}
+
+double Mouse6dofInput::progressive(double value)
+{
+    // assuming value is in range [-1,1]
+    return (value * value * (double)sign(value));
+}
+
+double Mouse6dofInput::saturate(double value)
+{
+    return (qAbs(value) > 1.0) ? (double)sign(value) : value;
+}
+
+int Mouse6dofInput::sign(double value)
+{
+    if (value > 0.0)
+        return 1;
+    else if (value == 0.0)
+        return 0;
+    else
+        return -1;
 }
