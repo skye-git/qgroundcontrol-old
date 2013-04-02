@@ -1,6 +1,6 @@
 #include "UASSkyeBatteryInfoWidget.h"
 #include "ui_UASSkyeBatteryInfoWidget.h"
-#include "UASManager.h"
+#include <UASManager.h>
 #include "SkyeMAV.h"
 
 UASSkyeBatteryInfoWidget::UASSkyeBatteryInfoWidget(QWidget *parent) :
@@ -40,7 +40,11 @@ void UASSkyeBatteryInfoWidget::setActiveUAS(UASInterface *uas)
 {
     if (this->uasId != 0)
     {
-        // Disconnect old UAS
+        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(uasId));
+        if (mav)
+        {
+            disconnect(mav, SIGNAL(batteryPackChanged(mavlink_battery_status_t*)), this, SLOT(changeBatteryPack(mavlink_battery_status_t*)));
+        }
     }
 
     // Connect UAS

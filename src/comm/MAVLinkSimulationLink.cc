@@ -587,6 +587,31 @@ void MAVLinkSimulationLink::mainloop()
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 
+        mavlink_battery_voltage_t volt;
+        volt.id = 2;
+        volt.voltage_1 = 1010;
+        volt.voltage_2 = 1010;
+        volt.voltage_3 = 1010;
+        volt.voltage_4 = 0;
+        volt.battery_remaining = -1;
+        mavlink_msg_battery_voltage_encode(systemId, MAV_COMP_ID_IMU, &msg, &volt);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
+
+        mavlink_actuation_current_t curr;
+        curr.id = 0;
+        curr.current_1 = 1010;
+        curr.current_2 = 1010;
+        curr.current_3 = 1010;
+        curr.current_4 = 1010;
+        mavlink_msg_actuation_current_encode(systemId, MAV_COMP_ID_IMU, &msg, &curr);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
+
 #endif
 
 

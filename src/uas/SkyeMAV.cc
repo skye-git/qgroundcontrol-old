@@ -58,6 +58,40 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             mavlink_msg_battery_status_decode(&message, &battery);
 
             emit batteryPackChanged(&battery);
+
+
+//            mavlink_battery_voltage_t volt;
+//            volt.id = 2;
+//            volt.voltage_1 = 1010;
+//            volt.voltage_2 = 1010;
+//            volt.voltage_3 = 1010;
+//            volt.voltage_4 = 0;
+//            volt.battery_remaining = -1;
+//            mavlink_msg_battery_voltage_encode(uasId, MAV_COMP_ID_IMU, &message, &volt);
+
+//            mavlink_battery_voltage_t voltage;
+//            mavlink_msg_battery_voltage_decode(&message, &voltage);
+
+//            emit voltageInfoChanged(&voltage);
+
+
+        }
+        break;
+        case MAVLINK_MSG_ID_BATTERY_VOLTAGE:
+        {
+            qDebug() << "[SkyeMAV] Received Battery Voltage";
+            mavlink_battery_voltage_t voltage;
+            mavlink_msg_battery_voltage_decode(&message, &voltage);
+
+            emit voltageInfoChanged(&voltage);
+        }
+        break;
+        case MAVLINK_MSG_ID_ACTUATION_CURRENT:
+        {
+            mavlink_actuation_current_t current;
+            mavlink_msg_actuation_current_decode(&message, &current);
+
+            emit currentInfoChanged(&current);
         }
         break;
 #ifdef TEMP_MAVLINK_ENABLE_SKYE
@@ -141,7 +175,10 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
         }
         break;
         }
+    } else {
+        qDebug() << "[SkyeMAV] Got Message with wrong sysid" << message.sysid;
     }
+
 #else
     // Let UAS handle the default message set
     UAS::receiveMessage(link, message);

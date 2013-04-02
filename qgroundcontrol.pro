@@ -235,7 +235,9 @@ FORMS += src/ui/MainWindow.ui \
     src/ui/QGCHilConfiguration.ui \
     src/ui/QGCHilFlightGearConfiguration.ui \
     src/ui/QGCHilXPlaneConfiguration.ui \
-    src/ui/ledControl/LedControlWidget.ui
+    src/ui/ledControl/LedControlWidget.ui \
+    src/ui/uas/UASVoltageInfoWidget.ui \
+    src/uas/UASCurrentInfoWidget.ui
 INCLUDEPATH += src \
     src/ui \
     src/ui/linechart \
@@ -388,7 +390,9 @@ HEADERS += src/MG.h \
     src/ui/QGCHilFlightGearConfiguration.h \
     src/ui/QGCHilXPlaneConfiguration.h \
     src/ui/uas/Skye_enums.h \
-    src/ui/ledControl/LedControlWidget.h
+    src/ui/ledControl/LedControlWidget.h \
+    src/ui/uas/UASVoltageInfoWidget.h \
+    src/uas/UASCurrentInfoWidget.h
 
 # Google Earth is only supported on Mac OS and Windows with Visual Studio Compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010::HEADERS += src/ui/map3D/QGCGoogleEarthView.h
@@ -559,7 +563,9 @@ SOURCES += src/main.cc \
     src/ui/QGCHilConfiguration.cc \
     src/ui/QGCHilFlightGearConfiguration.cc \
     src/ui/QGCHilXPlaneConfiguration.cc \
-    src/ui/ledControl/LedControlWidget.cc
+    src/ui/ledControl/LedControlWidget.cc \
+    src/ui/uas/UASVoltageInfoWidget.cpp \
+    src/uas/UASCurrentInfoWidget.cpp
 
 # Enable Google Earth only on Mac OS and Windows with Visual Studio compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010::SOURCES += src/ui/map3D/QGCGoogleEarthView.cc

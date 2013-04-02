@@ -87,6 +87,14 @@ signals:
      *          current Recent current of accu pack in ampere
      *          percent Estimated remaining battery, -1 when not estimated
     **/
+    void voltageInfoChanged(mavlink_battery_voltage_t* info);
+    /** @brief Emit new detailed accu voltage info for up to 4 accu packs
+     *  @param info, contains data
+    **/
+    void currentInfoChanged(mavlink_actuation_current_t* info);
+    /** @brief Emit actuation current consumption for up to 4 actuation units
+     *  @param info, contains data
+    **/
     void batteryPackChanged(mavlink_battery_status_t* battery);
     void reportUDPLinkFailed(QString errorStr);
     void mouseButtonRotationChanged(bool active);
