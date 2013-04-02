@@ -33,7 +33,18 @@ public:
     ~Mouse6dofInput();
     void run();
 
+#ifdef MOUSE_ENABLED_LINUX
+    const double mouse3DMaxX;
+    const double mouse3DMaxY;
+    const double mouse3DMaxZ;
+    const double mouse3DMaxA;
+    const double mouse3DMaxB;
+    const double mouse3DMaxC;
+#else
+#ifdef MOUSE_ENABLED_WIN
     const double mouse3DMax;
+#endif
+#endif
 
 protected:
     void init();

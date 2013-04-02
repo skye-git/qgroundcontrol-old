@@ -32,7 +32,7 @@ SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
     sensitivityFactorTrans(0),
     sensitivityFactorRot(0),
     currentTrajectoryStamp(0),
-    inputMode(QGC_INPUT_MODE_NONE)
+    inputMode(QGC_INPUT_MODE_TOUCH)
 {
     imagePacketsArrived = 0;
     this->setUASName("SKYE");
