@@ -4153,7 +4153,7 @@ static void mavlink_test_actuation_current(uint8_t system_id, uint8_t component_
         	packet1.current_2 = packet_in.current_2;
         	packet1.current_3 = packet_in.current_3;
         	packet1.current_4 = packet_in.current_4;
-        	packet1.component_id = packet_in.component_id;
+        	packet1.id = packet_in.id;
         
         
 
@@ -4163,12 +4163,12 @@ static void mavlink_test_actuation_current(uint8_t system_id, uint8_t component_
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_actuation_current_pack(system_id, component_id, &msg , packet1.component_id , packet1.current_1 , packet1.current_2 , packet1.current_3 , packet1.current_4 );
+	mavlink_msg_actuation_current_pack(system_id, component_id, &msg , packet1.id , packet1.current_1 , packet1.current_2 , packet1.current_3 , packet1.current_4 );
 	mavlink_msg_actuation_current_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_actuation_current_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.component_id , packet1.current_1 , packet1.current_2 , packet1.current_3 , packet1.current_4 );
+	mavlink_msg_actuation_current_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.id , packet1.current_1 , packet1.current_2 , packet1.current_3 , packet1.current_4 );
 	mavlink_msg_actuation_current_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -4181,7 +4181,7 @@ static void mavlink_test_actuation_current(uint8_t system_id, uint8_t component_
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_actuation_current_send(MAVLINK_COMM_1 , packet1.component_id , packet1.current_1 , packet1.current_2 , packet1.current_3 , packet1.current_4 );
+	mavlink_msg_actuation_current_send(MAVLINK_COMM_1 , packet1.id , packet1.current_1 , packet1.current_2 , packet1.current_3 , packet1.current_4 );
 	mavlink_msg_actuation_current_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
@@ -4205,7 +4205,7 @@ static void mavlink_test_battery_voltage(uint8_t system_id, uint8_t component_id
         	packet1.voltage_2 = packet_in.voltage_2;
         	packet1.voltage_3 = packet_in.voltage_3;
         	packet1.voltage_4 = packet_in.voltage_4;
-        	packet1.accu_id = packet_in.accu_id;
+        	packet1.id = packet_in.id;
         	packet1.battery_remaining = packet_in.battery_remaining;
         
         
@@ -4216,12 +4216,12 @@ static void mavlink_test_battery_voltage(uint8_t system_id, uint8_t component_id
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_battery_voltage_pack(system_id, component_id, &msg , packet1.accu_id , packet1.voltage_1 , packet1.voltage_2 , packet1.voltage_3 , packet1.voltage_4 , packet1.battery_remaining );
+	mavlink_msg_battery_voltage_pack(system_id, component_id, &msg , packet1.id , packet1.voltage_1 , packet1.voltage_2 , packet1.voltage_3 , packet1.voltage_4 , packet1.battery_remaining );
 	mavlink_msg_battery_voltage_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_battery_voltage_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.accu_id , packet1.voltage_1 , packet1.voltage_2 , packet1.voltage_3 , packet1.voltage_4 , packet1.battery_remaining );
+	mavlink_msg_battery_voltage_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.id , packet1.voltage_1 , packet1.voltage_2 , packet1.voltage_3 , packet1.voltage_4 , packet1.battery_remaining );
 	mavlink_msg_battery_voltage_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -4234,7 +4234,7 @@ static void mavlink_test_battery_voltage(uint8_t system_id, uint8_t component_id
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_battery_voltage_send(MAVLINK_COMM_1 , packet1.accu_id , packet1.voltage_1 , packet1.voltage_2 , packet1.voltage_3 , packet1.voltage_4 , packet1.battery_remaining );
+	mavlink_msg_battery_voltage_send(MAVLINK_COMM_1 , packet1.id , packet1.voltage_1 , packet1.voltage_2 , packet1.voltage_3 , packet1.voltage_4 , packet1.battery_remaining );
 	mavlink_msg_battery_voltage_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }

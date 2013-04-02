@@ -1617,7 +1617,7 @@
           </message>
           <message id="145" name="ACTUATION_CURRENT">
                <description>Current information for up to 4 actuators.</description>
-               <field type="uint8_t" name="component_id">ID number</field>
+               <field type="uint8_t" name="id">ID for personal specification</field>
                <field type="int16_t" name="current_1">Actuation unit 1 current, in 10*milliamperes (1 = 10 milliampere), -1: autopilot does not measure the current</field>
                <field type="int16_t" name="current_2">Actuation unit 2 current, in 10*milliamperes (1 = 10 milliampere), -1: autopilot does not measure the current</field>
                <field type="int16_t" name="current_3">Actuation unit 3 current, in 10*milliamperes (1 = 10 milliampere), -1: autopilot does not measure the current</field>
@@ -1625,7 +1625,7 @@
           </message>
           <message id="146" name="BATTERY_VOLTAGE">
                <description>Battery voltage informations for up to 4 batteries.</description>
-               <field type="uint8_t" name="accu_id">Accupack ID</field>
+               <field type="uint8_t" name="id">ID for personal specification</field>
                <field type="uint16_t" name="voltage_1">Battery voltage of accu 1, in millivolts (1 = 1 millivolt)</field>
                <field type="uint16_t" name="voltage_2">Battery voltage of accu 2, in millivolts (1 = 1 millivolt), -1: no cell</field>
                <field type="uint16_t" name="voltage_3">Battery voltage of accu 3, in millivolts (1 = 1 millivolt), -1: no cell</field>
