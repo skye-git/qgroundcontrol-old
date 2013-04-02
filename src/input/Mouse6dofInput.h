@@ -99,6 +99,12 @@ signals:
      */
     void mouseRotationActiveChanged(bool rotationEnable);
 
+    /**
+      * @brief Reset input mode (if initialization fails)
+      * @param inputMode, none if mouse initialization fails
+      */
+    void resetInputMode(SkyeMAV::QGC_INPUT_MODE);
+
 public slots:
     void setActiveUAS(UASInterface* uas);
 #ifdef MOUSE_ENABLED_WIN

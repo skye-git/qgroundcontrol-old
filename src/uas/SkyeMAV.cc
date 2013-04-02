@@ -464,6 +464,7 @@ void SkyeMAV::updateTrigonometry()
 
 void SkyeMAV::setInputMode(SkyeMAV::QGC_INPUT_MODE input)
 {
+    qDebug() << "[SkyeMAV] Set new input mode" << input;
     inputMode = input;
     emit inputModeChanged(inputMode);
 }

@@ -153,6 +153,7 @@ void Mouse6dofInput::setActiveUAS(UASInterface* uas)
         connect(this, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
         connect(this, SIGNAL(mouseRotationActiveChanged(bool)), mav, SLOT(changeMouseRotationActive(bool)));
         connect(this, SIGNAL(mouseTranslationActiveChanged(bool)), mav, SLOT(changeMouseTranslationActive(bool)));
+        connect(this, SIGNAL(resetInputMode(SkyeMAV::QGC_INPUT_MODE)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
         connect(mav, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(updateInputMode(SkyeMAV::QGC_INPUT_MODE)));
 
         emit mouseRotationActiveChanged(this->rotationActive);
@@ -263,16 +264,16 @@ void Mouse6dofInput::button3DMouseDown(int button)
     {
     case 1:
     {
-            rotationActive = !rotationActive;
-            emit mouseRotationActiveChanged(rotationActive);
-            qDebug() << "Changed 3DMouse Rotation to " << (bool)rotationActive;
+            translationActive = !translationActive;
+            emit mouseTranslationActiveChanged(translationActive);
+            qDebug() << "Changed 3DMouse Translation to" << (bool)translationActive;
         break;
     }
     case 2:
     {
-            translationActive = !translationActive;
-            emit mouseTranslationActiveChanged(translationActive);
-            qDebug() << "Changed 3DMouse Translation to" << (bool)translationActive;
+            rotationActive = !rotationActive;
+            emit mouseRotationActiveChanged(rotationActive);
+            qDebug() << "Changed 3DMouse Rotation to " << (bool)rotationActive;
         break;
     }
     default:
@@ -287,7 +288,7 @@ void Mouse6dofInput::handleX11Event(XEvent *event)
     //qDebug("XEvent occured...");
     if (!mouseActive)
     {
-        qDebug() << "3dMouse not initialized. Cancelled handling X11event for 3dMouse";
+//        qDebug() << "3dMouse not initialized. Cancelled handling X11event for 3dMouse";
         return;
     }
 
@@ -354,16 +355,16 @@ void Mouse6dofInput::handleX11Event(XEvent *event)
             {
             case 1:
             {
-                    rotationActive = !rotationActive;
-                    emit mouseRotationActiveChanged(rotationActive);
-                    qDebug() << "Changed 3DMouse Rotation to " << (bool)rotationActive;
+                    translationActive = !translationActive;
+                    emit mouseTranslationActiveChanged(translationActive);
+                    qDebug() << "Changed 3DMouse Translation to" << (bool)translationActive;
                 break;
             }
             case 2:
             {
-                    translationActive = !translationActive;
-                    emit mouseTranslationActiveChanged(translationActive);
-                    qDebug() << "Changed 3DMouse Translation to" << (bool)translationActive;
+                    rotationActive = !rotationActive;
+                    emit mouseRotationActiveChanged(rotationActive);
+                    qDebug() << "Changed 3DMouse Rotation to " << (bool)rotationActive;
                 break;
             }
             default:
@@ -407,8 +408,8 @@ void Mouse6dofInput::updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
             msgBox.setDefaultButton(QMessageBox::Ok);
             msgBox.exec();
 
+            emit resetInputMode(SkyeMAV::QGC_INPUT_MODE_NONE);
             qDebug() << "[update] No 3DxWare driver is running!";
-            return;
         }
         else
         {
