@@ -49,7 +49,12 @@ Mouse6dofInput::Mouse6dofInput(Mouse3DInput* mouseInput) :
 
 #ifdef MOUSE_ENABLED_LINUX
 Mouse6dofInput::Mouse6dofInput(QWidget* parent) :
-    mouse3DMax(350.0),   // TODO: check maximum value fot plugged device
+    mouse3DMaxX(350.0),   // TODO: check maximum value for plugged device
+    mouse3DMaxY(350.0),   // TODO: check maximum value for plugged device
+    mouse3DMaxZ(350.0),   // TODO: check maximum value for plugged device
+    mouse3DMaxA(390.0),   // TODO: check maximum value for plugged device
+    mouse3DMaxB(390.0),   // TODO: check maximum value for plugged device
+    mouse3DMaxC(350.0),   // TODO: check maximum value for plugged device
     uas(NULL),
     done(false),
     mouseActive(false),
@@ -65,49 +70,49 @@ Mouse6dofInput::Mouse6dofInput(QWidget* parent) :
 {
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setActiveUAS(UASInterface*)));
 
-    if (true)       //(!mouseActive)
-    {
-//        // man visudo --> then you can omit giving password (success not guarantied..)
-//        qDebug() << "Starting 3DxWare Daemon for 3dConnexion 3dMouse";
-//        QString processProgramm = "gksudo";
-//        QStringList processArguments;
-//        processArguments << "/etc/3DxWare/daemon/3dxsrv -d usb";
-//        process3dxDaemon = new QProcess();
-//        process3dxDaemon->start(processProgramm, processArguments);
-//    //    process3dxDaemon->waitForFinished();
-//    //    {
-//    //        qDebug() << "... continuing without 3DxWare. May not be initialized properly!";
-//    //        qDebug() << "Try in terminal as user root:" << processArguments.last();
-//    //    }
+//    if (true)       //(!mouseActive)
+//    {
+////        // man visudo --> then you can omit giving password (success not guarantied..)
+////        qDebug() << "Starting 3DxWare Daemon for 3dConnexion 3dMouse";
+////        QString processProgramm = "gksudo";
+////        QStringList processArguments;
+////        processArguments << "/etc/3DxWare/daemon/3dxsrv -d usb";
+////        process3dxDaemon = new QProcess();
+////        process3dxDaemon->start(processProgramm, processArguments);
+////    //    process3dxDaemon->waitForFinished();
+////    //    {
+////    //        qDebug() << "... continuing without 3DxWare. May not be initialized properly!";
+////    //        qDebug() << "Try in terminal as user root:" << processArguments.last();
+////    //    }
 
-        Display *display = QX11Info::display();
-        if(!display)
-        {
-            qDebug() << "Cannot open display!" << endl;
-        }
-        if ( !MagellanInit( display, parent->winId() ) )
-        {
-            QMessageBox msgBox;
-            msgBox.setIcon(QMessageBox::Information);
-            msgBox.setText(tr("No 3DxWare driver is running."));
-            msgBox.setInformativeText(tr("Enter in Terminal 'sudo /etc/3DxWare/daemon/3dxsrv -d usb' and then restart QGroundControl."));
-            msgBox.setStandardButtons(QMessageBox::Ok);
-            msgBox.setDefaultButton(QMessageBox::Ok);
-            msgBox.exec();
+//        Display *display = QX11Info::display();
+//        if(!display)
+//        {
+//            qDebug() << "Cannot open display!" << endl;
+//        }
+//        if ( !MagellanInit( display, parent->winId() ) )
+//        {
+//            QMessageBox msgBox;
+//            msgBox.setIcon(QMessageBox::Information);
+//            msgBox.setText(tr("No 3DxWare driver is running."));
+//            msgBox.setInformativeText(tr("Enter in Terminal 'sudo /etc/3DxWare/daemon/3dxsrv -d usb' and then restart QGroundControl."));
+//            msgBox.setStandardButtons(QMessageBox::Ok);
+//            msgBox.setDefaultButton(QMessageBox::Ok);
+//            msgBox.exec();
 
-            qDebug() << "No 3DxWare driver is running!";
-            return;
-        }
-        else
-        {
-            qDebug() << "Initialized 3dMouse";
-            mouseActive = true;
-        }
-    }
-    else
-    {
-        qDebug() << "3dMouse already initialized..";
-    }
+//            qDebug() << "No 3DxWare driver is running!";
+//            return;
+//        }
+//        else
+//        {
+//            qDebug() << "Initialized 3dMouse";
+//            mouseActive = true;
+//        }
+//    }
+//    else
+//    {
+//        qDebug() << "3dMouse already initialized..";
+//    }
 
 }
 #endif //MOUSE_ENABLED_LINUX
@@ -148,6 +153,7 @@ void Mouse6dofInput::setActiveUAS(UASInterface* uas)
         connect(this, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
         connect(this, SIGNAL(mouseRotationActiveChanged(bool)), mav, SLOT(changeMouseRotationActive(bool)));
         connect(this, SIGNAL(mouseTranslationActiveChanged(bool)), mav, SLOT(changeMouseTranslationActive(bool)));
+        connect(this, SIGNAL(resetInputMode(SkyeMAV::QGC_INPUT_MODE)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
         connect(mav, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(updateInputMode(SkyeMAV::QGC_INPUT_MODE)));
 
         emit mouseRotationActiveChanged(this->rotationActive);
@@ -258,16 +264,16 @@ void Mouse6dofInput::button3DMouseDown(int button)
     {
     case 1:
     {
-            rotationActive = !rotationActive;
-            emit mouseRotationActiveChanged(rotationActive);
-            qDebug() << "Changed 3DMouse Rotation to " << (bool)rotationActive;
+            translationActive = !translationActive;
+            emit mouseTranslationActiveChanged(translationActive);
+            qDebug() << "Changed 3DMouse Translation to" << (bool)translationActive;
         break;
     }
     case 2:
     {
-            translationActive = !translationActive;
-            emit mouseTranslationActiveChanged(translationActive);
-            qDebug() << "Changed 3DMouse Translation to" << (bool)translationActive;
+            rotationActive = !rotationActive;
+            emit mouseRotationActiveChanged(rotationActive);
+            qDebug() << "Changed 3DMouse Rotation to " << (bool)rotationActive;
         break;
     }
     default:
@@ -282,7 +288,7 @@ void Mouse6dofInput::handleX11Event(XEvent *event)
     //qDebug("XEvent occured...");
     if (!mouseActive)
     {
-        qDebug() << "3dMouse not initialized. Cancelled handling X11event for 3dMouse";
+//        qDebug() << "3dMouse not initialized. Cancelled handling X11event for 3dMouse";
         return;
     }
 
@@ -301,16 +307,21 @@ void Mouse6dofInput::handleX11Event(XEvent *event)
       {
         case MagellanInputMotionEvent :
              MagellanRemoveMotionEvents( display );
-             for (int i = 0; i < 6; i++) {  // Saturation
-                 MagellanEvent.MagellanData[i] = (abs(MagellanEvent.MagellanData[i]) < mouse3DMax) ? MagellanEvent.MagellanData[i] : (mouse3DMax*MagellanEvent.MagellanData[i]/abs(MagellanEvent.MagellanData[i]));
-             }
+
+             /**
+              * Consider the following axis interpretation
+              * X: Mouse front (point where wire is connected)
+              * Y: Mouse right
+              * Z: Mouse down
+              */
 
              // Check whether translational motions are enabled
              if (translationActive)
              {
-                 xValue = MagellanEvent.MagellanData[ MagellanZ ] / mouse3DMax;
-                 yValue = MagellanEvent.MagellanData[ MagellanX ] / mouse3DMax;
-                 zValue = - MagellanEvent.MagellanData[ MagellanY ] / mouse3DMax;
+                 xValue = MagellanEvent.MagellanData[ MagellanZ ] / mouse3DMaxX;
+                 yValue = MagellanEvent.MagellanData[ MagellanX ] / mouse3DMaxY;
+                 zValue = - MagellanEvent.MagellanData[ MagellanY ] / mouse3DMaxZ;
+//                 qDebug() << "Unsaturated Mouse value x" << xValue << "\t y" << yValue << "\t z" << zValue;
              }else{
                  xValue = 0;
                  yValue = 0;
@@ -319,14 +330,22 @@ void Mouse6dofInput::handleX11Event(XEvent *event)
              // Check whether rotational motions are enabled
              if (rotationActive)
              {
-                 aValue = MagellanEvent.MagellanData[ MagellanC ] / mouse3DMax;
-                 bValue = MagellanEvent.MagellanData[ MagellanA ] / mouse3DMax;
-                 cValue = - MagellanEvent.MagellanData[ MagellanB ] / mouse3DMax;
+                 aValue = MagellanEvent.MagellanData[ MagellanC ] / mouse3DMaxA;
+                 bValue = MagellanEvent.MagellanData[ MagellanA ] / mouse3DMaxB;
+                 cValue = - MagellanEvent.MagellanData[ MagellanB ] / mouse3DMaxC;
+//                 qDebug() << "Unsaturated Mouse value a" << aValue << "\t b" << bValue << "\t c" << cValue;
              }else{
                  aValue = 0;
                  bValue = 0;
                  cValue = 0;
              }
+             // Saturation
+             xValue = saturate(xValue);
+             yValue = saturate(yValue);
+             zValue = saturate(zValue);
+             aValue = saturate(aValue);
+             bValue = saturate(bValue);
+             cValue = saturate(cValue);
              //qDebug() << "NEW 3D MOUSE VALUES -- X" << xValue << " -- Y" << yValue << " -- Z" << zValue << " -- A" << aValue << " -- B" << bValue << " -- C" << cValue;
         break;
 
@@ -336,16 +355,16 @@ void Mouse6dofInput::handleX11Event(XEvent *event)
             {
             case 1:
             {
-                    rotationActive = !rotationActive;
-                    emit mouseRotationActiveChanged(rotationActive);
-                    qDebug() << "Changed 3DMouse Rotation to " << (bool)rotationActive;
+                    translationActive = !translationActive;
+                    emit mouseTranslationActiveChanged(translationActive);
+                    qDebug() << "Changed 3DMouse Translation to" << (bool)translationActive;
                 break;
             }
             case 2:
             {
-                    translationActive = !translationActive;
-                    emit mouseTranslationActiveChanged(translationActive);
-                    qDebug() << "Changed 3DMouse Translation to" << (bool)translationActive;
+                    rotationActive = !rotationActive;
+                    emit mouseRotationActiveChanged(rotationActive);
+                    qDebug() << "Changed 3DMouse Rotation to " << (bool)rotationActive;
                 break;
             }
             default:
@@ -377,7 +396,7 @@ void Mouse6dofInput::updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
         display = QX11Info::display();
         if(!display)
         {
-            qDebug() << "Cannot open display!" << endl;
+            qDebug() << "[update] Cannot open display!" << endl;
         }
         if ( !MagellanInit( display, parentWidget->winId() ) )
         {
@@ -389,12 +408,12 @@ void Mouse6dofInput::updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
             msgBox.setDefaultButton(QMessageBox::Ok);
             msgBox.exec();
 
-            qDebug() << "No 3DxWare driver is running!";
-            return;
+            emit resetInputMode(SkyeMAV::QGC_INPUT_MODE_NONE);
+            qDebug() << "[update] No 3DxWare driver is running!";
         }
         else
         {
-            qDebug() << "Initialized 3dMouse";
+            qDebug() << "[update] Initialized 3dMouse";
             mouseActive = true;
         }
     }
