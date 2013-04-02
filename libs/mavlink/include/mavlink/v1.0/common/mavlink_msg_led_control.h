@@ -1,6 +1,6 @@
 // MESSAGE LED_CONTROL PACKING
 
-#define MAVLINK_MSG_ID_LED_CONTROL 146
+#define MAVLINK_MSG_ID_LED_CONTROL 144
 
 typedef struct __mavlink_led_control_t
 {
@@ -13,7 +13,7 @@ typedef struct __mavlink_led_control_t
 } mavlink_led_control_t;
 
 #define MAVLINK_MSG_ID_LED_CONTROL_LEN 9
-#define MAVLINK_MSG_ID_146_LEN 9
+#define MAVLINK_MSG_ID_144_LEN 9
 
 
 
