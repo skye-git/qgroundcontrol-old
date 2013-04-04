@@ -156,14 +156,14 @@ protected:
     double rotX;
     double rotY;
     double rotZ;
-    int thrust1;        //Testphase Control
-    int thrust2;
-    int thrust3;
-    int thrust4;
-    int orientation1;
-    int orientation2;
-    int orientation3;
-    int orientation4;
+    float thrust1;        //Testphase Control
+    float thrust2;
+    float thrust3;
+    float thrust4;
+    float orientation1;
+    float orientation2;
+    float orientation3;
+    float orientation4;
     int battery_pack_id;    // Iterator for detailed battery message
     int homing;                 //Value from HOME_MAXON message
 

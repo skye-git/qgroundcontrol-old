@@ -179,6 +179,7 @@ void TestphaseWidget::stopall()
 
 //}
 
+
 void TestphaseWidget::cycleContextButton()
 {    
     if (uas)
@@ -186,6 +187,8 @@ void TestphaseWidget::cycleContextButton()
         if (!engineOn)
         {
             uas->armSystem();
+            uas->setModeCommand(MAV_MODE_FLAG_TEST_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED);
+
             //m_ui->controlButton->setText(tr("DISARMSYSTEM"));
             //m_ui->controlButton->setStyleSheet("* { background-color: rgb(255,125,100) }");
 //            uas->setMode(MAV_MODE_TESTPHASE_ARMED);
@@ -195,7 +198,7 @@ void TestphaseWidget::cycleContextButton()
             uas->disarmSystem();
             //m_ui->controlButton->setText(tr("ARM SYSTEM"));
             //m_ui->controlButton->setStyleSheet("* { background-color: rgb(125,255,100) }");
-            uas->setMode(MAV_MODE_TESTPHASE_DISARMED);
+            uas->setModeCommand(MAV_MODE_PREFLIGHT);
             engineOn=false;
         }
 
@@ -217,6 +220,11 @@ void TestphaseWidget::updateState(int state)
         setzero();
         m_ui->controlButton->setText(tr("ARM SYSTEM"));
         m_ui->controlButton->setStyleSheet("* { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00DD44, stop: 1 #11AA22); }");
+        break;
+    default:
+        engineOn = true;
+        m_ui->controlButton->setText(tr("UNKNOWN STATE"));
+        m_ui->controlButton->setStyleSheet("* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DD0044, stop: 1 #AA0022); border-color: yellow; color: yellow }");
         break;
     }
 }
