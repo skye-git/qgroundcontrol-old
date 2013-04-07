@@ -49,7 +49,7 @@ UASSkyeBatteryPackWidget::UASSkyeBatteryPackWidget(QWidget *parent, MAV_SKYE_BAT
         }
         break;
         default:
-            labelText = "no pack";
+            labelText = "Battery Id higher than 3";
         break;
     }
     ui->labelBatteryPack->setText(labelText);
@@ -73,7 +73,7 @@ void UASSkyeBatteryPackWidget::changeBatteryStatus(double voltage1, double volta
 
     int priorVoltage;
     priorVoltage = batteryCells;
-    if (voltage1 > 0)
+    // Display at least cell 1 (even if it is zero)
         batteryCells = 1;
     if (voltage2 > 0)
         batteryCells = 2;
