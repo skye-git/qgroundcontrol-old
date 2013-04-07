@@ -568,17 +568,20 @@ void MAVLinkSimulationLink::mainloop()
         streampointer += bufferlength;
 
         battery_pack_id++;
-        if (battery_pack_id >= 3){
-            battery_pack_id = 0;
+        if (battery_pack_id > 5){
+            battery_pack_id = 1;
         }
         mavlink_battery_status_t battery;
         battery.accu_id = battery_pack_id;
         battery.voltage_cell_1 = 1000*(3 + sin(time_boot*0.002));
         battery.voltage_cell_2 = 1000*(3 + cos(time_boot*0.002));
         battery.voltage_cell_3 = 1000*(3 - sin(time_boot*0.002));
-        battery.voltage_cell_4 = 1000*(3 + cos(time_boot*0.002));
-        battery.voltage_cell_5 = -1;
-        battery.voltage_cell_6 = -1;
+        if (battery_pack_id == 1)
+            battery.voltage_cell_4 = 1000*(3 + cos(time_boot*0.002));
+        else
+            battery.voltage_cell_4 = 0;
+        battery.voltage_cell_5 = 0;
+        battery.voltage_cell_6 = 0;
         battery.current_battery = 100*2.12;
         battery.battery_remaining = (int8_t)floor((float)(100 - 0.0005*time_boot));
         mavlink_msg_battery_status_encode(systemId, MAV_COMP_ID_IMU, &msg, &battery);

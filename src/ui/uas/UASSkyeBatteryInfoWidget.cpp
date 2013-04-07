@@ -21,13 +21,6 @@ UASSkyeBatteryInfoWidget::UASSkyeBatteryInfoWidget(QWidget *parent) :
     batteryPacks.insert(MAV_SKYE_BATTERY_PACK_ID_1, new UASSkyeBatteryPackWidget(this, MAV_SKYE_BATTERY_PACK_ID_1));
     listLayout->addWidget(batteryPacks.value(MAV_SKYE_BATTERY_PACK_ID_1));
 
-    batteryPacks.insert(MAV_SKYE_BATTERY_PACK_ID_2, new UASSkyeBatteryPackWidget(this, MAV_SKYE_BATTERY_PACK_ID_2));
-    listLayout->addWidget(batteryPacks.value(MAV_SKYE_BATTERY_PACK_ID_2));
-
-    batteryPacks.insert(MAV_SKYE_BATTERY_PACK_ID_3, new UASSkyeBatteryPackWidget(this, MAV_SKYE_BATTERY_PACK_ID_3));
-    listLayout->addWidget(batteryPacks.value(MAV_SKYE_BATTERY_PACK_ID_3));
-
-
     batteryPacksNumber = 1;
 
     setActiveUAS(UASManager::instance()->getActiveUAS());
@@ -62,7 +55,7 @@ void UASSkyeBatteryInfoWidget::setActiveUAS(UASInterface *uas)
 void UASSkyeBatteryInfoWidget::changeBatteryPack(mavlink_battery_status_t* battery)
 {
 //    qDebug()<<"Message battery_status received";
-    MAV_SKYE_BATTERY_PACK_ID packId = (MAV_SKYE_BATTERY_PACK_ID)(battery->accu_id+1);
+    MAV_SKYE_BATTERY_PACK_ID packId = (MAV_SKYE_BATTERY_PACK_ID)(battery->accu_id);
     double voltage1 = (double)battery->voltage_cell_1/1000.0;
     double voltage2 = (double)battery->voltage_cell_2/1000.0;
     double voltage3 = (double)battery->voltage_cell_3/1000.0;
@@ -72,15 +65,17 @@ void UASSkyeBatteryInfoWidget::changeBatteryPack(mavlink_battery_status_t* batte
     double current = (double)battery->current_battery/100.0;
     int remaining = battery->battery_remaining;
 
-//    if (packId == batteryPacksNumber+1)
-//    {
-//        // Add battery pack widget
-//        batteryPacks.insert(packId, new UASSkyeBatteryPackWidget(this, packId));
-//        listLayout->addWidget(batteryPacks.value(packId));
-//        batteryPacksNumber++;
-//     }
+    if (packId == batteryPacksNumber+1)
+    {
+        // Add battery pack widget
+        batteryPacks.insert(packId, new UASSkyeBatteryPackWidget(this, packId));
+        listLayout->addWidget(batteryPacks.value(packId));
+        batteryPacksNumber++;
+     }
 
 //    if( batteryPacks.value(packId))
-//        // Update battery pack widget
-//        batteryPacks.value(packId)->changeBatteryStatus( voltage1, voltage2, voltage3, voltage4, voltage5, voltage6, current, remaining);
+        // Update battery pack widget
+    if (batteryPacks.value(packId))
+        batteryPacks.value(packId)->changeBatteryStatus( voltage1, voltage2, voltage3, voltage4, voltage5, voltage6, current, remaining);
+
 }
