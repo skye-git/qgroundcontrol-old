@@ -6,7 +6,9 @@
 UASSkyeBatteryInfoWidget::UASSkyeBatteryInfoWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::UASSkyeBatteryInfoWidget),
-    uasId(0)
+    uasId(0),
+    batteryPacksNumber(1),
+    uasUsesZeroBatteryId(false)
 {
     ui->setupUi(this);
 
@@ -20,8 +22,6 @@ UASSkyeBatteryInfoWidget::UASSkyeBatteryInfoWidget(QWidget *parent) :
 
     batteryPacks.insert(MAV_SKYE_BATTERY_PACK_ID_1, new UASSkyeBatteryPackWidget(this, MAV_SKYE_BATTERY_PACK_ID_1));
     listLayout->addWidget(batteryPacks.value(MAV_SKYE_BATTERY_PACK_ID_1));
-
-    batteryPacksNumber = 1;
 
     setActiveUAS(UASManager::instance()->getActiveUAS());
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setActiveUAS(UASInterface*)));
@@ -56,6 +56,7 @@ void UASSkyeBatteryInfoWidget::changeBatteryPack(mavlink_battery_status_t* batte
 {
 //    qDebug()<<"Message battery_status received";
     MAV_SKYE_BATTERY_PACK_ID packId = (MAV_SKYE_BATTERY_PACK_ID)(battery->accu_id);
+    if (packId == 0) uasUsesZeroBatteryId = true;
     double voltage1 = (double)battery->voltage_cell_1/1000.0;
     double voltage2 = (double)battery->voltage_cell_2/1000.0;
     double voltage3 = (double)battery->voltage_cell_3/1000.0;
@@ -73,9 +74,15 @@ void UASSkyeBatteryInfoWidget::changeBatteryPack(mavlink_battery_status_t* batte
         batteryPacksNumber++;
      }
 
-//    if( batteryPacks.value(packId))
-        // Update battery pack widget
+    // Shift id if UAS starts id with ID 0
+    if (uasUsesZeroBatteryId == true)
+    {
+        packId = (MAV_SKYE_BATTERY_PACK_ID)((int)packId + 1);
+    }
+    // Update battery pack widget
     if (batteryPacks.value(packId))
+    {
         batteryPacks.value(packId)->changeBatteryStatus( voltage1, voltage2, voltage3, voltage4, voltage5, voltage6, current, remaining);
+    }
 
 }

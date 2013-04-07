@@ -31,6 +31,7 @@ private:
 protected:
     QMap<int, UASSkyeBatteryPackWidget*> batteryPacks;
     int batteryPacksNumber;
+    bool uasUsesZeroBatteryId;
     QVBoxLayout* listLayout;
     int uasId;
 };
