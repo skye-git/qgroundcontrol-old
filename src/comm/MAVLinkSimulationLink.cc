@@ -834,7 +834,8 @@ void MAVLinkSimulationLink::writeBytes(const char* data, qint64 size)
                 // Set mode indepent of mode.target
 
 #ifdef QGC_USE_SKYE_INTERFACE                             // Beginn Code MA (13.03.2012)
-                if (system.base_mode & MAV_MODE_FLAG_DECODE_POSITION_SAFETY)
+                if ((system.base_mode & MAV_MODE_FLAG_SAFETY_ARMED) &&
+                    (mode.base_mode & MAV_MODE_FLAG_SAFETY_ARMED))
                 {
                     system.base_mode = mode.base_mode;
                     system.system_status = MAV_STATE_ACTIVE;

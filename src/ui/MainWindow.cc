@@ -584,6 +584,25 @@ void MainWindow::buildCommonWidgets()
         addTool(video2DockWidget, tr("Video Stream 2"), Qt::LeftDockWidgetArea);
     }
 
+    // Dock voltage widget
+    if (!voltageInfoDockWidget)
+    {
+        voltageInfoDockWidget = new QDockWidget("Voltage Info", this);
+        voltageInfoDockWidget->setWidget( new UASVoltageInfoWidget);
+        voltageInfoDockWidget->setObjectName("VOLTAGE_INFO_DOCKWIDGET");
+        addTool(voltageInfoDockWidget, tr("Voltage Info"), Qt::LeftDockWidgetArea);
+    }
+
+    // Dock current widget
+    if (!currentInfoDockWidget)
+    {
+        currentInfoDockWidget = new QDockWidget("Current Info", this);
+        currentInfoDockWidget->setWidget( new UASCurrentInfoWidget);
+        currentInfoDockWidget->setObjectName("CURRENT_INFO_DOCKWIDGET");
+        addTool(currentInfoDockWidget, tr("Current Info"), Qt::LeftDockWidgetArea);
+    }
+
+
 //    if (!rgbd1DockWidget) {
 //        rgbd1DockWidget = new QDockWidget(tr("Video Stream 1"), this);
 //        HUD* video1 =  new HUD(160, 120, this);
@@ -1553,23 +1572,6 @@ void MainWindow::UASCreated(UASInterface* uas)
                 addTool(skyeBatteryInfoDockWidget, tr("Battery Info"), Qt::RightDockWidgetArea);
             }
 
-            // Dock voltage widget
-            if (!voltageInfoDockWidget)
-            {
-                voltageInfoDockWidget = new QDockWidget("Voltage Info", this);
-                voltageInfoDockWidget->setWidget( new UASVoltageInfoWidget);
-                voltageInfoDockWidget->setObjectName("VOLTAGE_INFO_DOCKWIDGET");
-                addTool(voltageInfoDockWidget, tr("Voltage Info"), Qt::LeftDockWidgetArea);
-            }
-
-            // Dock current widget
-            if (!currentInfoDockWidget)
-            {
-                currentInfoDockWidget = new QDockWidget("Current Info", this);
-                currentInfoDockWidget->setWidget( new UASCurrentInfoWidget);
-                currentInfoDockWidget->setObjectName("CURRENT_INFO_DOCKWIDGET");
-                addTool(currentInfoDockWidget, tr("Current Info"), Qt::LeftDockWidgetArea);
-            }
         }
 #endif
 

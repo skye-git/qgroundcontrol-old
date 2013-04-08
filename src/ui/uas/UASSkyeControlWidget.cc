@@ -338,10 +338,10 @@ void UASSkyeControlWidget::setDirectControlMode()
 
     uint8_t newMode = MAV_MODE_PREFLIGHT;
     if (engineOn) {
-        newMode = newMode | MAV_MODE_FLAG_SAFETY_ARMED;
 
     if ( !(uasMode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED) || (uasMode & MAV_MODE_FLAG_STABILIZE_ENABLED) ) {
-        newMode = newMode | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
+        // Set direct manual control (otherwise reset to PREFLIGHT)
+        newMode = newMode | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED;
     }
 
     transmitMode(newMode);
@@ -364,8 +364,10 @@ void UASSkyeControlWidget::setRateControlMode()
         newMode = newMode | MAV_MODE_FLAG_SAFETY_ARMED;
 
         if ( !(uasMode & MAV_MODE_FLAG_CUSTOM_MODE_ENABLED) ) {
+            // Set rate control
             newMode |= MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
         } else {
+            // Reset to direct manual control
             newMode |= MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
         }
 
@@ -388,8 +390,10 @@ void UASSkyeControlWidget::setAttitudeControlMode()
         newMode = newMode | MAV_MODE_FLAG_SAFETY_ARMED;
 
         if ( (uasMode & MAV_MODE_FLAG_CUSTOM_MODE_ENABLED) || !(uasMode & MAV_MODE_FLAG_STABILIZE_ENABLED) ) {
+            // Set attitude control (custom flag)
             newMode |= MAV_MODE_FLAG_STABILIZE_ENABLED;
         } else {
+            // Reset attitude control
             newMode |= MAV_MODE_FLAG_CUSTOM_MODE_ENABLED | MAV_MODE_FLAG_STABILIZE_ENABLED;
         }
 
@@ -402,67 +406,8 @@ void UASSkyeControlWidget::setAttitudeControlMode()
         ui.lastActionLabel->setText("Arm system first");
     }
 
-//    if (checked)
-//    {
-//        ui.sensitivityTransSlider->setValue(QGC_SKYE_DEFAULT_SENS_ASSIST_TRANS / QGC_SKYE_MAX_SENS_ASSIST_TRANS * ui.sensitivityTransSlider->maximum());
-//        ui.sensitivityRotSlider->setValue(QGC_SKYE_DEFAULT_SENS_ASSIST_ROT / QGC_SKYE_MAX_SENS_ASSIST_ROT * ui.sensitivityRotSlider->maximum());
-//        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
-//        if (mav){
-//            UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
-//            if (mav->isArmed())
-//                transmitMode(MAV_MODE_FLAG_DECODE_POSITION_STABILIZE & MAV_MODE_FLAG_DECODE_POSITION_SAFETY);
-//            else
-//                transmitMode(MAV_MODE_FLAG_DECODE_POSITION_STABILIZE);
-//        }
-//        else
-//        {
-//            ui.lastActionLabel->setText("UAS is no SKYE!");
-//        }
-//    }
 #endif // QGC_USE_SKYE_INTERFACE
 }
-
-//void UASSkyeControlWidget::setHalfAutomaticControlMode(bool checked)
-//{
-//    if (checked)
-//    {
-//#ifdef QGC_USE_SKYE_INTERFACE
-//        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
-//        if (mav){
-//            UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
-//            if (mav->isArmed())
-//                transmitMode(MAV_MODE_HALF_AUTOMATIC_ARMED);
-//            else
-//                transmitMode(MAV_MODE_HALF_AUTOMATIC_DISARMED);
-//        }
-//        else
-//        {
-//            ui.lastActionLabel->setText("UAS is no SKYE!");
-//        }
-//#endif // QGC_USE_SKYE_INTERFACE
-//    }
-//}
-
-//void UASSkyeControlWidget::setFullAutomaticControlMode(bool checked)
-//{
-//    if (checked)
-//    {
-//#ifdef QGC_USE_SKYE_INTERFACE
-//        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
-//        if (mav){
-//            UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
-//            if (mav->isArmed())
-//                transmitMode(MAV_MODE_FULL_AUTOMATIC_ARMED);
-//            else
-//                transmitMode(MAV_MODE_FULL_AUTOMATIC_DISARMED);
-//        }
-//        else
-//        {
-//            ui.lastActionLabel->setText("UAS is no SKYE!");
-//        }
-//#endif // QGC_USE_SKYE_INTERFACE
-//    }
-//}
 
 void UASSkyeControlWidget::mouseActivated(bool success)
 {
