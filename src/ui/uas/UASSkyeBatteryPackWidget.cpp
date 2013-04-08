@@ -73,13 +73,10 @@ void UASSkyeBatteryPackWidget::changeBatteryStatus(double voltage1, double volta
 
     int priorVoltage;
     priorVoltage = batteryCells;
-    // Display at least cell 1 (even if it is zero)
         batteryCells = 1;
-    if (voltage2 > 0)
         batteryCells = 2;
-    if (voltage3 > 0)
         batteryCells = 3;
-    if (voltage4 > 0)
+        // Display at least 4 "cells" (even if they are zero)
         batteryCells = 4;
     if (voltage5 > 0)
         batteryCells = 5;
@@ -88,7 +85,7 @@ void UASSkyeBatteryPackWidget::changeBatteryStatus(double voltage1, double volta
     if (priorVoltage != batteryCells)
         updateVoltageVisibility();
 
-    updateCurrentVisibility(current);
+//    updateCurrentVisibility(current); // Always show current
     updateRemainingVisibility(remaining);
 
 

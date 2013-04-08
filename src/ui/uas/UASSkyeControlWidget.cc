@@ -390,10 +390,10 @@ void UASSkyeControlWidget::setAttitudeControlMode()
         newMode = newMode | MAV_MODE_FLAG_SAFETY_ARMED;
 
         if ( (uasMode & MAV_MODE_FLAG_CUSTOM_MODE_ENABLED) || !(uasMode & MAV_MODE_FLAG_STABILIZE_ENABLED) ) {
-            // Set attitude control (custom flag)
+            // Set attitude control
             newMode |= MAV_MODE_FLAG_STABILIZE_ENABLED;
         } else {
-            // Reset attitude control
+            // Reset to rate control
             newMode |= MAV_MODE_FLAG_CUSTOM_MODE_ENABLED | MAV_MODE_FLAG_STABILIZE_ENABLED;
         }
 
