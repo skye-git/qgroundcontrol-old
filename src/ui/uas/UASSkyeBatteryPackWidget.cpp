@@ -16,13 +16,13 @@ UASSkyeBatteryPackWidget::UASSkyeBatteryPackWidget(QWidget *parent, MAV_SKYE_BAT
     this->setStyleSheet("QProgressBar::chunk {background-color: green;}");
 
 //    toolBarBatteryVoltageLabel->setStyleSheet(QString("QLabel { margin: 0px 0px 0px 4px; font: 14px; color: %1; }").arg(QColor(Qt::green).name()));
-    ui->lcdNumberVoltage1->setToolTip("Voltage of cell 1");
-    ui->lcdNumberVoltage2->setToolTip("Voltage of cell 2");
-    ui->lcdNumberVoltage3->setToolTip("Voltage of cell 3");
-    ui->lcdNumberVoltage4->setToolTip("Voltage of cell 4");
-    ui->lcdNumberVoltage5->setToolTip("Voltage of cell 5");
-    ui->lcdNumberVoltage6->setToolTip("Voltage of cell 6");
-    ui->lcdNumberCurrent->setToolTip("Current of this accu pack");
+    ui->lcdNumberVoltage1->setToolTip("Voltage 1");
+    ui->lcdNumberVoltage2->setToolTip("Voltage 2");
+    ui->lcdNumberVoltage3->setToolTip("Voltage 3");
+    ui->lcdNumberVoltage4->setToolTip("Voltage 4");
+    ui->lcdNumberVoltage5->setToolTip("Voltage 5");
+    ui->lcdNumberVoltage6->setToolTip("Voltage 6");
+    ui->lcdNumberCurrent->setToolTip("Total current");
     ui->progressBarRemaining->setToolTip("Estimated remaining battery");
 
     ui->lcdNumberCurrent->setStyleSheet("* { background-color: gray; color: darkblue; }");
@@ -32,8 +32,8 @@ UASSkyeBatteryPackWidget::UASSkyeBatteryPackWidget(QWidget *parent, MAV_SKYE_BAT
     {
         case MAV_SKYE_BATTERY_PACK_ID_1:
         {
-            labelText = "Battery pack 1";
-            this->setToolTip("Battery info for accu pack 1");
+            labelText = "Skye Battery Info";
+            this->setToolTip("Battery info for of Skye");
         }
         break;
         case MAV_SKYE_BATTERY_PACK_ID_2:

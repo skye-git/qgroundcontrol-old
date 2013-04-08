@@ -567,29 +567,6 @@ void MAVLinkSimulationLink::mainloop()
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 
-        battery_pack_id++;
-        if (battery_pack_id > 5){
-            battery_pack_id = 1;
-        }
-        mavlink_battery_status_t battery;
-        battery.accu_id = battery_pack_id;
-        battery.voltage_cell_1 = 1000*(3 + sin(time_boot*0.002));
-        battery.voltage_cell_2 = 1000*(3 + cos(time_boot*0.002));
-        battery.voltage_cell_3 = 1000*(3 - sin(time_boot*0.002));
-        if (battery_pack_id == 1)
-            battery.voltage_cell_4 = 1000*(3 + cos(time_boot*0.002));
-        else
-            battery.voltage_cell_4 = 0;
-        battery.voltage_cell_5 = 0;
-        battery.voltage_cell_6 = 0;
-        battery.current_battery = 100*2.12;
-        battery.battery_remaining = (int8_t)floor((float)(100 - 0.0005*time_boot));
-        mavlink_msg_battery_status_encode(systemId, MAV_COMP_ID_IMU, &msg, &battery);
-        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-        //add data into datastream
-        memcpy(stream+streampointer,buffer, bufferlength);
-        streampointer += bufferlength;
-
         mavlink_battery_voltage_t volt;
         volt.id = 2;
         volt.voltage_1 = 1010;
@@ -632,7 +609,7 @@ void MAVLinkSimulationLink::mainloop()
 
         static int detectionCounter = 6;
         if (detectionCounter % 10 == 0) {
-#ifdef MAVLINK_ENABLED_PIXHAWK
+#ifdef MAVLINK_ENABLED_PIXHAWK_PATTERN_BLABLA
             mavlink_pattern_detected_t detected;
             detected.confidence = 5.0f;
 
@@ -737,6 +714,23 @@ void MAVLinkSimulationLink::mainloop()
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 #endif
+        battery_pack_id = 1;
+        mavlink_battery_status_t battery;
+        battery.accu_id = battery_pack_id;
+        battery.voltage_cell_1 = 0;//1000*(3 + sin(time_boot*0.002));
+        battery.voltage_cell_2 = 1000*(3 + cos(time_boot*0.002));
+        battery.voltage_cell_3 = 1000*(3 - sin(time_boot*0.002));
+        battery.voltage_cell_4 = 0;
+        battery.voltage_cell_5 = 0;
+        battery.voltage_cell_6 = 0;
+        battery.current_battery = 100*2.12;
+        battery.battery_remaining = -1;//(int8_t)floor((float)(100 - 0.0005*time_boot));
+        mavlink_msg_battery_status_encode(systemId, MAV_COMP_ID_IMU, &msg, &battery);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
+
 
         rate1hzCounter = 1;
         seqnr = 0;
