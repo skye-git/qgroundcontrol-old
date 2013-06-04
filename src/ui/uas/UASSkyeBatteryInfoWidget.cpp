@@ -40,6 +40,8 @@ void UASSkyeBatteryInfoWidget::setActiveUAS(UASInterface *uas)
         if (mav)
         {
             disconnect(mav, SIGNAL(batteryPackChanged(mavlink_battery_status_t*)), this, SLOT(changeBatteryPack(mavlink_battery_status_t*)));
+            batteryPacksNumber = 1;
+            uasUsesZeroBatteryId = false;
         }
     }
 
