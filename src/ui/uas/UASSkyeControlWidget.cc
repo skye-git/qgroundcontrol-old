@@ -123,14 +123,16 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
 
     // additive lift factor fields
     ui.liftCheckBox->setChecked(liftFactorEnabled);
-    ui.liftSlider->setRange(0, 99);
+    connect(ui.liftCheckBox, SIGNAL(toggled(bool)), this, SLOT(enableLiftFactor(bool)));
+
+    ui.liftSlider->setRange(0, 999);
     ui.liftSlider->setValue(ui.liftSlider->maximum()*liftFactor/maxLiftFactor);
     connect(ui.liftSlider, SIGNAL(valueChanged(int)), this, SLOT(setLiftFactor(int)));
+
     ui.minSensitivityRotLabel->setNum((double)minLiftFactor);
     ui.maxLiftSpinBox->setValue((double)maxLiftFactor);
     connect(ui.maxLiftSpinBox, SIGNAL(valueChanged(double)), this, SLOT(setMaxLiftFactor(double)));
 
-    ui.liftCheckBox->hide();
 
     updateStyleSheet();
 
@@ -640,13 +642,13 @@ void UASSkyeControlWidget::setLiftFactor(int val)
     QString style = QString("QSlider::sub-page:horizontal {border: 1px solid #bbb; border-radius: 4px; background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #%1, stop: 1 #%2); }").arg(colorStart, 1, 16).arg(colorEnd, 1, 16);
     ui.liftSlider->setStyleSheet(style);
 
-    if (liftFactor) {
+    if (liftFactorEnabled) {
         emit changedLiftFactor(liftFactor);
         QString str = QString("Lift Factor: %1").arg(liftFactor);
         ui.liftLabel->setText(str);
     } else {
         emit changedLiftFactor(0.0f);
-        QString str = QString("Lift Factor: %1").arg(0.0f);
+        QString str = QString("Lift Factor (DISABLED): %1").arg(liftFactor);
         ui.liftLabel->setText(str);
     }
 }
@@ -659,7 +661,7 @@ void UASSkyeControlWidget::setLiftFactor(float val)
 void UASSkyeControlWidget::setMaxLiftFactor(double max)
 {
     maxLiftFactor = (float)max;
-    setLiftFactor(qMin(liftFactor, maxLiftFactor));
+    ui.liftSlider->setValue(liftFactor/maxLiftFactor*ui.liftSlider->maximum());
 }
 
 void UASSkyeControlWidget::enableLiftFactor(bool enabled)
