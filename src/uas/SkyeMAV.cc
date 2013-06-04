@@ -59,6 +59,14 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             mavlink_msg_battery_status_decode(&message, &battery);
 
             emit batteryPackChanged(&battery);
+            uint16_t lowestVolt = 99999;
+            lowestVolt = (battery.voltage_cell_1 < lowestVolt && battery.voltage_cell_1 > 0) ? battery.voltage_cell_1 : lowestVolt;
+            lowestVolt = (battery.voltage_cell_2 < lowestVolt && battery.voltage_cell_2 > 0) ? battery.voltage_cell_2 : lowestVolt;
+            lowestVolt = (battery.voltage_cell_3 < lowestVolt && battery.voltage_cell_3 > 0) ? battery.voltage_cell_3 : lowestVolt;
+            lowestVolt = (battery.voltage_cell_4 < lowestVolt && battery.voltage_cell_4 > 0) ? battery.voltage_cell_4 : lowestVolt;
+            lowestVolt = (battery.voltage_cell_5 < lowestVolt && battery.voltage_cell_5 > 0) ? battery.voltage_cell_5 : lowestVolt;
+            lowestVolt = (battery.voltage_cell_6 < lowestVolt && battery.voltage_cell_6 > 0) ? battery.voltage_cell_6 : lowestVolt;
+            emit batteryChanged(this, 0.001*(double)lowestVolt , 0.0 , 0);
 
 
 //            mavlink_battery_voltage_t volt;
