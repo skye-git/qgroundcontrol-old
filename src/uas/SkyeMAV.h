@@ -66,6 +66,9 @@ public slots:
     void setSensitivityFactorRot(float val) {sensitivityFactorRot = val;}
     /** @brief Send mode via mavlink command */
     void setModeCommand(int mode);
+    /** @brief Set additive value for z manual control */
+    void setLiftFactor(float val) {liftFactor = val; qDebug() << "lift factor" << val;}
+
 
     void followTrajectory();
     /** @brief Set active Input Mode for this UAS */
@@ -124,8 +127,9 @@ protected:
     double manualYRot;          ///< Pitch (y axis) set by human pilot
     double manualZRot;          ///< Yaw (z axis) set by human pilot
 
-    float sensitivityFactorTrans;    ///< Translational factor for manual control [remark: abs(deviceInput) <= 1 ]
-    float sensitivityFactorRot;      ///< Rotational factor for manual control [remark: abs(deviceInput) <= 1 ]
+    float sensitivityFactorTrans;   ///< Translational factor for manual control [remark: abs(deviceInput) <= 1 ]
+    float sensitivityFactorRot;     ///< Rotational factor for manual control [remark: abs(deviceInput) <= 1 ]
+    float liftFactor;               ///< Additive term for manual control
 
     int currentTrajectoryStamp;
     QTimer trajectoryTimer;

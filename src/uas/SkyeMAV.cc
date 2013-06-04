@@ -17,20 +17,21 @@
 SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
     UAS(mavlink, id),
     airframe(QGC_AIRFRAME_SKYE),
-    manualXThrust(0),
-    manualYThrust(0),
-    manualZThrust(0),
-    manualXMoment(0),
-    manualYMoment(0),
-    manualZMoment(0),
-    manualXVel(0),
-    manualYVel(0),
-    manualZVel(0),
-    manualXRot(0),
-    manualYRot(0),
-    manualZRot(0),
-    sensitivityFactorTrans(0),
-    sensitivityFactorRot(0),
+    manualXThrust(0.0),
+    manualYThrust(0.0),
+    manualZThrust(0.0),
+    manualXMoment(0.0),
+    manualYMoment(0.0),
+    manualZMoment(0.0),
+    manualXVel(0.0),
+    manualYVel(0.0),
+    manualZVel(0.0),
+    manualXRot(0.0),
+    manualYRot(0.0),
+    manualZRot(0.0),
+    sensitivityFactorTrans(0.0f),
+    sensitivityFactorRot(0.0f),
+    liftFactor(0.0f),
     currentTrajectoryStamp(0),
     inputMode(QGC_INPUT_MODE_TOUCH)
 {
@@ -193,27 +194,28 @@ void SkyeMAV::setManual6DOFControlCommands(double x , double y , double z , doub
 
     if (mode & MAV_MODE_FLAG_GUIDED_ENABLED)
     {
-        manualXRot = a * sensitivityFactorRot;
-        manualYRot = b * sensitivityFactorRot;
-        manualZRot = c * sensitivityFactorRot;
+        manualXRot = a * (double)sensitivityFactorRot;
+        manualYRot = b * (double)sensitivityFactorRot;
+        manualZRot = c * (double)sensitivityFactorRot;
         qDebug() << "Set manual rotation for FAC" << a << b << c;
 
     }else if (mode & MAV_MODE_FLAG_AUTO_ENABLED)
     {
-        manualZVel = z * sensitivityFactorTrans;
-        manualXRot = a * sensitivityFactorRot;
-        manualYRot = b * sensitivityFactorRot;
-        manualZRot = c * sensitivityFactorRot;
+        manualZVel = z * (double)sensitivityFactorTrans;
+        manualXRot = a * (double)sensitivityFactorRot;
+        manualYRot = b * (double)sensitivityFactorRot;
+        manualZRot = c * (double)sensitivityFactorRot;
         qDebug() << "Set lift and manual rotation for HAC" << z << a << b << c;
 
     }else if (mode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED)
     {
-        manualXVel = x * sensitivityFactorTrans;
-        manualYVel = y * sensitivityFactorTrans;
-        manualZVel = z * sensitivityFactorTrans;
-        manualXRot = a * sensitivityFactorRot;
-        manualYRot = b * sensitivityFactorRot;
-        manualZRot = c * sensitivityFactorRot;
+        manualXVel = x * (double)sensitivityFactorTrans;
+        manualYVel = y * (double)sensitivityFactorTrans;
+        manualZVel = z * (double)sensitivityFactorTrans - (double)liftFactor;
+        manualZVel = qMin((double)sensitivityFactorTrans, qMax(-(double)sensitivityFactorTrans, manualZVel));
+        manualXRot = a * (double)sensitivityFactorRot;
+        manualYRot = b * (double)sensitivityFactorRot;
+        manualZRot = c * (double)sensitivityFactorRot;
         sendManualControlCommands6DoF(manualXVel, manualYVel, manualZVel, manualXRot, manualYRot, manualZRot);
         //    qDebug() << __FILE__ << __LINE__ << ": SENT 6DOF CONTROL MESSAGE: x velocity" << manualXVel << " y velocity: " << manualYVel << " z velocity: " << manualZVel << " x rotation: " << manualXRot << " y rotation: " << manualYRot << " z rotation: " << manualZRot;
     }

@@ -57,11 +57,15 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     mouseTranslationEnabled(true),
     mouseRotationEnabled(true),
     sensitivityFactorTrans(QGC_SKYE_DEFAULT_SENS_DIRECT_TRANS),
-    minSensitivityFactorTrans(0.0),
+    minSensitivityFactorTrans(0.0f),
     maxSensitivityFactorTrans(QGC_SKYE_MAX_SENS_DIRECT_TRANS),
     sensitivityFactorRot(QGC_SKYE_DEFAULT_SENS_DIRECT_ROT),
-    minSensitivityFactorRot(0.0),
-    maxSensitivityFactorRot(QGC_SKYE_MAX_SENS_DIRECT_ROT)
+    minSensitivityFactorRot(0.0f),
+    maxSensitivityFactorRot(QGC_SKYE_MAX_SENS_DIRECT_ROT),
+    liftFactorEnabled(true),
+    liftFactor(0.0f),
+    minLiftFactor(0.0f),
+    maxLiftFactor(0.5f)
 {
 #ifdef QGC_USE_SKYE_INTERFACE
     ui.setupUi(this);
@@ -117,6 +121,17 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     ui.bluefoxRightButton->hide();
     ui.prosilicaButton->hide();
 
+    // additive lift factor fields
+    ui.liftCheckBox->setChecked(liftFactorEnabled);
+    ui.liftSlider->setRange(0, 99);
+    ui.liftSlider->setValue(ui.liftSlider->maximum()*liftFactor/maxLiftFactor);
+    connect(ui.liftSlider, SIGNAL(valueChanged(int)), this, SLOT(setLiftFactor(int)));
+    ui.minSensitivityRotLabel->setNum((double)minLiftFactor);
+    ui.maxLiftSpinBox->setValue((double)maxLiftFactor);
+    connect(ui.maxLiftSpinBox, SIGNAL(valueChanged(double)), this, SLOT(setMaxLiftFactor(double)));
+
+    ui.liftCheckBox->hide();
+
     updateStyleSheet();
 
     // TODO: set correct margins instead of min height
@@ -168,8 +183,12 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(mav, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(updateInput(SkyeMAV::QGC_INPUT_MODE)));
         connect(this, SIGNAL(changedSensitivityTransFactor(float)), mav, SLOT(setSensitivityFactorTrans(float)));
         connect(this, SIGNAL(changedSensitivityRotFactor(float)), mav, SLOT(setSensitivityFactorRot(float)));
+        connect(this, SIGNAL(changedLiftFactor(float)), mav, SLOT(setLiftFactor(float)));
         emit changedSensitivityTransFactor(sensitivityFactorTrans);
         emit changedSensitivityRotFactor(sensitivityFactorRot);
+        if (liftFactorEnabled) {
+            emit changedLiftFactor(liftFactor);
+        }
 
     }
 
@@ -578,7 +597,7 @@ void UASSkyeControlWidget::uncheckAllModeButtons()
 
 void UASSkyeControlWidget::setSensitivityFactorTrans(int val)
 {
-    sensitivityFactorTrans = val*maxSensitivityFactorTrans/ui.sensitivityTransSlider->maximum();
+    sensitivityFactorTrans = (float)val*maxSensitivityFactorTrans/ui.sensitivityTransSlider->maximum();
     QString str = QString("Translation-Sensitivity: %1").arg(sensitivityFactorTrans);
     ui.sensitivityTransLabel->setText(str);
     int red = 16*16;
@@ -594,7 +613,7 @@ void UASSkyeControlWidget::setSensitivityFactorTrans(int val)
 
 void UASSkyeControlWidget::setSensitivityFactorRot(int val)
 {
-    sensitivityFactorRot = val*maxSensitivityFactorRot/ui.sensitivityRotSlider->maximum();
+    sensitivityFactorRot = (float)val*maxSensitivityFactorRot/ui.sensitivityRotSlider->maximum();
     QString str = QString("Rotation-Sensitivity: %1").arg(sensitivityFactorRot);
     ui.sensitivityRotLabel->setText(str);
     int red = 16*16;
@@ -609,4 +628,42 @@ void UASSkyeControlWidget::setSensitivityFactorRot(int val)
     emit changedSensitivityRotFactor(sensitivityFactorRot);
 }
 
+void UASSkyeControlWidget::setLiftFactor(int val)
+{
+    liftFactor = (float)val*maxLiftFactor/ui.liftSlider->maximum();
 
+    int red = 16*16;
+    int green = 16;
+    int blue = 1;
+    int colorStart = (int)(( 1+10*ui.liftSlider->value()/ui.liftSlider->maximum() ) * red + (  10*(ui.sensitivityRotSlider->maximum()-ui.sensitivityRotSlider->value())/ui.liftSlider->maximum()) * green + 6 * blue);
+    int colorEnd =   (int)(( 1+14*ui.liftSlider->value()/ui.liftSlider->maximum() ) * red + (  14*(ui.sensitivityRotSlider->maximum()-ui.sensitivityRotSlider->value())/ui.liftSlider->maximum()) * green + 6 * blue);
+    QString style = QString("QSlider::sub-page:horizontal {border: 1px solid #bbb; border-radius: 4px; background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #%1, stop: 1 #%2); }").arg(colorStart, 1, 16).arg(colorEnd, 1, 16);
+    ui.liftSlider->setStyleSheet(style);
+
+    if (liftFactor) {
+        emit changedLiftFactor(liftFactor);
+        QString str = QString("Lift Factor: %1").arg(liftFactor);
+        ui.liftLabel->setText(str);
+    } else {
+        emit changedLiftFactor(0.0f);
+        QString str = QString("Lift Factor: %1").arg(0.0f);
+        ui.liftLabel->setText(str);
+    }
+}
+
+void UASSkyeControlWidget::setLiftFactor(float val)
+{
+    setLiftFactor((int)((float)ui.liftSlider->maximum()/maxLiftFactor*val));
+}
+
+void UASSkyeControlWidget::setMaxLiftFactor(double max)
+{
+    maxLiftFactor = (float)max;
+    setLiftFactor(qMin(liftFactor, maxLiftFactor));
+}
+
+void UASSkyeControlWidget::enableLiftFactor(bool enabled)
+{
+    liftFactorEnabled = enabled;
+    setLiftFactor(liftFactor);
+}

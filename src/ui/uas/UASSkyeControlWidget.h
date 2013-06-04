@@ -82,6 +82,7 @@ signals:
     void changedInput(SkyeMAV::QGC_INPUT_MODE);
     void changedSensitivityTransFactor(float);
     void changedSensitivityRotFactor(float);
+    void changedLiftFactor(float);
 
     protected slots:
 //        /** @brief Set the background color for the widget */
@@ -108,6 +109,14 @@ signals:
         void setSensitivityFactorTrans(int val);
         /** @brief Set new (float)sensitivityFactorRot by int */
         void setSensitivityFactorRot(int val);
+        /** @brief Set new (float)liftFactor by int */
+        void setLiftFactor(int val);
+        /** @brief Set new (float)liftFactor by float */
+        void setLiftFactor(float val);
+        /** @brief Set new (float) maximum liftFactor */
+        void setMaxLiftFactor(double max);
+        /** @brief En-/disable liftFactor. Sends 0 if disabled */
+        void enableLiftFactor(bool enabled);
 
 
     protected:
@@ -117,12 +126,19 @@ signals:
         SkyeMAV::QGC_INPUT_MODE inputMode;           ///< Current device for input
         bool mouseTranslationEnabled;       ///< True when translational motions enabled
         bool mouseRotationEnabled;          ///< True when rotational motions enabled
+
         float sensitivityFactorTrans;       ///< Gain rotational manual inputs.
         float minSensitivityFactorTrans;    ///< Minimum value of velocitySlider in float scale.
         float maxSensitivityFactorTrans;    ///< Maximum value of velocitySlider in float scale.
+
         float sensitivityFactorRot;         ///< Gain rotational manual inputs.
         float minSensitivityFactorRot;      ///< Minimum value of velocitySlider in float scale.
         float maxSensitivityFactorRot;      ///< Maximum value of velocitySlider in float scale.
+
+        bool liftFactorEnabled;             ///< True when additive lift value is added
+        float liftFactor;                   ///< Additive z value (for constant lift gain)
+        float minLiftFactor;                ///< Minimum value of liftSlider
+        float maxLiftFactor;                ///< Maximum value of liftSlider
 
     private:
         /** @brief Set up widget, don't use ui file */

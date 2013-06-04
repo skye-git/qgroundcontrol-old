@@ -34,8 +34,8 @@
   <property name="toolTip">
    <string>Control widget to send basic control actions to the micro air vehicle</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
     <widget class="QPushButton" name="controlButton">
      <property name="minimumSize">
       <size>
@@ -54,7 +54,7 @@
      </property>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="QPushButton" name="directControlButton">
@@ -180,7 +180,7 @@
      </item>
     </layout>
    </item>
-   <item>
+   <item row="2" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <property name="sizeConstraint">
       <enum>QLayout::SetMinimumSize</enum>
@@ -277,7 +277,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item>
+   <item row="3" column="0">
     <layout class="QGridLayout" name="sensitivityTransLayout">
      <item row="1" column="0">
       <widget class="QLabel" name="minSensitivityTransLabel">
@@ -321,7 +321,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item>
+   <item row="4" column="0">
     <layout class="QGridLayout" name="sensitivityRotLayout">
      <item row="1" column="0">
       <widget class="QLabel" name="minSensitivityRotLabel">
@@ -365,7 +365,45 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item>
+   <item row="5" column="0">
+    <layout class="QGridLayout" name="liftLayout">
+     <item row="0" column="1">
+      <widget class="QLabel" name="liftLabel">
+       <property name="text">
+        <string>Lift Value</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="minLiftLabel">
+       <property name="text">
+        <string>min</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QDoubleSpinBox" name="maxLiftSpinBox"/>
+     </item>
+     <item row="1" column="1">
+      <widget class="QSlider" name="liftSlider">
+       <property name="value">
+        <number>10</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="liftCheckBox">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="6" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="bluefoxLeftButton">
@@ -402,7 +440,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item>
+   <item row="7" column="0">
     <widget class="QLabel" name="lastActionLabel">
      <property name="text">
       <string>No commands so far</string>
