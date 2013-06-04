@@ -714,7 +714,7 @@ void MAVLinkSimulationLink::mainloop()
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 #endif
-        battery_pack_id = 1;
+        battery_pack_id = (int)(0.5*sin(time_boot*0.001)+1);
         mavlink_battery_status_t battery;
         battery.accu_id = battery_pack_id;
         battery.voltage_cell_1 = 0;//1000*(3 + sin(time_boot*0.002));

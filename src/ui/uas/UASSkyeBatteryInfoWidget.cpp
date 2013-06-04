@@ -68,6 +68,12 @@ void UASSkyeBatteryInfoWidget::changeBatteryPack(mavlink_battery_status_t* batte
     double current = (double)battery->current_battery/100.0;
     int remaining = battery->battery_remaining;
 
+    // Shift id if UAS starts id with ID 0
+    if (uasUsesZeroBatteryId == true)
+    {
+        packId = (MAV_SKYE_BATTERY_PACK_ID)((int)packId + 1);
+    }
+
     if (packId == batteryPacksNumber+1)
     {
         // Add battery pack widget
@@ -76,11 +82,6 @@ void UASSkyeBatteryInfoWidget::changeBatteryPack(mavlink_battery_status_t* batte
         batteryPacksNumber++;
      }
 
-    // Shift id if UAS starts id with ID 0
-    if (uasUsesZeroBatteryId == true)
-    {
-        packId = (MAV_SKYE_BATTERY_PACK_ID)((int)packId + 1);
-    }
     // Update battery pack widget
     if (batteryPacks.value(packId))
     {
