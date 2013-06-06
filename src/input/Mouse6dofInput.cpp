@@ -408,7 +408,7 @@ void Mouse6dofInput::updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
             msgBox.setDefaultButton(QMessageBox::Ok);
             msgBox.exec();
 
-            emit resetInputMode(SkyeMAV::QGC_INPUT_MODE_NONE);
+            emit resetInputMode(SkyeMAV::QGC_INPUT_MODE_TOUCH);
             qDebug() << "[update] No 3DxWare driver is running!";
         }
         else
