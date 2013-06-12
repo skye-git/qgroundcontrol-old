@@ -244,6 +244,7 @@ void UASSkyeControlWidget::updateStatemachine()
 
 void UASSkyeControlWidget::updateMode(int uas,int baseMode)
 {
+    qDebug() << "Got uas mode:" << baseMode;
 #ifdef QGC_USE_SKYE_INTERFACE
     if ((uasId == uas) && ((int)uasMode != baseMode))
     {

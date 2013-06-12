@@ -55,7 +55,9 @@ DirectControlWidget::DirectControlWidget(QWidget *parent):
     connect(ui->closeButton, SIGNAL(clicked()),this, SLOT(stopAll()));
     connect(ui->closeButton, SIGNAL(clicked()),this, SLOT(directControlClose()));
 
-    connect(ui->assistedControlCheckBox, SIGNAL(toggled(bool)), this, SLOT(changeAssistedMode(bool)));
+    connect(ui->manPushButton, SIGNAL(clicked()), this, SLOT(setManualMode()));
+    connect(ui->ratePushButton, SIGNAL(clicked()), this, SLOT(setRateMode()));
+    connect(ui->attPushButton, SIGNAL(clicked()), this, SLOT(setAttMode()));
 
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 
@@ -101,7 +103,9 @@ void DirectControlWidget::setUAS(UASInterface* mav)
         connect(this, SIGNAL(valueDirectControlChanged(double,double,double,double,double,double)), uas, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
         connect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
         updateState(uas->getUASState());
-        uas->setMode(MAV_MODE_DIRECT_CONTROL_DISARMED);
+//        uas->setMode(MAV_MODE_DIRECT_CONTROL_DISARMED);
+        uas->setMode(MAV_MODE_PREFLIGHT);
+        uas->setInputMode(SkyeMAV::QGC_INPUT_MODE_NONE);
     }
 }
 
@@ -109,8 +113,7 @@ void DirectControlWidget::emitValues()
 {
     if (uas && this->isVisible())
     {
-//        if (uas->getMode() == MAV_MODE_DIRECT_CONTROL_ARMED)
-        if ( (uas->getMode() == MAV_MODE_DIRECT_CONTROL_ARMED) || (uas->getMode() == MAV_MODE_ASSISTED_CONTROL_ARMED ) )
+        if (uas->getMode() & MAV_MODE_FLAG_SAFETY_ARMED)
         {
             double forceX = (double)ui->sliderThrustX->value() / (double)maxThrust;
             double forceY = (double)ui->sliderThrustY->value() / (double)maxThrust;
@@ -119,7 +122,6 @@ void DirectControlWidget::emitValues()
             double momentY = (double)ui->sliderMomentY->value() / (double)maxMoment;
             double momentZ = (double)ui->sliderMomentZ->value() / (double)maxMoment;
             emit valueDirectControlChanged( forceX, forceY, forceZ, momentX, momentY, momentZ );
-
         }
     }
 }
@@ -129,26 +131,34 @@ void DirectControlWidget::changeMode(int mode)
     if(uas)
     {
         uas->setMode(mode);
+        uas->setInputMode(SkyeMAV::QGC_INPUT_MODE_NONE);
+        emit emitValues();
     }
 }
 
-void DirectControlWidget::changeAssistedMode(bool isAssisted)
+void DirectControlWidget::setManualMode()
 {
     if(uas) {
         if (engineOn) {
-            stopAll();
-            if (!isAssisted) {
-                uas->setMode(MAV_MODE_DIRECT_CONTROL_ARMED);
-            } else {
-                uas->setMode(MAV_MODE_ASSISTED_CONTROL_ARMED);
-            }
-        } else {
-            stopAll();
-            if (!isAssisted) {
-                uas->setMode(MAV_MODE_DIRECT_CONTROL_DISARMED);
-            } else {
-                uas->setMode(MAV_MODE_ASSISTED_CONTROL_DISARMED);
-            }
+            changeMode(MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED);
+        }
+    }
+}
+
+void DirectControlWidget::setRateMode()
+{
+    if(uas) {
+        if (engineOn) {
+            changeMode(MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_CUSTOM_MODE_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED);
+        }
+    }
+}
+
+void DirectControlWidget::setAttMode()
+{
+    if(uas) {
+        if (engineOn) {
+            changeMode(MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED);
         }
     }
 }
@@ -161,7 +171,7 @@ void DirectControlWidget::directControlShow()
     // Start Timer
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()),this, SLOT(emitValues()));
-    timer->start(200); //5Hz emitValues is called
+    timer->start(100); // emit values with 10Hz
 
 }
 
@@ -195,30 +205,12 @@ void DirectControlWidget::cycleContextButton()
         if (!engineOn)
         {
             uas->armSystem();
-//            ui->controlButton->setText(tr("DISARMSYSTEM"));
-//            ui.controlButton->setStyleSheet("* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DD0044, stop: 1 #AA0022); border-color: yellow; color: yellow }");
-            if (!ui->assistedControlCheckBox->isChecked()) {
-                uas->setMode(MAV_MODE_DIRECT_CONTROL_ARMED);
-            } else {
-                uas->setMode(MAV_MODE_ASSISTED_CONTROL_ARMED);
-            }
-//            uas->setMode(MAV_MODE_DIRECT_CONTROL_ARMED);
             engineOn=true;
         } else {
             emit valueDirectControlChanged( 0, 0, 0, 0, 0, 0 );
             uas->disarmSystem();
-//            ui->controlButton->setText(tr("ARM SYSTEM"));
-//            ui.controlButton->setStyleSheet("* { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00DD44, stop: 1 #11AA22); }");
-            if (!ui->assistedControlCheckBox->isChecked()) {
-                uas->setMode(MAV_MODE_DIRECT_CONTROL_DISARMED);
-            } else {
-                uas->setMode(MAV_MODE_ASSISTED_CONTROL_DISARMED);
-            }
-//            uas->setMode(MAV_MODE_DIRECT_CONTROL_DISARMED);
-
             engineOn=false;
         }
-
     }
 }
 

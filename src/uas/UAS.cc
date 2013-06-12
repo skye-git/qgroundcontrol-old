@@ -2840,7 +2840,7 @@ QString UAS::getShortModeTextFor(int id)
     QString mode;
     uint8_t modeid = id;
 
-    qDebug() << "MODE:" << modeid;
+//    qDebug() << "MODE:" << modeid;
 
     // BASE MODE DECODING
     if (modeid & (uint8_t)MAV_MODE_FLAG_DECODE_POSITION_AUTO)
