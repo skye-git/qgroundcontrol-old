@@ -254,176 +254,49 @@ void MAVLinkSimulationLink::mainloop()
     static unsigned int rate10hzCounter = 1;
     static unsigned int rate20hzCounter = 1;
     static unsigned int rate50hzCounter = 1;
-    static unsigned int circleCounter = 0;
 
     // Image transmition sequence number
     static uint16_t seqnr = 0;
-
-//    static QByteArray tmpImage;
-//    static QFile tmpFile(":images/skye_images/LOGO_DEF.png");
-
-
-//    static int state = 0;
-
-//    if (state == 0)
-//    {
-//        state++;
-//    }
 
 
     // 50 HZ TASKS
     if (rate50hzCounter == 1000 / rate / 40)
     {
-//        if (simulationFile->isOpen())
-//        {
-//            if (simulationFile->atEnd()) {
-//                // We reached the end of the file, start from scratch
-//                simulationFile->reset();
-//                simulationHeader = simulationFile->readLine();
-//            }
 
-//            // Data was made available, read one line
-//            // first entry is the timestamp
-//            QString values = QString(simulationFile->readLine());
-//            QStringList parts = values.split("\t");
-//            QStringList keys = simulationHeader.split("\t");
-//            //qDebug() << simulationHeader;
-//            //qDebug() << values;
-//            bool ok;
-//            static quint64 lastTime = 0;
-//            static quint64 baseTime = 0;
-//            quint64 time = QString(parts.first()).toLongLong(&ok, 10);
-//            // FIXME Remove multiplicaton by 1000
-//            time *= 1000;
+        // ATTITUDE
+        attitude.roll = this->roll;          // Beginn Code MA (13.03.2012)
+        attitude.pitch = this->pitch;
+        attitude.yaw = this->yaw;
+        attitude.rollspeed = this->speedRoll;
+        attitude.pitchspeed = this->speedPitch;
+        attitude.yawspeed = this->speedYaw;                  // Ende Code MA
 
-//            if (ok) {
-//                if (timeOffset == 0) {
-//                    timeOffset = time;
-//                    baseTime = time;
-//                }
+        attitude.time_boot_ms = time_boot/1000;
+        // Pack message and get size of encoded byte string
+        mavlink_msg_attitude_encode(systemId, componentId, &msg, &attitude);
+        // Allocate buffer with packet data
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
 
-//                if (lastTime > time) {
-//                    // We have wrapped around in the logfile
-//                    // Add the measurement time interval to the base time
-//                    baseTime += lastTime - timeOffset;
-//                }
-//                lastTime = time;
-
-//                time = time - timeOffset + baseTime;
-
-//                // Gather individual measurement values
-//                for (int i = 1; i < (parts.size() - 1); ++i) {
-//                    // Get one data field
-//                    bool res;
-//                    double d = QString(parts.at(i)).toDouble(&res);
-//                    if (!res) d = 0;
-
-//                    if (keys.value(i, "") == "Accel._X") {
-//                        rawImuValues.xacc = d;
-//                    }
-
-//                    if (keys.value(i, "") == "Accel._Y") {
-//                        rawImuValues.yacc = d;
-//                    }
-
-//                    if (keys.value(i, "") == "Accel._Z") {
-//                        rawImuValues.zacc = d;
-//                    }
-//                    if (keys.value(i, "") == "Gyro_Phi") {
-//                        rawImuValues.xgyro = d;
-//                        attitude.rollspeed = ((d-29.000)/15000.0)*2.7-2.7-2.65;
-//                    }
-
-//                    if (keys.value(i, "") == "Gyro_Theta") {
-//                        rawImuValues.ygyro = d;
-//                        attitude.pitchspeed = ((d-29.000)/15000.0)*2.7-2.7-2.65;
-//                    }
-
-//                    if (keys.value(i, "") == "Gyro_Psi") {
-//                        rawImuValues.zgyro = d;
-//                        attitude.yawspeed = ((d-29.000)/3000.0)*2.7-2.7-2.65;
-//                    }
-//#ifdef MAVLINK_ENABLED_PIXHAWK
-//                    if (keys.value(i, "") == "Pressure") {
-//                        rawAuxValues.baro = d;
-//                    }
-
-//                    if (keys.value(i, "") == "Battery") {
-//                        rawAuxValues.vbat = d;
-//                    }
-//#endif
-//                    if (keys.value(i, "") == "roll_IMU") {
-//                        attitude.roll = d;
-//                    }
-
-//                    if (keys.value(i, "") == "pitch_IMU") {
-//                        attitude.pitch = d;
-//                    }
-
-//                    if (keys.value(i, "") == "yaw_IMU") {
-//                        attitude.yaw = d;
-//                    }
-
-//                    //Accel._X   Accel._Y    Accel._Z    Battery     Bottom_Rotor      CPU_Load    Ground_Dist.      Gyro_Phi    Gyro_Psi    Gyro_Theta  Left_Servo  Mag._X      Mag._Y      Mag._Z      Pressure    Right_Servo Temperature Top_Rotor   pitch_IMU      roll_IMU    yaw_IMU
-
-//                }
-//                // Send out packets
-
-
-//                // ATTITUDE
-
-//                attitude.time_boot_ms = time/1000;
-//                // Pack message and get size of encoded byte string
-//                mavlink_msg_attitude_encode(systemId, componentId, &msg, &attitude);
-//                // Allocate buffer with packet data
-//                bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-//                //add data into datastream
-//                memcpy(stream+streampointer,buffer, bufferlength);
-//                streampointer += bufferlength;
-
-//                // IMU
-//                rawImuValues.time_usec = time;
-//                rawImuValues.xmag = 0;
-//                rawImuValues.ymag = 0;
-//                rawImuValues.zmag = 0;
-//                // Pack message and get size of encoded byte string
-//                mavlink_msg_raw_imu_encode(systemId, componentId, &msg, &rawImuValues);
-//                // Allocate buffer with packet data
-//                bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-//                //add data into datastream
-//                memcpy(stream+streampointer,buffer, bufferlength);
-//                streampointer += bufferlength;
-
-//                //qDebug() << "ATTITUDE" << "BUF LEN" << bufferlength << "POINTER" << streampointer;
-
-//                //qDebug() << "REALTIME" << QGC::groundTimeMilliseconds() << "ONBOARDTIME" << attitude.msec << "ROLL" << attitude.roll;
-
-//            }
-
-//        }
-
-         // ATTITUDE
-
-          attitude.roll = this->roll;          // Beginn Code MA (13.03.2012)
-          attitude.pitch = this->pitch;
-          attitude.yaw = this->yaw;
-          attitude.rollspeed = this->speedRoll;
-          attitude.pitchspeed = this->speedPitch;
-          attitude.yawspeed = this->speedYaw;                  // Ende Code MA
-
-          attitude.time_boot_ms = time_boot/1000;
-          // Pack message and get size of encoded byte string
-          mavlink_msg_attitude_encode(systemId, componentId, &msg, &attitude);
-          // Allocate buffer with packet data
-          bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-          //add data into datastream
-          memcpy(stream+streampointer,buffer, bufferlength);
-          streampointer += bufferlength;
+        mavlink_nanotron_skye_node_0_raw_t nano_0;
+        nano_0.distance_1 = 4.0f;
+        nano_0.distance_2 = 3.0f;
+        nano_0.distance_3 = 2.0f;
+        nano_0.distance_4 = 1.0f;
+        nano_0.distance_5 = 0.0f;
+        nano_0.distance_6 = 0.0f;
+        mavlink_msg_nanotron_skye_node_0_raw_encode(systemId, MAV_COMP_ID_IMU, &msg, &nano_0);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
 
 
         rate50hzCounter = 1;
-        time_boot += 20;
-//        qDebug() << "Time since boot: " << time_boot;
+//        time_boot += 20;
+////        qDebug() << "Time since boot: " << time_boot;
     }
 
 
@@ -431,251 +304,107 @@ void MAVLinkSimulationLink::mainloop()
     if (rate10hzCounter == 1000 / rate / 9) {
         rate10hzCounter = 1;
 
-//        double lastX = x;
-//        double lastY = y;
-//        double lastZ = z;
-//        double hackDt = 0.1f; // 100 ms
-
-//        // Move X Position
-//        x = 7.0*sin(((double)circleCounter)/200.0);
-//        y = 5.0*cos(((double)circleCounter)/200.0);
-//        z = 1.8 + 1.2*sin(((double)circleCounter)/200.0);
-
-//        double xSpeed = (x - lastX)/hackDt;
-//        double ySpeed = (y - lastY)/hackDt;
-//        double zSpeed = (z - lastZ)/hackDt;
-
-        circleCounter++;
-
-
-//        x = (x > 5.0f) ? 5.0f : x;
-//        y = (y > 5.0f) ? 5.0f : y;
-//        z = (z > 3.0f) ? 3.0f : z;
-
-//        x = (x < -5.0f) ? -5.0f : x;
-//        y = (y < -5.0f) ? -5.0f : y;
-//        z = (z < -3.0f) ? -3.0f : z;
-
-        // Send back new setpoint
-        mavlink_message_t ret;
-        mavlink_msg_local_position_setpoint_pack(systemId, componentId, &ret, MAV_FRAME_LOCAL_NED, spX, spY, spZ, speedYaw); // spYaw/180.0*M_PI);
-        bufferlength = mavlink_msg_to_send_buffer(buffer, &ret);
-        //add data into datastream
-        memcpy(stream+streampointer,buffer, bufferlength);
-        streampointer += bufferlength;
-
-        // Send back new position
-        mavlink_msg_local_position_ned_pack(systemId, componentId, &ret, 0, x, y, -fabs(z), speedX, speedY, speedZ);
-        bufferlength = mavlink_msg_to_send_buffer(buffer, &ret);
-        //add data into datastream
-        memcpy(stream+streampointer,buffer, bufferlength);
-        streampointer += bufferlength;
-
-//        // GPS RAW
-//        mavlink_msg_gps_raw_pack(systemId, componentId, &ret, 0, 3, 47.376417+(x*0.00001), 8.548103+(y*0.00001), z, 0, 0, 2.5f, 0.1f);
+//        // Send back new setpoint
+//        mavlink_message_t ret;
+//        mavlink_msg_local_position_setpoint_pack(systemId, componentId, &ret, MAV_FRAME_LOCAL_NED, spX, spY, spZ, speedYaw); // spYaw/180.0*M_PI);
 //        bufferlength = mavlink_msg_to_send_buffer(buffer, &ret);
 //        //add data into datastream
 //        memcpy(stream+streampointer,buffer, bufferlength);
 //        streampointer += bufferlength;
 
-        // GLOBAL POSITION
-        mavlink_msg_global_position_int_pack(systemId, componentId, &ret, 0, (473774.15+(x))*1E3, (85466.12+(y))*1E3, (z)*1000.0,/* (z+550.0)*1000.0*/-1, speedX, speedY, speedZ, yaw);
-        bufferlength = mavlink_msg_to_send_buffer(buffer, &ret);
-        //add data into datastream
-        memcpy(stream+streampointer,buffer, bufferlength);
-        streampointer += bufferlength;
-
-//        // GLOBAL POSITION VEHICLE 2
-//        mavlink_msg_global_position_int_pack(systemId+1, componentId+1, &ret, 0, (473780.28137103+(x+0.00001))*1E3, (85489.9892510421+((y/2)+0.00001))*1E3, (z+550.0)*1000.0, (z+550.0)*1000.0-1, xSpeed, ySpeed, zSpeed, yaw);
+//        // Send back new position
+//        mavlink_msg_local_position_ned_pack(systemId, componentId, &ret, 0, x, y, -fabs(z), speedX, speedY, speedZ);
 //        bufferlength = mavlink_msg_to_send_buffer(buffer, &ret);
 //        //add data into datastream
 //        memcpy(stream+streampointer,buffer, bufferlength);
 //        streampointer += bufferlength;
 
-//        // ATTITUDE VEHICLE 2
-//        mavlink_msg_attitude_pack(54, MAV_COMP_ID_IMU, &ret, 0, 0, 0, atan2((y/2)+0.3, (x+0.002)), 0, 0, 0);
-//        sendMAVLinkMessage(&ret);
-
-
-//        // GLOBAL POSITION VEHICLE 3
-//        mavlink_msg_global_position_int_pack(60, componentId, &ret, 0, (473780.28137103+(x/2+0.002))*1E3, (85489.9892510421+((y*2)+0.3))*1E3, (z+590.0)*1000.0, 0*100.0, 0*100.0, 0*100.0);
+//        // GLOBAL POSITION
+//        mavlink_msg_global_position_int_pack(systemId, componentId, &ret, 0, (473774.15+(x))*1E3, (85466.12+(y))*1E3, (z)*1000.0,/* (z+550.0)*1000.0*/-1, speedX, speedY, speedZ, yaw);
 //        bufferlength = mavlink_msg_to_send_buffer(buffer, &ret);
 //        //add data into datastream
 //        memcpy(stream+streampointer,buffer, bufferlength);
 //        streampointer += bufferlength;
 
-        static int rcCounter = 0;
-        if (rcCounter == 2) {
-            mavlink_rc_channels_raw_t chan;
-            chan.time_boot_ms = 0;
-            chan.port = 0;
-            chan.chan1_raw = 1000 + ((int)(fabs(x) * 1000) % 2000);
-            chan.chan2_raw = 1000 + ((int)(fabs(y) * 1000) % 2000);
-            chan.chan3_raw = 1000 + ((int)(fabs(z) * 1000) % 2000);
-            chan.chan4_raw = (chan.chan1_raw + chan.chan2_raw) / 2.0f;
-            chan.chan5_raw = (chan.chan3_raw + chan.chan4_raw) / 2.0f;
-            chan.chan6_raw = (chan.chan3_raw + chan.chan2_raw) / 2.0f;
-            chan.chan7_raw = (chan.chan4_raw + chan.chan2_raw) / 2.0f;
-            chan.chan8_raw = 0;
-            chan.rssi = 100;
-            messageSize = mavlink_msg_rc_channels_raw_encode(systemId, componentId, &msg, &chan);
-            // Allocate buffer with packet data
-            bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-            //add data into datastream
-            memcpy(stream+streampointer,buffer, bufferlength);
-            streampointer += bufferlength;
-            rcCounter = 0;
-        }
-        rcCounter++;
 
-#ifdef QGC_USE_SKYE_INTERFACE
-        // RETURN 6 DOF CONTROL MSG
-        mavlink_setpoint_6dof_t manual;
-        manual.trans_x = thrustX;
-        manual.trans_y = thrustY;
-        manual.trans_z = thrustZ;
-        manual.rot_x = momentX;
-        manual.rot_y = momentY;
-        manual.rot_z = momentZ;
-        manual.target_system = systemId;
-        mavlink_msg_setpoint_6dof_encode(systemId, MAV_COMP_ID_IMU, &msg, &manual);
-        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-        //add data into datastream
-        memcpy(stream+streampointer,buffer, bufferlength);
-        streampointer += bufferlength;
+////#ifdef QGC_USE_SKYE_INTERFACE
+//        // RETURN 6 DOF CONTROL MSG
+//        mavlink_setpoint_6dof_t manual;
+//        manual.trans_x = thrustX;
+//        manual.trans_y = thrustY;
+//        manual.trans_z = thrustZ;
+//        manual.rot_x = momentX;
+//        manual.rot_y = momentY;
+//        manual.rot_z = momentZ;
+//        manual.target_system = systemId;
+//        mavlink_msg_setpoint_6dof_encode(systemId, MAV_COMP_ID_IMU, &msg, &manual);
+//        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+//        //add data into datastream
+//        memcpy(stream+streampointer,buffer, bufferlength);
+//        streampointer += bufferlength;
 
-        // RETURN MANUAL 8DOF COMMAND (Testphase)
-        mavlink_setpoint_8dof_t manual_8dof;
-        manual_8dof.val1 = thrust1;
-        manual_8dof.val2 = thrust2;
-        manual_8dof.val3 = thrust3;
-        manual_8dof.val4 = thrust4;
-        manual_8dof.val5 = orientation1;
-        manual_8dof.val6 = orientation2;
-        manual_8dof.val7 = orientation3;
-        manual_8dof.val8 = orientation4;
-        manual_8dof.target_system = systemId;
-        mavlink_msg_setpoint_8dof_encode(systemId, MAV_COMP_ID_IMU, &msg, &manual_8dof);
-        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-        //add data into datastream
-        memcpy(stream+streampointer,buffer, bufferlength);
-        streampointer += bufferlength;
+//        // RETURN MANUAL 8DOF COMMAND (Testphase)
+//        mavlink_setpoint_8dof_t manual_8dof;
+//        manual_8dof.val1 = thrust1;
+//        manual_8dof.val2 = thrust2;
+//        manual_8dof.val3 = thrust3;
+//        manual_8dof.val4 = thrust4;
+//        manual_8dof.val5 = orientation1;
+//        manual_8dof.val6 = orientation2;
+//        manual_8dof.val7 = orientation3;
+//        manual_8dof.val8 = orientation4;
+//        manual_8dof.target_system = systemId;
+//        mavlink_msg_setpoint_8dof_encode(systemId, MAV_COMP_ID_IMU, &msg, &manual_8dof);
+//        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+//        //add data into datastream
+//        memcpy(stream+streampointer,buffer, bufferlength);
+//        streampointer += bufferlength;
 
-        mavlink_battery_voltage_t volt;
-        volt.id = 2;
-        volt.voltage_1 = 1010;
-        volt.voltage_2 = 1010;
-        volt.voltage_3 = 1010;
-        volt.voltage_4 = 0;
-        volt.battery_remaining = -1;
-        mavlink_msg_battery_voltage_encode(systemId, MAV_COMP_ID_IMU, &msg, &volt);
-        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-        //add data into datastream
-        memcpy(stream+streampointer,buffer, bufferlength);
-        streampointer += bufferlength;
+//////        mavlink_battery_voltage_t volt;
+//////        volt.id = 2;
+//////        volt.voltage_1 = 1010;
+//////        volt.voltage_2 = 1010;
+//////        volt.voltage_3 = 1010;
+//////        volt.voltage_4 = 0;
+//////        volt.battery_remaining = -1;
+//////        mavlink_msg_battery_voltage_encode(systemId, MAV_COMP_ID_IMU, &msg, &volt);
+//////        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+//////        //add data into datastream
+//////        memcpy(stream+streampointer,buffer, bufferlength);
+//////        streampointer += bufferlength;
 
-        mavlink_actuation_current_t curr;
-        curr.id = 0;
-        curr.current_1 = 1010;
-        curr.current_2 = 1010;
-        curr.current_3 = 1010;
-        curr.current_4 = 1010;
-        mavlink_msg_actuation_current_encode(systemId, MAV_COMP_ID_IMU, &msg, &curr);
-        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-        //add data into datastream
-        memcpy(stream+streampointer,buffer, bufferlength);
-        streampointer += bufferlength;
+//////        mavlink_actuation_current_t curr;
+//////        curr.id = 0;
+//////        curr.current_1 = 1010;
+//////        curr.current_2 = 1010;
+//////        curr.current_3 = 1010;
+//////        curr.current_4 = 1010;
+//////        mavlink_msg_actuation_current_encode(systemId, MAV_COMP_ID_IMU, &msg, &curr);
+//////        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+//////        //add data into datastream
+//////        memcpy(stream+streampointer,buffer, bufferlength);
+//////        streampointer += bufferlength;
 
-#endif
+
+//#endif
 
 
     }
 
     // 1 HZ TASKS
     if (rate1hzCounter == 1000 / rate / 1) {
-        // STATE
-//        static int statusCounter = 0;
-//        if (statusCounter == 100) {
-//            system.base_mode = (system.base_mode + 1) % MAV_MODE_ENUM_END;
-//            statusCounter = 0;
-//        }
-//        statusCounter++;
-
-        static int detectionCounter = 6;
-        if (detectionCounter % 10 == 0) {
-#ifdef MAVLINK_ENABLED_PIXHAWK_PATTERN_BLABLA
-            mavlink_pattern_detected_t detected;
-            detected.confidence = 5.0f;
-
-            if (detectionCounter == 10) {
-                char fileName[] = "patterns/face5.png";
-                memcpy(detected.file, fileName, sizeof(fileName));
-                detected.type = 0; // 0: Pattern, 1: Letter
-            } else if (detectionCounter == 20) {
-                char fileName[] = "7";
-                memcpy(detected.file, fileName, sizeof(fileName));
-                detected.type = 1; // 0: Pattern, 1: Letter
-            } else if (detectionCounter == 30) {
-                char fileName[] = "patterns/einstein.bmp";
-                memcpy(detected.file, fileName, sizeof(fileName));
-                detected.type = 0; // 0: Pattern, 1: Letter
-            } else if (detectionCounter == 40) {
-                char fileName[] = "F";
-                memcpy(detected.file, fileName, sizeof(fileName));
-                detected.type = 1; // 0: Pattern, 1: Letter
-            } else if (detectionCounter == 50) {
-                char fileName[] = "patterns/face2.png";
-                memcpy(detected.file, fileName, sizeof(fileName));
-                detected.type = 0; // 0: Pattern, 1: Letter
-            } else if (detectionCounter == 60) {
-                char fileName[] = "H";
-                memcpy(detected.file, fileName, sizeof(fileName));
-                detected.type = 1; // 0: Pattern, 1: Letter
-                detectionCounter = 0;
-            }
-            detected.detected = 1;
-            messageSize = mavlink_msg_pattern_detected_encode(systemId, componentId, &msg, &detected);
-            // Allocate buffer with packet data
-            bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-            //add data into datastream
-            memcpy(stream+streampointer,buffer, bufferlength);
-            streampointer += bufferlength;
-            //detectionCounter = 0;
-#endif
-        }
-        detectionCounter++;
-
-
 
         status.voltage_battery = voltage * 1000; // millivolts
-        status.load = 33 * detectionCounter % 1000;
+        status.load = 0;
 
         // Pack message and get size of encoded byte string
-        messageSize = mavlink_msg_sys_status_encode(systemId, componentId, &msg, &status);
+//        messageSize = mavlink_msg_sys_status_encode(systemId, componentId, &msg, &status);
 
-        // Allocate buffer with packet data
-        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-        //add data into datastream
-        memcpy(stream+streampointer,buffer, bufferlength);
-        streampointer += bufferlength;
-
-//        // Pack debug text message
-//        mavlink_statustext_t text;
-//        text.severity = 0;
-//        strcpy((char*)(text.text), "Text message from system 32");
-//        mavlink_msg_statustext_encode(systemId, componentId, &msg, &text);
+//        // Allocate buffer with packet data
 //        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-//        memcpy(stream+streampointer, buffer, bufferlength);
+//        //add data into datastream
+//        memcpy(stream+streampointer,buffer, bufferlength);
 //        streampointer += bufferlength;
-
-        /*
-        // Pack message and get size of encoded byte string
-        messageSize = mavlink_msg_boot_pack(systemId, componentId, &msg, version);
-        // Allocate buffer with packet data
-        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-        //add data into datastream
-        memcpy(stream+streampointer,buffer, bufferlength);
-        streampointer += bufferlength;*/
 
         // HEARTBEAT
 
@@ -687,27 +416,9 @@ void MAVLinkSimulationLink::mainloop()
 #endif
         // Allocate buffer with packet data
         bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-        //qDebug() << "CRC:" << msg.ck_a << msg.ck_b;
         //add data into datastream
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
-
-#ifdef TEMP_QGC_USE_SKYE_INTERFACE
-        uint8_t type = MAVLINK_DATA_STREAM_IMG_RAW8U;  //MAVLINK_DATA_STREAM_IMG_RAW8U;
-        uint8_t payload = 253;
-        uint16_t width = 66;    // 92 //463
-        uint16_t height = 44; // 44 //464
-        uint32_t size = width*height;
-        uint8_t packets = floor((float)(size/payload))+1;
-        uint8_t jpg_quality = 0;
-        mavlink_msg_data_transmission_handshake_pack(systemId, componentId, &msg, type, size, width, height, packets, payload, jpg_quality);
-        // Allocate buffer with packet data
-        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-        //qDebug() << "CRC:" << msg.ck_a << msg.ck_b;
-        //add data into datastream
-        memcpy(stream+streampointer,buffer, bufferlength);
-        streampointer += bufferlength;
-#endif
 
         // Vary values
 
@@ -715,7 +426,7 @@ void MAVLinkSimulationLink::mainloop()
         // The battery is drained constantly
         voltage = voltage - ((fullVoltage - emptyVoltage) * drainRate / rate);
     //    if (voltage < 3.550f * 3.0f) voltage = 3.550f * 3.0f;
-
+#ifdef NNNNNNNNNNN
         battery_pack_id = 0;//(int)(0.5*sin(time_boot*0.001)+1);
         mavlink_battery_status_t battery;
         battery.accu_id = battery_pack_id;
@@ -732,7 +443,7 @@ void MAVLinkSimulationLink::mainloop()
         //add data into datastream
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
-
+#endif
 
         rate1hzCounter = 1;
         seqnr = 0;
@@ -922,99 +633,99 @@ void MAVLinkSimulationLink::writeBytes(const char* data, qint64 size)
             }
             break;
 #endif
-            case MAVLINK_MSG_ID_PARAM_REQUEST_LIST:
-            {
-                qDebug() << "GCS REQUESTED PARAM LIST FROM SIMULATION";
-                mavlink_param_request_list_t read;
-               mavlink_msg_param_request_list_decode(&msg, &read);
-                if (read.target_system == systemId)
-                {
-                    // Output all params
-                    // Iterate through all components, through all parameters and emit them
-                    QMap<QString, float>::iterator i;
-                    // Iterate through all components / subsystems
-                    int j = 0;
-                    for (i = onboardParams.begin(); i != onboardParams.end(); ++i) {
-                        if (j != 5) {
-                            // Pack message and get size of encoded byte string
-                            mavlink_msg_param_value_pack(read.target_system, componentId, &msg, i.key().toStdString().c_str(), i.value(), MAV_PARAM_TYPE_REAL32, onboardParams.size(), j);
-                            // Allocate buffer with packet data
-                            bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-                            //add data into datastream
-                            memcpy(stream+streampointer,buffer, bufferlength);
-                            streampointer+=bufferlength;
-                        }
-                        j++;
-                    }
+//            case MAVLINK_MSG_ID_PARAM_REQUEST_LIST:
+//            {
+//                qDebug() << "GCS REQUESTED PARAM LIST FROM SIMULATION";
+//                mavlink_param_request_list_t read;
+//               mavlink_msg_param_request_list_decode(&msg, &read);
+//                if (read.target_system == systemId)
+//                {
+//                    // Output all params
+//                    // Iterate through all components, through all parameters and emit them
+//                    QMap<QString, float>::iterator i;
+//                    // Iterate through all components / subsystems
+//                    int j = 0;
+//                    for (i = onboardParams.begin(); i != onboardParams.end(); ++i) {
+//                        if (j != 5) {
+//                            // Pack message and get size of encoded byte string
+//                            mavlink_msg_param_value_pack(read.target_system, componentId, &msg, i.key().toStdString().c_str(), i.value(), MAV_PARAM_TYPE_REAL32, onboardParams.size(), j);
+//                            // Allocate buffer with packet data
+//                            bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+//                            //add data into datastream
+//                            memcpy(stream+streampointer,buffer, bufferlength);
+//                            streampointer+=bufferlength;
+//                        }
+//                        j++;
+//                    }
 
-                    qDebug() << "SIMULATION SENT PARAMETERS TO GCS";
-                }
-            }
-                break;
-            case MAVLINK_MSG_ID_PARAM_SET:
-            {
-                // Drop on even milliseconds
-                if (QGC::groundTimeMilliseconds() % 2 == 0)
-                {
-                    qDebug() << "SIMULATION RECEIVED COMMAND TO SET PARAMETER";
-                    mavlink_param_set_t set;
-                    mavlink_msg_param_set_decode(&msg, &set);
-                    //                    if (set.target_system == systemId)
-                    //                    {
-                    QString key = QString((char*)set.param_id);
-                    if (onboardParams.contains(key))
-                    {
-                        onboardParams.remove(key);
-                        onboardParams.insert(key, set.param_value);
+//                    qDebug() << "SIMULATION SENT PARAMETERS TO GCS";
+//                }
+//            }
+//                break;
+//            case MAVLINK_MSG_ID_PARAM_SET:
+//            {
+//                // Drop on even milliseconds
+//                if (QGC::groundTimeMilliseconds() % 2 == 0)
+//                {
+//                    qDebug() << "SIMULATION RECEIVED COMMAND TO SET PARAMETER";
+//                    mavlink_param_set_t set;
+//                    mavlink_msg_param_set_decode(&msg, &set);
+//                    //                    if (set.target_system == systemId)
+//                    //                    {
+//                    QString key = QString((char*)set.param_id);
+//                    if (onboardParams.contains(key))
+//                    {
+//                        onboardParams.remove(key);
+//                        onboardParams.insert(key, set.param_value);
 
-                        // Pack message and get size of encoded byte string
-                        mavlink_msg_param_value_pack(set.target_system, componentId, &msg, key.toStdString().c_str(), set.param_value, MAV_PARAM_TYPE_REAL32, onboardParams.size(), onboardParams.keys().indexOf(key));
-                        // Allocate buffer with packet data
-                        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-                        //add data into datastream
-                        memcpy(stream+streampointer,buffer, bufferlength);
-                        streampointer+=bufferlength;
-                    }
-                    //                    }
-                }
-            }
-            break;
-            case MAVLINK_MSG_ID_PARAM_REQUEST_READ:
-            {
-                qDebug() << "SIMULATION RECEIVED COMMAND TO SEND PARAMETER";
-                mavlink_param_request_read_t read;
-                mavlink_msg_param_request_read_decode(&msg, &read);
-                QByteArray bytes((char*)read.param_id, MAVLINK_MSG_PARAM_REQUEST_READ_FIELD_PARAM_ID_LEN);
-                QString key = QString(bytes);
-                if (onboardParams.contains(key))
-                {
-                    float paramValue = onboardParams.value(key);
+//                        // Pack message and get size of encoded byte string
+//                        mavlink_msg_param_value_pack(set.target_system, componentId, &msg, key.toStdString().c_str(), set.param_value, MAV_PARAM_TYPE_REAL32, onboardParams.size(), onboardParams.keys().indexOf(key));
+//                        // Allocate buffer with packet data
+//                        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+//                        //add data into datastream
+//                        memcpy(stream+streampointer,buffer, bufferlength);
+//                        streampointer+=bufferlength;
+//                    }
+//                    //                    }
+//                }
+//            }
+//            break;
+//            case MAVLINK_MSG_ID_PARAM_REQUEST_READ:
+//            {
+//                qDebug() << "SIMULATION RECEIVED COMMAND TO SEND PARAMETER";
+//                mavlink_param_request_read_t read;
+//                mavlink_msg_param_request_read_decode(&msg, &read);
+//                QByteArray bytes((char*)read.param_id, MAVLINK_MSG_PARAM_REQUEST_READ_FIELD_PARAM_ID_LEN);
+//                QString key = QString(bytes);
+//                if (onboardParams.contains(key))
+//                {
+//                    float paramValue = onboardParams.value(key);
 
-                    // Pack message and get size of encoded byte string
-                    mavlink_msg_param_value_pack(read.target_system, componentId, &msg, key.toStdString().c_str(), paramValue, MAV_PARAM_TYPE_REAL32, onboardParams.size(), onboardParams.keys().indexOf(key));
-                    // Allocate buffer with packet data
-                    bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-                    //add data into datastream
-                    memcpy(stream+streampointer,buffer, bufferlength);
-                    streampointer+=bufferlength;
-                    //qDebug() << "Sending PARAM" << key;
-                }
-                else if (read.param_index >= 0 && read.param_index < onboardParams.keys().size())
-                {
-                    key = onboardParams.keys().at(read.param_index);
-                    float paramValue = onboardParams.value(key);
+//                    // Pack message and get size of encoded byte string
+//                    mavlink_msg_param_value_pack(read.target_system, componentId, &msg, key.toStdString().c_str(), paramValue, MAV_PARAM_TYPE_REAL32, onboardParams.size(), onboardParams.keys().indexOf(key));
+//                    // Allocate buffer with packet data
+//                    bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+//                    //add data into datastream
+//                    memcpy(stream+streampointer,buffer, bufferlength);
+//                    streampointer+=bufferlength;
+//                    //qDebug() << "Sending PARAM" << key;
+//                }
+//                else if (read.param_index >= 0 && read.param_index < onboardParams.keys().size())
+//                {
+//                    key = onboardParams.keys().at(read.param_index);
+//                    float paramValue = onboardParams.value(key);
 
-                    // Pack message and get size of encoded byte string
-                    mavlink_msg_param_value_pack(read.target_system, componentId, &msg, key.toStdString().c_str(), paramValue, MAV_PARAM_TYPE_REAL32, onboardParams.size(), onboardParams.keys().indexOf(key));
-                    // Allocate buffer with packet data
-                    bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-                    //add data into datastream
-                    memcpy(stream+streampointer,buffer, bufferlength);
-                    streampointer+=bufferlength;
-                    //qDebug() << "Sending PARAM #ID" << (read.param_index) << "KEY:" << key;
-                }
-            }
-            break;
+//                    // Pack message and get size of encoded byte string
+//                    mavlink_msg_param_value_pack(read.target_system, componentId, &msg, key.toStdString().c_str(), paramValue, MAV_PARAM_TYPE_REAL32, onboardParams.size(), onboardParams.keys().indexOf(key));
+//                    // Allocate buffer with packet data
+//                    bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+//                    //add data into datastream
+//                    memcpy(stream+streampointer,buffer, bufferlength);
+//                    streampointer+=bufferlength;
+//                    //qDebug() << "Sending PARAM #ID" << (read.param_index) << "KEY:" << key;
+//                }
+//            }
+//            break;
 
             // Beginn Code MA (09.03.2012)
             case MAVLINK_MSG_ID_SETPOINT_6DOF: {

@@ -15,6 +15,9 @@ typedef struct __mavlink_nanotron_skye_node_2_raw_t
 #define MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_LEN 24
 #define MAVLINK_MSG_ID_143_LEN 24
 
+#define MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_CRC 77
+#define MAVLINK_MSG_ID_143_CRC 77
+
 
 
 #define MAVLINK_MESSAGE_INFO_NANOTRON_SKYE_NODE_2_RAW { \
@@ -48,7 +51,7 @@ static inline uint16_t mavlink_msg_nanotron_skye_node_2_raw_pack(uint8_t system_
 						       float distance_1, float distance_2, float distance_3, float distance_4, float distance_5, float distance_6)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-	char buf[24];
+	char buf[MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_LEN];
 	_mav_put_float(buf, 0, distance_1);
 	_mav_put_float(buf, 4, distance_2);
 	_mav_put_float(buf, 8, distance_3);
@@ -56,7 +59,7 @@ static inline uint16_t mavlink_msg_nanotron_skye_node_2_raw_pack(uint8_t system_
 	_mav_put_float(buf, 16, distance_5);
 	_mav_put_float(buf, 20, distance_6);
 
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, 24);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_LEN);
 #else
 	mavlink_nanotron_skye_node_2_raw_t packet;
 	packet.distance_1 = distance_1;
@@ -66,11 +69,15 @@ static inline uint16_t mavlink_msg_nanotron_skye_node_2_raw_pack(uint8_t system_
 	packet.distance_5 = distance_5;
 	packet.distance_6 = distance_6;
 
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, 24);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_LEN);
 #endif
 
 	msg->msgid = MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW;
-	return mavlink_finalize_message(msg, system_id, component_id, 24, 77);
+#if MAVLINK_CRC_EXTRA
+    return mavlink_finalize_message(msg, system_id, component_id, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_LEN, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_CRC);
+#else
+    return mavlink_finalize_message(msg, system_id, component_id, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_LEN);
+#endif
 }
 
 /**
@@ -92,7 +99,7 @@ static inline uint16_t mavlink_msg_nanotron_skye_node_2_raw_pack_chan(uint8_t sy
 						           float distance_1,float distance_2,float distance_3,float distance_4,float distance_5,float distance_6)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-	char buf[24];
+	char buf[MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_LEN];
 	_mav_put_float(buf, 0, distance_1);
 	_mav_put_float(buf, 4, distance_2);
 	_mav_put_float(buf, 8, distance_3);
@@ -100,7 +107,7 @@ static inline uint16_t mavlink_msg_nanotron_skye_node_2_raw_pack_chan(uint8_t sy
 	_mav_put_float(buf, 16, distance_5);
 	_mav_put_float(buf, 20, distance_6);
 
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, 24);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_LEN);
 #else
 	mavlink_nanotron_skye_node_2_raw_t packet;
 	packet.distance_1 = distance_1;
@@ -110,11 +117,15 @@ static inline uint16_t mavlink_msg_nanotron_skye_node_2_raw_pack_chan(uint8_t sy
 	packet.distance_5 = distance_5;
 	packet.distance_6 = distance_6;
 
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, 24);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_LEN);
 #endif
 
 	msg->msgid = MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW;
-	return mavlink_finalize_message_chan(msg, system_id, component_id, chan, 24, 77);
+#if MAVLINK_CRC_EXTRA
+    return mavlink_finalize_message_chan(msg, system_id, component_id, chan, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_LEN, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_CRC);
+#else
+    return mavlink_finalize_message_chan(msg, system_id, component_id, chan, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_LEN);
+#endif
 }
 
 /**
@@ -146,7 +157,7 @@ static inline uint16_t mavlink_msg_nanotron_skye_node_2_raw_encode(uint8_t syste
 static inline void mavlink_msg_nanotron_skye_node_2_raw_send(mavlink_channel_t chan, float distance_1, float distance_2, float distance_3, float distance_4, float distance_5, float distance_6)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-	char buf[24];
+	char buf[MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_LEN];
 	_mav_put_float(buf, 0, distance_1);
 	_mav_put_float(buf, 4, distance_2);
 	_mav_put_float(buf, 8, distance_3);
@@ -154,7 +165,11 @@ static inline void mavlink_msg_nanotron_skye_node_2_raw_send(mavlink_channel_t c
 	_mav_put_float(buf, 16, distance_5);
 	_mav_put_float(buf, 20, distance_6);
 
-	_mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW, buf, 24, 77);
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW, buf, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_LEN, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW, buf, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_LEN);
+#endif
 #else
 	mavlink_nanotron_skye_node_2_raw_t packet;
 	packet.distance_1 = distance_1;
@@ -164,7 +179,11 @@ static inline void mavlink_msg_nanotron_skye_node_2_raw_send(mavlink_channel_t c
 	packet.distance_5 = distance_5;
 	packet.distance_6 = distance_6;
 
-	_mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW, (const char *)&packet, 24, 77);
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW, (const char *)&packet, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_LEN, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW, (const char *)&packet, MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_LEN);
+#endif
 #endif
 }
 
@@ -249,6 +268,6 @@ static inline void mavlink_msg_nanotron_skye_node_2_raw_decode(const mavlink_mes
 	nanotron_skye_node_2_raw->distance_5 = mavlink_msg_nanotron_skye_node_2_raw_get_distance_5(msg);
 	nanotron_skye_node_2_raw->distance_6 = mavlink_msg_nanotron_skye_node_2_raw_get_distance_6(msg);
 #else
-	memcpy(nanotron_skye_node_2_raw, _MAV_PAYLOAD(msg), 24);
+	memcpy(nanotron_skye_node_2_raw, _MAV_PAYLOAD(msg), MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW_LEN);
 #endif
 }

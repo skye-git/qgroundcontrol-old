@@ -14,6 +14,9 @@ typedef struct __mavlink_actuation_current_t
 #define MAVLINK_MSG_ID_ACTUATION_CURRENT_LEN 9
 #define MAVLINK_MSG_ID_145_LEN 9
 
+#define MAVLINK_MSG_ID_ACTUATION_CURRENT_CRC 106
+#define MAVLINK_MSG_ID_145_CRC 106
+
 
 
 #define MAVLINK_MESSAGE_INFO_ACTUATION_CURRENT { \
@@ -45,14 +48,14 @@ static inline uint16_t mavlink_msg_actuation_current_pack(uint8_t system_id, uin
 						       uint8_t id, int16_t current_1, int16_t current_2, int16_t current_3, int16_t current_4)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-	char buf[9];
+	char buf[MAVLINK_MSG_ID_ACTUATION_CURRENT_LEN];
 	_mav_put_int16_t(buf, 0, current_1);
 	_mav_put_int16_t(buf, 2, current_2);
 	_mav_put_int16_t(buf, 4, current_3);
 	_mav_put_int16_t(buf, 6, current_4);
 	_mav_put_uint8_t(buf, 8, id);
 
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, 9);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_ACTUATION_CURRENT_LEN);
 #else
 	mavlink_actuation_current_t packet;
 	packet.current_1 = current_1;
@@ -61,11 +64,15 @@ static inline uint16_t mavlink_msg_actuation_current_pack(uint8_t system_id, uin
 	packet.current_4 = current_4;
 	packet.id = id;
 
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, 9);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_ACTUATION_CURRENT_LEN);
 #endif
 
 	msg->msgid = MAVLINK_MSG_ID_ACTUATION_CURRENT;
-	return mavlink_finalize_message(msg, system_id, component_id, 9, 106);
+#if MAVLINK_CRC_EXTRA
+    return mavlink_finalize_message(msg, system_id, component_id, MAVLINK_MSG_ID_ACTUATION_CURRENT_LEN, MAVLINK_MSG_ID_ACTUATION_CURRENT_CRC);
+#else
+    return mavlink_finalize_message(msg, system_id, component_id, MAVLINK_MSG_ID_ACTUATION_CURRENT_LEN);
+#endif
 }
 
 /**
@@ -86,14 +93,14 @@ static inline uint16_t mavlink_msg_actuation_current_pack_chan(uint8_t system_id
 						           uint8_t id,int16_t current_1,int16_t current_2,int16_t current_3,int16_t current_4)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-	char buf[9];
+	char buf[MAVLINK_MSG_ID_ACTUATION_CURRENT_LEN];
 	_mav_put_int16_t(buf, 0, current_1);
 	_mav_put_int16_t(buf, 2, current_2);
 	_mav_put_int16_t(buf, 4, current_3);
 	_mav_put_int16_t(buf, 6, current_4);
 	_mav_put_uint8_t(buf, 8, id);
 
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, 9);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_ACTUATION_CURRENT_LEN);
 #else
 	mavlink_actuation_current_t packet;
 	packet.current_1 = current_1;
@@ -102,11 +109,15 @@ static inline uint16_t mavlink_msg_actuation_current_pack_chan(uint8_t system_id
 	packet.current_4 = current_4;
 	packet.id = id;
 
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, 9);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_ACTUATION_CURRENT_LEN);
 #endif
 
 	msg->msgid = MAVLINK_MSG_ID_ACTUATION_CURRENT;
-	return mavlink_finalize_message_chan(msg, system_id, component_id, chan, 9, 106);
+#if MAVLINK_CRC_EXTRA
+    return mavlink_finalize_message_chan(msg, system_id, component_id, chan, MAVLINK_MSG_ID_ACTUATION_CURRENT_LEN, MAVLINK_MSG_ID_ACTUATION_CURRENT_CRC);
+#else
+    return mavlink_finalize_message_chan(msg, system_id, component_id, chan, MAVLINK_MSG_ID_ACTUATION_CURRENT_LEN);
+#endif
 }
 
 /**
@@ -137,14 +148,18 @@ static inline uint16_t mavlink_msg_actuation_current_encode(uint8_t system_id, u
 static inline void mavlink_msg_actuation_current_send(mavlink_channel_t chan, uint8_t id, int16_t current_1, int16_t current_2, int16_t current_3, int16_t current_4)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-	char buf[9];
+	char buf[MAVLINK_MSG_ID_ACTUATION_CURRENT_LEN];
 	_mav_put_int16_t(buf, 0, current_1);
 	_mav_put_int16_t(buf, 2, current_2);
 	_mav_put_int16_t(buf, 4, current_3);
 	_mav_put_int16_t(buf, 6, current_4);
 	_mav_put_uint8_t(buf, 8, id);
 
-	_mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ACTUATION_CURRENT, buf, 9, 106);
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ACTUATION_CURRENT, buf, MAVLINK_MSG_ID_ACTUATION_CURRENT_LEN, MAVLINK_MSG_ID_ACTUATION_CURRENT_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ACTUATION_CURRENT, buf, MAVLINK_MSG_ID_ACTUATION_CURRENT_LEN);
+#endif
 #else
 	mavlink_actuation_current_t packet;
 	packet.current_1 = current_1;
@@ -153,7 +168,11 @@ static inline void mavlink_msg_actuation_current_send(mavlink_channel_t chan, ui
 	packet.current_4 = current_4;
 	packet.id = id;
 
-	_mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ACTUATION_CURRENT, (const char *)&packet, 9, 106);
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ACTUATION_CURRENT, (const char *)&packet, MAVLINK_MSG_ID_ACTUATION_CURRENT_LEN, MAVLINK_MSG_ID_ACTUATION_CURRENT_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ACTUATION_CURRENT, (const char *)&packet, MAVLINK_MSG_ID_ACTUATION_CURRENT_LEN);
+#endif
 #endif
 }
 
@@ -227,6 +246,6 @@ static inline void mavlink_msg_actuation_current_decode(const mavlink_message_t*
 	actuation_current->current_4 = mavlink_msg_actuation_current_get_current_4(msg);
 	actuation_current->id = mavlink_msg_actuation_current_get_id(msg);
 #else
-	memcpy(actuation_current, _MAV_PAYLOAD(msg), 9);
+	memcpy(actuation_current, _MAV_PAYLOAD(msg), MAVLINK_MSG_ID_ACTUATION_CURRENT_LEN);
 #endif
 }

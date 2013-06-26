@@ -27,19 +27,6 @@ extern "C" {
 
 #define MAVLINK_ENABLED_COMMON
 
-
-
-// MAVLINK VERSION
-
-#ifndef MAVLINK_VERSION
-#define MAVLINK_VERSION 3
-#endif
-
-#if (MAVLINK_VERSION == 0)
-#undef MAVLINK_VERSION
-#define MAVLINK_VERSION 3
-#endif
-
 // ENUM DEFINITIONS
 
 
@@ -426,6 +413,19 @@ enum LED_CONTROL_MODE
 	LED_CONTROL_MODE_SPEED=6, /* Color proportional to measured angular velocity | */
 	LED_CONTROL_MODE_ENUM_END=7, /*  | */
 };
+#endif
+
+
+
+// MAVLINK VERSION
+
+#ifndef MAVLINK_VERSION
+#define MAVLINK_VERSION 3
+#endif
+
+#if (MAVLINK_VERSION == 0)
+#undef MAVLINK_VERSION
+#define MAVLINK_VERSION 3
 #endif
 
 // MESSAGE DEFINITIONS
