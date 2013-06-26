@@ -883,7 +883,7 @@
                     <description>Useful non-operational messages that can assist in debugging. These should not occur during normal operation.</description>
                </entry>
           </enum>
-                    <enum name="LED_CONTROL_MODE">
+          <enum name="LED_CONTROL_MODE">
                <description>Possible led color modes for LED_CONTROL message</description>
                <entry value="0" name="LED_CONTROL_MODE_CONSTANT">
                     <description>Constant light using color values</description>
@@ -1605,6 +1605,33 @@
                <description>File transfer result</description>
                <field type="uint64_t" name="transfer_uid">Unique transfer ID</field>
                <field type="uint8_t" name="result">0: OK, 1: not permitted, 2: bad path / file name, 3: no space left on device</field>
+          </message>
+          <message id="141" name="NANOTRON_SKYE_NODE_0_RAW">
+               <description>Raw distance measurements to skye node idx 0</description>
+               <field type="float" name="distance_1">Distance to ground module 1</field>
+               <field type="float" name="distance_2">Distance to ground module 2</field>
+               <field type="float" name="distance_3">Distance to ground module 3</field>
+               <field type="float" name="distance_4">Distance to ground module 4</field>
+               <field type="float" name="distance_5">Distance to ground module 5</field>
+               <field type="float" name="distance_6">Distance to ground module 6</field>
+          </message>
+          <message id="142" name="NANOTRON_SKYE_NODE_1_RAW">
+               <description>Raw distance measurements to skye node idx 1</description>
+               <field type="float" name="distance_1">Distance to ground module 1</field>
+               <field type="float" name="distance_2">Distance to ground module 2</field>
+               <field type="float" name="distance_3">Distance to ground module 3</field>
+               <field type="float" name="distance_4">Distance to ground module 4</field>
+               <field type="float" name="distance_5">Distance to ground module 5</field>
+               <field type="float" name="distance_6">Distance to ground module 6</field>
+          </message>
+          <message id="143" name="NANOTRON_SKYE_NODE_2_RAW">
+               <description>Raw distance measurements to skye node idx 2</description>
+               <field type="float" name="distance_1">Distance to ground module 1</field>
+               <field type="float" name="distance_2">Distance to ground module 2</field>
+               <field type="float" name="distance_3">Distance to ground module 3</field>
+               <field type="float" name="distance_4">Distance to ground module 4</field>
+               <field type="float" name="distance_5">Distance to ground module 5</field>
+               <field type="float" name="distance_6">Distance to ground module 6</field>
           </message>
           <message id="144" name="LED_CONTROL">
                <description>Control single LED or LED array</description>
