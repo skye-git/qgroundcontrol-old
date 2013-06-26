@@ -44,6 +44,7 @@ This file is part of the PIXHAWK project
 #include <QFileDialog>
 #include <QDebug>
 #include <QPalette>
+#include <QMessageBox>
 
 #include "UASSkyeControlWidget.h"
 #include "UASManager.h"
@@ -139,6 +140,9 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     // TODO: set correct margins instead of min height
     this->setMinimumHeight(220);
 
+    lastAlertTime.start();
+    alertedBatteryLow = false;
+
 #endif //QGC_USE_SKYE_INTERFACE
 }
 
@@ -158,7 +162,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
             disconnect(this, SIGNAL(changedInput(SkyeMAV::QGC_INPUT_MODE)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
             disconnect(mav, SIGNAL(mouseButtonRotationChanged(bool)), this, SLOT(changeMouseRotationEnabled(bool)));
             disconnect(mav, SIGNAL(mouseButtonTranslationChanged(bool)), this, SLOT(changeMouseTranslationEnabled(bool)));
-
+            disconnect(mav, SIGNAL(batteryLow(double)), this, SLOT(alertBatteryLow(double)));
 
         }
     }
@@ -180,6 +184,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(mav, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
         connect(mav, SIGNAL(mouseButtonRotationChanged(bool)), this, SLOT(changeMouseRotationEnabled(bool)));
         connect(mav, SIGNAL(mouseButtonTranslationChanged(bool)), this, SLOT(changeMouseTranslationEnabled(bool)));
+        connect(mav, SIGNAL(batteryLow(double)), this, SLOT(alertBatteryLow(double)));
 
         connect(this, SIGNAL(changedInput(SkyeMAV::QGC_INPUT_MODE)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
         connect(mav, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(updateInput(SkyeMAV::QGC_INPUT_MODE)));
@@ -669,4 +674,24 @@ void UASSkyeControlWidget::enableLiftFactor(bool enabled)
 {
     liftFactorEnabled = enabled;
     setLiftFactor(liftFactor);
+}
+
+void UASSkyeControlWidget::alertBatteryLow(double voltage)
+{
+    if ( (lastAlertTime.elapsed() > 10000) || (alertedBatteryLow == false) )
+    {
+        lastAlertTime.restart();
+        alertedBatteryLow = true;
+
+//        msgBox.showMessage("Battery low! Shut down system immediately.");
+//        msgBox.exec();
+
+        QMessageBox msgBox;
+        msgBox.setIcon(QMessageBox::Information);
+        msgBox.setText(tr("BATTERY LOW"));
+        msgBox.setInformativeText(tr("Please shut down the system and charge the batteries."));
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();
+    }
 }

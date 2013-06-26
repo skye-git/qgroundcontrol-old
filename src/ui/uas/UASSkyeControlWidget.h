@@ -36,6 +36,8 @@ This file is part of the QGROUNDCONTROL project
 #include <QString>
 #include <QPushButton>
 #include <QButtonGroup>
+#include <QTime>
+//#include <QErrorMessage>
 #include <QtGui/QApplication>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QHeaderView>
@@ -76,6 +78,8 @@ public slots:
     void changeMouseTranslationEnabled(bool transEnabled);
     /** @brief Update 3dMouse button image */
     void changeMouseRotationEnabled(bool rotEnabled);
+    /** @brief Alert user that battery is low */
+    void alertBatteryLow(double voltage);
 
 signals:
     void changedMode(int);
@@ -140,6 +144,10 @@ signals:
         float minLiftFactor;                ///< Minimum value of liftSlider
         float maxLiftFactor;                ///< Maximum value of liftSlider
 
+        QTime lastAlertTime;                ///< Time when last low battery alert was prompted
+        bool alertedBatteryLow;             ///< True if system had low battery once
+//        QErrorMessage *msgBox;
+
     private:
         /** @brief Set up widget, don't use ui file */
         void buildWidget();
@@ -151,6 +159,7 @@ signals:
         Ui::uasSkyeControl ui;
         QButtonGroup *modeButtonGroup;
         QButtonGroup *inputButtonGroup;
+
 
     };
 

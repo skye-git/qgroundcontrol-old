@@ -230,8 +230,8 @@ void MAVLinkSimulationLink::mainloop()
 
     // Fake system values
 
-    static float fullVoltage = 4.2f * 3.0f;
-    static float emptyVoltage = 3.35f * 3.0f;
+    static float fullVoltage = 4.2f * 6.0f;
+    static float emptyVoltage = 3.35f * 6.0f;
     static float voltage = fullVoltage;
     static float drainRate = 0.025f; // x.xx% of the capacity is linearly drained per second
 
@@ -262,12 +262,6 @@ void MAVLinkSimulationLink::mainloop()
 //    static QByteArray tmpImage;
 //    static QFile tmpFile(":images/skye_images/LOGO_DEF.png");
 
-    // Vary values
-
-    // VOLTAGE
-    // The battery is drained constantly
-    voltage = voltage - ((fullVoltage - emptyVoltage) * drainRate / rate);
-    if (voltage < 3.550f * 3.0f) voltage = 3.550f * 3.0f;
 
 //    static int state = 0;
 
@@ -714,12 +708,20 @@ void MAVLinkSimulationLink::mainloop()
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 #endif
-        battery_pack_id = (int)(0.5*sin(time_boot*0.001)+1);
+
+        // Vary values
+
+        // VOLTAGE
+        // The battery is drained constantly
+        voltage = voltage - ((fullVoltage - emptyVoltage) * drainRate / rate);
+    //    if (voltage < 3.550f * 3.0f) voltage = 3.550f * 3.0f;
+
+        battery_pack_id = 0;//(int)(0.5*sin(time_boot*0.001)+1);
         mavlink_battery_status_t battery;
         battery.accu_id = battery_pack_id;
-        battery.voltage_cell_1 = 0;//1000*(3 + sin(time_boot*0.002));
-        battery.voltage_cell_2 = 1000*(3 + cos(time_boot*0.002));
-        battery.voltage_cell_3 = 1000*(3 - sin(time_boot*0.002));
+        battery.voltage_cell_1 = 1000*voltage;//1000*(3 + sin(time_boot*0.002));
+        battery.voltage_cell_2 = 1000*voltage;//1000*(3 + cos(time_boot*0.002));
+        battery.voltage_cell_3 = 1000*voltage;//1000*(3 - sin(time_boot*0.002));
         battery.voltage_cell_4 = 0;
         battery.voltage_cell_5 = 0;
         battery.voltage_cell_6 = 0;
