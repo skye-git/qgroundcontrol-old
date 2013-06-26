@@ -281,10 +281,10 @@ void MAVLinkSimulationLink::mainloop()
         streampointer += bufferlength;
 
         mavlink_nanotron_skye_node_0_raw_t nano_0;
-        nano_0.distance_1 = 4.0f;
-        nano_0.distance_2 = 3.0f;
-        nano_0.distance_3 = 2.0f;
-        nano_0.distance_4 = 1.0f;
+        nano_0.distance_1 = 4.321f;
+        nano_0.distance_2 = 3.21f;
+        nano_0.distance_3 = 2.1f;
+        nano_0.distance_4 = 1.234f;
         nano_0.distance_5 = 0.0f;
         nano_0.distance_6 = 0.0f;
         mavlink_msg_nanotron_skye_node_0_raw_encode(systemId, MAV_COMP_ID_IMU, &msg, &nano_0);
@@ -304,89 +304,89 @@ void MAVLinkSimulationLink::mainloop()
     if (rate10hzCounter == 1000 / rate / 9) {
         rate10hzCounter = 1;
 
-//        // Send back new setpoint
-//        mavlink_message_t ret;
-//        mavlink_msg_local_position_setpoint_pack(systemId, componentId, &ret, MAV_FRAME_LOCAL_NED, spX, spY, spZ, speedYaw); // spYaw/180.0*M_PI);
-//        bufferlength = mavlink_msg_to_send_buffer(buffer, &ret);
-//        //add data into datastream
-//        memcpy(stream+streampointer,buffer, bufferlength);
-//        streampointer += bufferlength;
+        // Send back new setpoint
+        mavlink_message_t ret;
+        mavlink_msg_local_position_setpoint_pack(systemId, componentId, &ret, MAV_FRAME_LOCAL_NED, spX, spY, spZ, speedYaw); // spYaw/180.0*M_PI);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &ret);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
 
-//        // Send back new position
-//        mavlink_msg_local_position_ned_pack(systemId, componentId, &ret, 0, x, y, -fabs(z), speedX, speedY, speedZ);
-//        bufferlength = mavlink_msg_to_send_buffer(buffer, &ret);
-//        //add data into datastream
-//        memcpy(stream+streampointer,buffer, bufferlength);
-//        streampointer += bufferlength;
+        // Send back new position
+        mavlink_msg_local_position_ned_pack(systemId, componentId, &ret, 0, x, y, -fabs(z), speedX, speedY, speedZ);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &ret);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
 
-//        // GLOBAL POSITION
-//        mavlink_msg_global_position_int_pack(systemId, componentId, &ret, 0, (473774.15+(x))*1E3, (85466.12+(y))*1E3, (z)*1000.0,/* (z+550.0)*1000.0*/-1, speedX, speedY, speedZ, yaw);
-//        bufferlength = mavlink_msg_to_send_buffer(buffer, &ret);
-//        //add data into datastream
-//        memcpy(stream+streampointer,buffer, bufferlength);
-//        streampointer += bufferlength;
-
-
-////#ifdef QGC_USE_SKYE_INTERFACE
-//        // RETURN 6 DOF CONTROL MSG
-//        mavlink_setpoint_6dof_t manual;
-//        manual.trans_x = thrustX;
-//        manual.trans_y = thrustY;
-//        manual.trans_z = thrustZ;
-//        manual.rot_x = momentX;
-//        manual.rot_y = momentY;
-//        manual.rot_z = momentZ;
-//        manual.target_system = systemId;
-//        mavlink_msg_setpoint_6dof_encode(systemId, MAV_COMP_ID_IMU, &msg, &manual);
-//        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-//        //add data into datastream
-//        memcpy(stream+streampointer,buffer, bufferlength);
-//        streampointer += bufferlength;
-
-//        // RETURN MANUAL 8DOF COMMAND (Testphase)
-//        mavlink_setpoint_8dof_t manual_8dof;
-//        manual_8dof.val1 = thrust1;
-//        manual_8dof.val2 = thrust2;
-//        manual_8dof.val3 = thrust3;
-//        manual_8dof.val4 = thrust4;
-//        manual_8dof.val5 = orientation1;
-//        manual_8dof.val6 = orientation2;
-//        manual_8dof.val7 = orientation3;
-//        manual_8dof.val8 = orientation4;
-//        manual_8dof.target_system = systemId;
-//        mavlink_msg_setpoint_8dof_encode(systemId, MAV_COMP_ID_IMU, &msg, &manual_8dof);
-//        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-//        //add data into datastream
-//        memcpy(stream+streampointer,buffer, bufferlength);
-//        streampointer += bufferlength;
-
-//////        mavlink_battery_voltage_t volt;
-//////        volt.id = 2;
-//////        volt.voltage_1 = 1010;
-//////        volt.voltage_2 = 1010;
-//////        volt.voltage_3 = 1010;
-//////        volt.voltage_4 = 0;
-//////        volt.battery_remaining = -1;
-//////        mavlink_msg_battery_voltage_encode(systemId, MAV_COMP_ID_IMU, &msg, &volt);
-//////        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-//////        //add data into datastream
-//////        memcpy(stream+streampointer,buffer, bufferlength);
-//////        streampointer += bufferlength;
-
-//////        mavlink_actuation_current_t curr;
-//////        curr.id = 0;
-//////        curr.current_1 = 1010;
-//////        curr.current_2 = 1010;
-//////        curr.current_3 = 1010;
-//////        curr.current_4 = 1010;
-//////        mavlink_msg_actuation_current_encode(systemId, MAV_COMP_ID_IMU, &msg, &curr);
-//////        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-//////        //add data into datastream
-//////        memcpy(stream+streampointer,buffer, bufferlength);
-//////        streampointer += bufferlength;
+        // GLOBAL POSITION
+        mavlink_msg_global_position_int_pack(systemId, componentId, &ret, 0, (473774.15+(x))*1E3, (85466.12+(y))*1E3, (z)*1000.0,/* (z+550.0)*1000.0*/-1, speedX, speedY, speedZ, yaw);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &ret);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
 
 
-//#endif
+#ifdef QGC_USE_SKYE_INTERFACE
+        // RETURN 6 DOF CONTROL MSG
+        mavlink_setpoint_6dof_t manual;
+        manual.trans_x = thrustX;
+        manual.trans_y = thrustY;
+        manual.trans_z = thrustZ;
+        manual.rot_x = momentX;
+        manual.rot_y = momentY;
+        manual.rot_z = momentZ;
+        manual.target_system = systemId;
+        mavlink_msg_setpoint_6dof_encode(systemId, MAV_COMP_ID_IMU, &msg, &manual);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
+
+        // RETURN MANUAL 8DOF COMMAND (Testphase)
+        mavlink_setpoint_8dof_t manual_8dof;
+        manual_8dof.val1 = thrust1;
+        manual_8dof.val2 = thrust2;
+        manual_8dof.val3 = thrust3;
+        manual_8dof.val4 = thrust4;
+        manual_8dof.val5 = orientation1;
+        manual_8dof.val6 = orientation2;
+        manual_8dof.val7 = orientation3;
+        manual_8dof.val8 = orientation4;
+        manual_8dof.target_system = systemId;
+        mavlink_msg_setpoint_8dof_encode(systemId, MAV_COMP_ID_IMU, &msg, &manual_8dof);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
+
+        mavlink_battery_voltage_t volt;
+        volt.id = 2;
+        volt.voltage_1 = 1010;
+        volt.voltage_2 = 1010;
+        volt.voltage_3 = 1010;
+        volt.voltage_4 = 0;
+        volt.battery_remaining = -1;
+        mavlink_msg_battery_voltage_encode(systemId, MAV_COMP_ID_IMU, &msg, &volt);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
+
+        mavlink_actuation_current_t curr;
+        curr.id = 0;
+        curr.current_1 = 1010;
+        curr.current_2 = 1010;
+        curr.current_3 = 1010;
+        curr.current_4 = 1010;
+        mavlink_msg_actuation_current_encode(systemId, MAV_COMP_ID_IMU, &msg, &curr);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
+
+
+#endif
 
 
     }
@@ -426,7 +426,7 @@ void MAVLinkSimulationLink::mainloop()
         // The battery is drained constantly
         voltage = voltage - ((fullVoltage - emptyVoltage) * drainRate / rate);
     //    if (voltage < 3.550f * 3.0f) voltage = 3.550f * 3.0f;
-#ifdef NNNNNNNNNNN
+
         battery_pack_id = 0;//(int)(0.5*sin(time_boot*0.001)+1);
         mavlink_battery_status_t battery;
         battery.accu_id = battery_pack_id;
@@ -443,7 +443,7 @@ void MAVLinkSimulationLink::mainloop()
         //add data into datastream
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
-#endif
+
 
         rate1hzCounter = 1;
         seqnr = 0;
