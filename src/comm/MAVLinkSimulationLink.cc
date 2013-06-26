@@ -230,7 +230,7 @@ void MAVLinkSimulationLink::mainloop()
 
     // Fake system values
 
-    static float fullVoltage = 4.2f * 6.0f;
+    static float fullVoltage = 4.2f * 6.0f - 4.0f;
     static float emptyVoltage = 3.35f * 6.0f;
     static float voltage = fullVoltage;
     static float drainRate = 0.025f; // x.xx% of the capacity is linearly drained per second

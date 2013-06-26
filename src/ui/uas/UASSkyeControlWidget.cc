@@ -44,7 +44,7 @@ This file is part of the PIXHAWK project
 #include <QFileDialog>
 #include <QDebug>
 #include <QPalette>
-#include <QMessageBox>
+//#include <QMessageBox>
 
 #include "UASSkyeControlWidget.h"
 #include "UASManager.h"
@@ -142,6 +142,7 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
 
     lastAlertTime.start();
     alertedBatteryLow = false;
+    msgBox = new QErrorMessage;
 
 #endif //QGC_USE_SKYE_INTERFACE
 }
@@ -678,20 +679,20 @@ void UASSkyeControlWidget::enableLiftFactor(bool enabled)
 
 void UASSkyeControlWidget::alertBatteryLow(double voltage)
 {
-    if ( (lastAlertTime.elapsed() > 10000) || (alertedBatteryLow == false) )
+    if ( (lastAlertTime.elapsed() > 60000) || (alertedBatteryLow == false) )
     {
         lastAlertTime.restart();
         alertedBatteryLow = true;
 
-//        msgBox.showMessage("Battery low! Shut down system immediately.");
-//        msgBox.exec();
+        msgBox->showMessage("Battery low! Shut down system immediately.");
+//        msgBox->exec();
 
-        QMessageBox msgBox;
-        msgBox.setIcon(QMessageBox::Information);
-        msgBox.setText(tr("BATTERY LOW"));
-        msgBox.setInformativeText(tr("Please shut down the system and charge the batteries."));
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        msgBox.setDefaultButton(QMessageBox::Ok);
-        msgBox.exec();
+//        QMessageBox msgBox;
+//        msgBox.setIcon(QMessageBox::Information);
+//        msgBox.setText(tr("BATTERY LOW"));
+//        msgBox.setInformativeText(tr("Please shut down the system and charge the batteries."));
+//        msgBox.setStandardButtons(QMessageBox::Ok);
+//        msgBox.setDefaultButton(QMessageBox::Ok);
+//        msgBox.exec();
     }
 }

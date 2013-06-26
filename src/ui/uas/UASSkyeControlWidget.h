@@ -37,7 +37,7 @@ This file is part of the QGROUNDCONTROL project
 #include <QPushButton>
 #include <QButtonGroup>
 #include <QTime>
-//#include <QErrorMessage>
+#include <QErrorMessage>
 #include <QtGui/QApplication>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QHeaderView>
@@ -146,7 +146,7 @@ signals:
 
         QTime lastAlertTime;                ///< Time when last low battery alert was prompted
         bool alertedBatteryLow;             ///< True if system had low battery once
-//        QErrorMessage *msgBox;
+        QErrorMessage *msgBox;
 
     private:
         /** @brief Set up widget, don't use ui file */
