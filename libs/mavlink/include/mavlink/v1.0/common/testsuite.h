@@ -4082,12 +4082,12 @@ static void mavlink_test_file_transfer_res(uint8_t system_id, uint8_t component_
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
-static void mavlink_test_nanotron_skye_node_0_raw(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+static void mavlink_test_nanotron_skye_sender_1_raw(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
 {
 	mavlink_message_t msg;
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
-	mavlink_nanotron_skye_node_0_raw_t packet_in = {
+	mavlink_nanotron_skye_sender_1_raw_t packet_in = {
 		17.0,
 	45.0,
 	73.0,
@@ -4095,7 +4095,7 @@ static void mavlink_test_nanotron_skye_node_0_raw(uint8_t system_id, uint8_t com
 	129.0,
 	157.0,
 	};
-	mavlink_nanotron_skye_node_0_raw_t packet1, packet2;
+	mavlink_nanotron_skye_sender_1_raw_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
         	packet1.distance_1 = packet_in.distance_1;
         	packet1.distance_2 = packet_in.distance_2;
@@ -4107,18 +4107,18 @@ static void mavlink_test_nanotron_skye_node_0_raw(uint8_t system_id, uint8_t com
         
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_nanotron_skye_node_0_raw_encode(system_id, component_id, &msg, &packet1);
-	mavlink_msg_nanotron_skye_node_0_raw_decode(&msg, &packet2);
+	mavlink_msg_nanotron_skye_sender_1_raw_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_nanotron_skye_sender_1_raw_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_nanotron_skye_node_0_raw_pack(system_id, component_id, &msg , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
-	mavlink_msg_nanotron_skye_node_0_raw_decode(&msg, &packet2);
+	mavlink_msg_nanotron_skye_sender_1_raw_pack(system_id, component_id, &msg , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
+	mavlink_msg_nanotron_skye_sender_1_raw_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_nanotron_skye_node_0_raw_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
-	mavlink_msg_nanotron_skye_node_0_raw_decode(&msg, &packet2);
+	mavlink_msg_nanotron_skye_sender_1_raw_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
+	mavlink_msg_nanotron_skye_sender_1_raw_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
@@ -4126,21 +4126,21 @@ static void mavlink_test_nanotron_skye_node_0_raw(uint8_t system_id, uint8_t com
         for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
         	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
         }
-	mavlink_msg_nanotron_skye_node_0_raw_decode(last_msg, &packet2);
+	mavlink_msg_nanotron_skye_sender_1_raw_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_nanotron_skye_node_0_raw_send(MAVLINK_COMM_1 , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
-	mavlink_msg_nanotron_skye_node_0_raw_decode(last_msg, &packet2);
+	mavlink_msg_nanotron_skye_sender_1_raw_send(MAVLINK_COMM_1 , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
+	mavlink_msg_nanotron_skye_sender_1_raw_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
-static void mavlink_test_nanotron_skye_node_1_raw(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+static void mavlink_test_nanotron_skye_sender_2_raw(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
 {
 	mavlink_message_t msg;
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
-	mavlink_nanotron_skye_node_1_raw_t packet_in = {
+	mavlink_nanotron_skye_sender_2_raw_t packet_in = {
 		17.0,
 	45.0,
 	73.0,
@@ -4148,7 +4148,7 @@ static void mavlink_test_nanotron_skye_node_1_raw(uint8_t system_id, uint8_t com
 	129.0,
 	157.0,
 	};
-	mavlink_nanotron_skye_node_1_raw_t packet1, packet2;
+	mavlink_nanotron_skye_sender_2_raw_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
         	packet1.distance_1 = packet_in.distance_1;
         	packet1.distance_2 = packet_in.distance_2;
@@ -4160,18 +4160,18 @@ static void mavlink_test_nanotron_skye_node_1_raw(uint8_t system_id, uint8_t com
         
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_nanotron_skye_node_1_raw_encode(system_id, component_id, &msg, &packet1);
-	mavlink_msg_nanotron_skye_node_1_raw_decode(&msg, &packet2);
+	mavlink_msg_nanotron_skye_sender_2_raw_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_nanotron_skye_sender_2_raw_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_nanotron_skye_node_1_raw_pack(system_id, component_id, &msg , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
-	mavlink_msg_nanotron_skye_node_1_raw_decode(&msg, &packet2);
+	mavlink_msg_nanotron_skye_sender_2_raw_pack(system_id, component_id, &msg , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
+	mavlink_msg_nanotron_skye_sender_2_raw_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_nanotron_skye_node_1_raw_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
-	mavlink_msg_nanotron_skye_node_1_raw_decode(&msg, &packet2);
+	mavlink_msg_nanotron_skye_sender_2_raw_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
+	mavlink_msg_nanotron_skye_sender_2_raw_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
@@ -4179,21 +4179,21 @@ static void mavlink_test_nanotron_skye_node_1_raw(uint8_t system_id, uint8_t com
         for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
         	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
         }
-	mavlink_msg_nanotron_skye_node_1_raw_decode(last_msg, &packet2);
+	mavlink_msg_nanotron_skye_sender_2_raw_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_nanotron_skye_node_1_raw_send(MAVLINK_COMM_1 , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
-	mavlink_msg_nanotron_skye_node_1_raw_decode(last_msg, &packet2);
+	mavlink_msg_nanotron_skye_sender_2_raw_send(MAVLINK_COMM_1 , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
+	mavlink_msg_nanotron_skye_sender_2_raw_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
-static void mavlink_test_nanotron_skye_node_2_raw(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+static void mavlink_test_nanotron_skye_sender_3_raw(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
 {
 	mavlink_message_t msg;
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
-	mavlink_nanotron_skye_node_2_raw_t packet_in = {
+	mavlink_nanotron_skye_sender_3_raw_t packet_in = {
 		17.0,
 	45.0,
 	73.0,
@@ -4201,7 +4201,7 @@ static void mavlink_test_nanotron_skye_node_2_raw(uint8_t system_id, uint8_t com
 	129.0,
 	157.0,
 	};
-	mavlink_nanotron_skye_node_2_raw_t packet1, packet2;
+	mavlink_nanotron_skye_sender_3_raw_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
         	packet1.distance_1 = packet_in.distance_1;
         	packet1.distance_2 = packet_in.distance_2;
@@ -4213,18 +4213,18 @@ static void mavlink_test_nanotron_skye_node_2_raw(uint8_t system_id, uint8_t com
         
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_nanotron_skye_node_2_raw_encode(system_id, component_id, &msg, &packet1);
-	mavlink_msg_nanotron_skye_node_2_raw_decode(&msg, &packet2);
+	mavlink_msg_nanotron_skye_sender_3_raw_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_nanotron_skye_sender_3_raw_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_nanotron_skye_node_2_raw_pack(system_id, component_id, &msg , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
-	mavlink_msg_nanotron_skye_node_2_raw_decode(&msg, &packet2);
+	mavlink_msg_nanotron_skye_sender_3_raw_pack(system_id, component_id, &msg , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
+	mavlink_msg_nanotron_skye_sender_3_raw_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_nanotron_skye_node_2_raw_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
-	mavlink_msg_nanotron_skye_node_2_raw_decode(&msg, &packet2);
+	mavlink_msg_nanotron_skye_sender_3_raw_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
+	mavlink_msg_nanotron_skye_sender_3_raw_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
@@ -4232,12 +4232,171 @@ static void mavlink_test_nanotron_skye_node_2_raw(uint8_t system_id, uint8_t com
         for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
         	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
         }
-	mavlink_msg_nanotron_skye_node_2_raw_decode(last_msg, &packet2);
+	mavlink_msg_nanotron_skye_sender_3_raw_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_nanotron_skye_node_2_raw_send(MAVLINK_COMM_1 , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
-	mavlink_msg_nanotron_skye_node_2_raw_decode(last_msg, &packet2);
+	mavlink_msg_nanotron_skye_sender_3_raw_send(MAVLINK_COMM_1 , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
+	mavlink_msg_nanotron_skye_sender_3_raw_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+}
+
+static void mavlink_test_nanotron_skye_sender_4_raw(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+{
+	mavlink_message_t msg;
+        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
+        uint16_t i;
+	mavlink_nanotron_skye_sender_4_raw_t packet_in = {
+		17.0,
+	45.0,
+	73.0,
+	101.0,
+	129.0,
+	157.0,
+	};
+	mavlink_nanotron_skye_sender_4_raw_t packet1, packet2;
+        memset(&packet1, 0, sizeof(packet1));
+        	packet1.distance_1 = packet_in.distance_1;
+        	packet1.distance_2 = packet_in.distance_2;
+        	packet1.distance_3 = packet_in.distance_3;
+        	packet1.distance_4 = packet_in.distance_4;
+        	packet1.distance_5 = packet_in.distance_5;
+        	packet1.distance_6 = packet_in.distance_6;
+        
+        
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_nanotron_skye_sender_4_raw_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_nanotron_skye_sender_4_raw_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_nanotron_skye_sender_4_raw_pack(system_id, component_id, &msg , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
+	mavlink_msg_nanotron_skye_sender_4_raw_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_nanotron_skye_sender_4_raw_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
+	mavlink_msg_nanotron_skye_sender_4_raw_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+        mavlink_msg_to_send_buffer(buffer, &msg);
+        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
+        	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
+        }
+	mavlink_msg_nanotron_skye_sender_4_raw_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+        
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_nanotron_skye_sender_4_raw_send(MAVLINK_COMM_1 , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
+	mavlink_msg_nanotron_skye_sender_4_raw_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+}
+
+static void mavlink_test_nanotron_skye_sender_5_raw(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+{
+	mavlink_message_t msg;
+        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
+        uint16_t i;
+	mavlink_nanotron_skye_sender_5_raw_t packet_in = {
+		17.0,
+	45.0,
+	73.0,
+	101.0,
+	129.0,
+	157.0,
+	};
+	mavlink_nanotron_skye_sender_5_raw_t packet1, packet2;
+        memset(&packet1, 0, sizeof(packet1));
+        	packet1.distance_1 = packet_in.distance_1;
+        	packet1.distance_2 = packet_in.distance_2;
+        	packet1.distance_3 = packet_in.distance_3;
+        	packet1.distance_4 = packet_in.distance_4;
+        	packet1.distance_5 = packet_in.distance_5;
+        	packet1.distance_6 = packet_in.distance_6;
+        
+        
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_nanotron_skye_sender_5_raw_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_nanotron_skye_sender_5_raw_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_nanotron_skye_sender_5_raw_pack(system_id, component_id, &msg , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
+	mavlink_msg_nanotron_skye_sender_5_raw_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_nanotron_skye_sender_5_raw_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
+	mavlink_msg_nanotron_skye_sender_5_raw_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+        mavlink_msg_to_send_buffer(buffer, &msg);
+        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
+        	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
+        }
+	mavlink_msg_nanotron_skye_sender_5_raw_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+        
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_nanotron_skye_sender_5_raw_send(MAVLINK_COMM_1 , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
+	mavlink_msg_nanotron_skye_sender_5_raw_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+}
+
+static void mavlink_test_nanotron_skye_sender_6_raw(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+{
+	mavlink_message_t msg;
+        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
+        uint16_t i;
+	mavlink_nanotron_skye_sender_6_raw_t packet_in = {
+		17.0,
+	45.0,
+	73.0,
+	101.0,
+	129.0,
+	157.0,
+	};
+	mavlink_nanotron_skye_sender_6_raw_t packet1, packet2;
+        memset(&packet1, 0, sizeof(packet1));
+        	packet1.distance_1 = packet_in.distance_1;
+        	packet1.distance_2 = packet_in.distance_2;
+        	packet1.distance_3 = packet_in.distance_3;
+        	packet1.distance_4 = packet_in.distance_4;
+        	packet1.distance_5 = packet_in.distance_5;
+        	packet1.distance_6 = packet_in.distance_6;
+        
+        
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_nanotron_skye_sender_6_raw_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_nanotron_skye_sender_6_raw_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_nanotron_skye_sender_6_raw_pack(system_id, component_id, &msg , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
+	mavlink_msg_nanotron_skye_sender_6_raw_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_nanotron_skye_sender_6_raw_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
+	mavlink_msg_nanotron_skye_sender_6_raw_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+        mavlink_msg_to_send_buffer(buffer, &msg);
+        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
+        	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
+        }
+	mavlink_msg_nanotron_skye_sender_6_raw_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+        
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_nanotron_skye_sender_6_raw_send(MAVLINK_COMM_1 , packet1.distance_1 , packet1.distance_2 , packet1.distance_3 , packet1.distance_4 , packet1.distance_5 , packet1.distance_6 );
+	mavlink_msg_nanotron_skye_sender_6_raw_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
@@ -4935,9 +5094,12 @@ static void mavlink_test_common(uint8_t system_id, uint8_t component_id, mavlink
 	mavlink_test_file_transfer_start(system_id, component_id, last_msg);
 	mavlink_test_file_transfer_dir_list(system_id, component_id, last_msg);
 	mavlink_test_file_transfer_res(system_id, component_id, last_msg);
-	mavlink_test_nanotron_skye_node_0_raw(system_id, component_id, last_msg);
-	mavlink_test_nanotron_skye_node_1_raw(system_id, component_id, last_msg);
-	mavlink_test_nanotron_skye_node_2_raw(system_id, component_id, last_msg);
+	mavlink_test_nanotron_skye_sender_1_raw(system_id, component_id, last_msg);
+	mavlink_test_nanotron_skye_sender_2_raw(system_id, component_id, last_msg);
+	mavlink_test_nanotron_skye_sender_3_raw(system_id, component_id, last_msg);
+	mavlink_test_nanotron_skye_sender_4_raw(system_id, component_id, last_msg);
+	mavlink_test_nanotron_skye_sender_5_raw(system_id, component_id, last_msg);
+	mavlink_test_nanotron_skye_sender_6_raw(system_id, component_id, last_msg);
 	mavlink_test_led_control(system_id, component_id, last_msg);
 	mavlink_test_actuation_current(system_id, component_id, last_msg);
 	mavlink_test_battery_voltage(system_id, component_id, last_msg);
