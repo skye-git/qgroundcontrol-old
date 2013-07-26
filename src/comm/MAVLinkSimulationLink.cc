@@ -280,14 +280,14 @@ void MAVLinkSimulationLink::mainloop()
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 
-        mavlink_nanotron_skye_node_0_raw_t nano_0;
-        nano_0.distance_1 = 4.321f;
-        nano_0.distance_2 = 3.21f;
-        nano_0.distance_3 = 2.1f;
-        nano_0.distance_4 = 1.234f;
-        nano_0.distance_5 = 0.0f;
-        nano_0.distance_6 = 0.0f;
-        mavlink_msg_nanotron_skye_node_0_raw_encode(systemId, MAV_COMP_ID_IMU, &msg, &nano_0);
+        mavlink_nanotron_skye_sender_1_raw_t nano_1;
+        nano_1.distance_1 = 4.321f;
+        nano_1.distance_2 = 3.21f;
+        nano_1.distance_3 = 2.1f;
+        nano_1.distance_4 = 1.234f;
+        nano_1.distance_5 = 0.0f;
+        nano_1.distance_6 = 0.0f;
+        mavlink_msg_nanotron_skye_sender_1_raw_encode(systemId, MAV_COMP_ID_IMU, &msg, &nano_1);
         bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
         //add data into datastream
         memcpy(stream+streampointer,buffer, bufferlength);

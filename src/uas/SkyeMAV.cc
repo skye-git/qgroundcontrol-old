@@ -180,14 +180,10 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
 
         // Ignore these messages
         case MAVLINK_MSG_ID_SETPOINT_6DOF:
-            break;
         case MAVLINK_MSG_ID_SETPOINT_8DOF:
-            break;
-        case MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_0_RAW:
-            break;
-        case MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_1_RAW:
-            break;
-        case MAVLINK_MSG_ID_NANOTRON_SKYE_NODE_2_RAW:
+        case MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_1_RAW:
+        case MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW:
+        case MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_3_RAW:
             break;
 
         default:
