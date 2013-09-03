@@ -197,7 +197,6 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         if (liftFactorEnabled) {
             emit changedLiftFactor(liftFactor);
         }
-
     }
 
 
@@ -217,10 +216,14 @@ void UASSkyeControlWidget::updateStatemachine()
     if (engineOn)
     {
         ui.controlButton->setText(tr("DISARM SYSTEM"));
+        ui.controlButton->setStyleSheet("* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DD0044, stop: 1 #AA0022); border-color: yellow; color: yellow }");
+        setInputButtonActivity(false);
     }
     else
     {
         ui.controlButton->setText(tr("ARM SYSTEM"));
+        ui.controlButton->setStyleSheet("* { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00DD44, stop: 1 #11AA22); }");
+        setInputButtonActivity(true);
     }
 #endif // QGC_USE_SKYE_INTERFACE
 }
@@ -314,24 +317,12 @@ void UASSkyeControlWidget::updateState(int state)
     {
     case (int)MAV_STATE_ACTIVE:
         engineOn = true;
-        ui.controlButton->setText(tr("DISARM SYSTEM"));
-        ui.controlButton->setStyleSheet("* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DD0044, stop: 1 #AA0022); border-color: yellow; color: yellow }");
-//        ui.directControlButton->setDisabled(true);
-//        ui.rateControlButton->setDisabled(true);
-//        ui.halfAutomaticControlButton->setDisabled(true);
-//        ui.fullAutomaticControlButton->setDisabled(true);
         break;
     case (int)MAV_STATE_STANDBY:
         engineOn = false;
-        ui.controlButton->setText(tr("ARM SYSTEM"));
-        ui.controlButton->setStyleSheet("* { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00DD44, stop: 1 #11AA22); }");
-//        ui.directControlButton->setEnabled(true);
-//        ui.rateControlButton->setEnabled(true);
-//        ui.attitudeControlButton->setEnabled(true);
-//        ui.halfAutomaticControlButton->setEnabled(true);
-//        ui.fullAutomaticControlButton->setEnabled(true);
         break;
     }
+    updateStatemachine();
 #endif // QGC_USE_SKYE_INTERFACE
 }
 
@@ -506,6 +497,12 @@ void UASSkyeControlWidget::transmitMode(int mode)
         ui.lastActionLabel->setText("No UAS activated!");
     }
 #endif // QGC_USE_SKYE_INTERFACE
+}
+
+void UASSkyeControlWidget::setInputButtonActivity(bool enabled)
+{
+    ui.mouseButton->setEnabled(enabled);
+    ui.touchButton->setEnabled(enabled);
 }
 
 void UASSkyeControlWidget::cycleContextButton()

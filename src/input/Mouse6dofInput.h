@@ -10,6 +10,7 @@
 #define MOUSE6DOFINPUT_H
 
 #include <QThread>
+#include <QProcess>
 
 #ifdef MOUSE_ENABLED_WIN
 #include "Mouse3DInput.h"
@@ -58,6 +59,8 @@ protected:
 #ifdef MOUSE_ENABLED_LINUX
     QWidget* parentWidget;
     Display* display;
+    QProcess* process3dxDaemon;
+    QTimer* timerInit3dxDaemon;
 #endif // MOUSE_ENABLED_LINUX
 
     UASInterface* uas;
@@ -116,6 +119,8 @@ public slots:
 #ifdef MOUSE_ENABLED_LINUX
     /** @brief Get an XEvent to check it for an 3DMouse event (motion or button) */
     void handleX11Event(XEvent* event);
+    /** @brief Input mode changed to 3dMouse. */
+    void callInputModeMouse();
 #endif //MOUSE_ENABLED_LINUX
     /** @brief Input mode changed. Start 3dMouse if requested. */
     void updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode);

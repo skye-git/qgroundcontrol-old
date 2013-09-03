@@ -62,6 +62,8 @@ public:
 public slots:
     /** @brief Set the system this widget controls */
     void setUAS(UASInterface* uas);
+    /** @brief Block input change buttons */
+    void setInputButtonActivity(bool enabled);
     /** @brief Trigger next context action */
     void cycleContextButton();
     /** @brief Transmit the operation mode */

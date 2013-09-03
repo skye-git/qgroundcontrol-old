@@ -94,7 +94,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
         break;
         case MAVLINK_MSG_ID_BATTERY_VOLTAGE:
         {
-            qDebug() << "[SkyeMAV] Received Battery Voltage";
+//            qDebug() << "[SkyeMAV] Received Battery Voltage";
             mavlink_battery_voltage_t voltage;
             mavlink_msg_battery_voltage_decode(&message, &voltage);
 
