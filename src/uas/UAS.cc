@@ -567,7 +567,7 @@ void UAS::receiveMessage(LinkInterface* link, mavlink_message_t message)
             {
                 chargeLevel = state.battery_remaining;
             }
-//            emit batteryChanged(this, lpVoltage, getChargeLevel(), timeRemaining);
+            emit batteryChanged(this, lpVoltage, getChargeLevel(), timeRemaining);
 			emit valueChanged(uasId, name.arg("battery_remaining"), "%", getChargeLevel(), time);
             emit voltageChanged(message.sysid, currentVoltage);
 			emit valueChanged(uasId, name.arg("battery_voltage"), "V", currentVoltage, time);
