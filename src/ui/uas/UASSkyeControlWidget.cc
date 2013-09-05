@@ -337,15 +337,19 @@ void UASSkyeControlWidget::updateInput(SkyeMAV::QGC_INPUT_MODE input)
         ui.touchButton->setChecked(false);
         ui.keyboardButton->setChecked(false);
         inputButtonGroup->setExclusive(true);
+        ui.lastActionLabel->setText("No input set");
         break;
     case (int)SkyeMAV::QGC_INPUT_MODE_MOUSE:
         ui.mouseButton->setChecked(true);
+        ui.lastActionLabel->setText("Mouse input set");
         break;
     case (int)SkyeMAV::QGC_INPUT_MODE_TOUCH:
         ui.touchButton->setChecked(true);
+        ui.lastActionLabel->setText("Touch input set");
         break;
     case (int)SkyeMAV::QGC_INPUT_MODE_KEYBOARD:
         ui.keyboardButton->setChecked(true);
+        ui.lastActionLabel->setText("Keyboard input set");
         break;
     }
 #endif // QGC_USE_SKYE_INTERFACE
@@ -448,9 +452,9 @@ void UASSkyeControlWidget::setInputMouse(bool checked)
 #ifdef QGC_USE_SKYE_INTERFACE
     if (checked)
     {
+        ui.lastActionLabel->setText(tr("3dMouse activated!"));
         inputMode = SkyeMAV::QGC_INPUT_MODE_MOUSE;
         emit changedInput(inputMode);
-        ui.lastActionLabel->setText(tr("3dMouse activated!"));
     }
     updateStyleSheet();
 #endif // QGC_USE_SKYE_INTERFACE
@@ -461,9 +465,9 @@ void UASSkyeControlWidget::setInputTouch(bool checked)
 #ifdef QGC_USE_SKYE_INTERFACE
     if (checked)
     {
+        ui.lastActionLabel->setText(tr("Touchscreen activated!"));
         inputMode = SkyeMAV::QGC_INPUT_MODE_TOUCH;
         emit changedInput(inputMode);
-        ui.lastActionLabel->setText(tr("Touchscreen activated!"));
     }
 #endif // QGC_USE_SKYE_INTERFACE
 }
@@ -473,9 +477,9 @@ void UASSkyeControlWidget::setInputKeyboard(bool checked)
 #ifdef QGC_USE_SKYE_INTERFACE
     if (checked)
     {
+        ui.lastActionLabel->setText(tr("Keyboard activated!"));
         inputMode = SkyeMAV::QGC_INPUT_MODE_KEYBOARD;
         emit changedInput(inputMode);
-        ui.lastActionLabel->setText(tr("Keyboard activated!"));
     }
 #endif // QGC_USE_SKYE_INTERFACE
 }
