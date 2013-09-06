@@ -46,28 +46,31 @@
       </item>
       <item>
        <widget class="QLabel" name="label_2">
+        <property name="toolTip">
+         <string extracomment="512*84 = 43008 is a quarter turn (90°)"/>
+        </property>
         <property name="text">
-         <string>Orientation1 in 0.1 deg.</string>
+         <string>Orientation1 in QC</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QDial" name="dialOrientation1">
         <property name="minimum">
-         <number>-1800</number>
+         <number>-86016</number>
         </property>
         <property name="maximum">
-         <number>1800</number>
+         <number>86016</number>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QSpinBox" name="spinBoxOrientation1">
         <property name="minimum">
-         <number>-1800</number>
+         <number>-86016</number>
         </property>
         <property name="maximum">
-         <number>1800</number>
+         <number>86016</number>
         </property>
        </widget>
       </item>
@@ -106,28 +109,34 @@
       </item>
       <item>
        <widget class="QLabel" name="label_4">
+        <property name="toolTip">
+         <string extracomment="512*84 = 43008 is a quarter turn (90°)"/>
+        </property>
         <property name="text">
-         <string>Orientation2 in 0.1 deg.</string>
+         <string>Orientation2 in QC</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QDial" name="dialOrientation2">
         <property name="minimum">
-         <number>-10800</number>
+         <number>-86016</number>
         </property>
         <property name="maximum">
-         <number>10800</number>
+         <number>86016</number>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QSpinBox" name="spinBoxOrientation2">
         <property name="minimum">
-         <number>-10800</number>
+         <number>-86016</number>
         </property>
         <property name="maximum">
-         <number>10800</number>
+         <number>86016</number>
+        </property>
+        <property name="value">
+         <number>0</number>
         </property>
        </widget>
       </item>
@@ -166,28 +175,34 @@
       </item>
       <item>
        <widget class="QLabel" name="label_6">
+        <property name="toolTip">
+         <string extracomment="512*84 = 43008 is a quarter turn (90°)"/>
+        </property>
         <property name="text">
-         <string>Orientation3 in 0.1 deg.</string>
+         <string>Orientation3 in QC</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QDial" name="dialOrientation3">
         <property name="minimum">
-         <number>-10800</number>
+         <number>-86016</number>
         </property>
         <property name="maximum">
-         <number>10800</number>
+         <number>86016</number>
+        </property>
+        <property name="value">
+         <number>0</number>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QSpinBox" name="spinBoxOrientation3">
         <property name="minimum">
-         <number>-10800</number>
+         <number>-86016</number>
         </property>
         <property name="maximum">
-         <number>10800</number>
+         <number>86016</number>
         </property>
        </widget>
       </item>
@@ -226,28 +241,31 @@
       </item>
       <item>
        <widget class="QLabel" name="label_8">
+        <property name="toolTip">
+         <string extracomment="512*84 = 43008 is a quarter turn (90°)"/>
+        </property>
         <property name="text">
-         <string>Orientation4 in 0.1 deg.</string>
+         <string>Orientation4 in QC</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QDial" name="dialOrientation4">
         <property name="minimum">
-         <number>-10800</number>
+         <number>-86016</number>
         </property>
         <property name="maximum">
-         <number>10800</number>
+         <number>86016</number>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QSpinBox" name="spinBoxOrientation4">
         <property name="minimum">
-         <number>-10800</number>
+         <number>-86016</number>
         </property>
         <property name="maximum">
-         <number>10800</number>
+         <number>86016</number>
         </property>
        </widget>
       </item>
