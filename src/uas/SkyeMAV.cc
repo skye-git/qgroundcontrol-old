@@ -66,7 +66,6 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             lowestVolt = (battery.voltage_cell_4 < lowestVolt && battery.voltage_cell_4 > 0) ? battery.voltage_cell_4 : lowestVolt;
             lowestVolt = (battery.voltage_cell_5 < lowestVolt && battery.voltage_cell_5 > 0) ? battery.voltage_cell_5 : lowestVolt;
             lowestVolt = (battery.voltage_cell_6 < lowestVolt && battery.voltage_cell_6 > 0) ? battery.voltage_cell_6 : lowestVolt;
-            emit batteryChanged(this, 0.001*(double)lowestVolt , 0.0 , 0);
 
             // check low voltage -> alert required
             if (lowestVolt < 20000)
