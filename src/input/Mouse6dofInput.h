@@ -10,12 +10,14 @@
 #define MOUSE6DOFINPUT_H
 
 #include <QThread>
+#include <QProcess>
 
 #ifdef MOUSE_ENABLED_WIN
 #include "Mouse3DInput.h"
 #endif //MOUSE_ENABLED_WIN
 
 #include "UASInterface.h"
+#include "SkyeMAV.h"
 
 class Mouse6dofInput : public QThread
 {
@@ -32,10 +34,34 @@ public:
     ~Mouse6dofInput();
     void run();
 
+#ifdef MOUSE_ENABLED_LINUX
+    const double mouse3DMaxX;
+    const double mouse3DMaxY;
+    const double mouse3DMaxZ;
+    const double mouse3DMaxA;
+    const double mouse3DMaxB;
+    const double mouse3DMaxC;
+#else
+#ifdef MOUSE_ENABLED_WIN
     const double mouse3DMax;
+#endif
+#endif
 
 protected:
     void init();
+    /** Progressive incremention */
+    double progressive(double value);
+    /** Saturation to 1.0 */
+    double saturate(double value);
+    /** 1: greater than zero, 0: equal zero, -1 else */
+    int sign(double value);
+
+#ifdef MOUSE_ENABLED_LINUX
+    QWidget* parentWidget;
+    Display* display;
+    QProcess* process3dxDaemon;
+    QTimer* timerInit3dxDaemon;
+#endif // MOUSE_ENABLED_LINUX
 
     UASInterface* uas;
     bool done;
@@ -76,6 +102,12 @@ signals:
      */
     void mouseRotationActiveChanged(bool rotationEnable);
 
+    /**
+      * @brief Reset input mode (if initialization fails)
+      * @param inputMode, none if mouse initialization fails
+      */
+    void resetInputMode(SkyeMAV::QGC_INPUT_MODE);
+
 public slots:
     void setActiveUAS(UASInterface* uas);
 #ifdef MOUSE_ENABLED_WIN
@@ -87,7 +119,11 @@ public slots:
 #ifdef MOUSE_ENABLED_LINUX
     /** @brief Get an XEvent to check it for an 3DMouse event (motion or button) */
     void handleX11Event(XEvent* event);
+    /** @brief Input mode changed to 3dMouse. */
+    void callInputModeMouse();
 #endif //MOUSE_ENABLED_LINUX
+    /** @brief Input mode changed. Start 3dMouse if requested. */
+    void updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode);
 
 };
 
