@@ -15,6 +15,9 @@ typedef struct __mavlink_led_control_t
 #define MAVLINK_MSG_ID_LED_CONTROL_LEN 9
 #define MAVLINK_MSG_ID_144_LEN 9
 
+#define MAVLINK_MSG_ID_LED_CONTROL_CRC 76
+#define MAVLINK_MSG_ID_144_CRC 76
+
 
 
 #define MAVLINK_MESSAGE_INFO_LED_CONTROL { \
@@ -48,7 +51,7 @@ static inline uint16_t mavlink_msg_led_control_pack(uint8_t system_id, uint8_t c
 						       uint8_t led_id, uint8_t red, uint8_t green, uint8_t blue, uint8_t mode, float frequency)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-	char buf[9];
+	char buf[MAVLINK_MSG_ID_LED_CONTROL_LEN];
 	_mav_put_float(buf, 0, frequency);
 	_mav_put_uint8_t(buf, 4, led_id);
 	_mav_put_uint8_t(buf, 5, red);
@@ -56,7 +59,7 @@ static inline uint16_t mavlink_msg_led_control_pack(uint8_t system_id, uint8_t c
 	_mav_put_uint8_t(buf, 7, blue);
 	_mav_put_uint8_t(buf, 8, mode);
 
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, 9);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_LED_CONTROL_LEN);
 #else
 	mavlink_led_control_t packet;
 	packet.frequency = frequency;
@@ -66,18 +69,22 @@ static inline uint16_t mavlink_msg_led_control_pack(uint8_t system_id, uint8_t c
 	packet.blue = blue;
 	packet.mode = mode;
 
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, 9);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_LED_CONTROL_LEN);
 #endif
 
 	msg->msgid = MAVLINK_MSG_ID_LED_CONTROL;
-	return mavlink_finalize_message(msg, system_id, component_id, 9, 76);
+#if MAVLINK_CRC_EXTRA
+    return mavlink_finalize_message(msg, system_id, component_id, MAVLINK_MSG_ID_LED_CONTROL_LEN, MAVLINK_MSG_ID_LED_CONTROL_CRC);
+#else
+    return mavlink_finalize_message(msg, system_id, component_id, MAVLINK_MSG_ID_LED_CONTROL_LEN);
+#endif
 }
 
 /**
  * @brief Pack a led_control message on a channel
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
- * @param chan The MAVLink channel this message was sent over
+ * @param chan The MAVLink channel this message will be sent over
  * @param msg The MAVLink message to compress the data into
  * @param led_id Led ID
  * @param red Red color component for 24bit color
@@ -92,7 +99,7 @@ static inline uint16_t mavlink_msg_led_control_pack_chan(uint8_t system_id, uint
 						           uint8_t led_id,uint8_t red,uint8_t green,uint8_t blue,uint8_t mode,float frequency)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-	char buf[9];
+	char buf[MAVLINK_MSG_ID_LED_CONTROL_LEN];
 	_mav_put_float(buf, 0, frequency);
 	_mav_put_uint8_t(buf, 4, led_id);
 	_mav_put_uint8_t(buf, 5, red);
@@ -100,7 +107,7 @@ static inline uint16_t mavlink_msg_led_control_pack_chan(uint8_t system_id, uint
 	_mav_put_uint8_t(buf, 7, blue);
 	_mav_put_uint8_t(buf, 8, mode);
 
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, 9);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_LED_CONTROL_LEN);
 #else
 	mavlink_led_control_t packet;
 	packet.frequency = frequency;
@@ -110,15 +117,19 @@ static inline uint16_t mavlink_msg_led_control_pack_chan(uint8_t system_id, uint
 	packet.blue = blue;
 	packet.mode = mode;
 
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, 9);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_LED_CONTROL_LEN);
 #endif
 
 	msg->msgid = MAVLINK_MSG_ID_LED_CONTROL;
-	return mavlink_finalize_message_chan(msg, system_id, component_id, chan, 9, 76);
+#if MAVLINK_CRC_EXTRA
+    return mavlink_finalize_message_chan(msg, system_id, component_id, chan, MAVLINK_MSG_ID_LED_CONTROL_LEN, MAVLINK_MSG_ID_LED_CONTROL_CRC);
+#else
+    return mavlink_finalize_message_chan(msg, system_id, component_id, chan, MAVLINK_MSG_ID_LED_CONTROL_LEN);
+#endif
 }
 
 /**
- * @brief Encode a led_control struct into a message
+ * @brief Encode a led_control struct
  *
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
@@ -128,6 +139,20 @@ static inline uint16_t mavlink_msg_led_control_pack_chan(uint8_t system_id, uint
 static inline uint16_t mavlink_msg_led_control_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_led_control_t* led_control)
 {
 	return mavlink_msg_led_control_pack(system_id, component_id, msg, led_control->led_id, led_control->red, led_control->green, led_control->blue, led_control->mode, led_control->frequency);
+}
+
+/**
+ * @brief Encode a led_control struct on a channel
+ *
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param chan The MAVLink channel this message will be sent over
+ * @param msg The MAVLink message to compress the data into
+ * @param led_control C-struct to read the message contents from
+ */
+static inline uint16_t mavlink_msg_led_control_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_led_control_t* led_control)
+{
+	return mavlink_msg_led_control_pack_chan(system_id, component_id, chan, msg, led_control->led_id, led_control->red, led_control->green, led_control->blue, led_control->mode, led_control->frequency);
 }
 
 /**
@@ -146,7 +171,7 @@ static inline uint16_t mavlink_msg_led_control_encode(uint8_t system_id, uint8_t
 static inline void mavlink_msg_led_control_send(mavlink_channel_t chan, uint8_t led_id, uint8_t red, uint8_t green, uint8_t blue, uint8_t mode, float frequency)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-	char buf[9];
+	char buf[MAVLINK_MSG_ID_LED_CONTROL_LEN];
 	_mav_put_float(buf, 0, frequency);
 	_mav_put_uint8_t(buf, 4, led_id);
 	_mav_put_uint8_t(buf, 5, red);
@@ -154,7 +179,11 @@ static inline void mavlink_msg_led_control_send(mavlink_channel_t chan, uint8_t 
 	_mav_put_uint8_t(buf, 7, blue);
 	_mav_put_uint8_t(buf, 8, mode);
 
-	_mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_LED_CONTROL, buf, 9, 76);
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_LED_CONTROL, buf, MAVLINK_MSG_ID_LED_CONTROL_LEN, MAVLINK_MSG_ID_LED_CONTROL_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_LED_CONTROL, buf, MAVLINK_MSG_ID_LED_CONTROL_LEN);
+#endif
 #else
 	mavlink_led_control_t packet;
 	packet.frequency = frequency;
@@ -164,7 +193,11 @@ static inline void mavlink_msg_led_control_send(mavlink_channel_t chan, uint8_t 
 	packet.blue = blue;
 	packet.mode = mode;
 
-	_mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_LED_CONTROL, (const char *)&packet, 9, 76);
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_LED_CONTROL, (const char *)&packet, MAVLINK_MSG_ID_LED_CONTROL_LEN, MAVLINK_MSG_ID_LED_CONTROL_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_LED_CONTROL, (const char *)&packet, MAVLINK_MSG_ID_LED_CONTROL_LEN);
+#endif
 #endif
 }
 
@@ -249,6 +282,6 @@ static inline void mavlink_msg_led_control_decode(const mavlink_message_t* msg, 
 	led_control->blue = mavlink_msg_led_control_get_blue(msg);
 	led_control->mode = mavlink_msg_led_control_get_mode(msg);
 #else
-	memcpy(led_control, _MAV_PAYLOAD(msg), 9);
+	memcpy(led_control, _MAV_PAYLOAD(msg), MAVLINK_MSG_ID_LED_CONTROL_LEN);
 #endif
 }

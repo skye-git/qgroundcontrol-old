@@ -193,6 +193,7 @@ FORMS += src/ui/MainWindow.ui \
     src/ui/CommSettings.ui \
     src/ui/SerialSettings.ui \
     src/ui/UASControl.ui \
+    src/ui/UASSkyeControl.ui \
     src/ui/UASList.ui \
     src/ui/UASInfo.ui \
     src/ui/Linechart.ui \
@@ -265,6 +266,8 @@ FORMS += src/ui/MainWindow.ui \
     src/ui/QGCTabbedInfoView.ui \
     src/ui/UASRawStatusView.ui \
     src/ui/uas/QGCMessageView.ui \
+    src/ui/uas/UASSkyeBatteryInfoWidget.ui \
+    src/ui/uas/UASSkyeBatteryPackWidget.ui \
     src/ui/JoystickButton.ui \
     src/ui/JoystickAxis.ui \
     src/ui/configuration/ApmHardwareConfig.ui \
@@ -339,6 +342,9 @@ HEADERS += src/MG.h \
     src/ui/SerialConfigurationWindow.h \
     src/ui/MainWindow.h \
     src/ui/uas/UASControlWidget.h \
+    src/ui/uas/UASSkyeControlWidget.h \
+    src/ui/uas/UASSkyeBatteryInfoWidget.h \
+    src/ui/uas/UASSkyeBatteryPackWidget.h \
     src/ui/uas/UASListWidget.h \
     src/ui/uas/UASInfoWidget.h \
     src/ui/HUD.h \
@@ -371,6 +377,7 @@ HEADERS += src/MG.h \
     src/uas/ArduPilotMegaMAV.h \
     src/uas/senseSoarMAV.h \
     src/uas/SkyeMAV.h \
+    src/ui/uas/Skye_enums.h \
     src/ui/watchdog/WatchdogControl.h \
     src/ui/watchdog/WatchdogProcessView.h \
     src/ui/watchdog/WatchdogView.h \
@@ -566,6 +573,9 @@ SOURCES += src/main.cc \
     src/ui/SerialConfigurationWindow.cc \
     src/ui/MainWindow.cc \
     src/ui/uas/UASControlWidget.cc \
+    src/ui/uas/UASSkyeControlWidget.cc \
+    src/ui/uas/UASSkyeBatteryInfoWidget.cc \
+    src/ui/uas/UASSkyeBatteryPackWidget.cc \
     src/ui/uas/UASListWidget.cc \
     src/ui/uas/UASInfoWidget.cc \
     src/ui/HUD.cc \

@@ -15,6 +15,9 @@ typedef struct __mavlink_nanotron_skye_sender_2_raw_t
 #define MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_LEN 24
 #define MAVLINK_MSG_ID_139_LEN 24
 
+#define MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_CRC 104
+#define MAVLINK_MSG_ID_139_CRC 104
+
 
 
 #define MAVLINK_MESSAGE_INFO_NANOTRON_SKYE_SENDER_2_RAW { \
@@ -48,7 +51,7 @@ static inline uint16_t mavlink_msg_nanotron_skye_sender_2_raw_pack(uint8_t syste
 						       float distance_1, float distance_2, float distance_3, float distance_4, float distance_5, float distance_6)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-	char buf[24];
+	char buf[MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_LEN];
 	_mav_put_float(buf, 0, distance_1);
 	_mav_put_float(buf, 4, distance_2);
 	_mav_put_float(buf, 8, distance_3);
@@ -56,7 +59,7 @@ static inline uint16_t mavlink_msg_nanotron_skye_sender_2_raw_pack(uint8_t syste
 	_mav_put_float(buf, 16, distance_5);
 	_mav_put_float(buf, 20, distance_6);
 
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, 24);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_LEN);
 #else
 	mavlink_nanotron_skye_sender_2_raw_t packet;
 	packet.distance_1 = distance_1;
@@ -66,18 +69,22 @@ static inline uint16_t mavlink_msg_nanotron_skye_sender_2_raw_pack(uint8_t syste
 	packet.distance_5 = distance_5;
 	packet.distance_6 = distance_6;
 
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, 24);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_LEN);
 #endif
 
 	msg->msgid = MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW;
-	return mavlink_finalize_message(msg, system_id, component_id, 24, 104);
+#if MAVLINK_CRC_EXTRA
+    return mavlink_finalize_message(msg, system_id, component_id, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_LEN, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_CRC);
+#else
+    return mavlink_finalize_message(msg, system_id, component_id, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_LEN);
+#endif
 }
 
 /**
  * @brief Pack a nanotron_skye_sender_2_raw message on a channel
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
- * @param chan The MAVLink channel this message was sent over
+ * @param chan The MAVLink channel this message will be sent over
  * @param msg The MAVLink message to compress the data into
  * @param distance_1 Distance to Receiver module 1
  * @param distance_2 Distance to Receiver module 2
@@ -92,7 +99,7 @@ static inline uint16_t mavlink_msg_nanotron_skye_sender_2_raw_pack_chan(uint8_t 
 						           float distance_1,float distance_2,float distance_3,float distance_4,float distance_5,float distance_6)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-	char buf[24];
+	char buf[MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_LEN];
 	_mav_put_float(buf, 0, distance_1);
 	_mav_put_float(buf, 4, distance_2);
 	_mav_put_float(buf, 8, distance_3);
@@ -100,7 +107,7 @@ static inline uint16_t mavlink_msg_nanotron_skye_sender_2_raw_pack_chan(uint8_t 
 	_mav_put_float(buf, 16, distance_5);
 	_mav_put_float(buf, 20, distance_6);
 
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, 24);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_LEN);
 #else
 	mavlink_nanotron_skye_sender_2_raw_t packet;
 	packet.distance_1 = distance_1;
@@ -110,15 +117,19 @@ static inline uint16_t mavlink_msg_nanotron_skye_sender_2_raw_pack_chan(uint8_t 
 	packet.distance_5 = distance_5;
 	packet.distance_6 = distance_6;
 
-        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, 24);
+        memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_LEN);
 #endif
 
 	msg->msgid = MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW;
-	return mavlink_finalize_message_chan(msg, system_id, component_id, chan, 24, 104);
+#if MAVLINK_CRC_EXTRA
+    return mavlink_finalize_message_chan(msg, system_id, component_id, chan, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_LEN, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_CRC);
+#else
+    return mavlink_finalize_message_chan(msg, system_id, component_id, chan, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_LEN);
+#endif
 }
 
 /**
- * @brief Encode a nanotron_skye_sender_2_raw struct into a message
+ * @brief Encode a nanotron_skye_sender_2_raw struct
  *
  * @param system_id ID of this system
  * @param component_id ID of this component (e.g. 200 for IMU)
@@ -128,6 +139,20 @@ static inline uint16_t mavlink_msg_nanotron_skye_sender_2_raw_pack_chan(uint8_t 
 static inline uint16_t mavlink_msg_nanotron_skye_sender_2_raw_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_nanotron_skye_sender_2_raw_t* nanotron_skye_sender_2_raw)
 {
 	return mavlink_msg_nanotron_skye_sender_2_raw_pack(system_id, component_id, msg, nanotron_skye_sender_2_raw->distance_1, nanotron_skye_sender_2_raw->distance_2, nanotron_skye_sender_2_raw->distance_3, nanotron_skye_sender_2_raw->distance_4, nanotron_skye_sender_2_raw->distance_5, nanotron_skye_sender_2_raw->distance_6);
+}
+
+/**
+ * @brief Encode a nanotron_skye_sender_2_raw struct on a channel
+ *
+ * @param system_id ID of this system
+ * @param component_id ID of this component (e.g. 200 for IMU)
+ * @param chan The MAVLink channel this message will be sent over
+ * @param msg The MAVLink message to compress the data into
+ * @param nanotron_skye_sender_2_raw C-struct to read the message contents from
+ */
+static inline uint16_t mavlink_msg_nanotron_skye_sender_2_raw_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_nanotron_skye_sender_2_raw_t* nanotron_skye_sender_2_raw)
+{
+	return mavlink_msg_nanotron_skye_sender_2_raw_pack_chan(system_id, component_id, chan, msg, nanotron_skye_sender_2_raw->distance_1, nanotron_skye_sender_2_raw->distance_2, nanotron_skye_sender_2_raw->distance_3, nanotron_skye_sender_2_raw->distance_4, nanotron_skye_sender_2_raw->distance_5, nanotron_skye_sender_2_raw->distance_6);
 }
 
 /**
@@ -146,7 +171,7 @@ static inline uint16_t mavlink_msg_nanotron_skye_sender_2_raw_encode(uint8_t sys
 static inline void mavlink_msg_nanotron_skye_sender_2_raw_send(mavlink_channel_t chan, float distance_1, float distance_2, float distance_3, float distance_4, float distance_5, float distance_6)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-	char buf[24];
+	char buf[MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_LEN];
 	_mav_put_float(buf, 0, distance_1);
 	_mav_put_float(buf, 4, distance_2);
 	_mav_put_float(buf, 8, distance_3);
@@ -154,7 +179,11 @@ static inline void mavlink_msg_nanotron_skye_sender_2_raw_send(mavlink_channel_t
 	_mav_put_float(buf, 16, distance_5);
 	_mav_put_float(buf, 20, distance_6);
 
-	_mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW, buf, 24, 104);
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW, buf, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_LEN, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW, buf, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_LEN);
+#endif
 #else
 	mavlink_nanotron_skye_sender_2_raw_t packet;
 	packet.distance_1 = distance_1;
@@ -164,7 +193,11 @@ static inline void mavlink_msg_nanotron_skye_sender_2_raw_send(mavlink_channel_t
 	packet.distance_5 = distance_5;
 	packet.distance_6 = distance_6;
 
-	_mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW, (const char *)&packet, 24, 104);
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW, (const char *)&packet, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_LEN, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW, (const char *)&packet, MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_LEN);
+#endif
 #endif
 }
 
@@ -249,6 +282,6 @@ static inline void mavlink_msg_nanotron_skye_sender_2_raw_decode(const mavlink_m
 	nanotron_skye_sender_2_raw->distance_5 = mavlink_msg_nanotron_skye_sender_2_raw_get_distance_5(msg);
 	nanotron_skye_sender_2_raw->distance_6 = mavlink_msg_nanotron_skye_sender_2_raw_get_distance_6(msg);
 #else
-	memcpy(nanotron_skye_sender_2_raw, _MAV_PAYLOAD(msg), 24);
+	memcpy(nanotron_skye_sender_2_raw, _MAV_PAYLOAD(msg), MAVLINK_MSG_ID_NANOTRON_SKYE_SENDER_2_RAW_LEN);
 #endif
 }

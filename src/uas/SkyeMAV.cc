@@ -32,13 +32,13 @@ SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
     sensitivityFactorTrans(0.0f),
     sensitivityFactorRot(0.0f),
     liftFactor(0.0f),
-    currentTrajectoryStamp(0),
+//    currentTrajectoryStamp(0),
     inputMode(QGC_INPUT_MODE_TOUCH)
 {
     imagePacketsArrived = 0;
     this->setUASName("SKYE");
-    connect(&trajectoryTimer, SIGNAL(timeout()), this, SLOT(followTrajectory()));
-    trajectoryTimer.start(100);
+//    connect(&trajectoryTimer, SIGNAL(timeout()), this, SLOT(followTrajectory()));
+//    trajectoryTimer.start(100);
 }
 
 SkyeMAV::~SkyeMAV(void)
@@ -71,28 +71,8 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             {
                 emit batteryLow(0.001*(double)lowestVolt);
             }
-
-
         }
         break;
-        case MAVLINK_MSG_ID_BATTERY_VOLTAGE:
-        {
-//            qDebug() << "[SkyeMAV] Received Battery Voltage";
-            mavlink_battery_voltage_t voltage;
-            mavlink_msg_battery_voltage_decode(&message, &voltage);
-
-            emit voltageInfoChanged(&voltage);
-        }
-        break;
-        case MAVLINK_MSG_ID_ACTUATION_CURRENT:
-        {
-            mavlink_actuation_current_t current;
-            mavlink_msg_actuation_current_decode(&message, &current);
-
-            emit currentInfoChanged(&current);
-        }
-        break;
-
 
         // Ignore these messages
         case MAVLINK_MSG_ID_SETPOINT_6DOF:
@@ -116,14 +96,14 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
 
 void SkyeMAV::setManual6DOFControlCommands(double x , double y , double z , double a , double b, double c)
 {
-    if (mode & MAV_MODE_FLAG_GUIDED_ENABLED)
+    if (base_mode & MAV_MODE_FLAG_GUIDED_ENABLED)
     {
         manualXRot = a * (double)sensitivityFactorRot;
         manualYRot = b * (double)sensitivityFactorRot;
         manualZRot = c * (double)sensitivityFactorRot;
         qDebug() << "Set manual rotation for FAC" << a << b << c;
 
-    }else if (mode & MAV_MODE_FLAG_AUTO_ENABLED)
+    }else if (base_mode & MAV_MODE_FLAG_AUTO_ENABLED)
     {
         manualZVel = z * (double)sensitivityFactorTrans;
         manualXRot = a * (double)sensitivityFactorRot;
@@ -131,7 +111,7 @@ void SkyeMAV::setManual6DOFControlCommands(double x , double y , double z , doub
         manualZRot = c * (double)sensitivityFactorRot;
         qDebug() << "Set lift and manual rotation for HAC" << z << a << b << c;
 
-    }else if (mode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED)
+    }else if (base_mode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED)
     {
         manualXVel = x * (double)sensitivityFactorTrans;
         manualYVel = y * (double)sensitivityFactorTrans;
@@ -192,7 +172,7 @@ void SkyeMAV::setModeCommand(int mode)
 
 uint8_t SkyeMAV::getMode()
 {
-    return this->mode;
+    return this->base_mode;
 }
 
 
@@ -212,10 +192,10 @@ void SkyeMAV::sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t bl
 }
 
 
-
+/*
 void SkyeMAV::followTrajectory()
 {
-    if (mode & MAV_MODE_FLAG_DECODE_POSITION_GUIDED) // Half or Full Automatic Control
+    if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_GUIDED) // Half or Full Automatic Control
     {
         qDebug() << "SkyeMAV::followTrajectory";
         QVector<double> trajX;
@@ -252,9 +232,9 @@ void SkyeMAV::followTrajectory()
         InertialToCamera(deltaXYZ, deltaCam);
         qDebug() << "DeltaCam" << deltaCam[0] << deltaCam[1] << deltaCam[2];
 
-        if (mode & MAV_MODE_FLAG_DECODE_POSITION_SAFETY /*&& !qIsNaN(deltaCam[0]) && !qIsNaN(deltaCam[1]) && !qIsNaN(deltaCam[2])*/)
+        if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_SAFETY ) //&& !qIsNaN(deltaCam[0]) && !qIsNaN(deltaCam[1]) && !qIsNaN(deltaCam[2])
         {
-            if (mode & MAV_MODE_FLAG_DECODE_POSITION_AUTO) // FULL AUTOMATIC CONTROL
+            if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_AUTO) // FULL AUTOMATIC CONTROL
             {
                 if (deltaNorm < QGC_SKYE_MAX_VEL_NORM / sensitivityFactorTrans)
                 {
@@ -346,3 +326,4 @@ void SkyeMAV::updateTrigonometry()
     fromItoC[8] = cosPhi*cosTheta;
 //    qDebug() << "I to C" << fromItoC[0] << fromItoC[1] << fromItoC[2] << fromItoC[3] << fromItoC[4] << fromItoC[5] << fromItoC[6] << fromItoC[7] << fromItoC[8];
 }
+*/

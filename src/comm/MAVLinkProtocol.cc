@@ -25,6 +25,7 @@
 #include "SlugsMAV.h"
 #include "PxQuadMAV.h"
 #include "ArduPilotMegaMAV.h"
+#include "SkyeMAV.h"        // Code Skye
 #include "configuration.h"
 #include "LinkManager.h"
 #include "QGCMAVLink.h"

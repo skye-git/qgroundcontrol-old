@@ -185,6 +185,7 @@ public:
         QGC_AIRFRAME_PTERYX,
         QGC_AIRFRAME_TRICOPTER,
         QGC_AIRFRAME_HEXCOPTER,
+        QGC_AIRFRAME_SKYE,                  // Code Skye (22.03.2012)
         QGC_AIRFRAME_X8,
         QGC_AIRFRAME_VIPER_2_0,
         QGC_AIRFRAME_CAMFLYER_Q,

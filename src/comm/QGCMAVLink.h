@@ -31,6 +31,7 @@ This file is part of the QGROUNDCONTROL project
 #define QGCMAVLINK_H
 
 #include <mavlink.h>
+#include <Skye_enums.h>     // Begin & End Code Skye
 
 //#ifdef MAVLINK_CONF
 //#define MY_MACRO(x) <x>

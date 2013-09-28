@@ -34,17 +34,17 @@ public:
     {
         return inputMode;
     }
-    /** @brief Trajectory controller */
-    int getCurrentTrajectoryStamp()
-    {
-        return currentTrajectoryStamp;
-    }
+//    /** @brief Trajectory controller */
+//    int getCurrentTrajectoryStamp()
+//    {
+//        return currentTrajectoryStamp;
+//    }
 
 private:
-    /** @brief Transforms a Vector from inertial to uas coordinates
-                used for trajectory controller */
-    void InertialToCamera(const double inertFrame[3], double camFrame[3]);
-    void updateTrigonometry();
+//    /** @brief Transforms a Vector from inertial to uas coordinates
+//                used for trajectory controller */
+//    void InertialToCamera(const double inertFrame[3], double camFrame[3]);
+//    void updateTrigonometry();
 
 public slots:
     /** @brief Set the specific airframe type */
@@ -69,8 +69,8 @@ public slots:
     void setLiftFactor(float val) {liftFactor = val; qDebug() << "lift factor" << val;}
 
 
-    void followTrajectory();
-    /** @brief Set active Input Mode for this UAS */
+//    void followTrajectory();
+//    /** @brief Set active Input Mode for this UAS */
     void setInputMode(SkyeMAV::QGC_INPUT_MODE input);
     /** @brief Report de-/activation of rotative 3DMouse input */
     void changeMouseRotationActive(bool active){emit mouseButtonRotationChanged(active);}
@@ -81,21 +81,15 @@ public slots:
 
 signals:
     /** @brief Emit new detailed accu info for one accu pack
-     *  @param packID see ENUM MAV_SKYE_BATTERY_PACK_ID
-     *          voltCell1 Voltage of cell 1 in volt
-     *          voltCell2 Voltage of cell 2 in volt
-     *          voltCell3 Voltage of cell 3 in volt
-     *          voltCell4 Voltage of cell 4 in volt
-     *          current Recent current of accu pack in ampere
-     *          percent Estimated remaining battery, -1 when not estimated
-    **/
-    void voltageInfoChanged(mavlink_battery_voltage_t* info);
-    /** @brief Emit new detailed accu voltage info for up to 4 accu packs
-     *  @param info, contains data
-    **/
-    void currentInfoChanged(mavlink_actuation_current_t* info);
-    /** @brief Emit actuation current consumption for up to 4 actuation units
-     *  @param info, contains data
+     *  @param  voltage_cell_1 Voltage of cell 1 in volt
+     *          voltage_cell_2 Voltage of cell 2 in volt
+     *          voltage_cell_3 Voltage of cell 3 in volt
+     *          voltage_cell_4 Voltage of cell 4 in volt
+     *          voltage_cell_5 Voltage of cell 5 in volt
+     *          voltage_cell_6 Voltage of cell 6 in volt
+     *          current_battery Recent current of accu pack in ampere
+     *          accu_id see ENUM MAV_SKYE_BATTERY_PACK_ID
+     *          battery_remaining Estimated remaining battery in percent, -1 when not estimated
     **/
     void batteryPackChanged(mavlink_battery_status_t* battery);
     void reportUDPLinkFailed(QString errorStr);

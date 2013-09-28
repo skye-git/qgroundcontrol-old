@@ -130,7 +130,8 @@ MainWindow::MainWindow(QWidget *parent):
     isAdvancedMode(false),
     mavlink(new MAVLinkProtocol()),
     dockWidgetTitleBarEnabled(true),
-    customMode(CUSTOM_MODE_NONE)
+    customMode(CUSTOM_MODE_NONE),
+    inputMode(SkyeMAV::QGC_INPUT_MODE_NONE)     // FIXME: Remove asap, Code Skye
 {
     this->setAttribute(Qt::WA_DeleteOnClose);
     //TODO:  move protocol outside UI
@@ -1725,6 +1726,22 @@ void MainWindow::setActiveUAS(UASInterface* uas)
         win->restoreState(settings.value(getWindowStateKey()).toByteArray(), QGC::applicationVersion());
     }
 
+// Begin Code Skye (06.03.2012)
+    // Connect input to (skye) Mavlink messages
+    SkyeMAV* tmp = 0;
+    tmp = dynamic_cast<SkyeMAV*>(UASManager::instance()->getActiveUAS());
+    if (tmp) {
+        disconnect(tmp, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
+        //disconnect(this, SIGNAL(valueTouchInputChanged(double, double, double, double, double, double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));// Beginn und Ende Code AL (26.03.12)
+    }
+
+    tmp = dynamic_cast<SkyeMAV*>(uas);
+    if(tmp) {
+        connect(tmp, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
+        //connect(this, SIGNAL(valueTouchInputChanged(double,double,double,double,double,double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
+    }
+// End Code Skye
+
 }
 
 void MainWindow::UASSpecsChanged(int uas)
@@ -1873,13 +1890,28 @@ void MainWindow::UASCreated(UASInterface* uas)
             //addTool(detectionDockWidget, tr("Object Recognition"), Qt::RightDockWidgetArea);
         }
 
-        if (!watchdogControlDockWidget)
+//        if (!watchdogControlDockWidget)
+//        {
+//            watchdogControlDockWidget = new QDockWidget(tr("Process Control"), this);
+//            watchdogControlDockWidget->setWidget( new WatchdogControl(this) );
+//            watchdogControlDockWidget->setObjectName("WATCHDOG_CONTROL_DOCKWIDGET");
+//            //addTool(watchdogControlDockWidget, tr("Process Control"), Qt::BottomDockWidgetArea);
+//        }
+
+        // Begin Code Skye (06.03.2012)
+        if (!skyeControlDockWidget)
         {
-            watchdogControlDockWidget = new QDockWidget(tr("Process Control"), this);
-            watchdogControlDockWidget->setWidget( new WatchdogControl(this) );
-            watchdogControlDockWidget->setObjectName("WATCHDOG_CONTROL_DOCKWIDGET");
-            //addTool(watchdogControlDockWidget, tr("Process Control"), Qt::BottomDockWidgetArea);
+            skyeControlDockWidget = new QDockWidget(tr("Skye Control"), this);
+            skyeControlDockWidget->setObjectName("SKYE_CONTROL_DOCKWIDGET");
+            skyeControlDockWidget->setWidget( new UASSkyeControlWidget(this) );
+
+//            UASSkyeControlWidget *uasSkyeControl = dynamic_cast<UASSkyeControlWidget*>(skyeControlDockWidget->widget());
+//            if (uasSkyeControl)
+//            {
+//                addTool(skyeControlDockWidget, tr("Skye Control"), Qt::RightDockWidgetArea);
+//            }
         }
+        // End Code Skye
     }
 
     // Change the view only if this is the first UAS
@@ -2218,3 +2250,37 @@ bool MainWindow::x11Event(XEvent *event)
     return false;
 }
 #endif // MOUSE_ENABLED_LINUX
+
+void MainWindow::setInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
+{
+    switch ((int)inputMode)
+    {
+    case (int)SkyeMAV::QGC_INPUT_MODE_MOUSE:
+            this->inputMode = SkyeMAV::QGC_INPUT_MODE_MOUSE;
+            /*
+            #if defined (MOUSE_ENABLED_LINUX) || defined (MOUSE_ENABLED_WIN)
+            if ( !mouseInitialized )
+            {
+                start3dMouse();
+            }
+            #endif // MOUSE_ENABLED or MOUSE_ENABLED_WIN
+            */
+            emit emitTouchInputVisibility(false);
+            break;
+    case (int)SkyeMAV::QGC_INPUT_MODE_TOUCH:
+            this->inputMode = SkyeMAV::QGC_INPUT_MODE_TOUCH;
+            emit emitTouchInputVisibility(true);
+            break;
+    case (int)SkyeMAV::QGC_INPUT_MODE_KEYBOARD:
+            this->inputMode = SkyeMAV::QGC_INPUT_MODE_KEYBOARD;
+            emit emitTouchInputVisibility(false);
+            break;
+    default:
+            this->inputMode = SkyeMAV::QGC_INPUT_MODE_NONE;
+            emit emitTouchInputVisibility(false);
+            qDebug() << "No input device set!";
+            break;
+    }
+    statusBar()->showMessage("Set new Input mode", 20000);
+// qDebug() << "New Input: " << inputMode;
+}
