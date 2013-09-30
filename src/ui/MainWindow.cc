@@ -74,6 +74,8 @@ This file is part of the QGROUNDCONTROL project
 // Begin Code Skye
 #include "UASSkyeControlWidget.h"
 #include "UASSkyeBatteryInfoWidget.h"
+#include "TestControlWidget.h"
+#include "DirectControlWidget.h"
 // End Code Skye
 
 #ifdef QGC_OSG_ENABLED
@@ -652,18 +654,16 @@ void MainWindow::buildCommonWidgets()
     createDockWidget(engineeringView,new HUD(320,240,this),tr("Video Downlink"),"HEAD_UP_DISPLAY_DOCKWIDGET",VIEW_ENGINEER,Qt::RightDockWidgetArea,this->width()/1.5);
 
     createDockWidget(simView,new PrimaryFlightDisplay(320,240,this),tr("Primary Flight Display"),"PRIMARY_FLIGHT_DISPLAY_DOCKWIDGET",VIEW_SIMULATION,Qt::RightDockWidgetArea,this->width()/1.5);
+
+    // Begin Code Skye
 //    createDockWidget(pilotView,new PrimaryFlightDisplay(320,240,this),tr("Primary Flight Display"),"PRIMARY_FLIGHT_DISPLAY_DOCKWIDGET",VIEW_FLIGHT,Qt::LeftDockWidgetArea,this->width()/1.8);
+    createDockWidget(pilotView,new UASSkyeControlWidget(this),tr("Skye Control"),"UAS_SKYE_CONTROL_DOCKWIDGET",VIEW_FLIGHT,Qt::LeftDockWidgetArea);
+    createDockWidget(pilotView,new UASSkyeBatteryInfoWidget(this),tr("Battery Info"),"UAS_SKYE_BATTERY_DOCKWIDGET",VIEW_FLIGHT,Qt::BottomDockWidgetArea);
+    // End Code Skye
 
     QGCTabbedInfoView *infoview = new QGCTabbedInfoView(this);
     infoview->addSource(mavlinkDecoder);
-    createDockWidget(pilotView,infoview,tr("Info View"),"UAS_INFO_INFOVIEW_DOCKWIDGET",VIEW_FLIGHT,Qt::RightDockWidgetArea);
-
-
-    // Begin Code Skye
-    createDockWidget(pilotView,new UASSkyeControlWidget(this),tr("Skye Control"),"UAS_SKYE_CONTROL_DOCKWIDGET",VIEW_FLIGHT,Qt::LeftDockWidgetArea);
-    createDockWidget(pilotView,new UASSkyeBatteryInfoWidget(this),tr("Battery Info"),"UAS_SKYE_BATTERY_DOCKWIDGET",VIEW_FLIGHT,Qt::LeftDockWidgetArea);
-    // End Code Skye
-
+    createDockWidget(pilotView,infoview,tr("Info View"),"UAS_INFO_INFOVIEW_DOCKWIDGET",VIEW_FLIGHT,Qt::LeftDockWidgetArea);
 
     //createDockWidget(pilotView,new HUD(320,240,this),tr("Head Up Display"),"HEAD_UP_DISPLAY_DOCKWIDGET",VIEW_FLIGHT,Qt::LeftDockWidgetArea,this->width()/1.8);
 
@@ -781,6 +781,7 @@ void MainWindow::addTool(SubMainWindow *parent,VIEW_SECTIONS view,QDockWidget* w
         connect(widget, SIGNAL(visibilityChanged(bool)), targetAction, SLOT(setChecked(bool)));
     }
     parent->addDockWidget(area,widget);
+//    qDebug() << "Area for" << widget->objectName() << parent->dockWidgetArea(widget);
 }
 
 QDockWidget* MainWindow::createDockWidget(QWidget *parent,QWidget *child,QString title,QString objectname,VIEW_SECTIONS view,Qt::DockWidgetArea area,int minwidth,int minheight)
@@ -878,13 +879,6 @@ void MainWindow::loadDockWidget(QString name)
     else if (name == "UAS_INFO_QUICKVIEW_DOCKWIDGET")
     {
         createDockWidget(centerStack->currentWidget(),new UASQuickView(this),tr("Quick View"),"UAS_INFO_QUICKVIEW_DOCKWIDGET",currentView,Qt::LeftDockWidgetArea);
-    }
-    else if (name == "UAS_SKYE_CONTROL_DOCKWIDGET")
-    {
-        createDockWidget(centerStack->currentWidget(),new UASSkyeControlWidget(this),tr("Skye Control"),name,currentView,Qt::LeftDockWidgetArea);
-    } else if (name == "UAS_SKYE_BATTERY_DOCKWIDGET")
-    {
-        createDockWidget(centerStack->currentWidget(),new UASSkyeBatteryInfoWidget(this),tr("Battery Info"),name,currentView,Qt::LeftDockWidgetArea);
     }
     else
     {
