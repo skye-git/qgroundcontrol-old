@@ -27,6 +27,11 @@ public:
     {
         return airframe;
     }
+    /** @brief Get the current state of active UAS */
+    int getState() const
+    {
+        return status;
+    }
     /** @brief Get mode */
     uint8_t getMode();
     /** @brief Get activated input mode for this uas */

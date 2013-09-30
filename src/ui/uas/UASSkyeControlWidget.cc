@@ -68,7 +68,6 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     minLiftFactor(0.0f),
     maxLiftFactor(0.5f)
 {
-#ifdef QGC_USE_SKYE_INTERFACE
     ui.setupUi(this);
 
     // Uncheck and group buttons to enable exclusiv checkable
@@ -143,13 +142,10 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     lastAlertTime.start();
     alertedBatteryLow = false;
     msgBox = new QErrorMessage;
-
-#endif //QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::setUAS(UASInterface* uas)
 {
-#ifdef QGC_USE_SKYE_INTERFACE
     if (this->uasId!= 0)
     {
         UASInterface* oldUAS = UASManager::instance()->getUASForId(this->uasId);
@@ -175,8 +171,8 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         //ui.controlStatusLabel->setText(tr("Connected to ") + mav->getUASName());
         this->uasId = mav->getUASID();
 
-        updateMode(mav->getUASID(), mav->getUASMode());
-        updateState(mav->getUASState());
+        updateMode(mav->getUASID(), mav->getMode());
+        updateState(mav->getState());
         updateInput(mav->getInputMode());
 
         // Connect user interface controls
@@ -199,20 +195,14 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         }
     }
 
-
-#endif // QGC_USE_SKYE_INTERFACE
 }
 
 UASSkyeControlWidget::~UASSkyeControlWidget()
 {
-#ifdef QGC_USE_SKYE_INTERFACE
-#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::updateStatemachine()
 {
-#ifdef QGC_USE_SKYE_INTERFACE
-
     if (engineOn)
     {
         ui.controlButton->setText(tr("DISARM SYSTEM"));
@@ -225,7 +215,6 @@ void UASSkyeControlWidget::updateStatemachine()
         ui.controlButton->setStyleSheet("* { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00DD44, stop: 1 #11AA22); }");
         setInputButtonActivity(true);
     }
-#endif // QGC_USE_SKYE_INTERFACE
 }
 
 ///**
@@ -254,7 +243,6 @@ void UASSkyeControlWidget::updateStatemachine()
 void UASSkyeControlWidget::updateMode(int uas,int baseMode)
 {
     qDebug() << "Got uas mode:" << baseMode;
-#ifdef QGC_USE_SKYE_INTERFACE
     if ((uasId == uas) && ((int)uasMode != baseMode))
     {
         uasMode = (unsigned int)baseMode;
@@ -307,12 +295,10 @@ void UASSkyeControlWidget::updateMode(int uas,int baseMode)
 
 
     }
-#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::updateState(int state)
 {
-#ifdef QGC_USE_SKYE_INTERFACE
     switch (state)
     {
     case (int)MAV_STATE_ACTIVE:
@@ -323,12 +309,10 @@ void UASSkyeControlWidget::updateState(int state)
         break;
     }
     updateStatemachine();
-#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::updateInput(SkyeMAV::QGC_INPUT_MODE input)
 {
-#ifdef QGC_USE_SKYE_INTERFACE
     switch ((int)input)
     {
     case (int)SkyeMAV::QGC_INPUT_MODE_NONE:
@@ -352,13 +336,10 @@ void UASSkyeControlWidget::updateInput(SkyeMAV::QGC_INPUT_MODE input)
         ui.lastActionLabel->setText("Keyboard input set");
         break;
     }
-#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::setDirectControlMode()
 {
-#ifdef  QGC_USE_SKYE_INTERFACE
-
     uint8_t newMode = MAV_MODE_PREFLIGHT;
     if (engineOn) {
 
@@ -376,12 +357,10 @@ void UASSkyeControlWidget::setDirectControlMode()
         ui.lastActionLabel->setText("Arm system first");
     }
 
-#endif  // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::setRateControlMode()
 {
-#ifdef QGC_USE_SKYE_INTERFACE
     uint8_t newMode = MAV_MODE_PREFLIGHT;
     if (engineOn) {
         newMode = newMode | MAV_MODE_FLAG_SAFETY_ARMED;
@@ -401,13 +380,10 @@ void UASSkyeControlWidget::setRateControlMode()
     } else {
         ui.lastActionLabel->setText("Arm system first");
     }
-
-#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::setAttitudeControlMode()
 {
-#ifdef QGC_USE_SKYE_INTERFACE
     uint8_t newMode = MAV_MODE_PREFLIGHT;
     if (engineOn) {
         newMode = newMode | MAV_MODE_FLAG_SAFETY_ARMED;
@@ -428,8 +404,6 @@ void UASSkyeControlWidget::setAttitudeControlMode()
     } else {
         ui.lastActionLabel->setText("Arm system first");
     }
-
-#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::mouseActivated(bool success)
@@ -449,7 +423,6 @@ void UASSkyeControlWidget::mouseActivated(bool success)
 
 void UASSkyeControlWidget::setInputMouse(bool checked)
 {
-#ifdef QGC_USE_SKYE_INTERFACE
     if (checked)
     {
         ui.lastActionLabel->setText(tr("3dMouse activated!"));
@@ -457,50 +430,42 @@ void UASSkyeControlWidget::setInputMouse(bool checked)
         emit changedInput(inputMode);
     }
     updateStyleSheet();
-#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::setInputTouch(bool checked)
 {
-#ifdef QGC_USE_SKYE_INTERFACE
     if (checked)
     {
         ui.lastActionLabel->setText(tr("Touchscreen activated!"));
         inputMode = SkyeMAV::QGC_INPUT_MODE_TOUCH;
         emit changedInput(inputMode);
     }
-#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::setInputKeyboard(bool checked)
 {
-#ifdef QGC_USE_SKYE_INTERFACE
     if (checked)
     {
         ui.lastActionLabel->setText(tr("Keyboard activated!"));
         inputMode = SkyeMAV::QGC_INPUT_MODE_KEYBOARD;
         emit changedInput(inputMode);
     }
-#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::transmitMode(int mode)
 {
-#ifdef QGC_USE_SKYE_INTERFACE
     UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
     if (mav)
     {
-        mav->setMode(mode);
+        mav->setMode(mode,0);
 
-        QString modeStr = UAS::getShortModeTextFor(mode);
-
+        QString modeStr = UAS::getShortModeTextFor(mode, 0, MAV_AUTOPILOT_PX4);
         ui.lastActionLabel->setText(QString("Sent mode %1 to %2").arg(modeStr).arg(mav->getUASName()));
     }
     else
     {
         ui.lastActionLabel->setText("No UAS activated!");
     }
-#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::setInputButtonActivity(bool enabled)
@@ -511,7 +476,6 @@ void UASSkyeControlWidget::setInputButtonActivity(bool enabled)
 
 void UASSkyeControlWidget::cycleContextButton()
 {
-#ifdef QGC_USE_SKYE_INTERFACE
 	SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
     if (mav)
     {
@@ -539,7 +503,6 @@ void UASSkyeControlWidget::cycleContextButton()
         QTimer::singleShot(200, this, SLOT(updateStatemachine()));
 
     }
-#endif // QGC_USE_SKYE_INTERFACE
 }
 
 void UASSkyeControlWidget::updateStyleSheet()

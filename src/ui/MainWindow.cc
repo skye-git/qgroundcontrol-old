@@ -71,6 +71,10 @@ This file is part of the QGROUNDCONTROL project
 #include <QGCConfigView.h>
 #include "SerialSettingsDialog.h"
 #include "terminalconsole.h"
+// Begin Code Skye
+#include "UASSkyeControlWidget.h"
+#include "UASSkyeBatteryInfoWidget.h"
+// End Code Skye
 
 #ifdef QGC_OSG_ENABLED
 #include "Q3DWidgetFactory.h"
@@ -514,7 +518,8 @@ void MainWindow::buildCommonWidgets()
     {
         pilotView = new SubMainWindow(this);
         pilotView->setObjectName("VIEW_FLIGHT");
-        pilotView->setCentralWidget(new QGCMapTool(this));
+//        pilotView->setCentralWidget(new QGCMapTool(this));
+        pilotView->setCentralWidget(new PrimaryFlightDisplay(640,480,this));
         addToCentralStackedWidget(pilotView, VIEW_FLIGHT, "Pilot");
     }
 
@@ -647,11 +652,17 @@ void MainWindow::buildCommonWidgets()
     createDockWidget(engineeringView,new HUD(320,240,this),tr("Video Downlink"),"HEAD_UP_DISPLAY_DOCKWIDGET",VIEW_ENGINEER,Qt::RightDockWidgetArea,this->width()/1.5);
 
     createDockWidget(simView,new PrimaryFlightDisplay(320,240,this),tr("Primary Flight Display"),"PRIMARY_FLIGHT_DISPLAY_DOCKWIDGET",VIEW_SIMULATION,Qt::RightDockWidgetArea,this->width()/1.5);
-    createDockWidget(pilotView,new PrimaryFlightDisplay(320,240,this),tr("Primary Flight Display"),"PRIMARY_FLIGHT_DISPLAY_DOCKWIDGET",VIEW_FLIGHT,Qt::LeftDockWidgetArea,this->width()/1.8);
+//    createDockWidget(pilotView,new PrimaryFlightDisplay(320,240,this),tr("Primary Flight Display"),"PRIMARY_FLIGHT_DISPLAY_DOCKWIDGET",VIEW_FLIGHT,Qt::LeftDockWidgetArea,this->width()/1.8);
 
     QGCTabbedInfoView *infoview = new QGCTabbedInfoView(this);
     infoview->addSource(mavlinkDecoder);
-    createDockWidget(pilotView,infoview,tr("Info View"),"UAS_INFO_INFOVIEW_DOCKWIDGET",VIEW_FLIGHT,Qt::LeftDockWidgetArea);
+    createDockWidget(pilotView,infoview,tr("Info View"),"UAS_INFO_INFOVIEW_DOCKWIDGET",VIEW_FLIGHT,Qt::RightDockWidgetArea);
+
+
+    // Begin Code Skye
+    createDockWidget(pilotView,new UASSkyeControlWidget(this),tr("Skye Control"),"UAS_SKYE_CONTROL_DOCKWIDGET",VIEW_FLIGHT,Qt::LeftDockWidgetArea);
+    createDockWidget(pilotView,new UASSkyeBatteryInfoWidget(this),tr("Battery Info"),"UAS_SKYE_BATTERY_DOCKWIDGET",VIEW_FLIGHT,Qt::LeftDockWidgetArea);
+    // End Code Skye
 
 
     //createDockWidget(pilotView,new HUD(320,240,this),tr("Head Up Display"),"HEAD_UP_DISPLAY_DOCKWIDGET",VIEW_FLIGHT,Qt::LeftDockWidgetArea,this->width()/1.8);
@@ -867,6 +878,13 @@ void MainWindow::loadDockWidget(QString name)
     else if (name == "UAS_INFO_QUICKVIEW_DOCKWIDGET")
     {
         createDockWidget(centerStack->currentWidget(),new UASQuickView(this),tr("Quick View"),"UAS_INFO_QUICKVIEW_DOCKWIDGET",currentView,Qt::LeftDockWidgetArea);
+    }
+    else if (name == "UAS_SKYE_CONTROL_DOCKWIDGET")
+    {
+        createDockWidget(centerStack->currentWidget(),new UASSkyeControlWidget(this),tr("Skye Control"),name,currentView,Qt::LeftDockWidgetArea);
+    } else if (name == "UAS_SKYE_BATTERY_DOCKWIDGET")
+    {
+        createDockWidget(centerStack->currentWidget(),new UASSkyeBatteryInfoWidget(this),tr("Battery Info"),name,currentView,Qt::LeftDockWidgetArea);
     }
     else
     {
@@ -1898,20 +1916,6 @@ void MainWindow::UASCreated(UASInterface* uas)
 //            //addTool(watchdogControlDockWidget, tr("Process Control"), Qt::BottomDockWidgetArea);
 //        }
 
-        // Begin Code Skye (06.03.2012)
-        if (!skyeControlDockWidget)
-        {
-            skyeControlDockWidget = new QDockWidget(tr("Skye Control"), this);
-            skyeControlDockWidget->setObjectName("SKYE_CONTROL_DOCKWIDGET");
-            skyeControlDockWidget->setWidget( new UASSkyeControlWidget(this) );
-
-//            UASSkyeControlWidget *uasSkyeControl = dynamic_cast<UASSkyeControlWidget*>(skyeControlDockWidget->widget());
-//            if (uasSkyeControl)
-//            {
-//                addTool(skyeControlDockWidget, tr("Skye Control"), Qt::RightDockWidgetArea);
-//            }
-        }
-        // End Code Skye
     }
 
     // Change the view only if this is the first UAS

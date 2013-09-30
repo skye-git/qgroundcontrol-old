@@ -443,7 +443,6 @@ protected:
 
     // Dock widgets
     QPointer<QDockWidget> controlDockWidget;
-    QPointer<QDockWidget> skyeControlDockWidget;        // Begin & End Code Skye (06.03.2012)
     QPointer<QDockWidget> controlParameterWidget;
     QPointer<QDockWidget> infoDockWidget;
     QPointer<QDockWidget> cameraDockWidget;
@@ -480,8 +479,6 @@ protected:
     QPointer<QDockWidget> mavlinkSenderWidget;
     QGCMAVLinkLogPlayer* logPlayer;
     QMap<int, QDockWidget*> hilDocks;
-
-    QPointer<QDockWidget> skyeBatteryInfoDockWidget;        // Begin & End Code MA (15.03.2012)
 
     // Popup widgets
     JoystickWidget* joystickWidget;
