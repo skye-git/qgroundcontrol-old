@@ -83,48 +83,6 @@ Mouse6dofInput::~Mouse6dofInput()
 
 void Mouse6dofInput::setActiveUAS(UASInterface* uas)
 {
-    // Only connect / disconnect is the UAS is of a controllable UAS class
-    UAS* tmp = 0;
-    if (this->uas)
-    {
-        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(tmp);
-        if(mav)
-        {
-            disconnect(this, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
-            disconnect(this, SIGNAL(mouseRotationActiveChanged(bool)), mav, SLOT(changeMouseRotationActive(bool)));
-            disconnect(this, SIGNAL(mouseTranslationActiveChanged(bool)), mav, SLOT(changeMouseTranslationActive(bool)));
-            disconnect(mav, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(updateInputMode(SkyeMAV::QGC_INPUT_MODE)));
-        }else{
-            tmp = dynamic_cast<UAS*>(this->uas);
-            if(tmp)
-            {
-                disconnect(this, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
-            }
-        }
-    }
-
-    this->uas = uas;
-
-    SkyeMAV* mav = dynamic_cast<SkyeMAV*>(tmp);
-    if(mav)
-    {
-        connect(this, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
-        connect(this, SIGNAL(mouseRotationActiveChanged(bool)), mav, SLOT(changeMouseRotationActive(bool)));
-        connect(this, SIGNAL(mouseTranslationActiveChanged(bool)), mav, SLOT(changeMouseTranslationActive(bool)));
-        connect(this, SIGNAL(resetInputMode(SkyeMAV::QGC_INPUT_MODE)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
-        connect(mav, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(updateInputMode(SkyeMAV::QGC_INPUT_MODE)));
-
-        emit mouseRotationActiveChanged(this->rotationActive);
-        emit mouseTranslationActiveChanged(this->translationActive);
-    }else{
-
-        tmp = dynamic_cast<UAS*>(this->uas);
-        if(tmp)
-        {
-            connect(this, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
-        }
-    }
-
     if (!isRunning())
     {
         start();
@@ -167,16 +125,7 @@ void Mouse6dofInput::run()
             bValue = saturate(bValue);
             cValue = saturate(cValue);
 
-            SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uas);
-            if (mav)
-            {
-                if (mav->getInputMode() == SkyeMAV::QGC_INPUT_MODE_MOUSE)
-                {
-                    emit mouse6dofChanged(xValue, yValue, zValue, aValue, bValue, cValue);
-                }
-            }else{
-                emit mouse6dofChanged(xValue, yValue, zValue, aValue, bValue, cValue);
-            }
+            emit mouse6dofChanged(xValue, yValue, zValue, aValue, bValue, cValue);
         }
 
         // Sleep - Update rate of 3d mouse is approx. 20 Hz (1000 ms / 20 Hz = 50 ms)

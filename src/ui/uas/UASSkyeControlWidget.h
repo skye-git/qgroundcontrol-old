@@ -80,6 +80,9 @@ public slots:
     void changeMouseTranslationEnabled(bool transEnabled);
     /** @brief Update 3dMouse button image */
     void changeMouseRotationEnabled(bool rotEnabled);
+    /** @brief Get 3dmouse control commands */
+    void getMouse6DOFControlCommands(double x, double y, double z, double a, double b, double c);
+
     /** @brief Alert user that battery is low */
     void alertBatteryLow(double voltage);
 
@@ -89,6 +92,7 @@ signals:
     void changedSensitivityTransFactor(float);
     void changedSensitivityRotFactor(float);
     void changedLiftFactor(float);
+    void changed6DOFControlCommands(double, double, double, double, double, double);
 
     protected slots:
 //        /** @brief Set the background color for the widget */

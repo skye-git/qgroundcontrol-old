@@ -160,7 +160,10 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
             disconnect(mav, SIGNAL(mouseButtonRotationChanged(bool)), this, SLOT(changeMouseRotationEnabled(bool)));
             disconnect(mav, SIGNAL(mouseButtonTranslationChanged(bool)), this, SLOT(changeMouseTranslationEnabled(bool)));
             disconnect(mav, SIGNAL(batteryLow(double)), this, SLOT(alertBatteryLow(double)));
-
+            disconnect(this, SIGNAL(changedSensitivityTransFactor(float)), mav, SLOT(setSensitivityFactorTrans(float)));
+            disconnect(this, SIGNAL(changedSensitivityRotFactor(float)), mav, SLOT(setSensitivityFactorRot(float)));
+            disconnect(this, SIGNAL(changedLiftFactor(float)), mav, SLOT(setLiftFactor(float)));
+            disconnect(this, SIGNAL(changedchanged6DOFControlCommands(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
         }
     }
 
@@ -179,8 +182,6 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(ui.controlButton, SIGNAL(clicked()), this, SLOT(cycleContextButton()));
         connect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
         connect(mav, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
-        connect(mav, SIGNAL(mouseButtonRotationChanged(bool)), this, SLOT(changeMouseRotationEnabled(bool)));
-        connect(mav, SIGNAL(mouseButtonTranslationChanged(bool)), this, SLOT(changeMouseTranslationEnabled(bool)));
         connect(mav, SIGNAL(batteryLow(double)), this, SLOT(alertBatteryLow(double)));
 
         connect(this, SIGNAL(changedInput(SkyeMAV::QGC_INPUT_MODE)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
@@ -188,6 +189,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(this, SIGNAL(changedSensitivityTransFactor(float)), mav, SLOT(setSensitivityFactorTrans(float)));
         connect(this, SIGNAL(changedSensitivityRotFactor(float)), mav, SLOT(setSensitivityFactorRot(float)));
         connect(this, SIGNAL(changedLiftFactor(float)), mav, SLOT(setLiftFactor(float)));
+        connect(this, SIGNAL(changedchanged6DOFControlCommands(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
         emit changedSensitivityTransFactor(sensitivityFactorTrans);
         emit changedSensitivityRotFactor(sensitivityFactorRot);
         if (liftFactorEnabled) {
@@ -554,6 +556,26 @@ void UASSkyeControlWidget::changeMouseRotationEnabled(bool rotEnabled)
         mouseRotationEnabled = rotEnabled;
     }
     updateStyleSheet();
+}
+
+void UASSkyeControlWidget::getMouse6DOFControlCommands(double x, double y, double z, double a, double b, double c)
+{
+    if (inputMode == SkyeMAV::QGC_INPUT_MODE_MOUSE)
+    {
+        if (!mouseTranslationEnabled)
+        {
+            x = 0.0;
+            y = 0.0;
+            z = 0.0;
+        }
+        if (!mouseRotationEnabled)
+        {
+            a = 0.0;
+            b = 0.0;
+            c = 0.0;
+        }
+        emit changed6DOFControlCommands(x, y, z, a, b, c);
+    }
 }
 
 void UASSkyeControlWidget::uncheckAllModeButtons()

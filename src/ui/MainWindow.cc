@@ -292,6 +292,11 @@ void MainWindow::init()
 
     mouse = new Mouse6dofInput(this);
     connect(this, SIGNAL(x11EventOccured(XEvent*)), mouse, SLOT(handleX11Event(XEvent*)));
+    connect(skyeControl, SIGNAL(changedInput(SkyeMAV::QGC_INPUT_MODE)), mouse, SLOT(updateInputMode(SkyeMAV::QGC_INPUT_MODE)));
+    connect(mouse, SIGNAL(mouseRotationActiveChanged(bool)), skyeControl, SLOT(changeMouseRotationEnabled(bool)));
+    connect(mouse, SIGNAL(mouseTranslationActiveChanged(bool)), skyeControl, SLOT(changeMouseTranslationEnabled(bool)));
+    connect(mouse, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), skyeControl, SLOT(getMouse6DOFControlCommands(double,double,double,double,double,double)));
+
 #endif //MOUSE_ENABLED_LINUX
 
     // Connect link
@@ -655,9 +660,11 @@ void MainWindow::buildCommonWidgets()
 
     createDockWidget(simView,new PrimaryFlightDisplay(320,240,this),tr("Primary Flight Display"),"PRIMARY_FLIGHT_DISPLAY_DOCKWIDGET",VIEW_SIMULATION,Qt::RightDockWidgetArea,this->width()/1.5);
 
+    qDebug() << "create skye control";
     // Begin Code Skye
 //    createDockWidget(pilotView,new PrimaryFlightDisplay(320,240,this),tr("Primary Flight Display"),"PRIMARY_FLIGHT_DISPLAY_DOCKWIDGET",VIEW_FLIGHT,Qt::LeftDockWidgetArea,this->width()/1.8);
-    createDockWidget(pilotView,new UASSkyeControlWidget(this),tr("Skye Control"),"UAS_SKYE_CONTROL_DOCKWIDGET",VIEW_FLIGHT,Qt::LeftDockWidgetArea);
+    skyeControl = new UASSkyeControlWidget;
+    createDockWidget(pilotView,skyeControl,tr("Skye Control"),"UAS_SKYE_CONTROL_DOCKWIDGET",VIEW_FLIGHT,Qt::LeftDockWidgetArea);
     createDockWidget(pilotView,new UASSkyeBatteryInfoWidget(this),tr("Battery Info"),"UAS_SKYE_BATTERY_DOCKWIDGET",VIEW_FLIGHT,Qt::BottomDockWidgetArea);
     // End Code Skye
 
@@ -1738,21 +1745,21 @@ void MainWindow::setActiveUAS(UASInterface* uas)
         win->restoreState(settings.value(getWindowStateKey()).toByteArray(), QGC::applicationVersion());
     }
 
-// Begin Code Skye (06.03.2012)
-    // Connect input to (skye) Mavlink messages
-    SkyeMAV* tmp = 0;
-    tmp = dynamic_cast<SkyeMAV*>(UASManager::instance()->getActiveUAS());
-    if (tmp) {
-        disconnect(tmp, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
-        //disconnect(this, SIGNAL(valueTouchInputChanged(double, double, double, double, double, double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));// Beginn und Ende Code AL (26.03.12)
-    }
+//// Begin Code Skye (06.03.2012)
+//    // Connect input to (skye) Mavlink messages
+//    SkyeMAV* tmp = 0;
+//    tmp = dynamic_cast<SkyeMAV*>(UASManager::instance()->getActiveUAS());
+//    if (tmp) {
+//        disconnect(tmp, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
+//        //disconnect(this, SIGNAL(valueTouchInputChanged(double, double, double, double, double, double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));// Beginn und Ende Code AL (26.03.12)
+//    }
 
-    tmp = dynamic_cast<SkyeMAV*>(uas);
-    if(tmp) {
-        connect(tmp, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
-        //connect(this, SIGNAL(valueTouchInputChanged(double,double,double,double,double,double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
-    }
-// End Code Skye
+//    tmp = dynamic_cast<SkyeMAV*>(uas);
+//    if(tmp) {
+//        connect(tmp, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
+//        //connect(this, SIGNAL(valueTouchInputChanged(double,double,double,double,double,double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
+//    }
+//// End Code Skye
 
 }
 
@@ -2249,36 +2256,26 @@ bool MainWindow::x11Event(XEvent *event)
 }
 #endif // MOUSE_ENABLED_LINUX
 
+// Remove asap //Skye
 void MainWindow::setInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
 {
+    this->inputMode = inputMode;
+
     switch ((int)inputMode)
     {
     case (int)SkyeMAV::QGC_INPUT_MODE_MOUSE:
-            this->inputMode = SkyeMAV::QGC_INPUT_MODE_MOUSE;
-            /*
-            #if defined (MOUSE_ENABLED_LINUX) || defined (MOUSE_ENABLED_WIN)
-            if ( !mouseInitialized )
-            {
-                start3dMouse();
-            }
-            #endif // MOUSE_ENABLED or MOUSE_ENABLED_WIN
-            */
-            emit emitTouchInputVisibility(false);
+//            emit emitTouchInputVisibility(false);
             break;
     case (int)SkyeMAV::QGC_INPUT_MODE_TOUCH:
-            this->inputMode = SkyeMAV::QGC_INPUT_MODE_TOUCH;
-            emit emitTouchInputVisibility(true);
+//            emit emitTouchInputVisibility(true);
             break;
     case (int)SkyeMAV::QGC_INPUT_MODE_KEYBOARD:
-            this->inputMode = SkyeMAV::QGC_INPUT_MODE_KEYBOARD;
-            emit emitTouchInputVisibility(false);
+//            emit emitTouchInputVisibility(false);
             break;
     default:
-            this->inputMode = SkyeMAV::QGC_INPUT_MODE_NONE;
-            emit emitTouchInputVisibility(false);
+//            emit emitTouchInputVisibility(false);
             qDebug() << "No input device set!";
             break;
     }
-    statusBar()->showMessage("Set new Input mode", 20000);
 // qDebug() << "New Input: " << inputMode;
 }

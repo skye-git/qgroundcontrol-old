@@ -497,6 +497,8 @@ protected:
     Mouse6dofInput* mouse;                  ///< Implementation for 3dMouse input
 #endif // MOUSE_ENABLED_LINUX
 
+    UASSkyeControlWidget* skyeControl;
+
     /** User interface actions **/
     QAction* connectUASAct;
     QAction* disconnectUASAct;
