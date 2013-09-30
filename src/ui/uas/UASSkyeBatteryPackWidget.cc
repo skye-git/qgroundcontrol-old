@@ -2,57 +2,37 @@
 #include "UASSkyeBatteryPackWidget.h"
 #include "ui_UASSkyeBatteryPackWidget.h"
 
+#define CELLS 6
+#define CELL_VOLTAGE_CRITICAL 3.666666666666
+#define CELL_VOLTAGE_EMERGENCY 3.3
+
 
 UASSkyeBatteryPackWidget::UASSkyeBatteryPackWidget(QWidget *parent, MAV_SKYE_BATTERY_PACK_ID pack) :
     QWidget(parent),
     ui(new Ui::UASSkyeBatteryPackWidget),
-    batteryCells(-1),
+    batteries(0),
     measuringCurrent(true),
     estimatingRemaining(true)
 {
     ui->setupUi(this);
 
-    this->setStyleSheet("QProgressBar {height: 35;}");
-    this->setStyleSheet("QProgressBar::chunk {background-color: green;}");
+//    this->setStyleSheet("QProgressBar {height: 35;}");
+//    this->setStyleSheet("QProgressBar::chunk {background-color: green;}");
 
-//    toolBarBatteryVoltageLabel->setStyleSheet(QString("QLabel { margin: 0px 0px 0px 4px; font: 14px; color: %1; }").arg(QColor(Qt::green).name()));
-    ui->lcdNumberVoltage1->setToolTip("Voltage 1");
-    ui->lcdNumberVoltage2->setToolTip("Voltage 2");
-    ui->lcdNumberVoltage3->setToolTip("Voltage 3");
-    ui->lcdNumberVoltage4->setToolTip("Voltage 4");
-    ui->lcdNumberVoltage5->setToolTip("Voltage 5");
-    ui->lcdNumberVoltage6->setToolTip("Voltage 6");
-    ui->lcdNumberCurrent->setToolTip("Total current");
-    ui->progressBarRemaining->setToolTip("Estimated remaining battery");
+    QLabel* voltageLabel = new QLabel("Voltages [V]:");
+    ui->horizontalLayoutLeft->addWidget(voltageLabel);
 
-    ui->lcdNumberCurrent->setStyleSheet("* { background-color: gray; color: darkblue; }");
+    QLabel* currentLabel = new QLabel("Current [A]:");
+    ui->horizontalLayoutRight->addWidget(currentLabel);
 
-    QString labelText;
-    switch (pack)
-    {
-        case MAV_SKYE_BATTERY_PACK_ID_1:
-        {
-            labelText = "Skye Battery Info";
-            this->setToolTip("Battery info for of Skye");
-        }
-        break;
-        case MAV_SKYE_BATTERY_PACK_ID_2:
-        {
-            labelText = "Battery pack 2";
-            this->setToolTip("Battery info for accu pack 2");
-        }
-        break;
-        case MAV_SKYE_BATTERY_PACK_ID_3:
-        {
-            labelText = "Battery pack 3";
-            this->setToolTip("Battery info for accu pack 3");
-        }
-        break;
-        default:
-            labelText = "Battery Id higher than 3";
-        break;
-    }
-    ui->labelBatteryPack->setText(labelText);
+    currentMap[0] = new QLCDNumber;
+    ui->horizontalLayoutRight->addWidget(currentMap[0]);
+    currentMap[0]->setToolTip("Total current [A]");
+    currentMap[0]->setPalette(Qt::cyan);
+
+    // initial call of battery update
+    double volt[4] = {0.0, 0.0, 0.0, 0.0};
+    changeBatteryStatus(volt, sizeof(volt)/sizeof(double), 0.0, 0.0);
 }
 
 UASSkyeBatteryPackWidget::~UASSkyeBatteryPackWidget()
@@ -60,64 +40,45 @@ UASSkyeBatteryPackWidget::~UASSkyeBatteryPackWidget()
     delete ui;
 }
 
-void UASSkyeBatteryPackWidget::changeBatteryStatus(double voltage1, double voltage2, double voltage3, double voltage4, double voltage5, double voltage6, double current, int remaining)
+void UASSkyeBatteryPackWidget::changeBatteryStatus(const double *voltages, int size, double current, int remaining)
 {
-    ui->lcdNumberVoltage1->display(voltage1);
-    ui->lcdNumberVoltage2->display(voltage2);
-    ui->lcdNumberVoltage3->display(voltage3);
-    ui->lcdNumberVoltage4->display(voltage4);
-    ui->lcdNumberVoltage5->display(voltage5);
-    ui->lcdNumberVoltage6->display(voltage6);
-    ui->lcdNumberCurrent->display(current);
-    ui->progressBarRemaining->setValue(remaining);
+    // Update number of cells/batteries
+    batteries = size;
 
-    int priorVoltage;
-    priorVoltage = batteryCells;
-        batteryCells = 1;
-        batteryCells = 2;
-        batteryCells = 3;
-        // Display at least 4 "cells" (even if they are zero)
-        batteryCells = 4;
-    if (voltage5 > 0)
-        batteryCells = 5;
-    if (voltage6 > 0)
-        batteryCells = 6;
-    if (priorVoltage != batteryCells)
-        updateVoltageVisibility();
-
-//    updateCurrentVisibility(current); // Always show current
-    updateRemainingVisibility(remaining);
-
-
-    // TODO: change styleSheet if value is low
-}
-
-void UASSkyeBatteryPackWidget::updateVoltageVisibility()
-{
-    ui->lcdNumberVoltage1->hide();
-    ui->lcdNumberVoltage2->hide();
-    ui->lcdNumberVoltage3->hide();
-    ui->lcdNumberVoltage4->hide();
-    ui->lcdNumberVoltage5->hide();
-    ui->lcdNumberVoltage6->hide();
-
-    switch (batteryCells)
+    for (int i=0; i<batteries; i++)
     {
-    case 6:
-        ui->lcdNumberVoltage6->show();
-    case 5:
-        ui->lcdNumberVoltage5->show();
-    case 4:
-        ui->lcdNumberVoltage4->show();
-    case 3:
-        ui->lcdNumberVoltage3->show();
-    case 2:
-        ui->lcdNumberVoltage2->show();
-    case 1:
-        ui->lcdNumberVoltage1->show();
-        break;
-    default:
-        break;
+        // Create number displays
+        if (i >= voltageMap.size())
+        {
+            voltageMap[i] = new QLCDNumber;
+            ui->horizontalLayoutLeft->addWidget(voltageMap[i]);
+            voltageMap[i]->setToolTip(QString("Voltage of AU %1 [V]").arg(i+1));
+        }
+
+        // Update display value
+        if (i < size)
+        {
+            voltageMap[i]->display(voltages[i]);
+
+            if (voltages[i] > CELLS*CELL_VOLTAGE_CRITICAL)
+            {
+                // high voltage
+                voltageMap[i]->setPalette(QColor(50, 205, 50));
+            }
+            else if (voltages[i] > CELLS*CELL_VOLTAGE_EMERGENCY)
+            {
+                // medium voltage
+                voltageMap[i]->setPalette(QColor(255, 165, 0));
+            }
+            else
+            {
+                // low voltage
+                voltageMap[i]->setPalette(QColor(255, 0, 0));
+                // TODO: raise emergency
+            }
+        } else {
+            voltageMap[i]->display(0.0);
+        }
     }
 }
 
@@ -125,12 +86,12 @@ void UASSkyeBatteryPackWidget::updateCurrentVisibility(double current)
 {
     if (current < 0.0 && measuringCurrent)
     {
-        ui->lcdNumberCurrent->hide();
+        currentMap[0]->hide();
         measuringCurrent = false;
     }
     else if (current >= 0.0 && !measuringCurrent)
     {
-        ui->lcdNumberCurrent->show();
+        currentMap[0]->show();
         measuringCurrent = true;
     }
 }
@@ -139,12 +100,12 @@ void UASSkyeBatteryPackWidget::updateRemainingVisibility(int remaining)
 {
     if (remaining == -1 && estimatingRemaining)
     {
-        ui->progressBarRemaining->hide();
+//        ui->progressBarRemaining->hide();
         estimatingRemaining = false;
     }
     else if (remaining >= 0 && !estimatingRemaining)
     {
-        ui->progressBarRemaining->show();
+//        ui->progressBarRemaining->show();
         estimatingRemaining = true;
     }
 }

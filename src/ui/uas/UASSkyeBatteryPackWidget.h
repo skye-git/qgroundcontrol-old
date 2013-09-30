@@ -4,6 +4,8 @@
 #include <QWidget>
 #include "QGCMAVLink.h"
 #include <QtGui>
+#include <QMap>
+#include <QLCDNumber>
 
 namespace Ui {
     class UASSkyeBatteryPackWidget;
@@ -16,17 +18,21 @@ class UASSkyeBatteryPackWidget : public QWidget
 public:
     explicit UASSkyeBatteryPackWidget(QWidget *parent = 0, MAV_SKYE_BATTERY_PACK_ID pack = MAV_SKYE_BATTERY_PACK_ID_NONE);
     ~UASSkyeBatteryPackWidget();
-    void changeBatteryStatus(double voltage1, double voltage2, double voltage3, double voltage4, double voltage5, double voltage6, double current, int remaining);
-    void updateVoltageVisibility();
+    void changeBatteryStatus(const double *voltages, int size, double current, int remaining);
     void updateCurrentVisibility(double current);
     void updateRemainingVisibility(int remaining);
 
 private:
     Ui::UASSkyeBatteryPackWidget *ui;
 
-    int batteryCells;           ///< Number of cells in LiPo Accu (4 = 14.8V, 6 = 22.2V)
+    int batteries;              ///< Number batteries
     bool measuringCurrent;      ///< true if autopilot measures current
     bool estimatingRemaining;   ///< true if autopilot estimates remaining battery
+
+    QMap<int, QLCDNumber*> voltageMap;      ///< Container for voltage displays
+    QMap<int, QLCDNumber*> currentMap;      ///< Containter for current display(s)
+
+
 
 };
 
