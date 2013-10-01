@@ -29,15 +29,6 @@ This file is part of the PIXHAWK project
  *
  */
 
-#define QGC_SKYE_DEFAULT_SENS_DIRECT_TRANS 0.5
-#define QGC_SKYE_DEFAULT_SENS_DIRECT_ROT 0.5
-#define QGC_SKYE_DEFAULT_SENS_ASSIST_TRANS 0.5
-#define QGC_SKYE_DEFAULT_SENS_ASSIST_ROT 0.5
-#define QGC_SKYE_MAX_SENS_DIRECT_TRANS 1.0
-#define QGC_SKYE_MAX_SENS_DIRECT_ROT 1.0
-#define QGC_SKYE_MAX_SENS_ASSIST_TRANS 1.0
-#define QGC_SKYE_MAX_SENS_ASSIST_ROT 1.0
-
 #include <QString>
 #include <QTimer>
 #include <QLabel>
@@ -57,16 +48,10 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     inputMode(SkyeMAV::QGC_INPUT_MODE_NONE),
     mouseTranslationEnabled(true),
     mouseRotationEnabled(true),
-    sensitivityFactorTrans(QGC_SKYE_DEFAULT_SENS_DIRECT_TRANS),
-    minSensitivityFactorTrans(0.0f),
-    maxSensitivityFactorTrans(QGC_SKYE_MAX_SENS_DIRECT_TRANS),
-    sensitivityFactorRot(QGC_SKYE_DEFAULT_SENS_DIRECT_ROT),
-    minSensitivityFactorRot(0.0f),
-    maxSensitivityFactorRot(QGC_SKYE_MAX_SENS_DIRECT_ROT),
-    liftFactorEnabled(true),
+    sensitivityFactorTrans(0.5),
+    sensitivityFactorRot(0.5),
     liftFactor(0.0f),
-    minLiftFactor(0.0f),
-    maxLiftFactor(0.5f)
+    enabledAdvancedSettings(false)
 {
     ui.setupUi(this);
 
@@ -101,38 +86,19 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     connect(ui.touchButton, SIGNAL(clicked(bool)), this, SLOT(setInputTouch(bool)));
     connect(ui.keyboardButton, SIGNAL(clicked(bool)), this, SLOT(setInputKeyboard(bool)));
 
-    // Multiplication factor for translational commands
-    ui.sensitivityTransSlider->setValue(ui.sensitivityTransSlider->maximum()*sensitivityFactorTrans/maxSensitivityFactorTrans);
-    connect(ui.sensitivityTransSlider, SIGNAL(valueChanged(int)), this, SLOT(setSensitivityFactorTrans(int)));
-    setSensitivityFactorTrans(ui.sensitivityTransSlider->value());
-    ui.minSensitivityTransLabel->setNum((double)minSensitivityFactorTrans);
-    ui.maxSensitivityTransLabel->setNum((double)maxSensitivityFactorTrans);
+    connect(ui.advancedButton, SIGNAL(clicked()), this, SLOT(toggleAdvancedSettings()));
 
-    // Multiplication factor for rotational commands
-    ui.sensitivityRotSlider->setValue(ui.sensitivityRotSlider->maximum()*sensitivityFactorRot/maxSensitivityFactorRot);
-    connect(ui.sensitivityRotSlider, SIGNAL(valueChanged(int)), this, SLOT(setSensitivityFactorRot(int)));
-    setSensitivityFactorRot(ui.sensitivityRotSlider->value());
-    ui.minSensitivityRotLabel->setNum((double)minSensitivityFactorRot);
-    ui.maxSensitivityRotLabel->setNum((double)maxSensitivityFactorRot);
+    advancedWidget = new UASSkyeControlAdvancedWidget(this);
+    advancedWidget->hide();
+    ui.advancedLayout->addWidget(advancedWidget);
+
+    // Multiplication factor for translational commands
+    advancedWidget->setSliderValues(sensitivityFactorTrans, sensitivityFactorRot, liftFactor);
+    connect(advancedWidget, SIGNAL(transSliderValueChanged(double)), this, SLOT(setSensitivityFactorTrans(double)));
+    connect(advancedWidget, SIGNAL(rotSliderValueChanged(double)), this, SLOT(setSensitivityFactorRot(double)));
+    connect(advancedWidget, SIGNAL(liftSliderValueChanged(double)), this, SLOT(setLiftFactor(double)));
 
     //ui.gridLayout->setAlignment(Qt::AlignTop);
-
-    ui.bluefoxLeftButton->hide();
-    ui.bluefoxRightButton->hide();
-    ui.prosilicaButton->hide();
-
-    // additive lift factor fields
-    ui.liftCheckBox->setChecked(liftFactorEnabled);
-    connect(ui.liftCheckBox, SIGNAL(toggled(bool)), this, SLOT(enableLiftFactor(bool)));
-
-    ui.liftSlider->setRange(0, 999);
-    ui.liftSlider->setValue(ui.liftSlider->maximum()*liftFactor/maxLiftFactor);
-    connect(ui.liftSlider, SIGNAL(valueChanged(int)), this, SLOT(setLiftFactor(int)));
-
-    ui.minSensitivityRotLabel->setNum((double)minLiftFactor);
-    ui.maxLiftSpinBox->setValue((double)maxLiftFactor);
-    connect(ui.maxLiftSpinBox, SIGNAL(valueChanged(double)), this, SLOT(setMaxLiftFactor(double)));
-
 
     updateStyleSheet();
 
@@ -190,11 +156,9 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(this, SIGNAL(changedSensitivityRotFactor(float)), mav, SLOT(setSensitivityFactorRot(float)));
         connect(this, SIGNAL(changedLiftFactor(float)), mav, SLOT(setLiftFactor(float)));
         connect(this, SIGNAL(changedchanged6DOFControlCommands(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
-        emit changedSensitivityTransFactor(sensitivityFactorTrans);
-        emit changedSensitivityRotFactor(sensitivityFactorRot);
-        if (liftFactorEnabled) {
-            emit changedLiftFactor(liftFactor);
-        }
+        emit changedSensitivityTransFactor((float)sensitivityFactorTrans);
+        emit changedSensitivityRotFactor((float)sensitivityFactorRot);
+        emit changedLiftFactor((float)liftFactor);
     }
 
 }
@@ -209,38 +173,16 @@ void UASSkyeControlWidget::updateStatemachine()
     {
         ui.controlButton->setText(tr("DISARM SYSTEM"));
         ui.controlButton->setStyleSheet("* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DD0044, stop: 1 #AA0022); border-color: yellow; color: yellow }");
-        setInputButtonActivity(false);
+        //setInputButtonActivity(false);
     }
     else
     {
         ui.controlButton->setText(tr("ARM SYSTEM"));
         ui.controlButton->setStyleSheet("* { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00DD44, stop: 1 #11AA22); }");
-        setInputButtonActivity(true);
+        //setInputButtonActivity(true);
     }
 }
 
-///**
-// * Set the background color based on the MAV color. If the MAV is selected as the
-// * currently actively controlled system, the frame color is highlighted
-// */
-//void UASSkyeControlWidget::setBackgroundColor(QColor color)
-//{
-//#ifdef QGC_USE_SKYE_INTERFACE
-//    // UAS color
-//    QColor uasColor = color;
-//    QString colorstyle;
-//    QString borderColor = "#4A4A4F";
-//    borderColor = "#FA4A4F";
-//    uasColor = uasColor.darker(900);
-//    colorstyle = colorstyle.sprintf("QLabel { border-radius: 3px; padding: 0px; margin: 0px; background-color: #%02X%02X%02X; border: 0px solid %s; }",
-//                                    uasColor.red(), uasColor.green(), uasColor.blue(), borderColor.toStdString().c_str());
-//    setStyleSheet(colorstyle);
-//    QPalette palette = this->palette();
-//    palette.setBrush(QPalette::Window, QBrush(uasColor));
-//    setPalette(palette);
-//    setAutoFillBackground(true);
-//#endif // QGC_USE_SKYE_INTERFACE
-//}
 
 void UASSkyeControlWidget::updateMode(int uas,int baseMode)
 {
@@ -592,78 +534,42 @@ void UASSkyeControlWidget::uncheckAllModeButtons()
 ////    modeButtonGroup->setExclusive(true);
 }
 
-void UASSkyeControlWidget::setSensitivityFactorTrans(int val)
+void UASSkyeControlWidget::setSensitivityFactorTrans(double val)
 {
-    sensitivityFactorTrans = (float)val*maxSensitivityFactorTrans/ui.sensitivityTransSlider->maximum();
-    QString str = QString("Translation-Sensitivity: %1").arg(sensitivityFactorTrans);
-    ui.sensitivityTransLabel->setText(str);
-    int red = 16*16;
-    int green = 16;
-    int blue = 1;
-    int colorStart = (int)(( 1+10*ui.sensitivityTransSlider->value()/ui.sensitivityTransSlider->maximum() ) * red + (  10*(ui.sensitivityTransSlider->maximum()-ui.sensitivityTransSlider->value())/ui.sensitivityTransSlider->maximum()) * green + 6 * blue);
-    int colorEnd =   (int)(( 1+14*ui.sensitivityTransSlider->value()/ui.sensitivityTransSlider->maximum() ) * red + (  14*(ui.sensitivityTransSlider->maximum()-ui.sensitivityTransSlider->value())/ui.sensitivityTransSlider->maximum()) * green + 6 * blue);
-//    qDebug() << "COLORS" << colorStart << colorEnd;
-    QString style = QString("QSlider::sub-page:horizontal {border: 1px solid #bbb; border-radius: 4px; background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #%1, stop: 1 #%2); }").arg(colorStart, 1, 16).arg(colorEnd, 1, 16);
-    ui.sensitivityTransSlider->setStyleSheet(style);
-    emit changedSensitivityTransFactor(sensitivityFactorTrans);
+    sensitivityFactorTrans = val;
+
+    emit changedSensitivityTransFactor((float)sensitivityFactorTrans);
 }
 
-void UASSkyeControlWidget::setSensitivityFactorRot(int val)
+void UASSkyeControlWidget::setSensitivityFactorRot(double val)
 {
-    sensitivityFactorRot = (float)val*maxSensitivityFactorRot/ui.sensitivityRotSlider->maximum();
-    QString str = QString("Rotation-Sensitivity: %1").arg(sensitivityFactorRot);
-    ui.sensitivityRotLabel->setText(str);
-    int red = 16*16;
-    int green = 16;
-    int blue = 1;
-    int colorStart = (int)(( 1+10*ui.sensitivityRotSlider->value()/ui.sensitivityRotSlider->maximum() ) * red + (  10*(ui.sensitivityRotSlider->maximum()-ui.sensitivityRotSlider->value())/ui.sensitivityRotSlider->maximum()) * green + 6 * blue);
-    int colorEnd =   (int)(( 1+14*ui.sensitivityRotSlider->value()/ui.sensitivityRotSlider->maximum() ) * red + (  14*(ui.sensitivityRotSlider->maximum()-ui.sensitivityRotSlider->value())/ui.sensitivityRotSlider->maximum()) * green + 6 * blue);
-//    qDebug() << "COLORS" << colorStart << colorEnd;
-    QString style = QString("QSlider::sub-page:horizontal {border: 1px solid #bbb; border-radius: 4px; background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #%1, stop: 1 #%2); }").arg(colorStart, 1, 16).arg(colorEnd, 1, 16);
-//    style.append("QSlider::groove:horizontal {border: 1px solid #bbb; border-radius: 4px;  background: qlineargradient(x1: 0, y1: %1, x2: 1, y2: %2, stop: 0 #6e6, stop: 1 #e66); }").arg((float)val/maxSensitivityFactorRot-0.1).arg((float)val/maxSensitivityFactorRot+0.1);
-    ui.sensitivityRotSlider->setStyleSheet(style);
-    emit changedSensitivityRotFactor(sensitivityFactorRot);
+    sensitivityFactorRot = val;
+
+    emit changedSensitivityRotFactor((float)sensitivityFactorRot);
 }
 
-void UASSkyeControlWidget::setLiftFactor(int val)
+void UASSkyeControlWidget::setLiftFactor(double val)
 {
-    liftFactor = (float)val*maxLiftFactor/ui.liftSlider->maximum();
+    liftFactor = val;
 
-    int red = 16*16;
-    int green = 16;
-    int blue = 1;
-    int colorStart = (int)(( 1+10*ui.liftSlider->value()/ui.liftSlider->maximum() ) * red + (  10*(ui.sensitivityRotSlider->maximum()-ui.sensitivityRotSlider->value())/ui.liftSlider->maximum()) * green + 6 * blue);
-    int colorEnd =   (int)(( 1+14*ui.liftSlider->value()/ui.liftSlider->maximum() ) * red + (  14*(ui.sensitivityRotSlider->maximum()-ui.sensitivityRotSlider->value())/ui.liftSlider->maximum()) * green + 6 * blue);
-    QString style = QString("QSlider::sub-page:horizontal {border: 1px solid #bbb; border-radius: 4px; background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #%1, stop: 1 #%2); }").arg(colorStart, 1, 16).arg(colorEnd, 1, 16);
-    ui.liftSlider->setStyleSheet(style);
+    emit changedLiftFactor((float)liftFactor);
 
-    if (liftFactorEnabled) {
-        emit changedLiftFactor(liftFactor);
-        QString str = QString("Lift Factor: %1").arg(liftFactor);
-        ui.liftLabel->setText(str);
+}
+
+void UASSkyeControlWidget::toggleAdvancedSettings()
+{
+    if (enabledAdvancedSettings) {
+        advancedWidget->hide();
+        ui.advancedButton->setText("Show Advanced");
     } else {
-        emit changedLiftFactor(0.0f);
-        QString str = QString("Lift Factor (DISABLED): %1").arg(liftFactor);
-        ui.liftLabel->setText(str);
+        advancedWidget->show();
+        ui.advancedButton->setText("Hide Advanced");
     }
+
+    enabledAdvancedSettings = !enabledAdvancedSettings;
 }
 
-void UASSkyeControlWidget::setLiftFactor(float val)
-{
-    setLiftFactor((int)((float)ui.liftSlider->maximum()/maxLiftFactor*val));
-}
 
-void UASSkyeControlWidget::setMaxLiftFactor(double max)
-{
-    maxLiftFactor = (float)max;
-    ui.liftSlider->setValue(liftFactor/maxLiftFactor*ui.liftSlider->maximum());
-}
-
-void UASSkyeControlWidget::enableLiftFactor(bool enabled)
-{
-    liftFactorEnabled = enabled;
-    setLiftFactor(liftFactor);
-}
 
 void UASSkyeControlWidget::alertBatteryLow(double voltage)
 {

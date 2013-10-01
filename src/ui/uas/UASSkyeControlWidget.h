@@ -47,6 +47,7 @@ This file is part of the QGROUNDCONTROL project
 #include <UASInterface.h>
 //#include "Ui_UASSkyeControl.h"
 #include "SkyeMAV.h"
+#include "UASSkyeControlAdvancedWidget.h"
 
 /**
  * @brief Widget controlling one (skye) MAV
@@ -115,18 +116,14 @@ signals:
         void setInputTouch(bool checked);
         /** @brief Set Keyboard as active inpute device */
         void setInputKeyboard(bool checked);
-        /** @brief Set new (float)sensitivityFactorTrans by int */
-        void setSensitivityFactorTrans(int val);
-        /** @brief Set new (float)sensitivityFactorRot by int */
-        void setSensitivityFactorRot(int val);
-        /** @brief Set new (float)liftFactor by int */
-        void setLiftFactor(int val);
-        /** @brief Set new (float)liftFactor by float */
-        void setLiftFactor(float val);
-        /** @brief Set new (float) maximum liftFactor */
-        void setMaxLiftFactor(double max);
-        /** @brief En-/disable liftFactor. Sends 0 if disabled */
-        void enableLiftFactor(bool enabled);
+        /** @brief Set new (double)sensitivityFactorTrans by double */
+        void setSensitivityFactorTrans(double val);
+        /** @brief Set new (double)sensitivityFactorRot by double */
+        void setSensitivityFactorRot(double val);
+        /** @brief Set new (double)liftFactor by double */
+        void setLiftFactor(double val);
+        /** @brief Show/Hide advanced settings */
+        void toggleAdvancedSettings();
 
 
     protected:
@@ -137,18 +134,9 @@ signals:
         bool mouseTranslationEnabled;       ///< True when translational motions enabled
         bool mouseRotationEnabled;          ///< True when rotational motions enabled
 
-        float sensitivityFactorTrans;       ///< Gain rotational manual inputs.
-        float minSensitivityFactorTrans;    ///< Minimum value of velocitySlider in float scale.
-        float maxSensitivityFactorTrans;    ///< Maximum value of velocitySlider in float scale.
-
-        float sensitivityFactorRot;         ///< Gain rotational manual inputs.
-        float minSensitivityFactorRot;      ///< Minimum value of velocitySlider in float scale.
-        float maxSensitivityFactorRot;      ///< Maximum value of velocitySlider in float scale.
-
-        bool liftFactorEnabled;             ///< True when additive lift value is added
-        float liftFactor;                   ///< Additive z value (for constant lift gain)
-        float minLiftFactor;                ///< Minimum value of liftSlider
-        float maxLiftFactor;                ///< Maximum value of liftSlider
+        double sensitivityFactorTrans;       ///< Gain rotational manual inputs.
+        double sensitivityFactorRot;         ///< Gain rotational manual inputs.
+        double liftFactor;                   ///< Additive z value (for constant lift gain)
 
         QTime lastAlertTime;                ///< Time when last low battery alert was prompted
         bool alertedBatteryLow;             ///< True if system had low battery once
@@ -165,6 +153,8 @@ signals:
         Ui::uasSkyeControl ui;
         QButtonGroup *modeButtonGroup;
         QButtonGroup *inputButtonGroup;
+        UASSkyeControlAdvancedWidget *advancedWidget;
+        bool enabledAdvancedSettings;
 
 
     };
