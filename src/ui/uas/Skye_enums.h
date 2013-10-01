@@ -35,5 +35,21 @@ enum MAV_SKYE_BATTERY_PACK_ID
 };
 #endif
 
+/** @brief Possible led color modes for LED_CONTROL message */
+#ifndef HAVE_ENUM_LED_CONTROL_MODE
+#define HAVE_ENUM_LED_CONTROL_MODE
+enum LED_CONTROL_MODE
+{
+    LED_CONTROL_MODE_CONSTANT=0, /* Constant light using color values | */
+    LED_CONTROL_MODE_BLINK=1, /* Switsch led on/off with given color and frequency | */
+    LED_CONTROL_MODE_PULS=2, /* Dim led like a pulser with given color and frequency | */
+    LED_CONTROL_MODE_RAINBOW=3, /* Iterate color wheel with given frequency | */
+    LED_CONTROL_MODE_DISCO=4, /* Disco mode (random puls, blink, color switch) considering given frequency | */
+    LED_CONTROL_MODE_POWER=5, /* Color proportional to given thrust (sum of all motors) | */
+    LED_CONTROL_MODE_SPEED=6, /* Color proportional to measured angular velocity | */
+    LED_CONTROL_MODE_ENUM_END=7, /*  | */
+};
+#endif
+
 #endif // _skye_enums_H
 

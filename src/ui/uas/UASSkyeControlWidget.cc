@@ -90,7 +90,10 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
 
     advancedWidget = new UASSkyeControlAdvancedWidget(this);
     advancedWidget->hide();
+    ledWidget = new LedControlWidget(this);
+    ledWidget->hide();
     ui.advancedLayout->addWidget(advancedWidget);
+    ui.advancedLayout->addWidget(ledWidget);
 
     // Multiplication factor for translational commands
     advancedWidget->setSliderValues(sensitivityFactorTrans, sensitivityFactorRot, liftFactor);
@@ -560,9 +563,11 @@ void UASSkyeControlWidget::toggleAdvancedSettings()
 {
     if (enabledAdvancedSettings) {
         advancedWidget->hide();
+        ledWidget->hide();
         ui.advancedButton->setText("Show Advanced");
     } else {
         advancedWidget->show();
+        ledWidget->show();
         ui.advancedButton->setText("Hide Advanced");
     }
 

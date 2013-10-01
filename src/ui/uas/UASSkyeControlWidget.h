@@ -48,6 +48,7 @@ This file is part of the QGROUNDCONTROL project
 //#include "Ui_UASSkyeControl.h"
 #include "SkyeMAV.h"
 #include "UASSkyeControlAdvancedWidget.h"
+#include "ledControl/LedControlWidget.h"
 
 /**
  * @brief Widget controlling one (skye) MAV
@@ -153,8 +154,11 @@ signals:
         Ui::uasSkyeControl ui;
         QButtonGroup *modeButtonGroup;
         QButtonGroup *inputButtonGroup;
-        UASSkyeControlAdvancedWidget *advancedWidget;
+
+        UASSkyeControlAdvancedWidget *advancedWidget;       ///< sub widget containing advanced settings
         bool enabledAdvancedSettings;
+
+        LedControlWidget *ledWidget;                        ///< sub widget for led control
 
 
     };
