@@ -166,7 +166,7 @@ void SkyeMAV::setModeCommand(int mode)
 	mavlink_msg_command_long_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId,
 								  (uint8_t)MAV_COMP_ID_ALL, MAV_CMD_DO_SET_MODE, 1, mode, 0, 0, 0, 0, 0, 0);
 
-	sendMessage(message);
+    sendMessage(message);
 }
 
 

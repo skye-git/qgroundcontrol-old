@@ -88,6 +88,20 @@ UASInterface* QGCMAVLinkUASFactory::createUAS(MAVLinkProtocol* mavlink, LinkInte
 			break;
 		}
 #endif
+// Begin Code Skye (16.02.2012)
+        case MAV_AUTOPILOT_PX4:
+                {
+                        SkyeMAV* mav = new SkyeMAV(mavlink,sysid);
+                        mav->setSystemType((int)heartbeat->type);
+                        connect(mavlink, SIGNAL(messageReceived(LinkInterface*, mavlink_message_t)), mav, SLOT(receiveMessage(LinkInterface*, mavlink_message_t)));
+                        #ifdef QGC_PROTOBUF_ENABLED
+                                connect(mavlink, SIGNAL(extendedMessageReceived(LinkInterface*, std::tr1::shared_ptr<google::protobuf::Message>)), mav, SLOT(receiveExtendedMessage(LinkInterface*, std::tr1::shared_ptr<google::protobuf::Message>)));
+                        #endif
+                        uas = mav;
+                        break;
+                }
+// End Code Skye (16.02.2012)
+
     default:
     {
         UAS* mav = new UAS(mavlink, sysid);

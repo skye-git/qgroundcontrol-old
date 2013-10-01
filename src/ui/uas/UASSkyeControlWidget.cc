@@ -456,17 +456,19 @@ void UASSkyeControlWidget::setInputKeyboard(bool checked)
 
 void UASSkyeControlWidget::transmitMode(int mode)
 {
-    UASInterface* mav = UASManager::instance()->getUASForId(this->uasId);
+    SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
     if (mav)
     {
-        mav->setMode(mode,0);
+        mav->setModeCommand(mode);
 
         QString modeStr = UAS::getShortModeTextFor(mode, 0, MAV_AUTOPILOT_PX4);
         ui.lastActionLabel->setText(QString("Sent mode %1 to %2").arg(modeStr).arg(mav->getUASName()));
+
+        qDebug() << "Send mode" << modeStr << "to" << mav->getUASName();
     }
     else
     {
-        ui.lastActionLabel->setText("No UAS activated!");
+        ui.lastActionLabel->setText("No Skye activated!");
     }
 }
 

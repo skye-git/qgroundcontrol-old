@@ -14,6 +14,7 @@
 #include "PxQuadMAV.h"
 #include "senseSoarMAV.h"
 #include "ArduPilotMegaMAV.h"
+#include "SkyeMAV.h"            // Begin & End Code Skye (16.02.2012)
 
 class QGCMAVLinkUASFactory : public QObject
 {

@@ -577,6 +577,7 @@ void UAS::receiveMessage(LinkInterface* link, mavlink_message_t message)
                 shortModeText = getShortModeTextFor(this->base_mode, this->custom_mode, this->autopilot);
 
                 emit modeChanged(this->getUASID(), shortModeText, "");
+                emit modeChanged(this->getUASID(), base_mode);          // Code Skye
 
                 modeAudio = " is now in " + audiomodeText;
             }
@@ -3377,7 +3378,14 @@ QString UAS::getShortModeTextFor(uint8_t base_mode, uint32_t custom_mode, int au
             } else if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) {
                 mode += "|STABILIZED";
             }
-        }
+            // Begin Skye Code
+        } else if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) {
+            if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE) {
+                mode += "|RATE";
+            } else {
+                mode += "|ATT";
+            }
+        }   // End Skye Code
     }
 
     if (mode.length() == 0)

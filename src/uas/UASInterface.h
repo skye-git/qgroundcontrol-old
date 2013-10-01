@@ -458,6 +458,10 @@ signals:
     void dropRateChanged(int systemId,  float receiveDrop);
     /** @brief Robot mode has changed */
     void modeChanged(int sysId, QString status, QString description);
+    // Begin Skye Code
+    /** @brief Robot mode has changed */
+    void modeChanged(int sysId, int mode);
+    // End Skye Code
     /** @brief Robot armed state has changed */
     void armingChanged(int sysId, QString armingState);
     /** @brief A command has been issued **/
