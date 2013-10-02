@@ -48,7 +48,8 @@ This file is part of the QGROUNDCONTROL project
 #include "CameraView.h"
 #include "UASListWidget.h"
 #include "MAVLinkProtocol.h"
-#include "MAVLinkSimulationLink.h"
+//#include "MAVLinkSimulationLink.h"
+#include "MAVLinkSkyeSimulationLink.h"  // Begin & End Skye Code
 #include "ObjectDetectionView.h"
 #include "submainwindow.h"
 #include "input/JoystickInput.h"
@@ -103,7 +104,9 @@ public:
         CUSTOM_MODE_NONE,
         CUSTOM_MODE_PX4,
         CUSTOM_MODE_APM,
-        CUSTOM_MODE_WIFI
+        CUSTOM_MODE_WIFI,
+        CUSTOM_MODE_SKYE,   // Begin Code Skye
+        CUSTOM_MODE_SIM     // End Code Skye
     };
 
     /**
@@ -515,7 +518,8 @@ protected:
     QString darkStyleFileName;
     QString lightStyleFileName;
     bool autoReconnect;
-    MAVLinkSimulationLink* simulationLink;
+    MAVLinkSkyeSimulationLink* simulationLink;      // Begin & End Code Skye
+//    MAVLinkSimulationLink* simulationLink;
     Qt::WindowStates windowStateVal;
     bool lowPowerMode; ///< If enabled, QGC reduces the update rates of all widgets
     QGCFlightGearLink* fgLink;

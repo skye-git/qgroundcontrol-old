@@ -132,7 +132,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
             disconnect(this, SIGNAL(changedSensitivityTransFactor(float)), mav, SLOT(setSensitivityFactorTrans(float)));
             disconnect(this, SIGNAL(changedSensitivityRotFactor(float)), mav, SLOT(setSensitivityFactorRot(float)));
             disconnect(this, SIGNAL(changedLiftFactor(float)), mav, SLOT(setLiftFactor(float)));
-            disconnect(this, SIGNAL(changedchanged6DOFControlCommands(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
+            disconnect(this, SIGNAL(changed6DOFControlCommands(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
         }
     }
 
@@ -158,7 +158,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(this, SIGNAL(changedSensitivityTransFactor(float)), mav, SLOT(setSensitivityFactorTrans(float)));
         connect(this, SIGNAL(changedSensitivityRotFactor(float)), mav, SLOT(setSensitivityFactorRot(float)));
         connect(this, SIGNAL(changedLiftFactor(float)), mav, SLOT(setLiftFactor(float)));
-        connect(this, SIGNAL(changedchanged6DOFControlCommands(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
+        connect(this, SIGNAL(changed6DOFControlCommands(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
         emit changedSensitivityTransFactor((float)sensitivityFactorTrans);
         emit changedSensitivityRotFactor((float)sensitivityFactorRot);
         emit changedLiftFactor((float)liftFactor);

@@ -522,7 +522,8 @@ HEADERS += src/MG.h \
     src/ui/TestControlWidget.h \
     src/ui/DirectControlWidget.h \
     src/ui/UASSkyeControlAdvancedWidget.h \
-    src/ui/ledControl/LedControlWidget.h
+    src/ui/ledControl/LedControlWidget.h \
+    src/comm/MAVLinkSkyeSimulationLink.h
 
 # Google Earth is only supported on Mac OS and Windows with Visual Studio Compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010|win32-msvc2012::HEADERS += src/ui/map3D/QGCGoogleEarthView.h
@@ -752,7 +753,8 @@ SOURCES += src/main.cc \
     src/ui/TestControlWidget.cc \
     src/ui/DirectControlWidget.cc \
     src/ui/UASSkyeControlAdvancedWidget.cc \
-    src/ui/ledControl/LedControlWidget.cc
+    src/ui/ledControl/LedControlWidget.cc \
+    src/comm/MAVLinkSkyeSimulationLink.cc
 
 # Enable Google Earth only on Mac OS and Windows with Visual Studio compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010|win32-msvc2012::SOURCES += src/ui/map3D/QGCGoogleEarthView.cc

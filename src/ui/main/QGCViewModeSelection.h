@@ -19,7 +19,10 @@ public:
     enum MainWindow::CUSTOM_MODE waitForInput();
 
 public slots:
-
+    // Begin Code Skye
+    void selectSkye();
+    void selectSim();
+    // End Code Skye
     void selectGeneric();
     void selectPX4();
     void selectAPM();

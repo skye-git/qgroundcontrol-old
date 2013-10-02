@@ -161,6 +161,7 @@ QGCCore::QGCCore(bool firstStart, int &argc, char* argv[]) : QApplication(argc, 
     mainWindow = MainWindow::instance_mode(splashScreen, mode);
 
     UDPLink* udpLink = NULL;
+    MAVLinkSimulationLink* simLink = NULL;
 
     if (mainWindow->getCustomMode() == MainWindow::CUSTOM_MODE_WIFI)
     {
@@ -174,6 +175,11 @@ QGCCore::QGCCore(bool firstStart, int &argc, char* argv[]) : QApplication(argc, 
         LinkManager::instance()->add(udpLink);
         SerialLink *slink = new SerialLink();
         LinkManager::instance()->add(slink);
+        // Begin Code Skye
+    } else if (mainWindow->getCustomMode() == MainWindow::CUSTOM_MODE_SIM) {
+        // connect to a simulation link
+        mainWindow->simulateLink(true);
+        // End Code Skye
     } else {
         // We want to have a default serial link available for "quick" connecting.
         SerialLink *slink = new SerialLink();

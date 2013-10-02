@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>750</width>
+    <width>782</width>
     <height>409</height>
    </rect>
   </property>
@@ -50,38 +50,7 @@
    <item row="2" column="1">
     <widget class="QWidget" name="viewModeWidget" native="true">
      <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="1">
-       <widget class="QPushButton" name="viewModeAR">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../../../qgroundcontrol.qrc">
-          <normaloff>:/files/images/actions/qgroundcontrol-wifi.svg</normaloff>:/files/images/actions/qgroundcontrol-wifi.svg</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>120</width>
-          <height>120</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="3">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>APM Autopilot</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="2">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>PX4 Autopilot</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="3">
+      <item row="1" column="6">
        <widget class="QPushButton" name="viewModeAPM">
         <property name="text">
          <string/>
@@ -98,14 +67,37 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QLabel" name="label_4">
+      <item row="2" column="6">
+       <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>WiFi / UDP</string>
+         <string>APM Autopilot</string>
         </property>
        </widget>
       </item>
       <item row="1" column="2">
+       <widget class="QPushButton" name="viewModeSim">
+        <property name="minimumSize">
+         <size>
+          <width>117</width>
+          <height>130</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../qgroundcontrol.qrc">
+          <normaloff>:/files/images/actions/qgroundcontrol-generic.svg</normaloff>:/files/images/actions/qgroundcontrol-generic.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>120</width>
+          <height>120</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="5">
        <widget class="QPushButton" name="viewModePX4">
         <property name="text">
          <string/>
@@ -122,7 +114,28 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="5">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>PX4 Autopilot</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="4">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>WiFi / UDP</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="3">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Radio / Serial Link</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
        <widget class="QPushButton" name="viewModeGeneric">
         <property name="text">
          <string/>
@@ -139,10 +152,51 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label">
+      <item row="2" column="2">
+       <widget class="QLabel" name="label_5">
         <property name="text">
-         <string>Radio / Serial Link</string>
+         <string>Simulation</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="4">
+       <widget class="QPushButton" name="viewModeAR">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../qgroundcontrol.qrc">
+          <normaloff>:/files/images/actions/qgroundcontrol-wifi.svg</normaloff>:/files/images/actions/qgroundcontrol-wifi.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>120</width>
+          <height>120</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="viewModeSkye">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../qgroundcontrol.qrc">
+          <normaloff>:/files/images/actions/qgroundcontrol-generic.svg</normaloff>:/files/images/actions/qgroundcontrol-generic.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>120</width>
+          <height>120</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Skye</string>
         </property>
        </widget>
       </item>
