@@ -14,6 +14,11 @@
 #include "UASInterface.h"
 #include "px4_configuration/QGCPX4AirframeConfig.h"
 
+// Begin Code Skye
+#include "TestControlWidget.h"
+#include "DirectControlWidget.h"
+// End Code Skye
+
 class UASParameterCommsMgr;
 class DialogBare;
 class QGCPX4SensorCalibration;
@@ -45,6 +50,7 @@ public slots:
     void advancedMenuButtonClicked();
     void airframeMenuButtonClicked();
     void firmwareMenuButtonClicked();
+    void skyeMenuButtonClicked();       // Begin & End Code Skye
 
     void identifyChannelMapping(int aert_index);
 
@@ -333,6 +339,11 @@ protected:
     QMessageBox msgBox;
     QGraphicsScene scene;
     QPushButton* skipActionButton;
+
+    // Begin Code Skye
+    TestControlWidget* testWidget;
+    DirectControlWidget* forceWidget;
+    // End Code Skye
 
 private:
     Ui::QGCPX4VehicleConfig *ui;

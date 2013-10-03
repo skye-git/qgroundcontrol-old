@@ -397,7 +397,7 @@ QPushButton, QToolButton {
 }
 
 QPushButton#advancedMenuButton, QPushButton#airframeMenuButton, QPushButton#firmwareMenuButton,
-QPushButton#generalMenuButton, QPushButton#rcMenuButton, QPushButton#sensorMenuButton {
+QPushButton#generalMenuButton, QPushButton#rcMenuButton, QPushButton#sensorMenuButton, QPushButton#skyeMenuButton {
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #333, stop: 1 #111);
     border-radius: 5px;
     min-height: 64px;

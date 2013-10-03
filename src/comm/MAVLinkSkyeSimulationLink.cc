@@ -399,11 +399,25 @@ void MAVLinkSkyeSimulationLink::mainloop()
         battery.voltage_cell_6 = 0;
         battery.current_battery = 100*2.12;
         battery.battery_remaining = -1;//(int8_t)floor((float)(100 - 0.0005*time_boot));
-        mavlink_msg_battery_status_encode(systemId, MAV_COMP_ID_IMU, &msg, &battery);
+        battery.current_consumed = 0;
+        battery.energy_consumed = 0;
+        mavlink_msg_battery_status_encode(systemId, componentId, &msg, &battery);
         bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
         //add data into datastream
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
+
+
+        // Pack debug text message
+        mavlink_statustext_t text;
+        text.severity = 0;
+        QString str = QString("Text message from system %1").arg(systemId);
+        strcpy((char*)(text.text), str.toAscii().constData());
+        mavlink_msg_statustext_encode(systemId, componentId, &msg, &text);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        memcpy(stream+streampointer, buffer, bufferlength);
+        streampointer += bufferlength;
+
 
 
         rate1hzCounter = 1;

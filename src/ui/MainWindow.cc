@@ -527,7 +527,7 @@ void MainWindow::buildCommonWidgets()
         pilotView = new SubMainWindow(this);
         pilotView->setObjectName("VIEW_FLIGHT");
 //        pilotView->setCentralWidget(new QGCMapTool(this));
-        pilotView->setCentralWidget(new PrimaryFlightDisplay(640,480,this));
+        pilotView->setCentralWidget(new PrimaryFlightDisplay(640,480,this));        // Begin & End Skye Code
         addToCentralStackedWidget(pilotView, VIEW_FLIGHT, "Pilot");
     }
 
@@ -669,9 +669,9 @@ void MainWindow::buildCommonWidgets()
     createDockWidget(pilotView,new UASSkyeBatteryInfoWidget(this),tr("Battery Info"),"UAS_SKYE_BATTERY_DOCKWIDGET",VIEW_FLIGHT,Qt::BottomDockWidgetArea);
     // End Code Skye
 
-    QGCTabbedInfoView *infoview = new QGCTabbedInfoView(this);
-    infoview->addSource(mavlinkDecoder);
-    createDockWidget(pilotView,infoview,tr("Info View"),"UAS_INFO_INFOVIEW_DOCKWIDGET",VIEW_FLIGHT,Qt::LeftDockWidgetArea);
+//    QGCTabbedInfoView *infoview = new QGCTabbedInfoView(this);
+//    infoview->addSource(mavlinkDecoder);
+//    createDockWidget(pilotView,infoview,tr("Info View"),"UAS_INFO_INFOVIEW_DOCKWIDGET",VIEW_FLIGHT,Qt::LeftDockWidgetArea);
 
     //createDockWidget(pilotView,new HUD(320,240,this),tr("Head Up Display"),"HEAD_UP_DISPLAY_DOCKWIDGET",VIEW_FLIGHT,Qt::LeftDockWidgetArea,this->width()/1.8);
 

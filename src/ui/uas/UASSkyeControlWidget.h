@@ -49,6 +49,7 @@ This file is part of the QGROUNDCONTROL project
 #include "SkyeMAV.h"
 #include "UASSkyeControlAdvancedWidget.h"
 #include "ledControl/LedControlWidget.h"
+#include "QGCTabbedInfoView.h"
 
 /**
  * @brief Widget controlling one (skye) MAV
@@ -124,7 +125,7 @@ signals:
         /** @brief Set new (double)liftFactor by double */
         void setLiftFactor(double val);
         /** @brief Show/Hide advanced settings */
-        void toggleAdvancedSettings();
+        void toggleAdvancedSettings(bool enabled);
 
 
     protected:
@@ -159,6 +160,7 @@ signals:
         bool enabledAdvancedSettings;
 
         LedControlWidget *ledWidget;                        ///< sub widget for led control
+        QGCTabbedInfoView *infoViewWidget;                        ///< sub widget for mavlink messages;
 
 
     };

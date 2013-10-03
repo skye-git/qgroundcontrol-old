@@ -86,14 +86,18 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     connect(ui.touchButton, SIGNAL(clicked(bool)), this, SLOT(setInputTouch(bool)));
     connect(ui.keyboardButton, SIGNAL(clicked(bool)), this, SLOT(setInputKeyboard(bool)));
 
-    connect(ui.advancedButton, SIGNAL(clicked()), this, SLOT(toggleAdvancedSettings()));
+    connect(ui.advancedCheckBox, SIGNAL(toggled(bool)), this, SLOT(toggleAdvancedSettings(bool)));
 
     advancedWidget = new UASSkyeControlAdvancedWidget(this);
     advancedWidget->hide();
     ledWidget = new LedControlWidget(this);
     ledWidget->hide();
+    infoViewWidget = new QGCTabbedInfoView(this);
+    infoViewWidget->show();
+
     ui.advancedLayout->addWidget(advancedWidget);
     ui.advancedLayout->addWidget(ledWidget);
+    ui.advancedLayout->addWidget(infoViewWidget);
 
     // Multiplication factor for translational commands
     advancedWidget->setSliderValues(sensitivityFactorTrans, sensitivityFactorRot, liftFactor);
@@ -559,19 +563,21 @@ void UASSkyeControlWidget::setLiftFactor(double val)
 
 }
 
-void UASSkyeControlWidget::toggleAdvancedSettings()
+void UASSkyeControlWidget::toggleAdvancedSettings(bool enabled)
 {
-    if (enabledAdvancedSettings) {
-        advancedWidget->hide();
-        ledWidget->hide();
-        ui.advancedButton->setText("Show Advanced");
-    } else {
+    enabledAdvancedSettings = enabled;
+
+    if (enabled) {
         advancedWidget->show();
         ledWidget->show();
-        ui.advancedButton->setText("Hide Advanced");
+        //ui.advancedButton->setText("Hide advanced settings");
+        infoViewWidget->hide();
+    } else {
+        advancedWidget->hide();
+        ledWidget->hide();
+        //ui.advancedCheckBox->setText("Show advanced settings");
+        infoViewWidget->show();
     }
-
-    enabledAdvancedSettings = !enabledAdvancedSettings;
 }
 
 

@@ -27,12 +27,18 @@
 #include <dialog_bare.h>
 #endif // QUPGRADE_SUPPORT
 
+// Begin Code Skye
+#include <QTableWidget>
+#include <QIcon>
+// End Code Skye
+
 #define WIDGET_INDEX_FIRMWARE 0
 #define WIDGET_INDEX_RC 1
 #define WIDGET_INDEX_SENSOR_CAL 2
 #define WIDGET_INDEX_AIRFRAME_CONFIG 3
 #define WIDGET_INDEX_GENERAL_CONFIG 4
 #define WIDGET_INDEX_ADV_CONFIG 5
+#define WIDGET_INDEX_SKYE_CONFIG 6      // Code Skye
 
 #define MIN_PWM_VAL 800
 #define MAX_PWM_VAL 2200
@@ -239,7 +245,28 @@ QGCPX4VehicleConfig::QGCPX4VehicleConfig(QWidget *parent) :
         rcMappedNormalizedValue[i] = 0.0f;
     }
 
-    firmwareMenuButtonClicked();
+    // Begin Code Skye
+    QTabWidget* skyeTab = new QTabWidget(this);
+    ui->stackedWidget->addWidget(skyeTab);
+
+    forceWidget = new DirectControlWidget(this);
+    testWidget = new TestControlWidget(this);
+
+    skyeTab->addTab(testWidget, "Motor Test");
+    skyeTab->addTab(forceWidget, "Force Test");
+
+    QPushButton* skyeMenuButton = new QPushButton;
+    skyeMenuButton->setObjectName("skyeMenuButton");
+    skyeMenuButton->setIcon(QIcon(":/files/images/px4/menu/cogwheels.png"));
+    skyeMenuButton->setIconSize(QSize(64,64));
+    skyeMenuButton->setText("Skye\nMotor Test");
+    ui->navBarLayout->insertWidget(ui->navBarLayout->indexOf(ui->advancedMenuButton)+1, skyeMenuButton);
+    connect(skyeMenuButton, SIGNAL(clicked()), this, SLOT(skyeMenuButtonClicked()));
+
+    skyeMenuButtonClicked();
+    // End Code Skye
+
+    //firmwareMenuButtonClicked();
 
     updateTimer.setInterval(150);
     connect(&updateTimer, SIGNAL(timeout()), this, SLOT(updateView()));
@@ -290,6 +317,14 @@ void QGCPX4VehicleConfig::firmwareMenuButtonClicked()
     ui->stackedWidget->setCurrentIndex(WIDGET_INDEX_FIRMWARE);
     ui->tabTitleLabel->setText(tr("Firmware Upgrade"));
 }
+
+// Begin Code Skye
+void QGCPX4VehicleConfig::skyeMenuButtonClicked()
+{
+    ui->stackedWidget->setCurrentIndex(WIDGET_INDEX_SKYE_CONFIG);
+    ui->tabTitleLabel->setText(tr("Skye Testing"));
+}
+// End Code Skye
 
 void QGCPX4VehicleConfig::identifyChannelMapping(int aert_index)
 {
