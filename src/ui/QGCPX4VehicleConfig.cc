@@ -246,14 +246,8 @@ QGCPX4VehicleConfig::QGCPX4VehicleConfig(QWidget *parent) :
     }
 
     // Begin Code Skye
-    QTabWidget* skyeTab = new QTabWidget(this);
-    ui->stackedWidget->addWidget(skyeTab);
-
-    forceWidget = new DirectControlWidget(this);
-    testWidget = new TestControlWidget(this);
-
-    skyeTab->addTab(testWidget, "Motor Test");
-    skyeTab->addTab(forceWidget, "Force Test");
+    skyeConfig = new QGCSkyeConfig(this);
+    ui->stackedWidget->addWidget(skyeConfig);
 
     QPushButton* skyeMenuButton = new QPushButton;
     skyeMenuButton->setObjectName("skyeMenuButton");

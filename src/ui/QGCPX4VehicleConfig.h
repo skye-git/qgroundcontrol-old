@@ -15,8 +15,7 @@
 #include "px4_configuration/QGCPX4AirframeConfig.h"
 
 // Begin Code Skye
-#include "TestControlWidget.h"
-#include "DirectControlWidget.h"
+#include "QGCSkyeConfig.h"
 // End Code Skye
 
 class UASParameterCommsMgr;
@@ -340,10 +339,9 @@ protected:
     QGraphicsScene scene;
     QPushButton* skipActionButton;
 
-    // Begin Code Skye
-    TestControlWidget* testWidget;
-    DirectControlWidget* forceWidget;
-    // End Code Skye
+    // Begin Skye Code
+    QGCSkyeConfig* skyeConfig;
+    // End Skye Code
 
 private:
     Ui::QGCPX4VehicleConfig *ui;

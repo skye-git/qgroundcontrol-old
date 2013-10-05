@@ -516,8 +516,7 @@ void MAVLinkSkyeSimulationLink::writeBytes(const char* data, qint64 size)
                 // Set mode indepent of mode.target
 
                 // Beginn Code MA (13.03.2012)
-                if ((system.base_mode & MAV_MODE_FLAG_SAFETY_ARMED) &&
-                    (mode.base_mode & MAV_MODE_FLAG_SAFETY_ARMED))
+                if (mode.base_mode & MAV_MODE_FLAG_SAFETY_ARMED)
                 {
                     system.base_mode = mode.base_mode;
                     system.system_status = MAV_STATE_ACTIVE;

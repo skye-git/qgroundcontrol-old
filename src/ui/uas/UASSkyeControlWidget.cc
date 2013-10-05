@@ -193,7 +193,7 @@ void UASSkyeControlWidget::updateStatemachine()
 
 void UASSkyeControlWidget::updateMode(int uas,int baseMode)
 {
-    qDebug() << "Got uas mode:" << baseMode;
+//    qDebug() << "Got uas mode:" << baseMode;
     if ((uasId == uas) && ((int)uasMode != baseMode))
     {
         uasMode = (unsigned int)baseMode;

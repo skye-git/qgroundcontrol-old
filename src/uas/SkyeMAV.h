@@ -60,8 +60,11 @@ public slots:
     }
     /** @brief Receive a MAVLink message from this MAV */
     void receiveMessage(LinkInterface* link, mavlink_message_t message);
-    /** @brief Send the 6 DOF command (from 3d Mouse or Touch Input) to MAV */
+    /** @brief Send the 6 DOF command (from 3d Mouse or Touch Input) to MAV
+    /*         The values are scaled by the sensitivity factors */
     void setManual6DOFControlCommands(double x , double y , double z , double a , double b, double c);
+    /** @brief Send the 6 DOF command (from test config window) to MAV */
+    void set6DOFCommandsByWidget(double x , double y , double z , double a , double b, double c);
     /** @brief Send the 8 DOF command (from Testphase Widget) to MAV */
     void setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 ); //AL (06.03.12)
     /** @brief Set multiplication factor for manual control */

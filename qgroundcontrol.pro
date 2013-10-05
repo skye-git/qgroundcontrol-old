@@ -308,7 +308,11 @@ FORMS += src/ui/MainWindow.ui \
     src/ui/TestControlWidget.ui \
     src/ui/DirectControlWidget.ui \
     src/ui/UASSkyeControlAdvancedWidget.ui \
-    src/ui/ledControl/LedControlWidget.ui
+    src/ui/ledControl/LedControlWidget.ui \
+    src/ui/QGCSkyeConfig.ui \
+    src/ui/QGCSkyeTestMotors.ui \
+    src/ui/QGCSkyeTestForce.ui \
+    src/ui/QGCSkyeTestControl.ui
 
 INCLUDEPATH += src \
     src/ui \
@@ -523,7 +527,11 @@ HEADERS += src/MG.h \
     src/ui/DirectControlWidget.h \
     src/ui/UASSkyeControlAdvancedWidget.h \
     src/ui/ledControl/LedControlWidget.h \
-    src/comm/MAVLinkSkyeSimulationLink.h
+    src/comm/MAVLinkSkyeSimulationLink.h \
+    src/ui/QGCSkyeConfig.h \
+    src/ui/QGCSkyeTestMotors.h \
+    src/ui/QGCSkyeTestForce.h \
+    src/ui/QGCSkyeTestControl.h
 
 # Google Earth is only supported on Mac OS and Windows with Visual Studio Compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010|win32-msvc2012::HEADERS += src/ui/map3D/QGCGoogleEarthView.h
@@ -754,7 +762,11 @@ SOURCES += src/main.cc \
     src/ui/DirectControlWidget.cc \
     src/ui/UASSkyeControlAdvancedWidget.cc \
     src/ui/ledControl/LedControlWidget.cc \
-    src/comm/MAVLinkSkyeSimulationLink.cc
+    src/comm/MAVLinkSkyeSimulationLink.cc \
+    src/ui/QGCSkyeConfig.cc \
+    src/ui/QGCSkyeTestMotors.cpp \
+    src/ui/QGCSkyeTestForce.cpp \
+    src/ui/QGCSkyeTestControl.cc
 
 # Enable Google Earth only on Mac OS and Windows with Visual Studio compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010|win32-msvc2012::SOURCES += src/ui/map3D/QGCGoogleEarthView.cc

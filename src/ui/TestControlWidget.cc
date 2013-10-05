@@ -26,11 +26,11 @@ TestControlWidget::TestControlWidget(QWidget *parent):
 
     if(uas)
     {
-        connect(this, SIGNAL(valueTestControlChanged(int, int, int, int, int, int, int, int)), uas, SLOT(setTestControlCommandsByWidget(int, int, int, int, int, int, int, int)));
+        connect(this, SIGNAL(valueTestControlChanged(int, int, int, int, int, int, int, int)), uas, SLOT(setTestphaseCommandsByWidget(int, int, int, int, int, int, int, int)));
         connect(m_ui->homingButton, SIGNAL(clicked()), uas, SLOT(sendHomingCommand()));
         connect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
         uas->setMode(MAV_MODE_TESTPHASE_DISARMED,0);
-        qDebug()<< " AL:TestControlWidget connect valueTestControlChanged to setTestControlCommandsByWidget";
+        qDebug()<< " AL:TestControlWidget connect valueTestControlChanged to setTestphaseCommandsByWidget";
     }
 
 
@@ -66,9 +66,9 @@ TestControlWidget::TestControlWidget(QWidget *parent):
     connect(m_ui->stopallButton, SIGNAL(clicked()),this, SLOT(stopall())); //Why connect to this?
 //    connect(m_ui->homingButton, SIGNAL(clicked()),this,SLOT(homing()));
     connect(m_ui->controlButton, SIGNAL(clicked()), this, SLOT(cycleContextButton()));
-    connect(m_ui->closeButton, SIGNAL(clicked()),this, SLOT(stopall()));
-    connect(m_ui->closeButton, SIGNAL(clicked()),this, SLOT(setzero()));
-    connect(m_ui->closeButton, SIGNAL(clicked()),this, SLOT(TestControlclose()));
+//    connect(m_ui->closeButton, SIGNAL(clicked()),this, SLOT(stopall()));
+//    connect(m_ui->closeButton, SIGNAL(clicked()),this, SLOT(setzero()));
+//    connect(m_ui->closeButton, SIGNAL(clicked()),this, SLOT(TestControlclose()));
 
 //    //emit valueTestControlChanged if some valueChanged
 //    connect(m_ui->SliderThrust1, SIGNAL(valueChanged(int)),this, SLOT(emitValues()));
