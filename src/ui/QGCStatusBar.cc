@@ -27,6 +27,7 @@ This file is part of the QGROUNDCONTROL project
 #include "QGCStatusBar.h"
 #include "UASManager.h"
 #include "MainWindow.h"
+#include "UASSkyeBatteryInfoWidget.h"       // Code Skye
 
 QGCStatusBar::QGCStatusBar(QWidget *parent) :
     QStatusBar(parent),
@@ -40,6 +41,7 @@ QGCStatusBar::QGCStatusBar(QWidget *parent) :
     toggleLoggingButton = new QPushButton("Logging", this);
     toggleLoggingButton->setCheckable(true);
 
+    addPermanentWidget(new UASSkyeBatteryInfoWidget);       // Code Skye
     addPermanentWidget(toggleLoggingButton);
 
     loadSettings();

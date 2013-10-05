@@ -74,7 +74,6 @@ This file is part of the QGROUNDCONTROL project
 #include "terminalconsole.h"
 // Begin Code Skye
 #include "UASSkyeControlWidget.h"
-#include "UASSkyeBatteryInfoWidget.h"
 #include "TestControlWidget.h"
 #include "DirectControlWidget.h"
 // End Code Skye
@@ -666,7 +665,7 @@ void MainWindow::buildCommonWidgets()
 //    createDockWidget(pilotView,new PrimaryFlightDisplay(320,240,this),tr("Primary Flight Display"),"PRIMARY_FLIGHT_DISPLAY_DOCKWIDGET",VIEW_FLIGHT,Qt::LeftDockWidgetArea,this->width()/1.8);
     skyeControl = new UASSkyeControlWidget;
     createDockWidget(pilotView,skyeControl,tr("Skye Control"),"UAS_SKYE_CONTROL_DOCKWIDGET",VIEW_FLIGHT,Qt::LeftDockWidgetArea, this->width()/2.3);
-    createDockWidget(pilotView,new UASSkyeBatteryInfoWidget(this),tr("Battery Info"),"UAS_SKYE_BATTERY_DOCKWIDGET",VIEW_FLIGHT,Qt::BottomDockWidgetArea);
+    //createDockWidget(pilotView,new UASSkyeBatteryInfoWidget(this),tr("Battery Info"),"UAS_SKYE_BATTERY_DOCKWIDGET",VIEW_FLIGHT,Qt::BottomDockWidgetArea);
     // End Code Skye
 
 //    QGCTabbedInfoView *infoview = new QGCTabbedInfoView(this);
