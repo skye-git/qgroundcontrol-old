@@ -440,36 +440,62 @@ QPushButton#magButton, QPushButton#gyroButton, QPushButton#accelButton {
     border: 1px solid #000000;
 }
 
-QPushButton#manControlButtonGray, QPushButton#rateControlButtonGray, QPushButton#attControlButtonGray {
+QPushButton#manControlButtonGray, QPushButton#rateControlButtonGray, QPushButton#attControlButtonGray, QPushButton#stopAllButton, QPushButton#setZeroButton {
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #999999, stop: 1 #444444);
     border-radius: 12px;
-    min-height: 200px;
-    max-height: 2200px;
-    min-width: 120px;
-    max-width: 140px;
-    border: 3px solid #465158;
+    min-height: 60px;
+    max-height: 70px;
+    min-width: 80px;
+    max-width: 80px;
+    border: 3px solid;
     font-size: 15pt;
 }
 
 QPushButton#manControlButtonGreen, QPushButton#rateControlButtonGreen, QPushButton#attControlButtonGreen {
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #004433, stop: 1 #228822);
     border-radius: 12px;
-    min-height: 80px;
-    max-height: 100px;
-    min-width: 120px;
-    max-width: 140px;
-    border: 3px solid #465158;
+    min-height: 60px;
+    max-height: 70px;
+    min-width: 80px;
+    max-width: 80px;
+    border: 3px solid;
     font-size: 15pt;
 }
 
 QPushButton#manControlButtonWhite, QPushButton#rateControlButtonWhite, QPushButton#attControlButtonWhite {
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DDDDDD, stop: 1 #999999);
     border-radius: 12px;
-    min-height: 80px;
-    max-height: 100px;
-    min-width: 120px;
-    max-width: 140px;
-    border: 3px solid #465158;
+    min-height: 60px;
+    max-height: 70px;
+    min-width: 80px;
+    max-width: 80px;
+    border: 3px solid;
+    font-size: 15pt;
+}
+
+QPushButton#controlButtonRed {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DD0044, stop: 1 #AA0022); 
+    border-color: yellow; 
+    color: yellow;
+    border-radius: 12px;
+    min-height: 120px;
+    max-height: 140px;
+    min-width: 260px;
+    max-width: 260px;
+    border: 3px solid;
+    font-size: 15pt;
+}
+
+QPushButton#controlButtonGreen {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00DD44, stop: 1 #11AA22); 
+    border-color: yellow; 
+    color: yellow;
+    border-radius: 12px;x;
+    min-height: 120px;
+    max-height: 140px;
+    min-width: 260px;
+    max-width: 260px;
+    border: 3px solid;
     font-size: 15pt;
 }
 

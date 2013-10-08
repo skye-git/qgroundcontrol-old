@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>261</width>
+    <width>218</width>
     <height>458</height>
    </rect>
   </property>
@@ -18,8 +18,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>200</width>
-    <height>150</height>
+    <width>0</width>
+    <height>0</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -34,134 +34,104 @@
   <property name="toolTip">
    <string>Control widget to send basic control actions to the micro air vehicle</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QPushButton" name="manControlButton">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QPushButton" name="controlButton">
        <property name="minimumSize">
         <size>
-         <width>35</width>
-         <height>35</height>
+         <width>0</width>
+         <height>0</height>
         </size>
        </property>
        <property name="toolTip">
-        <string>Enable Manual Moment Input</string>
+        <string>Main control button</string>
+       </property>
+       <property name="statusTip">
+        <string>Main control button</string>
        </property>
        <property name="text">
-        <string>MAN</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-       <property name="autoExclusive">
-        <bool>false</bool>
+        <string>Activate Engine</string>
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QPushButton" name="rateControlButton">
-       <property name="minimumSize">
-        <size>
-         <width>35</width>
-         <height>35</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Enable Rate Controller</string>
-       </property>
-       <property name="text">
-        <string>RATE</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-       <property name="autoExclusive">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="attControlButton">
-       <property name="minimumSize">
-        <size>
-         <width>35</width>
-         <height>35</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Enable Attitude Controller</string>
-       </property>
-       <property name="text">
-        <string>ATT</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="halfAutomaticControlButton">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>35</width>
-         <height>35</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Half Automatic Control (set waypoints for path, steer orientation manually)</string>
-       </property>
-       <property name="text">
-        <string>HAC</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-       <property name="autoExclusive">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="fullAutomaticControlButton">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>35</width>
-         <height>35</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Full Automatic Control (set both path and camera target as waypoints)</string>
-       </property>
-       <property name="text">
-        <string>FAC</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="autoExclusive">
-        <bool>false</bool>
-       </property>
-      </widget>
+     <item row="1" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QPushButton" name="manControlButton">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Enable Manual Moment Input</string>
+         </property>
+         <property name="text">
+          <string>MAN</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="rateControlButton">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Enable Rate Controller</string>
+         </property>
+         <property name="text">
+          <string>RATE</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="attControlButton">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Enable Attitude Controller</string>
+         </property>
+         <property name="text">
+          <string>ATT</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
-   <item row="2" column="0">
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <property name="sizeConstraint">
       <enum>QLayout::SetMinimumSize</enum>
@@ -173,8 +143,8 @@
       <widget class="QPushButton" name="mouseButton">
        <property name="minimumSize">
         <size>
-         <width>35</width>
-         <height>35</height>
+         <width>0</width>
+         <height>0</height>
         </size>
        </property>
        <property name="toolTip">
@@ -205,8 +175,8 @@ p, li { white-space: pre-wrap; }
        </property>
        <property name="minimumSize">
         <size>
-         <width>35</width>
-         <height>35</height>
+         <width>0</width>
+         <height>0</height>
         </size>
        </property>
        <property name="toolTip">
@@ -234,8 +204,8 @@ p, li { white-space: pre-wrap; }
       <widget class="QPushButton" name="keyboardButton">
        <property name="minimumSize">
         <size>
-         <width>35</width>
-         <height>35</height>
+         <width>0</width>
+         <height>0</height>
         </size>
        </property>
        <property name="toolTip">
@@ -258,26 +228,14 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="0" column="0">
-    <widget class="QPushButton" name="controlButton">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>40</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Main control button</string>
-     </property>
-     <property name="statusTip">
-      <string>Main control button</string>
-     </property>
+   <item>
+    <widget class="QLabel" name="lastActionLabel">
      <property name="text">
-      <string>Activate Engine</string>
+      <string>No commands so far</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
+   <item>
     <layout class="QFormLayout" name="advancedLayout">
      <property name="fieldGrowthPolicy">
       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
@@ -291,14 +249,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="lastActionLabel">
-     <property name="text">
-      <string>No commands so far</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -312,9 +263,9 @@ p, li { white-space: pre-wrap; }
     </spacer>
    </item>
   </layout>
-  <zorder>controlButton</zorder>
   <zorder></zorder>
   <zorder>lastActionLabel</zorder>
+  <zorder>controlButton</zorder>
   <zorder>verticalSpacer</zorder>
  </widget>
  <resources/>

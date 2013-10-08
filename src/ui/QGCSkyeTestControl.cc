@@ -10,6 +10,17 @@ QGCSkyeTestControl::QGCSkyeTestControl(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->manPushButton->setObjectName("manControlButtonGray");
+    ui->ratePushButton->setObjectName("rateControlButtonGray");
+    ui->attPushButton->setObjectName("attControlButtonGray");
+
+    ui->manPushButton->setStyleSheet("");
+    ui->ratePushButton->setStyleSheet("");
+    ui->attPushButton->setStyleSheet("");
+
+    ui->controlButton->setObjectName("controlButtonGreen");
+    ui->controlButton->setStyleSheet("");
+
     //connect UAS activation
     connect( UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
     //connect uas
@@ -18,7 +29,7 @@ QGCSkyeTestControl::QGCSkyeTestControl(QWidget *parent) :
 
     //connect Pushbuttons
     connect(ui->stopAllButton, SIGNAL(clicked()),this, SLOT(stopAll()));
-    connect(ui->SetZeroButton, SIGNAL(clicked()),this, SLOT(setZero()));
+    connect(ui->setZeroButton, SIGNAL(clicked()),this, SLOT(setZero()));
     connect(ui->controlButton, SIGNAL(clicked()), this, SLOT(cycleContextButton()));
 
     connect(ui->manPushButton, SIGNAL(clicked()), this, SLOT(setManualMode()));
@@ -69,7 +80,7 @@ void QGCSkyeTestControl::changeMode(int mode)
 {
     if (this->uas)
     {
-        uas->setMode(mode, 0);
+        uas->setModeCommand(mode);
         uas->setInputMode(SkyeMAV::QGC_INPUT_MODE_NONE);
         //emit emitValues();
     }
@@ -79,6 +90,8 @@ void QGCSkyeTestControl::setManualMode()
 {
     if (this->uas) {
         if (engineOn) {
+            ui->manPushButton->setObjectName("manControlButtonWhite");
+            ui->manPushButton->setStyleSheet("");
             changeMode(MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED);
         }
     }
@@ -88,7 +101,9 @@ void QGCSkyeTestControl::setRateMode()
 {
     if (this->uas) {
         if (engineOn) {
-            changeMode(MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_CUSTOM_MODE_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED);
+            ui->ratePushButton->setObjectName("rateControlButtonWhite");
+            ui->ratePushButton->setStyleSheet("");
+            changeMode(MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_CUSTOM_MODE_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED);
         }
     }
 }
@@ -97,7 +112,9 @@ void QGCSkyeTestControl::setAttMode()
 {
     if (this->uas) {
         if (engineOn) {
-            changeMode(MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED);
+            ui->attPushButton->setObjectName("attControlButtonWhite");
+            ui->attPushButton->setStyleSheet("");
+            changeMode( MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED);
         }
     }
 }
@@ -108,16 +125,18 @@ void QGCSkyeTestControl::cycleContextButton()
     {
         if (!engineOn)
         {
-            uas->armSystem();
             engineOn=true;
             if (tab == QGC_SKYE_CONFIG_TAB_MOTOR)
             {
                 uas->setModeCommand(MAV_MODE_FLAG_TEST_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED);
+            } else {
+                uas->armSystem();
             }
 
         } else {
             //emit valueDirectControlChanged( 0, 0, 0, 0, 0, 0 );
             stopAll();
+            uas->setMode(MAV_MODE_PREFLIGHT, 0);
             uas->disarmSystem();
             engineOn=false;
         }
@@ -131,50 +150,58 @@ void QGCSkyeTestControl::updateState(int state)
     case (int)MAV_STATE_ACTIVE:
         engineOn = true;
         ui->controlButton->setText(tr("DISARM SYSTEM"));
-        ui->controlButton->setStyleSheet("* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DD0044, stop: 1 #AA0022); border-color: yellow; color: yellow }");
+        ui->controlButton->setObjectName("controlButtonRed");
+        ui->controlButton->setStyleSheet("");
         break;
     case (int)MAV_STATE_STANDBY:
         engineOn = false;
         stopAll();
         ui->controlButton->setText(tr("ARM SYSTEM"));
-        ui->controlButton->setStyleSheet("* { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00DD44, stop: 1 #11AA22); }");
+        ui->controlButton->setObjectName("controlButtonGreen");
+        ui->controlButton->setStyleSheet("");
         break;
     }
 }
 
 void QGCSkyeTestControl::updateMode(int uas, int baseMode)
 {
-    QString green = "* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #004433, stop: 1 #228822)}";
-    QString gray  = "* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #999999, stop: 1 #444444)}";
-
+    //qDebug() << "QGCSkyeTestControl: update mode:" << baseMode ;
     if (baseMode == MAV_MODE_PREFLIGHT)
     {
-        ui->manPushButton->setStyleSheet(gray);
-        ui->ratePushButton->setStyleSheet(gray);
-        ui->attPushButton->setStyleSheet(gray);
+        //qDebug() << "PREFLIGHT";
+        ui->manPushButton->setObjectName("manControlButtonGray");
+        ui->ratePushButton->setObjectName("rateControlButtonGray");
+        ui->attPushButton->setObjectName("attControlButtonGray");
     }
 
-    if ((baseMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) || (baseMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE))
+    if (baseMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL)
     {
-        ui->manPushButton->setStyleSheet(green);
-    } else {
-        ui->manPushButton->setStyleSheet(gray);
+        //qDebug() << "MANUAL_MODE";
+        ui->manPushButton->setObjectName("manControlButtonGreen");
+        ui->ratePushButton->setObjectName("rateControlButtonGray");
+        ui->attPushButton->setObjectName("attControlButtonGray");
     }
 
-    if (baseMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE)
+    if ((baseMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE))
     {
-        if (baseMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE)
-        {
-            ui->ratePushButton->setStyleSheet(green);
-            ui->attPushButton->setStyleSheet(gray);
-        } else {
-            ui->ratePushButton->setStyleSheet(green);
-            ui->attPushButton->setStyleSheet(green);
-        }
-    } else {
-        ui->ratePushButton->setStyleSheet(gray);
-        ui->attPushButton->setStyleSheet(gray);
+        //qDebug() << "RATE_MODE";
+        ui->manPushButton->setObjectName("manControlButtonGray");
+        ui->ratePushButton->setObjectName("rateControlButtonGreen");
+        ui->attPushButton->setObjectName("attControlButtonGray");
     }
+
+    if ((baseMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) && !(baseMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE))
+    {
+        //qDebug() << "ATT_MODE";
+        ui->manPushButton->setObjectName("manControlButtonGray");
+        ui->ratePushButton->setObjectName("rateControlButtonGray");
+        ui->attPushButton->setObjectName("attControlButtonGreen");
+    }
+
+    ui->manPushButton->setStyleSheet("");
+    ui->ratePushButton->setStyleSheet("");
+    ui->attPushButton->setStyleSheet("");
+
 }
 
 void QGCSkyeTestControl::tabChanged(int tab)
@@ -192,12 +219,12 @@ void QGCSkyeTestControl::tabChanged(int tab)
         ui->ratePushButton->hide();
         ui->attPushButton->hide();
 
-        ui->SetZeroButton->show();
+        ui->setZeroButton->show();
     }
 
     if (tab == QGC_SKYE_CONFIG_TAB_FORCE)
     {
-        ui->SetZeroButton->hide();
+        ui->setZeroButton->hide();
 
         ui->manPushButton->show();
         ui->ratePushButton->show();

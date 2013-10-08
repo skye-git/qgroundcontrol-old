@@ -62,6 +62,8 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     ui.rateControlButton->setStyleSheet("");
     ui.attControlButton->setStyleSheet("");
 
+    ui.controlButton->setObjectName("controlButtonGreen");
+    ui.controlButton->setStyleSheet("");
 
     // Uncheck and group buttons to enable exclusiv checkable
 //    ui.manControlButton->setChecked(uasMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL);
@@ -72,8 +74,6 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     ui.manControlButton->setCheckable(false);
     ui.rateControlButton->setCheckable(false);
     ui.attControlButton->setCheckable(false);
-    ui.halfAutomaticControlButton->hide();
-    ui.fullAutomaticControlButton->hide();
 
     ui.mouseButton->setChecked(inputMode == SkyeMAV::QGC_INPUT_MODE_MOUSE);
     ui.touchButton->setChecked(inputMode == SkyeMAV::QGC_INPUT_MODE_TOUCH);
@@ -187,13 +187,15 @@ void UASSkyeControlWidget::updateStatemachine()
     if (engineOn)
     {
         ui.controlButton->setText(tr("DISARM SYSTEM"));
-        ui.controlButton->setStyleSheet("* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DD0044, stop: 1 #AA0022); border-color: yellow; color: yellow }");
+        ui.controlButton->setObjectName("controlButtonRed");
+        ui.controlButton->setStyleSheet("");
         //setInputButtonActivity(false);
     }
     else
     {
         ui.controlButton->setText(tr("ARM SYSTEM"));
-        ui.controlButton->setStyleSheet("* { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00DD44, stop: 1 #11AA22); }");
+        ui.controlButton->setObjectName("controlButtonGreen");
+        ui.controlButton->setStyleSheet("");
         //setInputButtonActivity(true);
     }
 }
@@ -289,8 +291,11 @@ void UASSkyeControlWidget::setDirectControlMode()
         newMode = newMode | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED;
         transmitMode(newMode);
 
-        ui.manControlButton->setObjectName("manControlButtonWhite");
-        ui.manControlButton->setStyleSheet("");
+        if (uasMode != newMode)
+        {
+            ui.manControlButton->setObjectName("manControlButtonWhite");
+            ui.manControlButton->setStyleSheet("");
+        }
 
     } else {
         ui.lastActionLabel->setText("Arm system first");
@@ -307,8 +312,11 @@ void UASSkyeControlWidget::setRateControlMode()
         newMode |= MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
         transmitMode(newMode);
 
-        ui.rateControlButton->setObjectName("rateControlButtonWhite");
-        ui.rateControlButton->setStyleSheet("");
+        if (uasMode != newMode)
+        {
+            ui.rateControlButton->setObjectName("rateControlButtonWhite");
+            ui.rateControlButton->setStyleSheet("");
+        }
     } else {
         ui.lastActionLabel->setText("Arm system first");
     }
@@ -323,9 +331,11 @@ void UASSkyeControlWidget::setAttitudeControlMode()
         newMode |= MAV_MODE_FLAG_STABILIZE_ENABLED;
         transmitMode(newMode);
 
-
-        ui.attControlButton->setObjectName("attControlButtonWhite");
-        ui.attControlButton->setStyleSheet("");
+        if (uasMode != newMode)
+        {
+            ui.attControlButton->setObjectName("attControlButtonWhite");
+            ui.attControlButton->setStyleSheet("");
+        }
 
     } else {
         ui.lastActionLabel->setText("Arm system first");
