@@ -440,6 +440,39 @@ QPushButton#magButton, QPushButton#gyroButton, QPushButton#accelButton {
     border: 1px solid #000000;
 }
 
+QPushButton#manControlButtonGray, QPushButton#rateControlButtonGray, QPushButton#attControlButtonGray {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #999999, stop: 1 #444444);
+    border-radius: 12px;
+    min-height: 200px;
+    max-height: 2200px;
+    min-width: 120px;
+    max-width: 140px;
+    border: 3px solid #465158;
+    font-size: 15pt;
+}
+
+QPushButton#manControlButtonGreen, QPushButton#rateControlButtonGreen, QPushButton#attControlButtonGreen {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #004433, stop: 1 #228822);
+    border-radius: 12px;
+    min-height: 80px;
+    max-height: 100px;
+    min-width: 120px;
+    max-width: 140px;
+    border: 3px solid #465158;
+    font-size: 15pt;
+}
+
+QPushButton#manControlButtonWhite, QPushButton#rateControlButtonWhite, QPushButton#attControlButtonWhite {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DDDDDD, stop: 1 #999999);
+    border-radius: 12px;
+    min-height: 80px;
+    max-height: 100px;
+    min-width: 120px;
+    max-width: 140px;
+    border: 3px solid #465158;
+    font-size: 15pt;
+}
+
 QWidget#containerWidget {
     background-color: qlineargradient(spread:pad, x1:0.527222, y1:0.961, x2:0.536946, y2:0.198864, stop:0.103448 rgba(65, 65, 65, 255), stop:1 rgba(119, 119, 119, 255));
     border-radius: 16px;

@@ -54,16 +54,24 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     enabledAdvancedSettings(false)
 {
     ui.setupUi(this);
+    ui.manControlButton->setObjectName("manControlButtonGray");
+    ui.rateControlButton->setObjectName("rateControlButtonGray");
+    ui.attControlButton->setObjectName("attControlButtonGray");
+
+    ui.manControlButton->setStyleSheet("");
+    ui.rateControlButton->setStyleSheet("");
+    ui.attControlButton->setStyleSheet("");
+
 
     // Uncheck and group buttons to enable exclusiv checkable
-//    ui.directControlButton->setChecked(uasMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL);
+//    ui.manControlButton->setChecked(uasMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL);
 //    ui.rateControlButton->setChecked(uasMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE);
-//    ui.attitudeControlButton->setChecked(uasMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE);
+//    ui.attControlButton->setChecked(uasMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE);
 //    ui.halfAutomaticControlButton->setChecked(uasMode & MAV_MODE_HALF_AUTOMATIC_DISARMED);
 //    ui.fullAutomaticControlButton->setChecked(uasMode & MAV_MODE_FULL_AUTOMATIC_DISARMED);
-    ui.directControlButton->setCheckable(false);
+    ui.manControlButton->setCheckable(false);
     ui.rateControlButton->setCheckable(false);
-	ui.attitudeControlButton->setCheckable(false);
+    ui.attControlButton->setCheckable(false);
     ui.halfAutomaticControlButton->hide();
     ui.fullAutomaticControlButton->hide();
 
@@ -78,9 +86,9 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
 
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 
-    connect(ui.directControlButton, SIGNAL(clicked()), this, SLOT(setDirectControlMode()));
+    connect(ui.manControlButton, SIGNAL(clicked()), this, SLOT(setDirectControlMode()));
     connect(ui.rateControlButton, SIGNAL(clicked()), this, SLOT(setRateControlMode()));
-	connect(ui.attitudeControlButton, SIGNAL(clicked()), this, SLOT(setAttitudeControlMode()));
+    connect(ui.attControlButton, SIGNAL(clicked()), this, SLOT(setAttitudeControlMode()));
 
     connect(ui.mouseButton, SIGNAL(clicked(bool)), this, SLOT(setInputMouse(bool)));
     connect(ui.touchButton, SIGNAL(clicked(bool)), this, SLOT(setInputTouch(bool)));
@@ -197,54 +205,38 @@ void UASSkyeControlWidget::updateMode(int uas,int baseMode)
     if ((uasId == uas) && ((int)uasMode != baseMode))
     {
         uasMode = (unsigned int)baseMode;
-        QString green = "* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #004433, stop: 1 #228822)}";
-        QString gray  = "* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #999999, stop: 1 #444444)}";
+
 		if (uasMode == MAV_MODE_PREFLIGHT)
         {
-            ui.directControlButton->setStyleSheet(gray);
-            ui.rateControlButton->setStyleSheet(gray);
-            ui.attitudeControlButton->setStyleSheet(gray);
+            ui.manControlButton->setObjectName("manControlButtonGray");
+            ui.rateControlButton->setObjectName("rateControlButtonGray");
+            ui.attControlButton->setObjectName("attControlButtonGray");
 		}
-        if ((uasMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) || (uasMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE))
+
+        if (uasMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL)
         {
-            ui.directControlButton->setStyleSheet(green);
-		} else {
-            ui.directControlButton->setStyleSheet(gray);
-		}
-
-
-		if (uasMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE)
-		{
-			if (uasMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE)
-			{
-                ui.rateControlButton->setStyleSheet(green);
-                ui.attitudeControlButton->setStyleSheet(gray);
-			} else {
-                ui.rateControlButton->setStyleSheet(green);
-                ui.attitudeControlButton->setStyleSheet(green);
-			}
-        } else {
-            ui.rateControlButton->setStyleSheet(gray);
-            ui.attitudeControlButton->setStyleSheet(gray);
+            ui.manControlButton->setObjectName("manControlButtonGreen");
+            ui.rateControlButton->setObjectName("rateControlButtonGray");
+            ui.attControlButton->setObjectName("attControlButtonGray");
         }
 
-//        case MAV_MODE_HALF_AUTOMATIC_DISARMED:
-//        case MAV_MODE_HALF_AUTOMATIC_ARMED:
-//        {
-//            ui.halfAutomaticControlButton->setChecked(true);
-//        }break;
-//        case MAV_MODE_FULL_AUTOMATIC_DISARMED:
-//        case MAV_MODE_FULL_AUTOMATIC_ARMED:
-//        {
-//            ui.fullAutomaticControlButton->setChecked(true);
-//        }break;
-//        default:
-//        {
-//            uncheckAllModeButtons();
-//        }break;
-//        }
+        if ((uasMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) && (uasMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE))
+        {
+            ui.manControlButton->setObjectName("manControlButtonGray");
+            ui.rateControlButton->setObjectName("rateControlButtonGreen");
+            ui.attControlButton->setObjectName("attControlButtonGray");
+        }
 
+        if ((uasMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) && !(uasMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE))
+        {
+            ui.manControlButton->setObjectName("manControlButtonGray");
+            ui.rateControlButton->setObjectName("rateControlButtonGray");
+            ui.attControlButton->setObjectName("attControlButtonGreen");
+        }
 
+        ui.manControlButton->setStyleSheet("");
+        ui.rateControlButton->setStyleSheet("");
+        ui.attControlButton->setStyleSheet("");
     }
 }
 
@@ -294,15 +286,11 @@ void UASSkyeControlWidget::setDirectControlMode()
     uint8_t newMode = MAV_MODE_PREFLIGHT;
     if (engineOn) {
 
-    if ( !(uasMode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED) || (uasMode & MAV_MODE_FLAG_STABILIZE_ENABLED) ) {
-        // Set direct manual control (otherwise reset to PREFLIGHT)
         newMode = newMode | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED;
-    }
+        transmitMode(newMode);
 
-    transmitMode(newMode);
-
-    QString white = "* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DDDDDD, stop: 1 #999999)}";
-    ui.directControlButton->setStyleSheet(white);
+        ui.manControlButton->setObjectName("manControlButtonWhite");
+        ui.manControlButton->setStyleSheet("");
 
     } else {
         ui.lastActionLabel->setText("Arm system first");
@@ -315,19 +303,12 @@ void UASSkyeControlWidget::setRateControlMode()
     uint8_t newMode = MAV_MODE_PREFLIGHT;
     if (engineOn) {
         newMode = newMode | MAV_MODE_FLAG_SAFETY_ARMED;
-
-        if ( !(uasMode & MAV_MODE_FLAG_CUSTOM_MODE_ENABLED) ) {
-            // Set rate control
-            newMode |= MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
-        } else {
-            // Reset to direct manual control
-            newMode |= MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
-        }
-
+        // Set rate control
+        newMode |= MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
         transmitMode(newMode);
 
-        QString white = "* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DDDDDD, stop: 1 #999999)}";
-        ui.rateControlButton->setStyleSheet(white);
+        ui.rateControlButton->setObjectName("rateControlButtonWhite");
+        ui.rateControlButton->setStyleSheet("");
     } else {
         ui.lastActionLabel->setText("Arm system first");
     }
@@ -338,19 +319,13 @@ void UASSkyeControlWidget::setAttitudeControlMode()
     uint8_t newMode = MAV_MODE_PREFLIGHT;
     if (engineOn) {
         newMode = newMode | MAV_MODE_FLAG_SAFETY_ARMED;
-
-        if ( (uasMode & MAV_MODE_FLAG_CUSTOM_MODE_ENABLED) || !(uasMode & MAV_MODE_FLAG_STABILIZE_ENABLED) ) {
-            // Set attitude control
-            newMode |= MAV_MODE_FLAG_STABILIZE_ENABLED;
-        } else {
-            // Reset to rate control
-            newMode |= MAV_MODE_FLAG_CUSTOM_MODE_ENABLED | MAV_MODE_FLAG_STABILIZE_ENABLED;
-        }
-
+        // Set attitude control
+        newMode |= MAV_MODE_FLAG_STABILIZE_ENABLED;
         transmitMode(newMode);
 
-        QString white = "* {  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DDDDDD, stop: 1 #999999)}";
-        ui.attitudeControlButton->setStyleSheet(white);
+
+        ui.attControlButton->setObjectName("attControlButtonWhite");
+        ui.attControlButton->setStyleSheet("");
 
     } else {
         ui.lastActionLabel->setText("Arm system first");
