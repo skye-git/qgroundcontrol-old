@@ -82,13 +82,14 @@ public slots:
     void changeMouseRotationEnabled(bool rotEnabled);
     /** @brief Alert user that battery is low */
     void alertBatteryLow(double voltage);
+    /** @brief Listens to changes in the lift value from MAV*/
+    void liftValueChanged(int);
 
 signals:
     void changedMode(int);
     void changedInput(SkyeMAV::QGC_INPUT_MODE);
     void changedSensitivityTransFactor(float);
     void changedSensitivityRotFactor(float);
-    void changedLiftFactor(float);
 
     protected slots:
 //        /** @brief Set the background color for the widget */
@@ -111,18 +112,14 @@ signals:
         void setInputTouch(bool checked);
         /** @brief Set Keyboard as active inpute device */
         void setInputKeyboard(bool checked);
+        /** @brief Set XboxController as active input device */
+        void setInputXbox(bool checked);
         /** @brief Set new (float)sensitivityFactorTrans by int */
         void setSensitivityFactorTrans(int val);
         /** @brief Set new (float)sensitivityFactorRot by int */
         void setSensitivityFactorRot(int val);
         /** @brief Set new (float)liftFactor by int */
-        void setLiftFactor(int val);
-        /** @brief Set new (float)liftFactor by float */
-        void setLiftFactor(float val);
-        /** @brief Set new (float) maximum liftFactor */
-        void setMaxLiftFactor(double max);
-        /** @brief En-/disable liftFactor. Sends 0 if disabled */
-        void enableLiftFactor(bool enabled);
+        void setLiftValue(int val);
 
 
     protected:
@@ -141,10 +138,7 @@ signals:
         float minSensitivityFactorRot;      ///< Minimum value of velocitySlider in float scale.
         float maxSensitivityFactorRot;      ///< Maximum value of velocitySlider in float scale.
 
-        bool liftFactorEnabled;             ///< True when additive lift value is added
-        float liftFactor;                   ///< Additive z value (for constant lift gain)
-        float minLiftFactor;                ///< Minimum value of liftSlider
-        float maxLiftFactor;                ///< Maximum value of liftSlider
+        int liftValue;                      ///< Additive z value (for constant lift gain)
 
         QTime lastAlertTime;                ///< Time when last low battery alert was prompted
         bool alertedBatteryLow;             ///< True if system had low battery once

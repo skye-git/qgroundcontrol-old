@@ -31,7 +31,8 @@ SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
     manualZRot(0.0),
     sensitivityFactorTrans(0.0f),
     sensitivityFactorRot(0.0f),
-    liftFactor(0.0f),
+    liftValue(0),
+    liftValueFloat(0.0f),
     currentTrajectoryStamp(0),
     inputMode(QGC_INPUT_MODE_TOUCH)
 {
@@ -227,7 +228,7 @@ void SkyeMAV::setManual6DOFControlCommands(double x , double y , double z , doub
     {
         manualXVel = x * (double)sensitivityFactorTrans;
         manualYVel = y * (double)sensitivityFactorTrans;
-        manualZVel = z * (double)sensitivityFactorTrans - (double)liftFactor;
+        manualZVel = z * (double)sensitivityFactorTrans - (double)liftValueFloat;
         manualZVel = qMin((double)sensitivityFactorTrans, qMax(-(double)sensitivityFactorTrans, manualZVel));
         manualXRot = a * (double)sensitivityFactorRot;
         manualYRot = b * (double)sensitivityFactorRot;
@@ -508,7 +509,7 @@ void SkyeMAV::updateTrigonometry()
     fromItoC[1] = cosTheta*sinPsi;
     fromItoC[2] = -sinTheta;
     fromItoC[3] = sinPhi*sinTheta*cosPsi - cosPhi*sinPsi;
-    fromItoC[4] = sinPhi*sinTheta*sinPsi + cosPhi*cosPsi;;
+    fromItoC[4] = sinPhi*sinTheta*sinPsi + cosPhi*cosPsi;
     fromItoC[5] = sinPhi*cosTheta;
     fromItoC[6] = cosPhi*sinTheta*cosPsi + sinPhi*sinPsi;
     fromItoC[7] = cosPhi*sinTheta*sinPsi - sinPhi*cosPsi;
@@ -530,4 +531,17 @@ void SkyeMAV::sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t bl
     mavlink_msg_led_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, ledId, red, green, blue, mode, frequency);
     sendMessage(msg);
     qDebug("Sent LED Color Message");
+}
+
+
+void SkyeMAV::setLiftValue(int val)
+{
+    if (val != liftValue and val >= 0 and val <= LIFT_RESOLUTION)
+    {
+        liftValue = val;
+        qDebug() << "lift factor" << val;
+        emit liftValueChanged(liftValue);
+        liftValueFloat = liftValue / LIFT_RESOLUTION;
+    }
+
 }

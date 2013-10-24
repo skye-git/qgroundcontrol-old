@@ -210,6 +210,13 @@ MainWindow::MainWindow(QWidget *parent):
     connect(this, SIGNAL(x11EventOccured(XEvent*)), mouse, SLOT(handleX11Event(XEvent*)));
 #endif //MOUSE_ENABLED_LINUX
 
+#if MOUSE_ENABLED_LINUX
+    emit initStatusChanged("Initializing Xbox interface.");
+
+    xbox = new XboxController(this);
+#endif //MOUSE_ENABLED_LINUX
+
+
     // Connect link
     if (autoReconnect)
     {
@@ -1966,6 +1973,10 @@ void MainWindow::setInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
             break;
     case (int)SkyeMAV::QGC_INPUT_MODE_KEYBOARD:
             this->inputMode = SkyeMAV::QGC_INPUT_MODE_KEYBOARD;
+            emit emitTouchInputVisibility(false);
+            break;
+    case (int)SkyeMAV::QGC_INPUT_MODE_XBOX:
+            this->inputMode = SkyeMAV::QGC_INPUT_MODE_XBOX;
             emit emitTouchInputVisibility(false);
             break;
     default:

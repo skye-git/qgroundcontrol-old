@@ -392,7 +392,8 @@ HEADERS += src/MG.h \
     src/ui/uas/Skye_enums.h \
     src/ui/ledControl/LedControlWidget.h \
     src/ui/uas/UASVoltageInfoWidget.h \
-    src/uas/UASCurrentInfoWidget.h
+    src/uas/UASCurrentInfoWidget.h \
+    src/input/xboxcontroller.h
 
 # Google Earth is only supported on Mac OS and Windows with Visual Studio Compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010::HEADERS += src/ui/map3D/QGCGoogleEarthView.h
@@ -565,7 +566,8 @@ SOURCES += src/main.cc \
     src/ui/QGCHilXPlaneConfiguration.cc \
     src/ui/ledControl/LedControlWidget.cc \
     src/ui/uas/UASVoltageInfoWidget.cpp \
-    src/uas/UASCurrentInfoWidget.cpp
+    src/uas/UASCurrentInfoWidget.cpp \
+    src/input/xboxcontroller.cpp
 
 # Enable Google Earth only on Mac OS and Windows with Visual Studio compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010::SOURCES += src/ui/map3D/QGCGoogleEarthView.cc
@@ -697,3 +699,12 @@ win32-msvc2008|win32-msvc2010 {
     INCLUDEPATH += libs/thirdParty/3DMouse/win
     DEFINES += MOUSE_ENABLED_WIN
 }
+
+
+#libjoystick for xbox 360 controller support
+linux-g++|linus-g++64{
+    SOURCES  += thirdParty/xbox/joystick.cpp
+    HEADERS  += thirdParty/xbox/joystick.h
+}
+
+

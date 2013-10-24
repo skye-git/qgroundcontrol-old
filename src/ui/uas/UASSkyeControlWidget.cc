@@ -63,10 +63,7 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     sensitivityFactorRot(QGC_SKYE_DEFAULT_SENS_DIRECT_ROT),
     minSensitivityFactorRot(0.0f),
     maxSensitivityFactorRot(QGC_SKYE_MAX_SENS_DIRECT_ROT),
-    liftFactorEnabled(true),
-    liftFactor(0.0f),
-    minLiftFactor(0.0f),
-    maxLiftFactor(0.5f)
+    liftValue(0)
 {
 #ifdef QGC_USE_SKYE_INTERFACE
     ui.setupUi(this);
@@ -86,10 +83,12 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     ui.mouseButton->setChecked(inputMode == SkyeMAV::QGC_INPUT_MODE_MOUSE);
     ui.touchButton->setChecked(inputMode == SkyeMAV::QGC_INPUT_MODE_TOUCH);
     ui.keyboardButton->setChecked(inputMode == SkyeMAV::QGC_INPUT_MODE_KEYBOARD);
+    ui.xboxButton->setChecked(inputMode == SkyeMAV::QGC_INPUT_MODE_XBOX);
     inputButtonGroup = new QButtonGroup;
     inputButtonGroup->addButton(ui.mouseButton);
     inputButtonGroup->addButton((ui.touchButton));
     inputButtonGroup->addButton((ui.keyboardButton));
+    inputButtonGroup->addButton((ui.xboxButton));
     ui.keyboardButton->hide();
 
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
@@ -101,6 +100,7 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     connect(ui.mouseButton, SIGNAL(clicked(bool)), this, SLOT(setInputMouse(bool)));
     connect(ui.touchButton, SIGNAL(clicked(bool)), this, SLOT(setInputTouch(bool)));
     connect(ui.keyboardButton, SIGNAL(clicked(bool)), this, SLOT(setInputKeyboard(bool)));
+    connect(ui.xboxButton, SIGNAL(clicked(bool)), this, SLOT(setInputXbox(bool)));
 
     // Multiplication factor for translational commands
     ui.sensitivityTransSlider->setValue(ui.sensitivityTransSlider->maximum()*sensitivityFactorTrans/maxSensitivityFactorTrans);
@@ -123,17 +123,10 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     ui.prosilicaButton->hide();
 
     // additive lift factor fields
-    ui.liftCheckBox->setChecked(liftFactorEnabled);
-    connect(ui.liftCheckBox, SIGNAL(toggled(bool)), this, SLOT(enableLiftFactor(bool)));
 
-    ui.liftSlider->setRange(0, 999);
-    ui.liftSlider->setValue(ui.liftSlider->maximum()*liftFactor/maxLiftFactor);
-    connect(ui.liftSlider, SIGNAL(valueChanged(int)), this, SLOT(setLiftFactor(int)));
-
-    ui.minSensitivityRotLabel->setNum((double)minLiftFactor);
-    ui.maxLiftSpinBox->setValue((double)maxLiftFactor);
-    connect(ui.maxLiftSpinBox, SIGNAL(valueChanged(double)), this, SLOT(setMaxLiftFactor(double)));
-
+    ui.liftSlider->setRange(0, LIFT_RESOLUTION);
+    ui.liftSlider->setValue(liftValue);
+    connect(ui.liftSlider, SIGNAL(valueChanged(int)), this, SLOT(setLiftValue(int)));
 
     updateStyleSheet();
 
@@ -191,12 +184,11 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(mav, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(updateInput(SkyeMAV::QGC_INPUT_MODE)));
         connect(this, SIGNAL(changedSensitivityTransFactor(float)), mav, SLOT(setSensitivityFactorTrans(float)));
         connect(this, SIGNAL(changedSensitivityRotFactor(float)), mav, SLOT(setSensitivityFactorRot(float)));
-        connect(this, SIGNAL(changedLiftFactor(float)), mav, SLOT(setLiftFactor(float)));
+        connect(ui.liftSlider, SIGNAL(valueChanged(int)), mav, SLOT(setLiftValue(int)));
+        connect(mav,SIGNAL(liftValueChanged(int)),this,SLOT(liftValueChanged(int)));
+
         emit changedSensitivityTransFactor(sensitivityFactorTrans);
         emit changedSensitivityRotFactor(sensitivityFactorRot);
-        if (liftFactorEnabled) {
-            emit changedLiftFactor(liftFactor);
-        }
     }
 
 
@@ -336,6 +328,7 @@ void UASSkyeControlWidget::updateInput(SkyeMAV::QGC_INPUT_MODE input)
         ui.mouseButton->setChecked(false);
         ui.touchButton->setChecked(false);
         ui.keyboardButton->setChecked(false);
+        ui.xboxButton->setChecked(false);
         inputButtonGroup->setExclusive(true);
         ui.lastActionLabel->setText("No input set");
         break;
@@ -350,6 +343,10 @@ void UASSkyeControlWidget::updateInput(SkyeMAV::QGC_INPUT_MODE input)
     case (int)SkyeMAV::QGC_INPUT_MODE_KEYBOARD:
         ui.keyboardButton->setChecked(true);
         ui.lastActionLabel->setText("Keyboard input set");
+        break;
+    case (int)SkyeMAV::QGC_INPUT_MODE_XBOX:
+        ui.xboxButton->setChecked(true);
+        ui.lastActionLabel->setText("Xbox input set");
         break;
     }
 #endif // QGC_USE_SKYE_INTERFACE
@@ -484,6 +481,18 @@ void UASSkyeControlWidget::setInputKeyboard(bool checked)
 #endif // QGC_USE_SKYE_INTERFACE
 }
 
+void UASSkyeControlWidget::setInputXbox(bool checked)
+{
+#ifdef QGC_USE_SKYE_INTERFACE
+    if (checked)
+    {
+        ui.lastActionLabel->setText(tr("Xbox Controller activated!"));
+        inputMode = SkyeMAV::QGC_INPUT_MODE_XBOX;
+        emit changedInput(inputMode);
+    }
+#endif // QGC_USE_SKYE_INTERFACE
+}
+
 void UASSkyeControlWidget::transmitMode(int mode)
 {
 #ifdef QGC_USE_SKYE_INTERFACE
@@ -571,6 +580,7 @@ void UASSkyeControlWidget::updateStyleSheet()
 
     style.append("QPushButton#touchButton {image: url(:images/skye_images/input/FingerPointing.png);}");
     style.append("QPushButton#keyboardButton {image: url(:images/skye_images/input/keyboard-icon_64.png); }");
+    style.append("QPushButton#xboxButton {image: url(:images/skye_images/input/xbox_controller.png); }");
     style.append("QPushButton:disabled {background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #BBBBBB, stop: 1 #444444); color: #333333 }");
     this->setStyleSheet(style);
 }
@@ -638,45 +648,6 @@ void UASSkyeControlWidget::setSensitivityFactorRot(int val)
     emit changedSensitivityRotFactor(sensitivityFactorRot);
 }
 
-void UASSkyeControlWidget::setLiftFactor(int val)
-{
-    liftFactor = (float)val*maxLiftFactor/ui.liftSlider->maximum();
-
-    int red = 16*16;
-    int green = 16;
-    int blue = 1;
-    int colorStart = (int)(( 1+10*ui.liftSlider->value()/ui.liftSlider->maximum() ) * red + (  10*(ui.sensitivityRotSlider->maximum()-ui.sensitivityRotSlider->value())/ui.liftSlider->maximum()) * green + 6 * blue);
-    int colorEnd =   (int)(( 1+14*ui.liftSlider->value()/ui.liftSlider->maximum() ) * red + (  14*(ui.sensitivityRotSlider->maximum()-ui.sensitivityRotSlider->value())/ui.liftSlider->maximum()) * green + 6 * blue);
-    QString style = QString("QSlider::sub-page:horizontal {border: 1px solid #bbb; border-radius: 4px; background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #%1, stop: 1 #%2); }").arg(colorStart, 1, 16).arg(colorEnd, 1, 16);
-    ui.liftSlider->setStyleSheet(style);
-
-    if (liftFactorEnabled) {
-        emit changedLiftFactor(liftFactor);
-        QString str = QString("Lift Factor: %1").arg(liftFactor);
-        ui.liftLabel->setText(str);
-    } else {
-        emit changedLiftFactor(0.0f);
-        QString str = QString("Lift Factor (DISABLED): %1").arg(liftFactor);
-        ui.liftLabel->setText(str);
-    }
-}
-
-void UASSkyeControlWidget::setLiftFactor(float val)
-{
-    setLiftFactor((int)((float)ui.liftSlider->maximum()/maxLiftFactor*val));
-}
-
-void UASSkyeControlWidget::setMaxLiftFactor(double max)
-{
-    maxLiftFactor = (float)max;
-    ui.liftSlider->setValue(liftFactor/maxLiftFactor*ui.liftSlider->maximum());
-}
-
-void UASSkyeControlWidget::enableLiftFactor(bool enabled)
-{
-    liftFactorEnabled = enabled;
-    setLiftFactor(liftFactor);
-}
 
 void UASSkyeControlWidget::alertBatteryLow(double voltage)
 {
@@ -696,4 +667,26 @@ void UASSkyeControlWidget::alertBatteryLow(double voltage)
 //        msgBox.setDefaultButton(QMessageBox::Ok);
 //        msgBox.exec();
     }
+}
+
+void UASSkyeControlWidget::setLiftValue(int val)
+{
+    liftValue = val;
+
+    int red = 16*16;
+    int green = 16;
+    int blue = 1;
+    int colorStart = (int)(( 1+10*ui.liftSlider->value()/ui.liftSlider->maximum() ) * red + (  10*(ui.liftSlider->maximum()-ui.liftSlider->value())/ui.liftSlider->maximum()) * green + 6 * blue);
+    int colorEnd =   (int)(( 1+14*ui.liftSlider->value()/ui.liftSlider->maximum() ) * red + (  14*(ui.liftSlider->maximum()-ui.liftSlider->value())/ui.liftSlider->maximum()) * green + 6 * blue);
+    QString style = QString("QSlider::sub-page:horizontal {border: 1px solid #bbb; border-radius: 4px; background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #%1, stop: 1 #%2); }").arg(colorStart, 1, 16).arg(colorEnd, 1, 16);
+    ui.liftSlider->setStyleSheet(style);
+    liftValue = val;
+    QString str = QString("Lift Value: %1").arg(MAX_LIFT_VALUE*liftValue/LIFT_RESOLUTION,0,'f',3);
+    ui.liftLabel->setText(str);
+
+}
+
+void UASSkyeControlWidget::liftValueChanged(int up)
+{
+    ui.liftSlider->setValue(up);
 }

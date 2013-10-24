@@ -5,6 +5,11 @@
 #include <QTimer>
 #include <QVector>
 #include "UAS.h"
+
+
+#define MAX_LIFT_VALUE 0.2
+#define LIFT_RESOLUTION 999     //values from 0 to LIFT_RESOLUTION are possible
+
 //#include "BluefoxReconfigure.h"
 
 class SkyeMAV : public UAS
@@ -19,7 +24,8 @@ public:
         QGC_INPUT_MODE_NONE,
         QGC_INPUT_MODE_MOUSE,
         QGC_INPUT_MODE_TOUCH,
-        QGC_INPUT_MODE_KEYBOARD
+        QGC_INPUT_MODE_KEYBOARD,
+        QGC_INPUT_MODE_XBOX
     };
 
     /** @brief Get the airframe */
@@ -67,7 +73,7 @@ public slots:
     /** @brief Send mode via mavlink command */
     void setModeCommand(int mode);
     /** @brief Set additive value for z manual control */
-    void setLiftFactor(float val) {liftFactor = val; qDebug() << "lift factor" << val;}
+    void setLiftValue(int val);
 
 
     void followTrajectory();
@@ -105,6 +111,7 @@ signals:
     void inputModeChanged(SkyeMAV::QGC_INPUT_MODE);
     /** @brief Battery is low. Shutdown required */
     void batteryLow(double voltage);
+    void liftValueChanged(int);
 
 
 protected:
@@ -131,7 +138,8 @@ protected:
 
     float sensitivityFactorTrans;   ///< Translational factor for manual control [remark: abs(deviceInput) <= 1 ]
     float sensitivityFactorRot;     ///< Rotational factor for manual control [remark: abs(deviceInput) <= 1 ]
-    float liftFactor;               ///< Additive term for manual control
+    int liftValue;               ///< Additive term for manual control: int from controller and slider
+    float liftValueFloat;       ///< liftvalue normalized from 0 to 1
 
     int currentTrajectoryStamp;
     QTimer trajectoryTimer;
