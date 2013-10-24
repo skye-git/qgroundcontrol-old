@@ -48,9 +48,6 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     inputMode(SkyeMAV::QGC_INPUT_MODE_NONE),
     mouseTranslationEnabled(true),
     mouseRotationEnabled(true),
-    sensitivityFactorTrans(0.5),
-    sensitivityFactorRot(0.5),
-    liftFactor(0.0f),
     inputMixer(NULL)
 {
 
@@ -79,10 +76,12 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     ui.mouseButton->setChecked(inputMode == SkyeMAV::QGC_INPUT_MODE_MOUSE);
     ui.touchButton->setChecked(inputMode == SkyeMAV::QGC_INPUT_MODE_TOUCH);
     ui.keyboardButton->setChecked(inputMode == SkyeMAV::QGC_INPUT_MODE_KEYBOARD);
+    ui.xboxButton->setChecked(inputMode == SkyeMAV::QGC_INPUT_MODE_XBOX);
     inputButtonGroup = new QButtonGroup;
     inputButtonGroup->addButton(ui.mouseButton);
     inputButtonGroup->addButton((ui.touchButton));
     inputButtonGroup->addButton((ui.keyboardButton));
+    inputButtonGroup->addButton((ui.xboxButton));
     ui.keyboardButton->hide();
 
     // alert widget
@@ -104,14 +103,12 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     connect(ui.mouseButton, SIGNAL(clicked(bool)), this, SLOT(setInputMouse(bool)));
     connect(ui.touchButton, SIGNAL(clicked(bool)), this, SLOT(setInputTouch(bool)));
     connect(ui.keyboardButton, SIGNAL(clicked(bool)), this, SLOT(setInputKeyboard(bool)));
+    connect(ui.xboxButton, SIGNAL(clicked(bool)), this, SLOT(setInputXbox(bool)));
 
-    // Multiplication factor for translational commands
-    infoViewWidget->advancedWidget->setSliderValues(sensitivityFactorTrans, sensitivityFactorRot, liftFactor);
-    connect(infoViewWidget->advancedWidget, SIGNAL(transSliderValueChanged(double)), this, SLOT(setSensitivityFactorTrans(double)));
-    connect(infoViewWidget->advancedWidget, SIGNAL(rotSliderValueChanged(double)), this, SLOT(setSensitivityFactorRot(double)));
-    connect(infoViewWidget->advancedWidget, SIGNAL(liftSliderValueChanged(double)), this, SLOT(setLiftFactor(double)));
 
     //ui.gridLayout->setAlignment(Qt::AlignTop);
+
+
 
     updateStyleSheet();
 
@@ -138,23 +135,15 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
             disconnect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
             disconnect(mav, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
             disconnect(this, SIGNAL(changedInput(SkyeMAV::QGC_INPUT_MODE)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
+
             disconnect(mav, SIGNAL(mouseButtonRotationChanged(bool)), this, SLOT(changeMouseRotationEnabled(bool)));
             disconnect(mav, SIGNAL(mouseButtonTranslationChanged(bool)), this, SLOT(changeMouseTranslationEnabled(bool)));
             //disconnect(mav, SIGNAL(batteryLow(double)), this, SLOT(alertBatteryLow(double)));
             disconnect(mav, SIGNAL(batteryLow(double,bool,uint)), alertWidget, SLOT(batteryLow(double,bool,uint)));
 
-            disconnect(this, SIGNAL(changedSensitivityTransFactor(float)), mav, SLOT(setSensitivityFactorTrans(float)));
-            disconnect(this, SIGNAL(changedSensitivityRotFactor(float)), mav, SLOT(setSensitivityFactorRot(float)));
-            disconnect(this, SIGNAL(changedLiftFactor(float)), mav, SLOT(setLiftFactor(float)));
             disconnect(inputMixer, SIGNAL(changed6DOFInput(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
 
-            disconnect(infoViewWidget->advancedWidget, SIGNAL(rollSliderValueChanged(double)), mav, SLOT(setAddRollValue(double)));
-            disconnect(infoViewWidget->advancedWidget, SIGNAL(pitchSliderValueChanged(double)), mav, SLOT(setAddPitchValue(double)));
-            disconnect(infoViewWidget->advancedWidget, SIGNAL(yawSliderValueChanged(double)), mav, SLOT(setAddYawValue(double)));
-
             // Disconnect slots for Change of Actuation Unit Configuration
-            disconnect(infoViewWidget->advancedWidget, SIGNAL(requestAUConfiguration(int)), mav, SLOT(sendAUConfiguration(int)));
-            disconnect(mav, SIGNAL(allocCaseChanged(int)), infoViewWidget->advancedWidget, SLOT(updateAllocCase(int)));
             disconnect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(getAllocCase(int)));
 
 
@@ -192,25 +181,14 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
 
         connect(this, SIGNAL(changedInput(SkyeMAV::QGC_INPUT_MODE)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
         //connect(mav, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(updateInput(SkyeMAV::QGC_INPUT_MODE)));
-        connect(this, SIGNAL(changedSensitivityTransFactor(float)), mav, SLOT(setSensitivityFactorTrans(float)));
-        connect(this, SIGNAL(changedSensitivityRotFactor(float)), mav, SLOT(setSensitivityFactorRot(float)));
-        connect(this, SIGNAL(changedLiftFactor(float)), mav, SLOT(setLiftFactor(float)));
+
         connect(inputMixer, SIGNAL(changed6DOFInput(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
 
-        connect(infoViewWidget->advancedWidget, SIGNAL(rollSliderValueChanged(double)), mav, SLOT(setAddRollValue(double)));
-        connect(infoViewWidget->advancedWidget, SIGNAL(pitchSliderValueChanged(double)), mav, SLOT(setAddPitchValue(double)));
-        connect(infoViewWidget->advancedWidget, SIGNAL(yawSliderValueChanged(double)), mav, SLOT(setAddYawValue(double)));
-
         // Connect slots for Change of Actuation Unit Configuration
-        connect(infoViewWidget->advancedWidget, SIGNAL(requestAUConfiguration(int)), mav, SLOT(sendAUConfiguration(int)));
-        connect(mav, SIGNAL(allocCaseChanged(int)), infoViewWidget->advancedWidget, SLOT(updateAllocCase(int)));
         connect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(getAllocCase(int)));
 
-
-        // ask for initial values
-        infoViewWidget->advancedWidget->emitSliderValues();
-
     }
+
 }
 
 UASSkyeControlWidget::~UASSkyeControlWidget()
@@ -301,6 +279,7 @@ void UASSkyeControlWidget::updateInput(SkyeMAV::QGC_INPUT_MODE input)
         ui.mouseButton->setChecked(false);
         ui.touchButton->setChecked(false);
         ui.keyboardButton->setChecked(false);
+        ui.xboxButton->setChecked(false);
         //inputButtonGroup->setExclusive(true);
         //ui.lastActionLabel->setText("No input set");
         break;
@@ -321,6 +300,10 @@ void UASSkyeControlWidget::updateInput(SkyeMAV::QGC_INPUT_MODE input)
         ui.touchButton->setChecked(false);
         ui.keyboardButton->setChecked(false);
         ui.lastActionLabel->setText("Keyboard input activated.");
+        break;
+    case (int)SkyeMAV::QGC_INPUT_MODE_XBOX:
+        ui.xboxButton->setChecked(true);
+        ui.lastActionLabel->setText("Xbox input set");
         break;
     }
     updateStyleSheet();
@@ -428,6 +411,16 @@ void UASSkyeControlWidget::setInputKeyboard(bool checked)
     }
 }
 
+void UASSkyeControlWidget::setInputXbox(bool checked)
+{
+    if (checked)
+    {
+        ui.lastActionLabel->setText(tr("Xbox Controller activated!"));
+        inputMode = SkyeMAV::QGC_INPUT_MODE_XBOX;
+        emit changedInput(inputMode);
+    }
+}
+
 void UASSkyeControlWidget::transmitMode(int mode)
 {
     SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
@@ -509,9 +502,9 @@ void UASSkyeControlWidget::updateStyleSheet()
     }else{
         style.append("QPushButton#mouseButton {image: url(:files/images/skye/input/3dx_spacenavigator_200x198.png);}");
     }
-
-    style.append("QPushButton#touchButton {image: url(:files/images/skye/input/FingerPointing.png);}");
-    style.append("QPushButton#keyboardButton {image: url(:files/images/skye/input/keyboard-icon_64.png); }");
+    style.append("QPushButton#touchButton {image: url(:images/skye_images/input/FingerPointing.png);}");
+    style.append("QPushButton#keyboardButton {image: url(:images/skye_images/input/keyboard-icon_64.png); }");
+    style.append("QPushButton#xboxButton {image: url(:images/skye_images/input/xbox_controller.png); }");
     style.append("QPushButton:disabled {background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #BBBBBB, stop: 1 #444444); color: #333333 }");
     this->setStyleSheet(style);
 }
@@ -578,28 +571,6 @@ void UASSkyeControlWidget::uncheckAllModeButtons()
 //        ui.lastActionLabel->setText("No mode set!");
 //    }
 ////    modeButtonGroup->setExclusive(true);
-}
-
-void UASSkyeControlWidget::setSensitivityFactorTrans(double val)
-{
-    sensitivityFactorTrans = val;
-
-    emit changedSensitivityTransFactor((float)sensitivityFactorTrans);
-}
-
-void UASSkyeControlWidget::setSensitivityFactorRot(double val)
-{
-    sensitivityFactorRot = val;
-
-    emit changedSensitivityRotFactor((float)sensitivityFactorRot);
-}
-
-void UASSkyeControlWidget::setLiftFactor(double val)
-{
-    liftFactor = val;
-
-    emit changedLiftFactor((float)liftFactor);
-
 }
 
 void UASSkyeControlWidget::alertBatteryLow(double voltage)

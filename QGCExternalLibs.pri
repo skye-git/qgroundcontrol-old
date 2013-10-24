@@ -396,6 +396,15 @@ WindowsBuild {
 }
 
 #
+# libjoystick for xbox 360 controller support
+#
+
+LinuxBuild : {
+    SOURCES  += thirdParty/xbox/joystick.cpp
+    HEADERS  += thirdParty/xbox/joystick.h
+}
+
+#
 # Opal RT-LAB Library
 #
 

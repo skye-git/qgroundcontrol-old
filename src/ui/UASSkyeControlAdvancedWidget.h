@@ -1,8 +1,18 @@
 #ifndef UASSKYECONTROLADVANCEDWIDGET_H
 #define UASSKYECONTROLADVANCEDWIDGET_H
 
+#define QGC_SKYE_DEFAULT_SENS_DIRECT_TRANS 0.5
+#define QGC_SKYE_DEFAULT_SENS_DIRECT_ROT 0.5
+#define QGC_SKYE_DEFAULT_SENS_ASSIST_TRANS 0.5
+#define QGC_SKYE_DEFAULT_SENS_ASSIST_ROT 0.5
+#define QGC_SKYE_MAX_SENS_DIRECT_TRANS 1.0
+#define QGC_SKYE_MAX_SENS_DIRECT_ROT 1.0
+#define QGC_SKYE_MAX_SENS_ASSIST_TRANS 1.0
+#define QGC_SKYE_MAX_SENS_ASSIST_ROT 1.0
+
 #include <QWidget>
 #include <QString>
+#include <UASInterface.h>
 
 namespace Ui {
 class UASSkyeControlAdvancedWidget;
@@ -17,9 +27,9 @@ public:
     ~UASSkyeControlAdvancedWidget();
 
 signals:
-    void transSliderValueChanged(double);
-    void rotSliderValueChanged(double);
-    void liftSliderValueChanged(double);
+    void transSliderValueChanged(float);
+    void rotSliderValueChanged(float);
+    void liftSliderValueChanged(int);
     void rollSliderValueChanged(double);
     void pitchSliderValueChanged(double);
     void yawSliderValueChanged(double);
@@ -29,10 +39,14 @@ signals:
     void requestAUConfiguration(int);
 
 public slots:
+    /** @brief Set the system this widget controls */
+    void setUAS(UASInterface* uas);
+
     void setSliderValues(double transValue, double rotValue, double liftValue);
     void emitSliderValues();
     /** @brief Update allocation case given by UAV */
     void updateAllocCase(int allocCase);
+
 
 private:
     Ui::UASSkyeControlAdvancedWidget *ui;
@@ -42,10 +56,14 @@ private:
     bool addPitchEnabled;
     bool addYawEnabled;
 
+    int liftValue;
+    int uasId;
+
 private slots:
     void changeTransValue(double value);
     void changeRotValue(double value);
     void changeLiftValue(double value);
+    void changeLiftValue(int value);
     void changeRollValue(double value);
     void changePitchValue(double value);
     void changeYawValue(double value);

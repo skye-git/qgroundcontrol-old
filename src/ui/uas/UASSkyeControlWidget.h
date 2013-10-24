@@ -96,9 +96,6 @@ public slots:
 signals:
     void changedMode(int);
     void changedInput(SkyeMAV::QGC_INPUT_MODE);
-    void changedSensitivityTransFactor(float);
-    void changedSensitivityRotFactor(float);
-    void changedLiftFactor(float);
     void changed6DOFControlCommands(double, double, double, double, double, double);
 
     /** @brief change actuation unit configuration parameter */
@@ -125,25 +122,18 @@ signals:
         void setInputTouch(bool checked);
         /** @brief Set Keyboard as active inpute device */
         void setInputKeyboard(bool checked);
-        /** @brief Set new (double)sensitivityFactorTrans by double */
-        void setSensitivityFactorTrans(double val);
-        /** @brief Set new (double)sensitivityFactorRot by double */
-        void setSensitivityFactorRot(double val);
-        /** @brief Set new (double)liftFactor by double */
-        void setLiftFactor(double val);
+        /** @brief Set XboxController as active input device */
+        void setInputXbox(bool checked);
 
 
-    private:
+
+    protected:
         int uasId;                          ///< Reference to the current uas
         unsigned int uasMode;               ///< Current uas mode
         bool engineOn;                      ///< Engine state
         SkyeMAV::QGC_INPUT_MODE inputMode;           ///< Current device for input
         bool mouseTranslationEnabled;       ///< True when translational motions enabled
         bool mouseRotationEnabled;          ///< True when rotational motions enabled
-
-        double sensitivityFactorTrans;       ///< Gain rotational manual inputs.
-        double sensitivityFactorRot;         ///< Gain rotational manual inputs.
-        double liftFactor;                   ///< Additive z value (for constant lift gain)
 
         QTime lastAlertTime;                ///< Time when last low battery alert was prompted
         bool alertedBatteryLow;             ///< True if system had low battery once

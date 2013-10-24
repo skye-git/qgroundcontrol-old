@@ -1,12 +1,16 @@
 #include "UASSkyeControlAdvancedWidget.h"
 #include "ui_UASSkyeControlAdvancedWidget.h"
 
+#include "UASManager.h"
+#include "SkyeMAV.h"
+
 UASSkyeControlAdvancedWidget::UASSkyeControlAdvancedWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::UASSkyeControlAdvancedWidget),
     addRollEnabled(false),
     addPitchEnabled(false),
-    addYawEnabled(false)
+    addYawEnabled(false),
+    uasId(0)
 {
     ui->setupUi(this);
 
@@ -37,12 +41,66 @@ UASSkyeControlAdvancedWidget::UASSkyeControlAdvancedWidget(QWidget *parent) :
     ui->checkBoxPitch->setChecked(addPitchEnabled);
     ui->checkBoxYaw->setChecked(addYawEnabled);
 
+    // connect uav activation
+    connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
+
 }
 
 UASSkyeControlAdvancedWidget::~UASSkyeControlAdvancedWidget()
 {
     delete ui;
 }
+
+void UASSkyeControlAdvancedWidget::setUAS(UASInterface* uas)
+{
+
+    if (this->uasId!= 0)
+    {
+        UASInterface* oldUAS = UASManager::instance()->getUASForId(this->uasId);
+        this->uasId = 0;
+        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(oldUAS);
+        if (mav)
+        {
+
+            disconnect(this, SIGNAL(transSliderValueChanged(float)), mav, SLOT(setSensitivityFactorTrans(float)));
+            disconnect(this, SIGNAL(rotSliderValueChanged(float)), mav, SLOT(setSensitivityFactorRot(float)));
+            disconnect(this, SIGNAL(liftSliderValueChanged(int)), mav, SLOT(setLiftValue(int)));
+            disconnect(mav,SIGNAL(liftValueChanged(int)),this,SLOT(changeLiftValue(int)));
+
+            disconnect(this, SIGNAL(rollSliderValueChanged(double)), mav, SLOT(setAddRollValue(double)));
+            disconnect(this, SIGNAL(pitchSliderValueChanged(double)), mav, SLOT(setAddPitchValue(double)));
+            disconnect(this, SIGNAL(yawSliderValueChanged(double)), mav, SLOT(setAddYawValue(double)));
+
+            // Disconnect slots for Change of Actuation Unit Configuration
+            disconnect(this, SIGNAL(requestAUConfiguration(int)), mav, SLOT(sendAUConfiguration(int)));
+            disconnect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocCase(int)));
+        }
+    }
+
+
+    SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uas);
+    if (mav)
+    {
+        this->uasId = mav->getUASID();
+
+        // Connect user interface controls
+
+        connect(this, SIGNAL(transSliderValueChanged(float)), mav, SLOT(setSensitivityFactorTrans(float)));
+        connect(this, SIGNAL(rotSliderValueChanged(float)), mav, SLOT(setSensitivityFactorRot(float)));
+        connect(this, SIGNAL(liftSliderValueChanged(int)), mav, SLOT(setLiftValue(int)));
+        connect(mav,SIGNAL(liftValueChanged(int)),this,SLOT(changeLiftValue(int)));
+
+        connect(this, SIGNAL(rollSliderValueChanged(double)), mav, SLOT(setAddRollValue(double)));
+        connect(this, SIGNAL(pitchSliderValueChanged(double)), mav, SLOT(setAddPitchValue(double)));
+        connect(this, SIGNAL(yawSliderValueChanged(double)), mav, SLOT(setAddYawValue(double)));
+
+        // Connect slots for Change of Actuation Unit Configuration
+        connect(this, SIGNAL(requestAUConfiguration(int)), mav, SLOT(sendAUConfiguration(int)));
+        connect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocCase(int)));
+
+    }
+}
+
 
 void UASSkyeControlAdvancedWidget::setSliderValues(double transValue, double rotValue, double liftValue)
 {
@@ -55,7 +113,7 @@ void UASSkyeControlAdvancedWidget::emitSliderValues()
 {
     emit transSliderValueChanged(ui->doubleSpinBoxTranslation->value());
     emit rotSliderValueChanged(ui->doubleSpinBoxRotation->value());
-    emit liftSliderValueChanged(ui->doubleSpinBoxLift->value());
+    emit liftSliderValueChanged((int)(ui->doubleSpinBoxLift->value() * LIFT_RESOLUTION));
     emit rollSliderValueChanged(ui->doubleSpinBoxRoll->value());
     emit pitchSliderValueChanged(ui->doubleSpinBoxPitch->value());
     emit yawSliderValueChanged(ui->doubleSpinBoxYaw->value());
@@ -65,21 +123,38 @@ void UASSkyeControlAdvancedWidget::changeTransValue(double value)
 {
     ui->doubleSpinBoxTranslation->setStyleSheet(getStyleString(value));
 
-    emit transSliderValueChanged(value);
+    emit transSliderValueChanged((float)value);
 }
 
 void UASSkyeControlAdvancedWidget::changeRotValue(double value)
 {
     ui->doubleSpinBoxRotation->setStyleSheet(getStyleString(value));
 
-    emit rotSliderValueChanged(value);
+    emit rotSliderValueChanged((float)value);
 }
 
 void UASSkyeControlAdvancedWidget::changeLiftValue(double value)
 {
-    ui->doubleSpinBoxLift->setStyleSheet(getStyleString(value));
+    if (liftValue != (int)(value * LIFT_RESOLUTION))
+    {
+        liftValue = (int)(value * LIFT_RESOLUTION);
 
-    emit liftSliderValueChanged(value);
+        ui->doubleSpinBoxLift->setStyleSheet(getStyleString(value));
+
+        emit liftSliderValueChanged((int)(value));
+    }
+}
+
+void UASSkyeControlAdvancedWidget::changeLiftValue(int value)
+{
+    if (liftValue != value)
+    {
+        liftValue = value;
+
+        ui->doubleSpinBoxLift->setStyleSheet(getStyleString(double(value)/double(LIFT_RESOLUTION)));
+
+        emit liftSliderValueChanged(value);
+    }
 }
 
 void UASSkyeControlAdvancedWidget::changeRollValue(double value)

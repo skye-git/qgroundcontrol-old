@@ -2084,6 +2084,10 @@ void MainWindow::setInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
     case (int)SkyeMAV::QGC_INPUT_MODE_KEYBOARD:
 //            emit emitTouchInputVisibility(false);
             break;
+    case (int)SkyeMAV::QGC_INPUT_MODE_XBOX:
+            this->inputMode = SkyeMAV::QGC_INPUT_MODE_XBOX;
+            emit emitTouchInputVisibility(false);
+            break;
     default:
 //            emit emitTouchInputVisibility(false);
             qDebug() << "No input device set!";

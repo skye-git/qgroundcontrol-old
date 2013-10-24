@@ -201,6 +201,16 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="xboxButton">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="keyboardButton">
        <property name="minimumSize">
         <size>
@@ -264,7 +274,6 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
   <zorder></zorder>
-  <zorder>verticalLayoutWidget</zorder>
   <zorder>verticalSpacer</zorder>
  </widget>
  <resources/>

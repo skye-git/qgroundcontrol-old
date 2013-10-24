@@ -28,11 +28,11 @@ SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
     manualZRot(0.0),
     sensitivityFactorTrans(0.0f),
     sensitivityFactorRot(0.0f),
-    liftFactor(0.0f),
+    liftValue(0),
+    liftValueFloat(0.0f),
     addRollValue(0.0),
     addPitchValue(0.0),
     addYawValue(0.0),
-//    currentTrajectoryStamp(0),
     inputMode(QGC_INPUT_MODE_TOUCH)
 //    lowBatteryFront(false),
 //    lowBatteryAU(false),
@@ -223,7 +223,8 @@ void SkyeMAV::setManual6DOFControlCommands(double x , double y , double z , doub
     {
         manualXVel = x * (double)sensitivityFactorTrans;
         manualYVel = y * (double)sensitivityFactorTrans;
-        manualZVel = z * (double)sensitivityFactorTrans - (double)liftFactor;
+        manualZVel = z * (double)sensitivityFactorTrans - (double)liftValueFloat;
+        manualZVel = qMin((double)sensitivityFactorTrans, qMax(-(double)sensitivityFactorTrans, manualZVel));
         manualXRot = a * (double)sensitivityFactorRot + addRollValue;
         manualYRot = b * (double)sensitivityFactorRot + addPitchValue;
         manualZRot = c * (double)sensitivityFactorRot + addYawValue;
@@ -318,7 +319,6 @@ uint8_t SkyeMAV::getMode()
     return this->base_mode;
 }
 
-
 void SkyeMAV::setInputMode(SkyeMAV::QGC_INPUT_MODE input)
 {
     qDebug() << "[SkyeMAV] Set new input mode" << input;
@@ -348,4 +348,17 @@ void SkyeMAV::sendAUReset(int auId)
     mavlink_msg_command_long_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, this->uasId, (uint8_t)MAV_COMP_ID_ALL, MAV_CMD_RESET_SKYE_AU, 0, (float)auId, 1.0f, 0, 0, 0, 0, 0);
     sendMessage(msg);
     qDebug() << "[SkyeMAV] Sent reset command for AU id" << auId;
+}
+
+
+void SkyeMAV::setLiftValue(int val)
+{
+    if (val != liftValue and val >= 0 and val <= LIFT_RESOLUTION)
+    {
+        liftValue = val;
+        qDebug() << "lift factor" << val;
+        emit liftValueChanged(liftValue);
+        liftValueFloat = liftValue / LIFT_RESOLUTION;
+    }
+
 }
