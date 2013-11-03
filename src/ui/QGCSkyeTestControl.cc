@@ -2,6 +2,16 @@
 #include "ui_QGCSkyeTestControl.h"
 #include "UASManager.h"
 
+// dynamic style for arm button
+#define STYLE_RED "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DD0044, stop: 1 #AA0022); color: yellow;"
+#define STYLE_GREEN "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00DD44, stop: 1 #11AA22); color: yellow;"
+
+// dynamic style for mode button
+#define STYLE_GRAYMODE "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #999999, stop: 1 #444444);"
+#define STYLE_WHITEMODE "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DDDDDD, stop: 1 #999999);"
+#define STYLE_GREENMODE "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #004433, stop: 1 #228822);"
+
+
 QGCSkyeTestControl::QGCSkyeTestControl(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::QGCSkyeTestControl),
@@ -150,15 +160,16 @@ void QGCSkyeTestControl::updateState(int state)
     case (int)MAV_STATE_ACTIVE:
         engineOn = true;
         ui->controlButton->setText(tr("DISARM SYSTEM"));
-        ui->controlButton->setObjectName("controlButtonRed");
-        ui->controlButton->setStyleSheet("");
+        //ui->controlButton->setObjectName("controlButtonRed");
+        ui->controlButton->setStyleSheet(STYLE_RED);
         break;
     case (int)MAV_STATE_STANDBY:
         engineOn = false;
         stopAll();
         ui->controlButton->setText(tr("ARM SYSTEM"));
         ui->controlButton->setObjectName("controlButtonGreen");
-        ui->controlButton->setStyleSheet("");
+        //ui->controlButton->setStyleSheet("");
+        ui->controlButton->setStyleSheet(STYLE_GREEN);
         break;
     }
 }
@@ -169,38 +180,50 @@ void QGCSkyeTestControl::updateMode(int uas, int baseMode)
     if (baseMode == MAV_MODE_PREFLIGHT)
     {
         //qDebug() << "PREFLIGHT";
-        ui->manPushButton->setObjectName("manControlButtonGray");
-        ui->ratePushButton->setObjectName("rateControlButtonGray");
-        ui->attPushButton->setObjectName("attControlButtonGray");
+        //ui->manPushButton->setObjectName("manControlButtonGray");
+        //ui->ratePushButton->setObjectName("rateControlButtonGray");
+        //ui->attPushButton->setObjectName("attControlButtonGray");
+        ui->manPushButton->setStyleSheet(STYLE_GRAYMODE);
+        ui->ratePushButton->setStyleSheet(STYLE_GRAYMODE);
+        ui->attPushButton->setStyleSheet(STYLE_GRAYMODE);
     }
 
     if (baseMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL)
     {
         //qDebug() << "MANUAL_MODE";
-        ui->manPushButton->setObjectName("manControlButtonGreen");
-        ui->ratePushButton->setObjectName("rateControlButtonGray");
-        ui->attPushButton->setObjectName("attControlButtonGray");
+        //ui->manPushButton->setObjectName("manControlButtonGreen");
+        //ui->ratePushButton->setObjectName("rateControlButtonGray");
+        //ui->attPushButton->setObjectName("attControlButtonGray");
+        ui->manPushButton->setStyleSheet(STYLE_GREENMODE);
+        ui->ratePushButton->setStyleSheet(STYLE_GRAYMODE);
+        ui->attPushButton->setStyleSheet(STYLE_GRAYMODE);
     }
 
     if ((baseMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE))
     {
         //qDebug() << "RATE_MODE";
-        ui->manPushButton->setObjectName("manControlButtonGray");
-        ui->ratePushButton->setObjectName("rateControlButtonGreen");
-        ui->attPushButton->setObjectName("attControlButtonGray");
+        //ui->manPushButton->setObjectName("manControlButtonGray");
+        //ui->ratePushButton->setObjectName("rateControlButtonGreen");
+        //ui->attPushButton->setObjectName("attControlButtonGray");
+        ui->manPushButton->setStyleSheet(STYLE_GRAYMODE);
+        ui->ratePushButton->setStyleSheet(STYLE_GREENMODE);
+        ui->attPushButton->setStyleSheet(STYLE_GRAYMODE);
     }
 
     if ((baseMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) && !(baseMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE))
     {
         //qDebug() << "ATT_MODE";
-        ui->manPushButton->setObjectName("manControlButtonGray");
-        ui->ratePushButton->setObjectName("rateControlButtonGray");
-        ui->attPushButton->setObjectName("attControlButtonGreen");
+        //ui->manPushButton->setObjectName("manControlButtonGray");
+        //ui->ratePushButton->setObjectName("rateControlButtonGray");
+        //ui->attPushButton->setObjectName("attControlButtonGreen");
+        ui->manPushButton->setStyleSheet(STYLE_GRAYMODE);
+        ui->ratePushButton->setStyleSheet(STYLE_GRAYMODE);
+        ui->attPushButton->setStyleSheet(STYLE_GREENMODE);
     }
 
-    ui->manPushButton->setStyleSheet("");
-    ui->ratePushButton->setStyleSheet("");
-    ui->attPushButton->setStyleSheet("");
+//    ui->manPushButton->setStyleSheet("");
+//    ui->ratePushButton->setStyleSheet("");
+//    ui->attPushButton->setStyleSheet("");
 
 }
 
