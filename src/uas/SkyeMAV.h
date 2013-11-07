@@ -74,7 +74,13 @@ public slots:
     /** @brief Send mode via mavlink command */
     void setModeCommand(int mode);
     /** @brief Set additive value for z manual control */
-    void setLiftFactor(float val) {liftFactor = val; qDebug() << "lift factor" << val;}
+    void setLiftFactor(float val) {liftFactor = val;}
+    /** @brief Set additive value for roll manual control */
+    void setAddRollValue(double val) {addRollValue = val;}
+    /** @brief Set additive value for pitch manual control */
+    void setAddPitchValue(double val) {addPitchValue = val;}
+    /** @brief Set additive value for yaw manual control */
+    void setAddYawValue(double val) {addYawValue = val;}
 
 
 //    void followTrajectory();
@@ -113,6 +119,11 @@ protected:
     void sendManualControlCommands6DoF(double x, double y, double z, double phi, double theta, double psi);
     /** @brief Send a Testphase Control Command to MAV: */
     void sendManualControlCommands8DoF(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 );
+    /** Saturation to 1.0 */
+    double saturate(double value);
+    /** 1: greater than zero, 0: equal zero, -1 else */
+    int sign(double value);
+
 
     int airframe;                   ///< The airframe type
 
@@ -133,6 +144,9 @@ protected:
     float sensitivityFactorTrans;   ///< Translational factor for manual control [remark: abs(deviceInput) <= 1 ]
     float sensitivityFactorRot;     ///< Rotational factor for manual control [remark: abs(deviceInput) <= 1 ]
     float liftFactor;               ///< Additive term for manual control
+    double addRollValue;             ///< Additive term for manual control
+    double addPitchValue;            ///< Additive term for manual control
+    double addYawValue;              ///< Additive term for manual control
 
     int currentTrajectoryStamp;
     QTimer trajectoryTimer;

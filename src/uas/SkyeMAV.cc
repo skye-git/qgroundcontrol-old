@@ -32,6 +32,9 @@ SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
     sensitivityFactorTrans(0.0f),
     sensitivityFactorRot(0.0f),
     liftFactor(0.0f),
+    addRollValue(0.0),
+    addPitchValue(0.0),
+    addYawValue(0.0),
 //    currentTrajectoryStamp(0),
     inputMode(QGC_INPUT_MODE_TOUCH)
 {
@@ -98,28 +101,27 @@ void SkyeMAV::setManual6DOFControlCommands(double x , double y , double z , doub
 {
     if (base_mode & MAV_MODE_FLAG_GUIDED_ENABLED)
     {
-        manualXRot = a * (double)sensitivityFactorRot;
-        manualYRot = b * (double)sensitivityFactorRot;
-        manualZRot = c * (double)sensitivityFactorRot;
+        manualXRot = saturate(a * (double)sensitivityFactorRot + addRollValue);
+        manualYRot = saturate(b * (double)sensitivityFactorRot + addPitchValue);
+        manualZRot = saturate(c * (double)sensitivityFactorRot + addYawValue);
         qDebug() << "Set manual rotation for FAC" << a << b << c;
 
     }else if (base_mode & MAV_MODE_FLAG_AUTO_ENABLED)
     {
-        manualZVel = z * (double)sensitivityFactorTrans;
-        manualXRot = a * (double)sensitivityFactorRot;
-        manualYRot = b * (double)sensitivityFactorRot;
-        manualZRot = c * (double)sensitivityFactorRot;
+        manualZVel = saturate(z * (double)sensitivityFactorTrans - (double)liftFactor);
+        manualXRot = saturate(a * (double)sensitivityFactorRot + addRollValue);
+        manualYRot = saturate(b * (double)sensitivityFactorRot + addPitchValue);
+        manualZRot = saturate(c * (double)sensitivityFactorRot + addYawValue);
         qDebug() << "Set lift and manual rotation for HAC" << z << a << b << c;
 
     }else if (base_mode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED)
     {
-        manualXVel = x * (double)sensitivityFactorTrans;
-        manualYVel = y * (double)sensitivityFactorTrans;
-        manualZVel = z * (double)sensitivityFactorTrans - (double)liftFactor;
-        manualZVel = qMin((double)sensitivityFactorTrans, qMax(-(double)sensitivityFactorTrans, manualZVel));
-        manualXRot = a * (double)sensitivityFactorRot;
-        manualYRot = b * (double)sensitivityFactorRot;
-        manualZRot = c * (double)sensitivityFactorRot;
+        manualXVel = saturate(x * (double)sensitivityFactorTrans);
+        manualYVel = saturate(y * (double)sensitivityFactorTrans);
+        manualZVel = saturate(z * (double)sensitivityFactorTrans - (double)liftFactor);
+        manualXRot = saturate(a * (double)sensitivityFactorRot + addRollValue);
+        manualYRot = saturate(b * (double)sensitivityFactorRot + addPitchValue);
+        manualZRot = saturate(c * (double)sensitivityFactorRot + addYawValue);
         sendManualControlCommands6DoF(manualXVel, manualYVel, manualZVel, manualXRot, manualYRot, manualZRot);
         //    qDebug() << ": SENT 6DOF CONTROL MESSAGE: x velocity" << manualXVel << " y velocity: " << manualYVel << " z velocity: " << manualZVel << " x rotation: " << manualXRot << " y rotation: " << manualYRot << " z rotation: " << manualZRot;
     }
@@ -337,3 +339,18 @@ void SkyeMAV::updateTrigonometry()
 //    qDebug() << "I to C" << fromItoC[0] << fromItoC[1] << fromItoC[2] << fromItoC[3] << fromItoC[4] << fromItoC[5] << fromItoC[6] << fromItoC[7] << fromItoC[8];
 }
 */
+
+double SkyeMAV::saturate(double value)
+{
+    return (qAbs(value) > 1.0) ? (double)sign(value) : value;
+}
+
+int SkyeMAV::sign(double value)
+{
+    if (value > 0.0)
+        return 1;
+    else if (value == 0.0)
+        return 0;
+    else
+        return -1;
+}

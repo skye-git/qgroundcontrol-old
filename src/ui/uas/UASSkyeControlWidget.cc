@@ -145,6 +145,10 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
             disconnect(this, SIGNAL(changedSensitivityRotFactor(float)), mav, SLOT(setSensitivityFactorRot(float)));
             disconnect(this, SIGNAL(changedLiftFactor(float)), mav, SLOT(setLiftFactor(float)));
             disconnect(this, SIGNAL(changed6DOFControlCommands(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
+
+            disconnect(advancedWidget, SIGNAL(rollSliderValueChanged(double)), mav, SLOT(setAddRollValue(double)));
+            disconnect(advancedWidget, SIGNAL(pitchSliderValueChanged(double)), mav, SLOT(setAddPitchValue(double)));
+            disconnect(advancedWidget, SIGNAL(yawSliderValueChanged(double)), mav, SLOT(setAddYawValue(double)));
         }
     }
 
@@ -171,11 +175,14 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(this, SIGNAL(changedSensitivityRotFactor(float)), mav, SLOT(setSensitivityFactorRot(float)));
         connect(this, SIGNAL(changedLiftFactor(float)), mav, SLOT(setLiftFactor(float)));
         connect(this, SIGNAL(changed6DOFControlCommands(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
-        emit changedSensitivityTransFactor((float)sensitivityFactorTrans);
-        emit changedSensitivityRotFactor((float)sensitivityFactorRot);
-        emit changedLiftFactor((float)liftFactor);
-    }
 
+        connect(advancedWidget, SIGNAL(rollSliderValueChanged(double)), mav, SLOT(setAddRollValue(double)));
+        connect(advancedWidget, SIGNAL(pitchSliderValueChanged(double)), mav, SLOT(setAddPitchValue(double)));
+        connect(advancedWidget, SIGNAL(yawSliderValueChanged(double)), mav, SLOT(setAddYawValue(double)));
+
+        // ask for initial values
+        advancedWidget->emitSliderValues();
+    }
 }
 
 UASSkyeControlWidget::~UASSkyeControlWidget()

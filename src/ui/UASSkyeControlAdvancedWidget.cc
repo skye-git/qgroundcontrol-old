@@ -3,13 +3,30 @@
 
 UASSkyeControlAdvancedWidget::UASSkyeControlAdvancedWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::UASSkyeControlAdvancedWidget)
+    ui(new Ui::UASSkyeControlAdvancedWidget),
+    addRollEnabled(false),
+    addPitchEnabled(false),
+    addYawEnabled(false)
 {
     ui->setupUi(this);
 
+    // connect spinboxes
     connect(ui->doubleSpinBoxTranslation, SIGNAL(valueChanged(double)), this, SLOT(changeTransValue(double)));
     connect(ui->doubleSpinBoxRotation, SIGNAL(valueChanged(double)), this, SLOT(changeRotValue(double)));
     connect(ui->doubleSpinBoxLift, SIGNAL(valueChanged(double)), this, SLOT(changeLiftValue(double)));
+    connect(ui->doubleSpinBoxRoll, SIGNAL(valueChanged(double)), this, SLOT(changeRollValue(double)));
+    connect(ui->doubleSpinBoxPitch, SIGNAL(valueChanged(double)), this, SLOT(changePitchValue(double)));
+    connect(ui->doubleSpinBoxYaw, SIGNAL(valueChanged(double)), this, SLOT(changeYawValue(double)));
+
+    // connect checkboxes
+    connect(ui->checkBoxRoll, SIGNAL(clicked(bool)), this, SLOT(clickedRollCheckBox(bool)));
+    connect(ui->checkBoxPitch, SIGNAL(clicked(bool)), this, SLOT(clickedPitchCheckBox(bool)));
+    connect(ui->checkBoxYaw, SIGNAL(clicked(bool)), this, SLOT(clickedYawCheckBox(bool)));
+
+    // update checkboxes
+    ui->checkBoxRoll->setChecked(addRollEnabled);
+    ui->checkBoxPitch->setChecked(addPitchEnabled);
+    ui->checkBoxYaw->setChecked(addYawEnabled);
 
 }
 
@@ -23,6 +40,16 @@ void UASSkyeControlAdvancedWidget::setSliderValues(double transValue, double rot
     ui->doubleSpinBoxTranslation->setValue(transValue);
     ui->doubleSpinBoxRotation->setValue(rotValue);
     ui->doubleSpinBoxLift->setValue(liftValue);
+}
+
+void UASSkyeControlAdvancedWidget::emitSliderValues()
+{
+    emit transSliderValueChanged(ui->doubleSpinBoxTranslation->value());
+    emit rotSliderValueChanged(ui->doubleSpinBoxRotation->value());
+    emit liftSliderValueChanged(ui->doubleSpinBoxLift->value());
+    emit rollSliderValueChanged(ui->doubleSpinBoxRoll->value());
+    emit pitchSliderValueChanged(ui->doubleSpinBoxPitch->value());
+    emit yawSliderValueChanged(ui->doubleSpinBoxYaw->value());
 }
 
 void UASSkyeControlAdvancedWidget::changeTransValue(double value)
@@ -46,6 +73,35 @@ void UASSkyeControlAdvancedWidget::changeLiftValue(double value)
     emit liftSliderValueChanged(value);
 }
 
+void UASSkyeControlAdvancedWidget::changeRollValue(double value)
+{
+    ui->doubleSpinBoxRoll->setStyleSheet(getStyleString(value));
+
+    if (ui->checkBoxRoll->isChecked())
+    {
+        emit rollSliderValueChanged(value);
+    }
+}
+
+void UASSkyeControlAdvancedWidget::changePitchValue(double value)
+{
+    ui->doubleSpinBoxPitch->setStyleSheet(getStyleString(value));
+    if (ui->checkBoxPitch->isChecked())
+    {
+        emit pitchSliderValueChanged(value);
+    }
+}
+
+void UASSkyeControlAdvancedWidget::changeYawValue(double value)
+{
+    ui->doubleSpinBoxYaw->setStyleSheet(getStyleString(value));
+
+    if (ui->checkBoxYaw->isChecked())
+    {
+        emit yawSliderValueChanged(value);
+    }
+}
+
 QString UASSkyeControlAdvancedWidget::getStyleString(double val)
 {
     int red = 16*16;
@@ -56,4 +112,27 @@ QString UASSkyeControlAdvancedWidget::getStyleString(double val)
     QString style = QString("QSlider::sub-page:horizontal {border: 1px solid #bbb; border-radius: 4px; background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #%1, stop: 1 #%2); }").arg(colorStart, 1, 16).arg(colorEnd, 1, 16);
 
     return style;
+}
+
+void UASSkyeControlAdvancedWidget::clickedRollCheckBox(bool active)
+{
+    addRollEnabled = active;
+    // update value
+    changeRollValue(ui->doubleSpinBoxRoll->value());
+}
+
+
+void UASSkyeControlAdvancedWidget::clickedPitchCheckBox(bool active)
+{
+    addPitchEnabled = active;
+    // update value
+    changePitchValue(ui->doubleSpinBoxPitch->value());
+}
+
+
+void UASSkyeControlAdvancedWidget::clickedYawCheckBox(bool active)
+{
+    addYawEnabled = active;
+    // update value
+    changeYawValue(ui->doubleSpinBoxYaw->value());
 }
