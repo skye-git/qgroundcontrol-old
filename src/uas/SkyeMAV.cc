@@ -50,6 +50,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
 {
     if (message.sysid == uasId)  // make sure the message is for the right UAV
     {
+        qDebug() << "[SKYE_MAV] RECEIVED MESSAGE NUMBER" << message.msgid;
         if (!link) return;
         switch (message.msgid)
         {

@@ -407,7 +407,6 @@ void MAVLinkSkyeSimulationLink::mainloop()
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
 
-
         // Pack debug text message
         mavlink_statustext_t text;
         text.severity = 0;
@@ -417,8 +416,6 @@ void MAVLinkSkyeSimulationLink::mainloop()
         bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
         memcpy(stream+streampointer, buffer, bufferlength);
         streampointer += bufferlength;
-
-
 
         rate1hzCounter = 1;
         seqnr = 0;
