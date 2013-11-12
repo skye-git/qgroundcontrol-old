@@ -50,6 +50,7 @@ This file is part of the QGROUNDCONTROL project
 #include "UASSkyeControlAdvancedWidget.h"
 #include "ledControl/LedControlWidget.h"
 #include "QGCTabbedInfoView.h"
+#include "UASSkyeInputMixer.h"
 
 /**
  * @brief Widget controlling one (skye) MAV
@@ -128,7 +129,7 @@ signals:
         void toggleAdvancedSettings(bool enabled);
 
 
-    protected:
+    private:
         int uasId;                          ///< Reference to the current uas
         unsigned int uasMode;               ///< Current uas mode
         bool engineOn;                      ///< Engine state
@@ -144,7 +145,8 @@ signals:
         bool alertedBatteryLow;             ///< True if system had low battery once
         QErrorMessage *msgBox;
 
-    private:
+        UASSkyeInputMixer *inputMixer;      ///< Thread to mix and emit inputs
+
         /** @brief Set up widget, don't use ui file */
         void buildWidget();
         /** @brief Update stylesheet for SkyeControlWidget */

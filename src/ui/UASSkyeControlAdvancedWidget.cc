@@ -81,6 +81,10 @@ void UASSkyeControlAdvancedWidget::changeRollValue(double value)
     {
         emit rollSliderValueChanged(value);
     }
+    else
+    {
+        emit rollSliderValueChanged(0.0);
+    }
 }
 
 void UASSkyeControlAdvancedWidget::changePitchValue(double value)
@@ -89,6 +93,10 @@ void UASSkyeControlAdvancedWidget::changePitchValue(double value)
     if (ui->checkBoxPitch->isChecked())
     {
         emit pitchSliderValueChanged(value);
+    }
+    else
+    {
+        emit pitchSliderValueChanged(0.0);
     }
 }
 
@@ -99,6 +107,10 @@ void UASSkyeControlAdvancedWidget::changeYawValue(double value)
     if (ui->checkBoxYaw->isChecked())
     {
         emit yawSliderValueChanged(value);
+    }
+    else
+    {
+        emit yawSliderValueChanged(0.0);
     }
 }
 

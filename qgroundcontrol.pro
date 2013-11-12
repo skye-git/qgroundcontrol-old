@@ -531,7 +531,8 @@ HEADERS += src/MG.h \
     src/ui/QGCSkyeConfig.h \
     src/ui/QGCSkyeTestMotors.h \
     src/ui/QGCSkyeTestForce.h \
-    src/ui/QGCSkyeTestControl.h
+    src/ui/QGCSkyeTestControl.h \
+    src/ui/uas/UASSkyeInputMixer.h
 
 # Google Earth is only supported on Mac OS and Windows with Visual Studio Compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010|win32-msvc2012::HEADERS += src/ui/map3D/QGCGoogleEarthView.h
@@ -766,7 +767,8 @@ SOURCES += src/main.cc \
     src/ui/QGCSkyeConfig.cc \
     src/ui/QGCSkyeTestMotors.cpp \
     src/ui/QGCSkyeTestForce.cpp \
-    src/ui/QGCSkyeTestControl.cc
+    src/ui/QGCSkyeTestControl.cc \
+    src/ui/uas/UASSkyeInputMixer.cc
 
 # Enable Google Earth only on Mac OS and Windows with Visual Studio compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010|win32-msvc2012::SOURCES += src/ui/map3D/QGCGoogleEarthView.cc

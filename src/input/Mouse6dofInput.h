@@ -9,6 +9,7 @@
 #ifndef MOUSE6DOFINPUT_H
 #define MOUSE6DOFINPUT_H
 
+#include <QObject>
 #include <QThread>
 #include <QProcess>
 

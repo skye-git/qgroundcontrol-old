@@ -40,8 +40,6 @@ SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
 {
     imagePacketsArrived = 0;
     this->setUASName("SKYE");
-//    connect(&trajectoryTimer, SIGNAL(timeout()), this, SLOT(followTrajectory()));
-//    trajectoryTimer.start(100);
 }
 
 SkyeMAV::~SkyeMAV(void)
@@ -99,32 +97,15 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
 
 void SkyeMAV::setManual6DOFControlCommands(double x , double y , double z , double a , double b, double c)
 {
-    if (base_mode & MAV_MODE_FLAG_GUIDED_ENABLED)
-    {
-        manualXRot = saturate(a * (double)sensitivityFactorRot + addRollValue);
-        manualYRot = saturate(b * (double)sensitivityFactorRot + addPitchValue);
-        manualZRot = saturate(c * (double)sensitivityFactorRot + addYawValue);
-        qDebug() << "Set manual rotation for FAC" << a << b << c;
 
-    }else if (base_mode & MAV_MODE_FLAG_AUTO_ENABLED)
-    {
-        manualZVel = saturate(z * (double)sensitivityFactorTrans - (double)liftFactor);
-        manualXRot = saturate(a * (double)sensitivityFactorRot + addRollValue);
-        manualYRot = saturate(b * (double)sensitivityFactorRot + addPitchValue);
-        manualZRot = saturate(c * (double)sensitivityFactorRot + addYawValue);
-        qDebug() << "Set lift and manual rotation for HAC" << z << a << b << c;
-
-    }else if (base_mode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED)
-    {
-        manualXVel = saturate(x * (double)sensitivityFactorTrans);
-        manualYVel = saturate(y * (double)sensitivityFactorTrans);
-        manualZVel = saturate(z * (double)sensitivityFactorTrans - (double)liftFactor);
-        manualXRot = saturate(a * (double)sensitivityFactorRot + addRollValue);
-        manualYRot = saturate(b * (double)sensitivityFactorRot + addPitchValue);
-        manualZRot = saturate(c * (double)sensitivityFactorRot + addYawValue);
-        sendManualControlCommands6DoF(manualXVel, manualYVel, manualZVel, manualXRot, manualYRot, manualZRot);
-        //    qDebug() << ": SENT 6DOF CONTROL MESSAGE: x velocity" << manualXVel << " y velocity: " << manualYVel << " z velocity: " << manualZVel << " x rotation: " << manualXRot << " y rotation: " << manualYRot << " z rotation: " << manualZRot;
-    }
+    manualXVel = x * (double)sensitivityFactorTrans;
+    manualYVel = y * (double)sensitivityFactorTrans;
+    manualZVel = z * (double)sensitivityFactorTrans - (double)liftFactor;
+    manualXRot = a * (double)sensitivityFactorRot + addRollValue;
+    manualYRot = b * (double)sensitivityFactorRot + addPitchValue;
+    manualZRot = c * (double)sensitivityFactorRot + addYawValue;
+//    qDebug() << ": SENT 6DOF CONTROL MESSAGE: x velocity" << manualXVel << " y velocity: " << manualYVel << " z velocity: " << manualZVel << " x rotation: " << manualXRot << " y rotation: " << manualYRot << " z rotation: " << manualZRot;
+    sendManualControlCommands6DoF(manualXVel, manualYVel, manualZVel, manualXRot, manualYRot, manualZRot);
 }
 
 void SkyeMAV::set6DOFCommandsByWidget(double x, double y, double z, double a, double b, double c)
@@ -136,10 +117,25 @@ void SkyeMAV::sendManualControlCommands6DoF(double x, double y, double z, double
 {
     if (this->base_mode & MAV_MODE_FLAG_SAFETY_ARMED)
     {
+        // saturate values to [-1,1]
+        x = x > 1.0 ? 1.0 : x;
+        y = y > 1.0 ? 1.0 : y;
+        z = z > 1.0 ? 1.0 : z;
+        phi   = phi   > 1.0 ? 1.0 : phi;
+        theta = theta > 1.0 ? 1.0 : theta;
+        psi   = psi   > 1.0 ? 1.0 : psi;
+
+        x = x < -1.0 ? -1.0 : x;
+        y = y < -1.0 ? -1.0 : y;
+        z = z < -1.0 ? -1.0 : z;
+        phi   = phi   < -1.0 ? -1.0 : phi;
+        theta = theta < -1.0 ? -1.0 : theta;
+        psi   = psi   < -1.0 ? -1.0 : psi;
+
         mavlink_message_t message;
         mavlink_msg_setpoint_6dof_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (float)x, (float)y, (float)z, (float)phi, (float)theta, (float)psi);
         sendMessage(message);
-        //qDebug() << SENT 6DOF CONTROL MESSAGE:" << x << y << z << phi << theta << psi;
+        qDebug() << "SENT 6DOF CONTROL MESSAGE:" << x << y << z << phi << theta << psi;
     }
 }
 
@@ -203,154 +199,3 @@ void SkyeMAV::sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t bl
     qDebug("Sent LED Color Message");
 }
 
-
-/*
-void SkyeMAV::followTrajectory()
-{
-    if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_GUIDED) // Half or Full Automatic Control
-    {
-        qDebug() << "SkyeMAV::followTrajectory";
-        QVector<double> trajX;
-        QVector<double> trajY;
-        QVector<double> trajZ;
-        waypointManager.getEditableTrajectory()->getVector(trajX, trajY, trajZ);
-//if (!(waypointManager.getEditableTrajectory()->getVector(trajX, trajY, trajZ)));
-//        {
-//            qDebug() << "SkyeMAV: Trajectory empty or not valid";
-//            return;
-//        }
-        if (trajX.isEmpty()){
-            return;
-        }
-        if (trajX.size() <= currentTrajectoryStamp && currentTrajectoryStamp > 0)
-        {
-            currentTrajectoryStamp = trajX.size() - 1;
-        }
-
-        deltaLatLngAlt[0] = trajX.value(currentTrajectoryStamp) - latitude;
-        deltaLatLngAlt[1] = trajY.value(currentTrajectoryStamp) - longitude;
-        deltaLatLngAlt[2] = trajZ.value(currentTrajectoryStamp) - altitude;
-
-        // Translate to local coordinates
-        deltaXYZ[0] = deltaLatLngAlt[0] * 3.141592 / 180.0 * QGC_EARTH_RADIUS * QGC_COS_LATITUDE;
-        deltaXYZ[1] = deltaLatLngAlt[1] * 3.141592 / 180.0 * QGC_EARTH_RADIUS;
-        deltaXYZ[2] = deltaLatLngAlt[2];
-
-        deltaNorm = qSqrt(deltaXYZ[0]*deltaXYZ[0] + deltaXYZ[1]*deltaXYZ[1] + deltaXYZ[2]+deltaXYZ[2]);
-        deltaNorm2D = qSqrt(deltaXYZ[0]*deltaXYZ[0] + deltaXYZ[1]*deltaXYZ[1]);
-        //        qDebug() << "Follows point" << currentTrajectoryStamp << "deltaLat" << deltaLatLngAlt[0] << "deltaLng" << deltaLatLngAlt[1] << "deltaAlt" << deltaLatLngAlt[2]<< "altitude" << altitude;
-        qDebug() << "deltaX" << deltaXYZ[0] << "deltaY" << deltaXYZ[1] << "deltaZ" << deltaXYZ[2] << "deltaNorm" << deltaNorm;
-
-        InertialToCamera(deltaXYZ, deltaCam);
-        qDebug() << "DeltaCam" << deltaCam[0] << deltaCam[1] << deltaCam[2];
-
-        if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_SAFETY ) //&& !qIsNaN(deltaCam[0]) && !qIsNaN(deltaCam[1]) && !qIsNaN(deltaCam[2])
-        {
-            if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_AUTO) // FULL AUTOMATIC CONTROL
-            {
-                if (deltaNorm < QGC_SKYE_MAX_VEL_NORM / sensitivityFactorTrans)
-                {
-                    qDebug() << "Send original 6DOF manual control command for FAC";
-                    sendManualControlCommands6DoF(sensitivityFactorTrans * deltaCam[0],
-                                                sensitivityFactorTrans * deltaCam[1],
-                                                sensitivityFactorTrans * deltaCam[2],
-                                                manualXRot,
-                                                manualYRot,
-                                                manualZRot);
-                } else {
-                    qDebug() << "Send original 6DOF manual control command for FAC";
-                    sendManualControlCommands6DoF(sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm * deltaCam[0],
-                                                sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm * deltaCam[1],
-                                                sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm * deltaCam[2],
-                                                manualXRot,
-                                                manualYRot,
-                                                manualZRot);
-                }
-                if ( deltaNorm < QGC_SKYE_LOOKAHEAD )
-                {
-                    qDebug() << "REACHED POINT" << currentTrajectoryStamp << "OF TRAJECTORY";
-                    if (trajX.size() > currentTrajectoryStamp + 1)
-                        currentTrajectoryStamp++;
-                }
-            }
-            else        // HALF AUTOMATIC CONTROL
-            {
-                if (deltaNorm2D < QGC_SKYE_MAX_VEL_NORM / sensitivityFactorTrans)
-                {
-                    qDebug() << "Send original 6DOF manual control command for HAC";
-                    sendManualControlCommands6DoF(sensitivityFactorTrans * deltaCam[0],
-                                                sensitivityFactorTrans * deltaCam[1],
-                                                manualZVel,
-                                                manualXRot,
-                                                manualYRot,
-                                                manualZRot);
-                } else {
-                    qDebug() << "Send reduced 6DOF manual control command for HAC";
-                    sendManualControlCommands6DoF(sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm2D * deltaCam[0],
-                                                sensitivityFactorTrans * QGC_SKYE_MAX_VEL_NORM / deltaNorm2D * deltaCam[1],
-                                                manualZVel,
-                                                manualXRot,
-                                                manualYRot,
-                                                manualZRot);
-                }
-                if ( deltaNorm2D < QGC_SKYE_LOOKAHEAD )
-                {
-                    qDebug() << "REACHED POINT" << currentTrajectoryStamp << "OF TRAJECTORY";
-                    if (trajX.size() > currentTrajectoryStamp + 1)
-                        currentTrajectoryStamp++;
-                }
-            }
-        }
-    }
-}
-
-void SkyeMAV::InertialToCamera(const double inertFrame[3], double camFrame[3])
-{
-    updateTrigonometry();
-    int i = 0;
-    int k = 0;
-    for (i = 0; i<3; i++)
-    {
-        camFrame[i] = 0;
-        for (k = 0; k<3; k++)
-        {
-            camFrame[i] += fromItoC[i*3 + k] * inertFrame[k];
-        }
-    }
-}
-
-void SkyeMAV::updateTrigonometry()
-{
-    cosPhi = qCos(roll);
-    sinPhi = qSin(roll);
-    cosTheta = qCos(pitch);
-    sinTheta = qSin(pitch);
-    cosPsi = qCos(yaw);
-    sinPsi = qSin(yaw);
-    fromItoC[0] = cosTheta*cosPsi;
-    fromItoC[1] = cosTheta*sinPsi;
-    fromItoC[2] = -sinTheta;
-    fromItoC[3] = sinPhi*sinTheta*cosPsi - cosPhi*sinPsi;
-    fromItoC[4] = sinPhi*sinTheta*sinPsi + cosPhi*cosPsi;;
-    fromItoC[5] = sinPhi*cosTheta;
-    fromItoC[6] = cosPhi*sinTheta*cosPsi + sinPhi*sinPsi;
-    fromItoC[7] = cosPhi*sinTheta*sinPsi - sinPhi*cosPsi;
-    fromItoC[8] = cosPhi*cosTheta;
-//    qDebug() << "I to C" << fromItoC[0] << fromItoC[1] << fromItoC[2] << fromItoC[3] << fromItoC[4] << fromItoC[5] << fromItoC[6] << fromItoC[7] << fromItoC[8];
-}
-*/
-
-double SkyeMAV::saturate(double value)
-{
-    return (qAbs(value) > 1.0) ? (double)sign(value) : value;
-}
-
-int SkyeMAV::sign(double value)
-{
-    if (value > 0.0)
-        return 1;
-    else if (value == 0.0)
-        return 0;
-    else
-        return -1;
-}

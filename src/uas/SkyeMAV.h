@@ -61,7 +61,8 @@ public slots:
     /** @brief Receive a MAVLink message from this MAV */
     void receiveMessage(LinkInterface* link, mavlink_message_t message);
     /** @brief Send the 6 DOF command (from 3d Mouse or Touch Input) to MAV
-    /*         The values are scaled by the sensitivity factors */
+     *  @note  The values are scaled by the sensitivity factors
+     *         The additive slider values are added without scaling */
     void setManual6DOFControlCommands(double x , double y , double z , double a , double b, double c);
     /** @brief Send the 6 DOF command (from test config window) to MAV */
     void set6DOFCommandsByWidget(double x , double y , double z , double a , double b, double c);
@@ -119,11 +120,6 @@ protected:
     void sendManualControlCommands6DoF(double x, double y, double z, double phi, double theta, double psi);
     /** @brief Send a Testphase Control Command to MAV: */
     void sendManualControlCommands8DoF(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 );
-    /** Saturation to 1.0 */
-    double saturate(double value);
-    /** 1: greater than zero, 0: equal zero, -1 else */
-    int sign(double value);
-
 
     int airframe;                   ///< The airframe type
 

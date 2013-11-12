@@ -51,8 +51,10 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     sensitivityFactorTrans(0.5),
     sensitivityFactorRot(0.5),
     liftFactor(0.0f),
-    enabledAdvancedSettings(false)
+    enabledAdvancedSettings(false),
+    inputMixer(NULL)
 {
+
     ui.setupUi(this);
     ui.manControlButton->setObjectName("manControlButtonGray");
     ui.rateControlButton->setObjectName("rateControlButtonGray");
@@ -123,6 +125,7 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     lastAlertTime.start();
     alertedBatteryLow = false;
     msgBox = new QErrorMessage;
+
 }
 
 void UASSkyeControlWidget::setUAS(UASInterface* uas)
@@ -144,11 +147,18 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
             disconnect(this, SIGNAL(changedSensitivityTransFactor(float)), mav, SLOT(setSensitivityFactorTrans(float)));
             disconnect(this, SIGNAL(changedSensitivityRotFactor(float)), mav, SLOT(setSensitivityFactorRot(float)));
             disconnect(this, SIGNAL(changedLiftFactor(float)), mav, SLOT(setLiftFactor(float)));
-            disconnect(this, SIGNAL(changed6DOFControlCommands(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
+            disconnect(inputMixer, SIGNAL(changed6DOFInput(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
 
             disconnect(advancedWidget, SIGNAL(rollSliderValueChanged(double)), mav, SLOT(setAddRollValue(double)));
             disconnect(advancedWidget, SIGNAL(pitchSliderValueChanged(double)), mav, SLOT(setAddPitchValue(double)));
             disconnect(advancedWidget, SIGNAL(yawSliderValueChanged(double)), mav, SLOT(setAddYawValue(double)));
+
+            // stop input mixer
+            if (inputMixer)
+            {
+                inputMixer->terminate();
+                inputMixer = NULL;
+            }
         }
     }
 
@@ -163,6 +173,11 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         updateState(mav->getState());
         updateInput(mav->getInputMode());
 
+        // start input mixer
+        inputMixer = new UASSkyeInputMixer(this);
+        inputMixer->init();
+        inputMixer->start();
+
         // Connect user interface controls
         connect(ui.controlButton, SIGNAL(clicked()), this, SLOT(cycleContextButton()));
         connect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
@@ -174,7 +189,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(this, SIGNAL(changedSensitivityTransFactor(float)), mav, SLOT(setSensitivityFactorTrans(float)));
         connect(this, SIGNAL(changedSensitivityRotFactor(float)), mav, SLOT(setSensitivityFactorRot(float)));
         connect(this, SIGNAL(changedLiftFactor(float)), mav, SLOT(setLiftFactor(float)));
-        connect(this, SIGNAL(changed6DOFControlCommands(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
+        connect(inputMixer, SIGNAL(changed6DOFInput(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
 
         connect(advancedWidget, SIGNAL(rollSliderValueChanged(double)), mav, SLOT(setAddRollValue(double)));
         connect(advancedWidget, SIGNAL(pitchSliderValueChanged(double)), mav, SLOT(setAddPitchValue(double)));
@@ -182,6 +197,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
 
         // ask for initial values
         advancedWidget->emitSliderValues();
+
     }
 }
 
@@ -517,7 +533,7 @@ void UASSkyeControlWidget::getMouse6DOFControlCommands(double x, double y, doubl
             b = 0.0;
             c = 0.0;
         }
-        emit changed6DOFControlCommands(x, y, z, a, b, c);
+        inputMixer->updateMouseValues(x, y, z, a, b, c);
     }
 }
 
