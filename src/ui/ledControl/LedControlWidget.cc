@@ -38,7 +38,8 @@ LedControlWidget::LedControlWidget(QWidget *parent) :
     blue(0),
     mode(LED_CONTROL_MODE_CONSTANT),
     frequency(0.0),
-    dialog(new QColorDialog)
+    dialog(new QColorDialog),
+    dialogVisible(false)
 
 {
     ui->setupUi(this);
@@ -47,9 +48,11 @@ LedControlWidget::LedControlWidget(QWidget *parent) :
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 
     // connect color dialog
-    connect(ui->ledColorButton, SIGNAL(pressed()), this, SLOT(openColorDialog()));
+    connect(ui->ledColorButton, SIGNAL(pressed()), this, SLOT(changeColorDialogVisibility()));
     connect(dialog, SIGNAL(currentColorChanged(QColor)), this, SLOT(changeColor(QColor)));
     dialog->setOption(QColorDialog::NoButtons);
+    this->layout()->addWidget(dialog);
+    dialog->hide();
 
     // connect color spinboxes
     connect(this, SIGNAL(redColorChanged(int)), ui->spinBoxRed, SLOT(setValue(int)));
@@ -88,7 +91,6 @@ LedControlWidget::~LedControlWidget()
 
 void LedControlWidget::setUAS(UASInterface* uas)
 {
-#ifdef QGC_USE_SKYE_INTERFACE
     if (this->uasId!= 0)
     {
         UASInterface* oldUAS = UASManager::instance()->getUASForId(this->uasId);
@@ -117,12 +119,19 @@ void LedControlWidget::setUAS(UASInterface* uas)
                 mav, SLOT(sendLedColor(uint8_t,uint8_t,uint8_t,uint8_t,uint8_t,float)));
     }
 
-#endif // QGC_USE_SKYE_INTERFACE
 }
 
-void LedControlWidget::openColorDialog()
+void LedControlWidget::changeColorDialogVisibility()
 {
-    dialog->open();
+    if (dialogVisible)
+    {
+        dialog->hide();
+        ui->ledColorButton->setText("Color");
+    } else {
+        dialog->show();
+        ui->ledColorButton->setText("Hide color");
+    }
+    dialogVisible = !dialogVisible;
 }
 
 void LedControlWidget::changeColor(QColor newColor)

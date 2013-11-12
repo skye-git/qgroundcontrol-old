@@ -33,8 +33,8 @@ signals:
 private slots:
     /** set active UAS */
     void setUAS(UASInterface* uas);
-    /** show live color dialog */
-    void openColorDialog();
+    /** show/hide live color dialog */
+    void changeColorDialogVisibility();
     /** update color */
     void changeColor(QColor newColor);
     void changeColorRed(int newRed);
@@ -63,6 +63,7 @@ private:
     double frequency;                   ///< current frequency for led color change
 
     QColorDialog *dialog;               ///< Dialog to choose color
+    bool dialogVisible;                 ///< boolean to hide/show color dialog
 
     QTime timeOfSubmit;                 ///< Time of last submit
 };
