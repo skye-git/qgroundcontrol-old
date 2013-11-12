@@ -40,6 +40,9 @@
      </item>
      <item row="0" column="0">
       <widget class="QLabel" name="labelTranslation">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Scaling factor for translative inputs of external devices.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>max translation</string>
        </property>
@@ -66,6 +69,9 @@
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="labelRotation">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Scaling factor for translative inputs of external devices.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>max rotation</string>
        </property>
@@ -73,6 +79,9 @@
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="labelLift">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Constant additive force in upward z-direction.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>constant lift</string>
        </property>
@@ -93,7 +102,7 @@
         <number>3</number>
        </property>
        <property name="maximum">
-        <double>0.100000000000000</double>
+        <double>0.200000000000000</double>
        </property>
        <property name="singleStep">
         <double>0.001000000000000</double>
@@ -113,6 +122,9 @@
     <layout class="QGridLayout" name="gridLayout">
      <item row="1" column="0">
       <widget class="QCheckBox" name="checkBoxPitch">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Constant additive value for pitch input component.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>constant pitch</string>
        </property>
@@ -120,6 +132,9 @@
      </item>
      <item row="0" column="0">
       <widget class="QCheckBox" name="checkBoxRoll">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Constant additive value for roll input component.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>constant roll</string>
        </property>
@@ -156,6 +171,9 @@
      </item>
      <item row="2" column="0">
       <widget class="QCheckBox" name="checkBoxYaw">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Constant additive value for yaw input component.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
         <string>constant yaw</string>
        </property>

@@ -92,10 +92,10 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Enable Rate Controller</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enable 5 DOF attitude controller.&lt;/p&gt;&lt;p&gt;Roll is blocked.&lt;/p&gt;&lt;p&gt;Pitch is in body frame.&lt;/p&gt;&lt;p&gt;Yaw is in inertial frame.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>RATE</string>
+          <string>5 DOF</string>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -117,10 +117,10 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Enable Attitude Controller</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enable 6DOF attitude controller.&lt;/p&gt;&lt;p&gt;Rotations are in body frame.&lt;/p&gt;&lt;p&gt;Translations are in body frame.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>ATT</string>
+          <string>6 DOF</string>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -230,6 +230,9 @@ p, li { white-space: pre-wrap; }
    </item>
    <item>
     <widget class="QLabel" name="lastActionLabel">
+     <property name="toolTip">
+      <string/>
+     </property>
      <property name="text">
       <string>No commands so far</string>
      </property>

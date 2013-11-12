@@ -25,7 +25,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Color</string>
+        <string>Show colors</string>
        </property>
       </widget>
      </item>

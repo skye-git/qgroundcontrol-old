@@ -24,6 +24,9 @@ QGCSkyeTestControl::QGCSkyeTestControl(QWidget *parent) :
     ui->ratePushButton->setObjectName("rateControlButtonGray");
     ui->attPushButton->setObjectName("attControlButtonGray");
 
+    // rate control is not supported on current IMU anymore
+    ui->ratePushButton->hide();
+
     ui->manPushButton->setStyleSheet("");
     ui->ratePushButton->setStyleSheet("");
     ui->attPushButton->setStyleSheet("");

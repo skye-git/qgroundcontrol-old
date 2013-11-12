@@ -68,7 +68,7 @@ void UASSkyeInputMixer::run()
             valuesAccum[i] = valuesAccum[i] < -1.0 ? -1.0 : valuesAccum[i];
         }
 
-        qDebug() << "[MIXER] Emit accumulated values" << valuesAccum[0] << valuesAccum[1] << valuesAccum[2] << valuesAccum[3] << valuesAccum[4] << valuesAccum[5];
+        //qDebug() << "[MIXER] Emit accumulated values" << valuesAccum[0] << valuesAccum[1] << valuesAccum[2] << valuesAccum[3] << valuesAccum[4] << valuesAccum[5];
 
         // emit inputs with approx 20Hz
         emit changed6DOFInput(valuesAccum[0],

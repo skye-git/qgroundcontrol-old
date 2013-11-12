@@ -126,10 +126,10 @@ void LedControlWidget::changeColorDialogVisibility()
     if (dialogVisible)
     {
         dialog->hide();
-        ui->ledColorButton->setText("Color");
+        ui->ledColorButton->setText("Show colors");
     } else {
         dialog->show();
-        ui->ledColorButton->setText("Hide color");
+        ui->ledColorButton->setText("Hide colors");
     }
     dialogVisible = !dialogVisible;
 }
