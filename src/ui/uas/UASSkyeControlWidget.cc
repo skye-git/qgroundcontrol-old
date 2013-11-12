@@ -51,7 +51,6 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     sensitivityFactorTrans(0.5),
     sensitivityFactorRot(0.5),
     liftFactor(0.0f),
-    enabledAdvancedSettings(false),
     inputMixer(NULL)
 {
 
@@ -96,24 +95,16 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     connect(ui.touchButton, SIGNAL(clicked(bool)), this, SLOT(setInputTouch(bool)));
     connect(ui.keyboardButton, SIGNAL(clicked(bool)), this, SLOT(setInputKeyboard(bool)));
 
-    connect(ui.advancedCheckBox, SIGNAL(toggled(bool)), this, SLOT(toggleAdvancedSettings(bool)));
-
-    advancedWidget = new UASSkyeControlAdvancedWidget(this);
-    advancedWidget->hide();
-    ledWidget = new LedControlWidget(this);
-    ledWidget->hide();
     infoViewWidget = new QGCTabbedInfoView(this);
     infoViewWidget->show();
 
-    ui.advancedLayout->addWidget(advancedWidget);
-    ui.advancedLayout->addWidget(ledWidget);
     ui.advancedLayout->addWidget(infoViewWidget);
 
     // Multiplication factor for translational commands
-    advancedWidget->setSliderValues(sensitivityFactorTrans, sensitivityFactorRot, liftFactor);
-    connect(advancedWidget, SIGNAL(transSliderValueChanged(double)), this, SLOT(setSensitivityFactorTrans(double)));
-    connect(advancedWidget, SIGNAL(rotSliderValueChanged(double)), this, SLOT(setSensitivityFactorRot(double)));
-    connect(advancedWidget, SIGNAL(liftSliderValueChanged(double)), this, SLOT(setLiftFactor(double)));
+    infoViewWidget->advancedWidget->setSliderValues(sensitivityFactorTrans, sensitivityFactorRot, liftFactor);
+    connect(infoViewWidget->advancedWidget, SIGNAL(transSliderValueChanged(double)), this, SLOT(setSensitivityFactorTrans(double)));
+    connect(infoViewWidget->advancedWidget, SIGNAL(rotSliderValueChanged(double)), this, SLOT(setSensitivityFactorRot(double)));
+    connect(infoViewWidget->advancedWidget, SIGNAL(liftSliderValueChanged(double)), this, SLOT(setLiftFactor(double)));
 
     //ui.gridLayout->setAlignment(Qt::AlignTop);
 
@@ -149,9 +140,9 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
             disconnect(this, SIGNAL(changedLiftFactor(float)), mav, SLOT(setLiftFactor(float)));
             disconnect(inputMixer, SIGNAL(changed6DOFInput(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
 
-            disconnect(advancedWidget, SIGNAL(rollSliderValueChanged(double)), mav, SLOT(setAddRollValue(double)));
-            disconnect(advancedWidget, SIGNAL(pitchSliderValueChanged(double)), mav, SLOT(setAddPitchValue(double)));
-            disconnect(advancedWidget, SIGNAL(yawSliderValueChanged(double)), mav, SLOT(setAddYawValue(double)));
+            disconnect(infoViewWidget->advancedWidget, SIGNAL(rollSliderValueChanged(double)), mav, SLOT(setAddRollValue(double)));
+            disconnect(infoViewWidget->advancedWidget, SIGNAL(pitchSliderValueChanged(double)), mav, SLOT(setAddPitchValue(double)));
+            disconnect(infoViewWidget->advancedWidget, SIGNAL(yawSliderValueChanged(double)), mav, SLOT(setAddYawValue(double)));
 
             // stop input mixer
             if (inputMixer)
@@ -191,12 +182,12 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(this, SIGNAL(changedLiftFactor(float)), mav, SLOT(setLiftFactor(float)));
         connect(inputMixer, SIGNAL(changed6DOFInput(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
 
-        connect(advancedWidget, SIGNAL(rollSliderValueChanged(double)), mav, SLOT(setAddRollValue(double)));
-        connect(advancedWidget, SIGNAL(pitchSliderValueChanged(double)), mav, SLOT(setAddPitchValue(double)));
-        connect(advancedWidget, SIGNAL(yawSliderValueChanged(double)), mav, SLOT(setAddYawValue(double)));
+        connect(infoViewWidget->advancedWidget, SIGNAL(rollSliderValueChanged(double)), mav, SLOT(setAddRollValue(double)));
+        connect(infoViewWidget->advancedWidget, SIGNAL(pitchSliderValueChanged(double)), mav, SLOT(setAddPitchValue(double)));
+        connect(infoViewWidget->advancedWidget, SIGNAL(yawSliderValueChanged(double)), mav, SLOT(setAddYawValue(double)));
 
         // ask for initial values
-        advancedWidget->emitSliderValues();
+        infoViewWidget->advancedWidget->emitSliderValues();
 
     }
 }
@@ -570,25 +561,6 @@ void UASSkyeControlWidget::setLiftFactor(double val)
     emit changedLiftFactor((float)liftFactor);
 
 }
-
-void UASSkyeControlWidget::toggleAdvancedSettings(bool enabled)
-{
-    enabledAdvancedSettings = enabled;
-
-    if (enabled) {
-        advancedWidget->show();
-        ledWidget->show();
-        //ui.advancedButton->setText("Hide advanced settings");
-        infoViewWidget->hide();
-    } else {
-        advancedWidget->hide();
-        ledWidget->hide();
-        //ui.advancedCheckBox->setText("Show advanced settings");
-        infoViewWidget->show();
-    }
-}
-
-
 
 void UASSkyeControlWidget::alertBatteryLow(double voltage)
 {

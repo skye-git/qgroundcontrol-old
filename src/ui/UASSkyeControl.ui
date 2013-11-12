@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>218</width>
+    <width>289</width>
     <height>458</height>
    </rect>
   </property>
@@ -240,13 +240,6 @@ p, li { white-space: pre-wrap; }
      <property name="fieldGrowthPolicy">
       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
      </property>
-     <item row="1" column="1">
-      <widget class="QCheckBox" name="advancedCheckBox">
-       <property name="text">
-        <string>Show advanced settings</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item>
@@ -265,7 +258,6 @@ p, li { white-space: pre-wrap; }
   </layout>
   <zorder></zorder>
   <zorder>lastActionLabel</zorder>
-  <zorder>controlButton</zorder>
   <zorder>verticalSpacer</zorder>
  </widget>
  <resources/>

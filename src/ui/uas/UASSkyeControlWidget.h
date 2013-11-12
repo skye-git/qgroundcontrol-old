@@ -47,8 +47,6 @@ This file is part of the QGROUNDCONTROL project
 #include <UASInterface.h>
 //#include "Ui_UASSkyeControl.h"
 #include "SkyeMAV.h"
-#include "UASSkyeControlAdvancedWidget.h"
-#include "ledControl/LedControlWidget.h"
 #include "QGCTabbedInfoView.h"
 #include "UASSkyeInputMixer.h"
 
@@ -125,8 +123,6 @@ signals:
         void setSensitivityFactorRot(double val);
         /** @brief Set new (double)liftFactor by double */
         void setLiftFactor(double val);
-        /** @brief Show/Hide advanced settings */
-        void toggleAdvancedSettings(bool enabled);
 
 
     private:
@@ -158,10 +154,6 @@ signals:
         QButtonGroup *modeButtonGroup;
         QButtonGroup *inputButtonGroup;
 
-        UASSkyeControlAdvancedWidget *advancedWidget;       ///< sub widget containing advanced settings
-        bool enabledAdvancedSettings;
-
-        LedControlWidget *ledWidget;                        ///< sub widget for led control
         QGCTabbedInfoView *infoViewWidget;                        ///< sub widget for mavlink messages;
 
 
