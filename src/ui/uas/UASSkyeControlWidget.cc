@@ -144,6 +144,10 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
             disconnect(infoViewWidget->advancedWidget, SIGNAL(pitchSliderValueChanged(double)), mav, SLOT(setAddPitchValue(double)));
             disconnect(infoViewWidget->advancedWidget, SIGNAL(yawSliderValueChanged(double)), mav, SLOT(setAddYawValue(double)));
 
+            // Disconnect slots for Change of Actuation Unit Configuration
+            disconnect(infoViewWidget->advancedWidget, SIGNAL(requestAUConfiguration(int)), this, SLOT(changeAUConfiguration(int)));
+
+
             // stop input mixer
             if (inputMixer)
             {
@@ -185,6 +189,10 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(infoViewWidget->advancedWidget, SIGNAL(rollSliderValueChanged(double)), mav, SLOT(setAddRollValue(double)));
         connect(infoViewWidget->advancedWidget, SIGNAL(pitchSliderValueChanged(double)), mav, SLOT(setAddPitchValue(double)));
         connect(infoViewWidget->advancedWidget, SIGNAL(yawSliderValueChanged(double)), mav, SLOT(setAddYawValue(double)));
+
+        // Connect slots for Change of Actuation Unit Configuration
+        connect(infoViewWidget->advancedWidget, SIGNAL(requestAUConfiguration(int)), mav, SLOT(sendAUConfiguration(int)));
+
 
         // ask for initial values
         infoViewWidget->advancedWidget->emitSliderValues();

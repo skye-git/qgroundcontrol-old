@@ -88,6 +88,7 @@ public slots:
     /** @brief Alert user that battery is low */
     void alertBatteryLow(double voltage);
 
+
 signals:
     void changedMode(int);
     void changedInput(SkyeMAV::QGC_INPUT_MODE);
@@ -95,6 +96,9 @@ signals:
     void changedSensitivityRotFactor(float);
     void changedLiftFactor(float);
     void changed6DOFControlCommands(double, double, double, double, double, double);
+
+    /** @brief change actuation unit configuration parameter */
+    void changeAUConfiguration(int disabledAU);
 
     protected slots:
 //        /** @brief Set the background color for the widget */

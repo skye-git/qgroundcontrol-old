@@ -23,6 +23,13 @@ UASSkyeControlAdvancedWidget::UASSkyeControlAdvancedWidget(QWidget *parent) :
     connect(ui->checkBoxPitch, SIGNAL(clicked(bool)), this, SLOT(clickedPitchCheckBox(bool)));
     connect(ui->checkBoxYaw, SIGNAL(clicked(bool)), this, SLOT(clickedYawCheckBox(bool)));
 
+    // connect AU radio buttons
+    connect(ui->radioButtonAllAU, SIGNAL(clicked()), this, SLOT(clickedAllAURadioButton()));
+    connect(ui->radioButtonWoAU1, SIGNAL(clicked()), this, SLOT(clickedWoAU1RadioButton()));
+    connect(ui->radioButtonWoAU2, SIGNAL(clicked()), this, SLOT(clickedWoAU2RadioButton()));
+    connect(ui->radioButtonWoAU3, SIGNAL(clicked()), this, SLOT(clickedWoAU3RadioButton()));
+    connect(ui->radioButtonWoAU4, SIGNAL(clicked()), this, SLOT(clickedWoAU4RadioButton()));
+
     // update checkboxes
     ui->checkBoxRoll->setChecked(addRollEnabled);
     ui->checkBoxPitch->setChecked(addPitchEnabled);
@@ -148,3 +155,26 @@ void UASSkyeControlAdvancedWidget::clickedYawCheckBox(bool active)
     // update value
     changeYawValue(ui->doubleSpinBoxYaw->value());
 }
+
+void UASSkyeControlAdvancedWidget::clickedAllAURadioButton()
+{
+    emit requestAUConfiguration(0);
+}
+
+void UASSkyeControlAdvancedWidget::clickedWoAU1RadioButton()
+{
+    emit requestAUConfiguration(1);
+}
+void UASSkyeControlAdvancedWidget::clickedWoAU2RadioButton()
+{
+    emit requestAUConfiguration(2);
+}
+void UASSkyeControlAdvancedWidget::clickedWoAU3RadioButton()
+{
+    emit requestAUConfiguration(3);
+}
+void UASSkyeControlAdvancedWidget::clickedWoAU4RadioButton()
+{
+    emit requestAUConfiguration(4);
+}
+
