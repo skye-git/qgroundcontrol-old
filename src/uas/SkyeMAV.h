@@ -116,6 +116,7 @@ signals:
     void inputModeChanged(SkyeMAV::QGC_INPUT_MODE);
     /** @brief Battery is low. Shutdown required */
     void batteryLow(double voltage);
+    void allocCaseChanged(int allocCase);
 
 
 protected:

@@ -178,3 +178,7 @@ void UASSkyeControlAdvancedWidget::clickedWoAU4RadioButton()
     emit requestAUConfiguration(4);
 }
 
+void UASSkyeControlAdvancedWidget::updateAllocCase(int allocCase)
+{
+    // Do something
+}

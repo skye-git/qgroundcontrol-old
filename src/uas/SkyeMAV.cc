@@ -76,6 +76,24 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
         }
         break;
 
+        case MAVLINK_MSG_ID_PARAM_VALUE:
+        {
+            mavlink_param_value_t rawValue;
+            mavlink_msg_param_value_decode(&message, &rawValue);
+
+            // check for value of SKYE_ALOC_CASE parameter
+            if (strcmp(rawValue.param_id , "SKYE_ALOC_CASE") == 0)
+            {
+                //qDebug() << "[SkyeMAV] GOT PARAM" << rawValue.param_value;
+                emit allocCaseChanged((int)rawValue.param_value);
+            }
+
+            // Let UAS handle this message additionally
+            UAS::receiveMessage(link, message);
+
+         }
+         break;
+
         // Ignore these messages
         case MAVLINK_MSG_ID_SETPOINT_6DOF:
         case MAVLINK_MSG_ID_SETPOINT_8DOF:

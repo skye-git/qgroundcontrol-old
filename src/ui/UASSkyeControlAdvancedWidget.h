@@ -31,6 +31,8 @@ signals:
 public slots:
     void setSliderValues(double transValue, double rotValue, double liftValue);
     void emitSliderValues();
+    /** @brief Update allocation case given by UAV */
+    void updateAllocCase(int allocCase);
 
 private:
     Ui::UASSkyeControlAdvancedWidget *ui;

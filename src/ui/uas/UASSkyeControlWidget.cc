@@ -146,6 +146,8 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
 
             // Disconnect slots for Change of Actuation Unit Configuration
             disconnect(infoViewWidget->advancedWidget, SIGNAL(requestAUConfiguration(int)), this, SLOT(changeAUConfiguration(int)));
+            disconnect(mav, SIGNAL(allocCaseChanged(int)), infoViewWidget->advancedWidget, SLOT(updateAllocCase(int)));
+            disconnect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(getAllocCase(int)));
 
 
             // stop input mixer
@@ -192,6 +194,8 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
 
         // Connect slots for Change of Actuation Unit Configuration
         connect(infoViewWidget->advancedWidget, SIGNAL(requestAUConfiguration(int)), mav, SLOT(sendAUConfiguration(int)));
+        connect(mav, SIGNAL(allocCaseChanged(int)), infoViewWidget->advancedWidget, SLOT(updateAllocCase(int)));
+        connect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(getAllocCase(int)));
 
 
         // ask for initial values
@@ -588,4 +592,9 @@ void UASSkyeControlWidget::alertBatteryLow(double voltage)
 //        msgBox.setDefaultButton(QMessageBox::Ok);
 //        msgBox.exec();
     }
+}
+
+void UASSkyeControlWidget::getAllocCase(int allocCase)
+{
+    ui.lastActionLabel->setText(QString("Set allocation case %1").arg(allocCase));
 }

@@ -88,6 +88,9 @@ public slots:
     /** @brief Alert user that battery is low */
     void alertBatteryLow(double voltage);
 
+    /** @brief New allocation case has been set on UAV */
+    void getAllocCase(int allocCase);
+
 
 signals:
     void changedMode(int);
