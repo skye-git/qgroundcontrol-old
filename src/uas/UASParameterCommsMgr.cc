@@ -187,7 +187,7 @@ void UASParameterCommsMgr::resendReadWriteRequests()
     foreach (compId, compIds) {
         // Request n parameters from this component (at maximum)
         QSet<int>* missingReadParams = readsWaiting.value(compId, NULL);
-        qDebug() << "compId " << compId << "readsWaiting:" << missingReadParams->count();
+        //qDebug() << "compId " << compId << "readsWaiting:" << missingReadParams->count();
         foreach (int paramId, *missingReadParams) {
             if (0 == paramId && 0 == compId) {
                 mav->requestParameters();
@@ -241,7 +241,7 @@ void UASParameterCommsMgr::silenceTimerExpired()
 {
     quint64 curTime = QGC::groundTimeMilliseconds();
     int elapsed = (int)(curTime - lastSilenceTimerReset);
-    qDebug() << "silenceTimerExpired elapsed:" << elapsed;
+    //qDebug() << "silenceTimerExpired elapsed:" << elapsed;
 
     if (elapsed < silenceTimeout) {
         //reset the guard timer: it fired prematurely

@@ -50,7 +50,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
 {
     if (message.sysid == uasId)  // make sure the message is for the right UAV
     {
-        qDebug() << "[SKYE_MAV] RECEIVED MESSAGE NUMBER" << message.msgid;
+        //qDebug() << "[SKYE_MAV] RECEIVED MESSAGE NUMBER" << message.msgid;
         if (!link) return;
         switch (message.msgid)
         {
@@ -154,7 +154,7 @@ void SkyeMAV::sendManualControlCommands6DoF(double x, double y, double z, double
         mavlink_message_t message;
         mavlink_msg_setpoint_6dof_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (float)x, (float)y, (float)z, (float)phi, (float)theta, (float)psi);
         sendMessage(message);
-        qDebug() << "SENT 6DOF CONTROL MESSAGE:" << x << y << z << phi << theta << psi;
+        //qDebug() << "SENT 6DOF CONTROL MESSAGE:" << x << y << z << phi << theta << psi;
     }
 }
 

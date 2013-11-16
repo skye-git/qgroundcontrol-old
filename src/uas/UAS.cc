@@ -2096,8 +2096,8 @@ void UAS::requestParameters()
     mavlink_msg_param_request_list_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, this->getUASID(), MAV_COMP_ID_ALL);
     sendMessage(msg);
 
-    QDateTime time = QDateTime::currentDateTime();
-    qDebug() << __FILE__ << ":" << __LINE__ << time.toString() << "LOADING PARAM LIST";
+    //QDateTime time = QDateTime::currentDateTime();
+    //qDebug() << __FILE__ << ":" << __LINE__ << time.toString() << "LOADING PARAM LIST";
 }
 
 void UAS::writeParametersToStorage()
