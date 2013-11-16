@@ -312,7 +312,8 @@ FORMS += src/ui/MainWindow.ui \
     src/ui/QGCSkyeConfig.ui \
     src/ui/QGCSkyeTestMotors.ui \
     src/ui/QGCSkyeTestForce.ui \
-    src/ui/QGCSkyeTestControl.ui
+    src/ui/QGCSkyeTestControl.ui \
+    src/ui/designer/QGCXYPlot.ui
 
 INCLUDEPATH += src \
     src/ui \
@@ -465,7 +466,6 @@ HEADERS += src/MG.h \
     src/ui/designer/QGCComboBox.h \
     src/ui/designer/QGCTextLabel.h \
     src/ui/submainwindow.h \
-    src/ui/dockwidgettitlebareventfilter.h \
     src/ui/uas/UASQuickView.h \
     src/ui/uas/UASQuickViewItem.h \
     src/ui/linechart/ChartPlot.h \
@@ -532,7 +532,9 @@ HEADERS += src/MG.h \
     src/ui/QGCSkyeTestMotors.h \
     src/ui/QGCSkyeTestForce.h \
     src/ui/QGCSkyeTestControl.h \
-    src/ui/uas/UASSkyeInputMixer.h
+    src/ui/uas/UASSkyeInputMixer.h \
+    src/ui/designer/QGCXYPlot.h \
+    src/ui/menuactionhelper.h \
 
 # Google Earth is only supported on Mac OS and Windows with Visual Studio Compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010|win32-msvc2012::HEADERS += src/ui/map3D/QGCGoogleEarthView.h
@@ -701,7 +703,6 @@ SOURCES += src/main.cc \
     src/ui/designer/QGCComboBox.cc \
     src/ui/designer/QGCTextLabel.cc \
     src/ui/submainwindow.cpp \
-    src/ui/dockwidgettitlebareventfilter.cpp \
     src/ui/uas/UASQuickViewItem.cc \
     src/ui/uas/UASQuickView.cc \
     src/ui/linechart/ChartPlot.cc \
@@ -768,7 +769,9 @@ SOURCES += src/main.cc \
     src/ui/QGCSkyeTestMotors.cpp \
     src/ui/QGCSkyeTestForce.cpp \
     src/ui/QGCSkyeTestControl.cc \
-    src/ui/uas/UASSkyeInputMixer.cc
+    src/ui/uas/UASSkyeInputMixer.cc \
+    src/ui/designer/QGCXYPlot.cc \
+    src/ui/menuactionhelper.cpp
 
 # Enable Google Earth only on Mac OS and Windows with Visual Studio compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010|win32-msvc2012::SOURCES += src/ui/map3D/QGCGoogleEarthView.cc

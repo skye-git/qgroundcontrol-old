@@ -88,6 +88,7 @@ class QGCStatusBar;
 class Linecharts;
 class QGCDataPlot2D;
 class JoystickWidget;
+class MenuActionHelper;
 
 /**
  * @brief Main Application Window
@@ -146,41 +147,38 @@ public:
     static const QString defaultLightStyle;
 
     /** @brief Get current visual style */
-    QGC_MAINWINDOW_STYLE getStyle()
+    QGC_MAINWINDOW_STYLE getStyle() const
     {
         return currentStyle;
     }
 
     /** @brief Get current light visual stylesheet */
-    QString getLightStyleSheet()
+    QString getLightStyleSheet() const
     {
         return lightStyleFileName;
     }
 
     /** @brief Get current dark visual stylesheet */
-    QString getDarkStyleSheet()
+    QString getDarkStyleSheet() const
     {
         return darkStyleFileName;
     }
     /** @brief Get auto link reconnect setting */
-    bool autoReconnectEnabled()
+    bool autoReconnectEnabled() const
     {
         return autoReconnect;
     }
 
     /** @brief Get title bar mode setting */
-    bool dockWidgetTitleBarsEnabled()
-    {
-        return dockWidgetTitleBarEnabled;
-    }
+    bool dockWidgetTitleBarsEnabled() const;
 
     /** @brief Get low power mode setting */
-    bool lowPowerModeEnabled()
+    bool lowPowerModeEnabled() const
     {
         return lowPowerMode;
     }
 
-    void setCustomMode(enum MainWindow::CUSTOM_MODE mode)
+    void setCustomMode(MainWindow::CUSTOM_MODE mode)
     {
         if (mode != CUSTOM_MODE_UNCHANGED)
         {
@@ -188,12 +186,12 @@ public:
         }
     }
 
-    enum MainWindow::CUSTOM_MODE getCustomMode()
+    MainWindow::CUSTOM_MODE getCustomMode() const
     {
         return customMode;
     }
 
-    QList<QAction*> listLinkMenuActions(void);
+    QList<QAction*> listLinkMenuActions();
 
 public slots:
     /** @brief Shows a status message on the bottom status bar */
@@ -228,7 +226,7 @@ public slots:
     void saveScreen();
 
     /** @brief Sets advanced mode, allowing for editing of tool widget locations */
-    void setAdvancedMode();
+    void setAdvancedMode(bool isAdvancedMode);
     /** @brief Load configuration views */
     void loadHardwareConfigView();
     void loadSoftwareConfigView();
@@ -288,16 +286,6 @@ public slots:
 //    void loadDataView(QString fileName);
 
     /**
-     * @brief Shows a Docked Widget based on the action sender
-     *
-     * This slot is written to be used in conjunction with the addTool() function
-     * It shows the QDockedWidget based on the action sender
-     *
-     */
-    void showTool(bool visible);
-
-
-    /**
      * @brief Shows a Widget from the center stack based on the action sender
      *
      * This slot is written to be used in conjunction with the addCentralWidget() function
@@ -317,10 +305,15 @@ public slots:
     void setInputMode(SkyeMAV::QGC_INPUT_MODE inputMode);
 // End Code Skye
 
+protected slots:
+    void showDockWidget(const QString &name, bool show);
+
 signals:
     void styleChanged(MainWindow::QGC_MAINWINDOW_STYLE newTheme);
-    void styleChanged();
     void initStatusChanged(const QString& message, int alignment, const QColor &color);
+    /** Emitted when any value changes from any source */
+    void valueChanged(const int uasId, const QString& name, const QString& unit, const QVariant& value, const quint64 msec);
+
 #ifdef MOUSE_ENABLED_LINUX
     /** @brief Forward X11Event to catch 3DMouse inputs */
     void x11EventOccured(XEvent *event);
@@ -374,8 +367,9 @@ protected:
      * @param location  The default location for the QDockedWidget in case there is no previous key in the settings
      */
     void addTool(SubMainWindow *parent,VIEW_SECTIONS view,QDockWidget* widget, const QString& title, Qt::DockWidgetArea area);
-    void loadDockWidget(QString name);
-    QDockWidget* createDockWidget(QWidget *parent,QWidget *child,QString title,QString objectname,VIEW_SECTIONS view,Qt::DockWidgetArea area,int minwidth=0,int minheight=0);
+    void loadDockWidget(const QString &name);
+
+    QDockWidget* createDockWidget(QWidget *subMainWindowParent,QWidget *child,const QString& title,const QString& objectname,VIEW_SECTIONS view,Qt::DockWidgetArea area,const QSize& minSize = QSize());
     /**
      * @brief Adds an already instantiated QWidget to the center stack
      *
@@ -529,11 +523,7 @@ protected:
 private:
     QList<QObject*> commsWidgetList;
     QMap<QString,QString> customWidgetNameToFilenameMap;
-    QMap<QAction*,QString > menuToDockNameMap;
-    QList<QDockWidget*> dockWidgets;
-    QMap<VIEW_SECTIONS,QMap<QString,QWidget*> > centralWidgetToDockWidgetsMap;
-    bool isAdvancedMode; ///< If enabled dock widgets can be moved and floated.
-    bool dockWidgetTitleBarEnabled; ///< If enabled, dock widget titlebars are displayed when NOT in advanced mode.
+    MenuActionHelper *menuActionHelper;
     Ui::MainWindow ui;
 
     /** @brief Set the appropriate titlebar for a given dock widget.
@@ -545,6 +535,8 @@ private:
     QString getWindowGeometryKey();
 
     SkyeMAV::QGC_INPUT_MODE inputMode; // FIXME: Remove asap.. Begin & End Code Skye (07.03.2012)
+
+    friend class MenuActionHelper; //For VIEW_SECTIONS
 
 };
 
