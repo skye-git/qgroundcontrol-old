@@ -366,7 +366,7 @@ void QGCPX4VehicleConfig::toggleCalibrationRC(bool enabled)
 
 void QGCPX4VehicleConfig::toggleSpektrumPairing(bool enabled)
 {
-    if (!ui->dsm2RadioButton->isChecked() && !ui->dsmxRadioButton) {
+    if (!ui->dsm2RadioButton->isChecked() && !ui->dsmxRadioButton && !ui->dsmx8RadioButton) {
         // Reject
         QMessageBox warnMsgBox;
         warnMsgBox.setText(tr("Please select a Spektrum Protocol Version"));
@@ -378,8 +378,16 @@ void QGCPX4VehicleConfig::toggleSpektrumPairing(bool enabled)
     }
 
     UASInterface* mav = UASManager::instance()->getActiveUAS();
-    if (mav)
-        mav->pairRX(0, ui->dsmxRadioButton->isChecked() ? 1 : 0);
+    if (mav) {
+        int rxSubType;
+        if (ui->dsm2RadioButton->isChecked())
+            rxSubType = 0;
+        else if (ui->dsmxRadioButton->isChecked())
+            rxSubType = 1;
+        else // if (ui->dsmx8RadioButton->isChecked())
+            rxSubType = 2;
+        mav->pairRX(0, rxSubType);
+    }
 }
 
 void QGCPX4VehicleConfig::setTrimPositions()
@@ -599,7 +607,7 @@ void QGCPX4VehicleConfig::loadQgcConfig(bool primary)
     {
         if (file.toLower().endsWith(".qgw")) {
             QWidget* parent = left?ui->generalLeftContents:ui->generalRightContents;
-            tool = new QGCToolWidget("", parent);
+            tool = new QGCToolWidget("", "", parent);
             if (tool->loadSettings(generaldir.absoluteFilePath(file), false))
             {
                 toolWidgets.append(tool);
@@ -674,7 +682,7 @@ void QGCPX4VehicleConfig::loadQgcConfig(bool primary)
         foreach (QString file,newdir.entryList(QDir::Files| QDir::NoDotAndDotDot))
         {
             if (file.toLower().endsWith(".qgw")) {
-                tool = new QGCToolWidget("", tab);
+                tool = new QGCToolWidget("", "", tab);
                 if (tool->loadSettings(newdir.absoluteFilePath(file), false))
                 {
                     toolWidgets.append(tool);
@@ -721,7 +729,7 @@ void QGCPX4VehicleConfig::loadQgcConfig(bool primary)
         foreach (QString file,newdir.entryList(QDir::Files| QDir::NoDotAndDotDot))
         {
             if (file.toLower().endsWith(".qgw")) {
-                tool = new QGCToolWidget("", tab);
+                tool = new QGCToolWidget("", "", tab);
                 tool->addUAS(mav);
                 if (tool->loadSettings(newdir.absoluteFilePath(file), false))
                 {
@@ -976,10 +984,8 @@ void QGCPX4VehicleConfig::loadConfig()
                                 {
                                     parent = ui->generalRightContents;
                                 }
-                                tool = new QGCToolWidget("", parent);
+                                tool = new QGCToolWidget(parametersname, parametersname, parent);
                                 tool->addUAS(mav);
-                                tool->setTitle(parametersname);
-                                tool->setObjectName(parametersname);
                                 tool->setSettings(genset);
                                 QList<QString> paramlist = tool->getParamList();
                                 for (int i=0;i<paramlist.size();i++)
@@ -1030,10 +1036,8 @@ void QGCPX4VehicleConfig::loadConfig()
                                 {
                                     parent = ui->generalRightContents;
                                 }
-                                tool = new QGCToolWidget("", parent);
+                                tool = new QGCToolWidget(parametersname, parametersname, parent);
                                 tool->addUAS(mav);
-                                tool->setTitle(parametersname);
-                                tool->setObjectName(parametersname);
                                 tool->setSettings(advset);
                                 QList<QString> paramlist = tool->getParamList();
                                 for (int i=0;i<paramlist.size();i++)
