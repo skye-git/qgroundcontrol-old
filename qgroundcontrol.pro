@@ -121,7 +121,7 @@ exists(user_config.pri) {
     message("Adding support for additional MAVLink messages for: " $$MAVLINK_CONF)
     message("------------------------------------------------------------------------")
 } else {
-    MAVLINK_CONF += ardupilotmega
+    # MAVLINK_CONF += ardupilotmega           THIS IS MISSLEADING (skye, 18.11.2013)
 }
 INCLUDEPATH += $$MAVLINKPATH
 isEmpty(MAVLINK_CONF) {
