@@ -3,8 +3,8 @@
 #include "ui_UASSkyeBatteryPackWidget.h"
 
 #define CELLS 6
-#define CELL_VOLTAGE_CRITICAL 3.666666666666
-#define CELL_VOLTAGE_EMERGENCY 3.3
+#define CELL_VOLTAGE_CRITICAL 3.833333333333
+#define CELL_VOLTAGE_EMERGENCY 3.666666666666
 
 
 UASSkyeBatteryPackWidget::UASSkyeBatteryPackWidget(QWidget *parent, MAV_SKYE_BATTERY_PACK_ID pack) :

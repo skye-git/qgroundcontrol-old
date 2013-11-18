@@ -20,9 +20,12 @@
       <widget class="QPushButton" name="ledColorButton">
        <property name="minimumSize">
         <size>
-         <width>40</width>
+         <width>0</width>
          <height>0</height>
         </size>
+       </property>
+       <property name="toolTip">
+        <string>Hide/Show color panel</string>
        </property>
        <property name="text">
         <string>Show colors</string>
@@ -30,30 +33,83 @@
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="spinBoxRed"/>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>red:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="spinBoxGreen"/>
+      <widget class="QSpinBox" name="spinBoxRed">
+       <property name="toolTip">
+        <string>Red LED component</string>
+       </property>
+      </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="spinBoxBlue"/>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>green:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spinBoxGreen">
+       <property name="toolTip">
+        <string>Green LED component</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>blue:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spinBoxBlue">
+       <property name="toolTip">
+        <string>Blue LED component</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout2">
      <item>
-      <widget class="QComboBox" name="comboBoxMode"/>
-     </item>
-     <item>
-      <widget class="QLabel" name="labelFrequency">
-       <property name="text">
-        <string>Freq:</string>
+      <widget class="QComboBox" name="comboBoxMode">
+       <property name="toolTip">
+        <string>Choose special color modes</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="doubleSpinBoxFrequency"/>
+      <widget class="QLabel" name="labelFrequency">
+       <property name="text">
+        <string>Frequency [Hz]:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="doubleSpinBoxFrequency">
+       <property name="toolTip">
+        <string>Color frequency (only for dynamic color modes)</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

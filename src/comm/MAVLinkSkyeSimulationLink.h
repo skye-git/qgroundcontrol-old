@@ -101,7 +101,6 @@ protected:
     double spYaw;//    double spX, spY, spZ, spYaw;
     double speedX, speedY, speedZ;      // Code MA (14.03.2012)
     double spX, spY, spZ;
-    int battery;
 
     QTimer* timer;
     /** File which contains the input data (simulated robot messages) **/
@@ -132,6 +131,7 @@ protected:
     qint64 timeOffset;
     mavlink_heartbeat_t system;
     mavlink_sys_status_t status;
+    mavlink_battery_status_t battery;
 
     QMap<QString, float> onboardParams;
 

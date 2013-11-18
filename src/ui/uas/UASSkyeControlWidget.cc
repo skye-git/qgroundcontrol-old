@@ -299,19 +299,19 @@ void UASSkyeControlWidget::updateInput(SkyeMAV::QGC_INPUT_MODE input)
         ui.mouseButton->setChecked(true);
         ui.touchButton->setChecked(false);
         ui.keyboardButton->setChecked(false);
-        ui.lastActionLabel->setText("Mouse input set");
+        ui.lastActionLabel->setText("Mouse input activated.");
         break;
     case (int)SkyeMAV::QGC_INPUT_MODE_TOUCH:
         ui.mouseButton->setChecked(false);
         ui.touchButton->setChecked(true);
         ui.keyboardButton->setChecked(false);
-        ui.lastActionLabel->setText("Touch input set");
+        ui.lastActionLabel->setText("Touch input activated.");
         break;
     case (int)SkyeMAV::QGC_INPUT_MODE_KEYBOARD:
         ui.mouseButton->setChecked(true);
         ui.touchButton->setChecked(false);
         ui.keyboardButton->setChecked(false);
-        ui.lastActionLabel->setText("Keyboard input set");
+        ui.lastActionLabel->setText("Keyboard input activated.");
         break;
     }
     updateStyleSheet();
@@ -398,7 +398,7 @@ void UASSkyeControlWidget::setInputMouse(bool checked)
         ui.lastActionLabel->setText(tr("Starting 3dMouse... Click again for activate."));
         emit changedInput(SkyeMAV::QGC_INPUT_MODE_MOUSE);
     }
-    updateStyleSheet();
+    //updateStyleSheet();
 }
 
 void UASSkyeControlWidget::setInputTouch(bool checked)
@@ -512,6 +512,13 @@ void UASSkyeControlWidget::changeMouseTranslationEnabled(bool transEnabled)
     if (mouseTranslationEnabled != transEnabled)
     {
         mouseTranslationEnabled = transEnabled;
+        if (!transEnabled)
+        {
+            ui.lastActionLabel->setText("Deactivated translational inputs.");
+        } else
+        {
+            ui.lastActionLabel->setText("Activated translational inputs.");
+        }
     }
     updateStyleSheet();
 }
@@ -521,6 +528,13 @@ void UASSkyeControlWidget::changeMouseRotationEnabled(bool rotEnabled)
     if (mouseRotationEnabled != rotEnabled)
     {
         mouseRotationEnabled = rotEnabled;
+        if (!rotEnabled)
+        {
+            ui.lastActionLabel->setText("Deactivated rotational inputs.");
+        } else
+        {
+            ui.lastActionLabel->setText("Activated rotational inputs.");
+        }
     }
     updateStyleSheet();
 }

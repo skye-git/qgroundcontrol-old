@@ -3385,9 +3385,9 @@ QString UAS::getShortModeTextFor(uint8_t base_mode, uint32_t custom_mode, int au
             // Begin Skye Code
         } else if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) {
             if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE) {
-                mode += "|RATE";
+                mode += "|5DOF";
             } else {
-                mode += "|ATT";
+                mode += "|6DOF";
             }
         }   // End Skye Code
     }

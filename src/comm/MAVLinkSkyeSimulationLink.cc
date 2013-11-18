@@ -225,7 +225,7 @@ void MAVLinkSkyeSimulationLink::mainloop()
 
     // Fake system values
 
-    static float fullVoltage = 4.2f * 6.0f - 4.0f;
+    static float fullVoltage = 4.2f * 6.0f - 2.11f;
     static float emptyVoltage = 3.35f * 6.0f;
     static float voltage = fullVoltage;
     static float drainRate = 0.025f; // x.xx% of the capacity is linearly drained per second
@@ -359,17 +359,37 @@ void MAVLinkSkyeSimulationLink::mainloop()
     // 1 HZ TASKS
     if (rate1hzCounter == 1000 / rate / 1) {
 
+
+        battery_pack_id = 1;//(int)(0.5*sin(time_boot*0.001)+1);
+
+        battery.accu_id = battery_pack_id;
+        battery.voltage_cell_1 = (uint16_t)(1000*voltage);  //1000*(3 + sin(time_boot*0.002));
+        battery.voltage_cell_2 = (uint16_t)(1000*voltage);  //1000*(3 + cos(time_boot*0.002));
+        battery.voltage_cell_3 = (uint16_t)(1000*voltage);  //1000*(3 - sin(time_boot*0.002));
+        battery.voltage_cell_4 = (uint16_t)(1000*voltage);  //1000*(3 - sin(time_boot*0.002));
+        battery.voltage_cell_5 = 0;
+        battery.voltage_cell_6 = 0;
+        battery.current_battery = (int16_t)212;
+        battery.battery_remaining = (int8_t)-1;//(int8_t)floor((float)(100 - 0.0005*time_boot));
+        messageSize = mavlink_msg_battery_status_encode(systemId, componentId, &msg, &battery);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
+
+
+
         status.voltage_battery = voltage * 1000; // millivolts
         status.load = 0;
 
         // Pack message and get size of encoded byte string
-//        messageSize = mavlink_msg_sys_status_encode(systemId, componentId, &msg, &status);
+        messageSize = mavlink_msg_sys_status_encode(systemId, componentId, &msg, &status);
 
-//        // Allocate buffer with packet data
-//        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-//        //add data into datastream
-//        memcpy(stream+streampointer,buffer, bufferlength);
-//        streampointer += bufferlength;
+        // Allocate buffer with packet data
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
 
         // HEARTBEAT
 
@@ -388,24 +408,6 @@ void MAVLinkSkyeSimulationLink::mainloop()
         voltage = voltage - ((fullVoltage - emptyVoltage) * drainRate / rate);
     //    if (voltage < 3.550f * 3.0f) voltage = 3.550f * 3.0f;
 
-        battery_pack_id = 0;//(int)(0.5*sin(time_boot*0.001)+1);
-        mavlink_battery_status_t battery;
-        battery.accu_id = battery_pack_id;
-        battery.voltage_cell_1 = 1000*voltage;//1000*(3 + sin(time_boot*0.002));
-        battery.voltage_cell_2 = 1000*voltage;//1000*(3 + cos(time_boot*0.002));
-        battery.voltage_cell_3 = 1000*voltage;//1000*(3 - sin(time_boot*0.002));
-        battery.voltage_cell_4 = 0;
-        battery.voltage_cell_5 = 0;
-        battery.voltage_cell_6 = 0;
-        battery.current_battery = 100*2.12;
-        battery.battery_remaining = -1;//(int8_t)floor((float)(100 - 0.0005*time_boot));
-        battery.current_consumed = 0;
-        battery.energy_consumed = 0;
-        mavlink_msg_battery_status_encode(systemId, componentId, &msg, &battery);
-        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
-        //add data into datastream
-        memcpy(stream+streampointer,buffer, bufferlength);
-        streampointer += bufferlength;
 
         // Pack debug text message
         mavlink_statustext_t text;

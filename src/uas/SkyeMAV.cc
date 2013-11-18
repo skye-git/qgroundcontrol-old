@@ -69,12 +69,68 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             lowestVolt = (battery.voltage_cell_6 < lowestVolt && battery.voltage_cell_6 > 0) ? battery.voltage_cell_6 : lowestVolt;
 
             // check low voltage -> alert required
-            if (lowestVolt < 22000)
+            if ((lowestVolt < 23000) && (lowestVolt > 10000))
             {
                 emit batteryLow(0.001*(double)lowestVolt);
             }
         }
         break;
+
+        case MAVLINK_MSG_ID_SYS_STATUS:
+        {
+            mavlink_sys_status_t state;
+            mavlink_msg_sys_status_decode(&message, &state);
+
+            // Prepare for sending data to the realtime plotter, which is every field excluding onboard_control_sensors_present.
+            quint64 time = getUnixTime();
+            QString name = QString("M%1:SYS_STATUS.%2").arg(message.sysid);
+
+            // Process CPU load.
+            emit loadChanged(this,state.load/10.0f);
+            emit valueChanged(uasId, name.arg("load"), "%", state.load/10.0f, time);
+
+            // Battery charge/time remaining/voltage calculations
+            currentVoltage = state.voltage_battery/1000.0f;
+            lpVoltage = filterVoltage(currentVoltage);
+
+            chargeLevel = state.battery_remaining;
+
+            emit batteryChanged(this, currentVoltage, currentCurrent, getChargeLevel(), timeRemaining);
+            emit valueChanged(uasId, name.arg("battery_remaining"), "%", getChargeLevel(), time);
+            // emit voltageChanged(message.sysid, currentVoltage);
+            emit valueChanged(uasId, name.arg("battery_voltage"), "V", currentVoltage, time);
+
+            // And if the battery current draw is measured, log that also.
+            if (state.current_battery != -1)
+            {
+                currentCurrent = ((double)state.current_battery)/100.0f;
+                emit valueChanged(uasId, name.arg("battery_current"), "A", currentCurrent, time);
+            }
+
+            // LOW BATTERY ALARM
+            if (lpVoltage < 23.0f && (currentVoltage > 10.0))
+            {
+                emit batteryLow((double)lpVoltage);
+                // An audio alarm. Does not generate any signals.
+                startLowBattAlarm();
+            }
+            else
+            {
+                stopLowBattAlarm();
+            }
+
+            // Trigger drop rate updates as needed. Here we convert the incoming
+            // drop_rate_comm value from 1/100 of a percent in a uint16 to a true
+            // percentage as a float. We also cap the incoming value at 100% as defined
+            // by the MAVLink specifications.
+            if (state.drop_rate_comm > 10000)
+            {
+                state.drop_rate_comm = 10000;
+            }
+            emit dropRateChanged(this->getUASID(), state.drop_rate_comm/100.0f);
+            emit valueChanged(uasId, name.arg("drop_rate_comm"), "%", state.drop_rate_comm/100.0f, time);
+        }
+            break;
 
         case MAVLINK_MSG_ID_PARAM_VALUE:
         {

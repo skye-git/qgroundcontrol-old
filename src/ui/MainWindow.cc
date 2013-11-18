@@ -277,9 +277,9 @@ void MainWindow::init()
     }
 
     // Connect user interface devices
-    emit initStatusChanged(tr("Initializing joystick interface"), Qt::AlignLeft | Qt::AlignBottom, QColor(62, 93, 141));
-    joystickWidget = 0;
-    joystick = new JoystickInput();
+    //emit initStatusChanged(tr("Initializing joystick interface"), Qt::AlignLeft | Qt::AlignBottom, QColor(62, 93, 141));
+    //joystickWidget = 0;
+    //joystick = new JoystickInput();
 
 #ifdef MOUSE_ENABLED_WIN
     emit initStatusChanged(tr("Initializing 3D mouse interface"), Qt::AlignLeft | Qt::AlignBottom, QColor(62, 93, 141));
@@ -1406,15 +1406,15 @@ void MainWindow::showRoadMap()
 
 void MainWindow::configure()
 {
-    if (!joystickWidget)
-    {
-        if (!joystick->isRunning())
-        {
-            joystick->start();
-        }
-        joystickWidget = new JoystickWidget(joystick, this);
-    }
-    joystickWidget->show();
+//    if (!joystickWidget)
+//    {
+//        if (!joystick->isRunning())
+//        {
+//            joystick->start();
+//        }
+//        joystickWidget = new JoystickWidget(joystick, this);
+//    }
+//    joystickWidget->show();
 }
 
 void MainWindow::showSettings()
