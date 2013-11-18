@@ -182,7 +182,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(mav, SIGNAL(batteryLow(double)), this, SLOT(alertBatteryLow(double)));
 
         connect(this, SIGNAL(changedInput(SkyeMAV::QGC_INPUT_MODE)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
-        connect(mav, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(updateInput(SkyeMAV::QGC_INPUT_MODE)));
+        //connect(mav, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(updateInput(SkyeMAV::QGC_INPUT_MODE)));
         connect(this, SIGNAL(changedSensitivityTransFactor(float)), mav, SLOT(setSensitivityFactorTrans(float)));
         connect(this, SIGNAL(changedSensitivityRotFactor(float)), mav, SLOT(setSensitivityFactorRot(float)));
         connect(this, SIGNAL(changedLiftFactor(float)), mav, SLOT(setLiftFactor(float)));
@@ -284,29 +284,37 @@ void UASSkyeControlWidget::updateState(int state)
 
 void UASSkyeControlWidget::updateInput(SkyeMAV::QGC_INPUT_MODE input)
 {
+    inputMode = input;
     switch ((int)input)
     {
     case (int)SkyeMAV::QGC_INPUT_MODE_NONE:
-        inputButtonGroup->setExclusive(false);
+        //inputButtonGroup->setExclusive(false);
         ui.mouseButton->setChecked(false);
         ui.touchButton->setChecked(false);
         ui.keyboardButton->setChecked(false);
-        inputButtonGroup->setExclusive(true);
-        ui.lastActionLabel->setText("No input set");
+        //inputButtonGroup->setExclusive(true);
+        //ui.lastActionLabel->setText("No input set");
         break;
     case (int)SkyeMAV::QGC_INPUT_MODE_MOUSE:
         ui.mouseButton->setChecked(true);
+        ui.touchButton->setChecked(false);
+        ui.keyboardButton->setChecked(false);
         ui.lastActionLabel->setText("Mouse input set");
         break;
     case (int)SkyeMAV::QGC_INPUT_MODE_TOUCH:
+        ui.mouseButton->setChecked(false);
         ui.touchButton->setChecked(true);
+        ui.keyboardButton->setChecked(false);
         ui.lastActionLabel->setText("Touch input set");
         break;
     case (int)SkyeMAV::QGC_INPUT_MODE_KEYBOARD:
-        ui.keyboardButton->setChecked(true);
+        ui.mouseButton->setChecked(true);
+        ui.touchButton->setChecked(false);
+        ui.keyboardButton->setChecked(false);
         ui.lastActionLabel->setText("Keyboard input set");
         break;
     }
+    updateStyleSheet();
 }
 
 void UASSkyeControlWidget::setDirectControlMode()
@@ -387,9 +395,8 @@ void UASSkyeControlWidget::setInputMouse(bool checked)
 {
     if (checked)
     {
-        ui.lastActionLabel->setText(tr("3dMouse activated!"));
-        inputMode = SkyeMAV::QGC_INPUT_MODE_MOUSE;
-        emit changedInput(inputMode);
+        ui.lastActionLabel->setText(tr("Starting 3dMouse... Click again for activate."));
+        emit changedInput(SkyeMAV::QGC_INPUT_MODE_MOUSE);
     }
     updateStyleSheet();
 }
@@ -398,9 +405,8 @@ void UASSkyeControlWidget::setInputTouch(bool checked)
 {
     if (checked)
     {
-        ui.lastActionLabel->setText(tr("Touchscreen activated!"));
-        inputMode = SkyeMAV::QGC_INPUT_MODE_TOUCH;
-        emit changedInput(inputMode);
+        ui.lastActionLabel->setText(tr("Activating Touchscreen..."));
+        emit changedInput(SkyeMAV::QGC_INPUT_MODE_TOUCH);
     }
 }
 
@@ -408,9 +414,8 @@ void UASSkyeControlWidget::setInputKeyboard(bool checked)
 {
     if (checked)
     {
-        ui.lastActionLabel->setText(tr("Keyboard activated!"));
-        inputMode = SkyeMAV::QGC_INPUT_MODE_KEYBOARD;
-        emit changedInput(inputMode);
+        ui.lastActionLabel->setText(tr("Activating Keyboard..."));
+        emit changedInput(SkyeMAV::QGC_INPUT_MODE_KEYBOARD);
     }
 }
 
@@ -473,7 +478,7 @@ void UASSkyeControlWidget::updateStyleSheet()
 {
     QString style = "";
     style.append("QPushButton { min-height: 30; }");
-    if (ui.mouseButton->isChecked())
+    if (inputMode == SkyeMAV::QGC_INPUT_MODE_MOUSE)
     {
 //        qDebug() << "3dMouse TRANSLATION is: " << mouseTranslationEnabled << ", ROTATION is: " << mouseRotationEnabled;
         if (mouseTranslationEnabled && mouseRotationEnabled)

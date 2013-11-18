@@ -330,12 +330,13 @@ void Mouse6dofInput::updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
             process3dxDaemon->start(processProgramm, processArguments);
 
             // 3dxsrv was not running, therefore return return to touch input
-            emit resetInputMode(SkyeMAV::QGC_INPUT_MODE_TOUCH);
+            emit resetInputMode(SkyeMAV::QGC_INPUT_MODE_NONE);
         }
         else
         {
             qDebug() << "[Mouse6dofInput] Initialized 3dMouse";
             mouseActive = true;
+            emit resetInputMode(SkyeMAV::QGC_INPUT_MODE_MOUSE);
         }
     }
     else
