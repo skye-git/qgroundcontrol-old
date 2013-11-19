@@ -229,14 +229,18 @@ p, li { white-space: pre-wrap; }
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="lastActionLabel">
-     <property name="toolTip">
-      <string/>
-     </property>
-     <property name="text">
-      <string>No commands so far</string>
-     </property>
-    </widget>
+    <layout class="QVBoxLayout" name="verticalLayoutForLabels">
+     <item>
+      <widget class="QLabel" name="lastActionLabel">
+       <property name="toolTip">
+        <string/>
+       </property>
+       <property name="text">
+        <string>No commands so far</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <layout class="QFormLayout" name="advancedLayout">
@@ -260,7 +264,7 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
   <zorder></zorder>
-  <zorder>lastActionLabel</zorder>
+  <zorder>verticalLayoutWidget</zorder>
   <zorder>verticalSpacer</zorder>
  </widget>
  <resources/>

@@ -85,6 +85,16 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     inputButtonGroup->addButton((ui.keyboardButton));
     ui.keyboardButton->hide();
 
+    // alert widget
+    alertWidget = new UASSkyeAlertWidget(this);
+    ui.verticalLayoutForLabels->addWidget(alertWidget);
+
+    // tabbed info view widget
+    infoViewWidget = new QGCTabbedInfoView(this);
+    infoViewWidget->show();
+
+    ui.advancedLayout->addWidget(infoViewWidget);
+
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 
     connect(ui.manControlButton, SIGNAL(clicked()), this, SLOT(setDirectControlMode()));
@@ -94,11 +104,6 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     connect(ui.mouseButton, SIGNAL(clicked(bool)), this, SLOT(setInputMouse(bool)));
     connect(ui.touchButton, SIGNAL(clicked(bool)), this, SLOT(setInputTouch(bool)));
     connect(ui.keyboardButton, SIGNAL(clicked(bool)), this, SLOT(setInputKeyboard(bool)));
-
-    infoViewWidget = new QGCTabbedInfoView(this);
-    infoViewWidget->show();
-
-    ui.advancedLayout->addWidget(infoViewWidget);
 
     // Multiplication factor for translational commands
     infoViewWidget->advancedWidget->setSliderValues(sensitivityFactorTrans, sensitivityFactorRot, liftFactor);
@@ -121,6 +126,7 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
 
 void UASSkyeControlWidget::setUAS(UASInterface* uas)
 {
+    qDebug() << "Slot set UAS called";
     if (this->uasId!= 0)
     {
         UASInterface* oldUAS = UASManager::instance()->getUASForId(this->uasId);
@@ -134,7 +140,9 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
             disconnect(this, SIGNAL(changedInput(SkyeMAV::QGC_INPUT_MODE)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
             disconnect(mav, SIGNAL(mouseButtonRotationChanged(bool)), this, SLOT(changeMouseRotationEnabled(bool)));
             disconnect(mav, SIGNAL(mouseButtonTranslationChanged(bool)), this, SLOT(changeMouseTranslationEnabled(bool)));
-            disconnect(mav, SIGNAL(batteryLow(double)), this, SLOT(alertBatteryLow(double)));
+            //disconnect(mav, SIGNAL(batteryLow(double)), this, SLOT(alertBatteryLow(double)));
+            disconnect(mav, SIGNAL(batteryLow(double,bool,uint)), alertWidget, SLOT(batteryLow(double,bool,uint)));
+
             disconnect(this, SIGNAL(changedSensitivityTransFactor(float)), mav, SLOT(setSensitivityFactorTrans(float)));
             disconnect(this, SIGNAL(changedSensitivityRotFactor(float)), mav, SLOT(setSensitivityFactorRot(float)));
             disconnect(this, SIGNAL(changedLiftFactor(float)), mav, SLOT(setLiftFactor(float)));
@@ -179,7 +187,8 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(ui.controlButton, SIGNAL(clicked()), this, SLOT(cycleContextButton()));
         connect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
         connect(mav, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
-        connect(mav, SIGNAL(batteryLow(double)), this, SLOT(alertBatteryLow(double)));
+        //connect(mav, SIGNAL(batteryLow(double)), this, SLOT(alertBatteryLow(double)));
+        connect(mav, SIGNAL(batteryLow(double,bool,uint)), alertWidget, SLOT(batteryLow(double,bool,uint)));
 
         connect(this, SIGNAL(changedInput(SkyeMAV::QGC_INPUT_MODE)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
         //connect(mav, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(updateInput(SkyeMAV::QGC_INPUT_MODE)));

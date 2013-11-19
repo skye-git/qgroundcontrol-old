@@ -290,8 +290,8 @@ void MAVLinkSkyeSimulationLink::mainloop()
 
 
         rate50hzCounter = 1;
-//        time_boot += 20;
-////        qDebug() << "Time since boot: " << time_boot;
+        time_boot += 20;
+//        qDebug() << "Time since boot: " << time_boot;
     }
 
 
@@ -363,7 +363,7 @@ void MAVLinkSkyeSimulationLink::mainloop()
         battery_pack_id = 1;//(int)(0.5*sin(time_boot*0.001)+1);
 
         battery.accu_id = battery_pack_id;
-        battery.voltage_cell_1 = (uint16_t)(1000*voltage);  //1000*(3 + sin(time_boot*0.002));
+        battery.voltage_cell_1 = 1000*(22 + sin(3.14159*time_boot/1000.0/10.0)); //(uint16_t)(1000*voltage);
         battery.voltage_cell_2 = (uint16_t)(1000*voltage);  //1000*(3 + cos(time_boot*0.002));
         battery.voltage_cell_3 = (uint16_t)(1000*voltage);  //1000*(3 - sin(time_boot*0.002));
         battery.voltage_cell_4 = (uint16_t)(1000*voltage);  //1000*(3 - sin(time_boot*0.002));

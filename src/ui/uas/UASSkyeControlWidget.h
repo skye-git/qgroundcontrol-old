@@ -49,6 +49,7 @@ This file is part of the QGROUNDCONTROL project
 #include "SkyeMAV.h"
 #include "QGCTabbedInfoView.h"
 #include "UASSkyeInputMixer.h"
+#include "UASSkyeAlertWidget.h"
 
 /**
  * @brief Widget controlling one (skye) MAV
@@ -162,6 +163,7 @@ signals:
         QButtonGroup *inputButtonGroup;
 
         QGCTabbedInfoView *infoViewWidget;                        ///< sub widget for mavlink messages;
+        UASSkyeAlertWidget *alertWidget;                        ///< sub widget for alert messages
 
 
     };

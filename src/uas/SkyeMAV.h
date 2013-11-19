@@ -116,6 +116,8 @@ signals:
     void inputModeChanged(SkyeMAV::QGC_INPUT_MODE);
     /** @brief Battery is low. Shutdown required */
     void batteryLow(double voltage);
+    /** @brief Battery is low. Shutdown required */
+    void batteryLow(double voltage, bool isLow, unsigned int ms);
     void allocCaseChanged(int allocCase);
 
 
@@ -166,6 +168,12 @@ protected:
     double fromItoC[9];
 
     QGC_INPUT_MODE inputMode;
+
+    bool lowBatteryFront;                   ///< true if electronics platform battery is low
+    bool lowBatteryAU;                      ///< true if actuation units battery is low
+    bool lowBattery;                        ///< true if any battery is low
+    unsigned int lowBatteryMs;              ///< QGC Groundtime Millisecond when battery droped below critical value
+
 };
 
 #endif // SKYEMAV_H

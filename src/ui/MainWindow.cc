@@ -237,6 +237,9 @@ void MainWindow::init()
     emit initStatusChanged(tr("Building common widgets."), Qt::AlignLeft | Qt::AlignBottom, QColor(62, 93, 141));
 
     buildCommonWidgets();
+
+    emit initStatusChanged(tr("Connecting common widgets."), Qt::AlignLeft | Qt::AlignBottom, QColor(62, 93, 141));
+
     connectCommonWidgets();
 
     emit initStatusChanged(tr("Building common actions"), Qt::AlignLeft | Qt::AlignBottom, QColor(62, 93, 141));

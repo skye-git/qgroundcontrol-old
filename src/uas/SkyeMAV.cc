@@ -11,8 +11,7 @@
 #define QGC_COS_LATITUDE 0.67716
 #endif
 
-#define QGC_SKYE_MAX_VEL_NORM 1.0
-#define QGC_SKYE_LOOKAHEAD 2.0
+#define ALARM_VOLTAGE 22.0f
 
 SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
     UAS(mavlink, id),
@@ -36,7 +35,11 @@ SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
     addPitchValue(0.0),
     addYawValue(0.0),
 //    currentTrajectoryStamp(0),
-    inputMode(QGC_INPUT_MODE_TOUCH)
+    inputMode(QGC_INPUT_MODE_TOUCH),
+    lowBatteryFront(false),
+    lowBatteryAU(false),
+    lowBattery(false),
+    lowBatteryMs(0)
 {
     imagePacketsArrived = 0;
     this->setUASName("SKYE");
@@ -68,10 +71,24 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             lowestVolt = (battery.voltage_cell_5 < lowestVolt && battery.voltage_cell_5 > 0) ? battery.voltage_cell_5 : lowestVolt;
             lowestVolt = (battery.voltage_cell_6 < lowestVolt && battery.voltage_cell_6 > 0) ? battery.voltage_cell_6 : lowestVolt;
 
-            // check low voltage -> alert required
-            if ((lowestVolt < 23000) && (lowestVolt > 10000))
+            // LOW BATTERY ALARM
+            if (lowestVolt < (uint16_t)(ALARM_VOLTAGE * 1000))
             {
-                emit batteryLow(0.001*(double)lowestVolt);
+                lowBatteryAU = true;
+                if (!lowBattery)
+                {
+                    lowBatteryMs = QGC::groundTimeMilliseconds();
+                    lowBattery = true;
+                }
+                //emit batteryLow(0.001*(double)lowestVolt);
+                emit batteryLow(0.001*(double)lowestVolt, true, QGC::groundTimeMilliseconds() - lowBatteryMs);
+            } else {
+                lowBatteryAU = false;
+                lowBattery = lowBatteryFront;
+                if (!lowBattery)
+                {
+                    emit batteryLow(0.0, false, 0);
+                }
             }
         }
         break;
@@ -108,15 +125,23 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             }
 
             // LOW BATTERY ALARM
-            if (lpVoltage < 23.0f && (currentVoltage > 10.0))
+            if (lpVoltage < ALARM_VOLTAGE)
             {
-                emit batteryLow((double)lpVoltage);
-                // An audio alarm. Does not generate any signals.
-                startLowBattAlarm();
-            }
-            else
-            {
-                stopLowBattAlarm();
+                lowBatteryFront = true;
+                if (!lowBattery)
+                {
+                    lowBatteryMs = QGC::groundTimeMilliseconds();
+                    lowBattery = true;
+                }
+                //emit batteryLow((double)lpVoltage);
+                emit batteryLow((double)lpVoltage, true, QGC::groundTimeMilliseconds() - lowBatteryMs);
+            } else {
+                lowBatteryFront = false;
+                lowBattery = lowBatteryAU;
+                if (!lowBattery)
+                {
+                    emit batteryLow(0.0, false, 0);
+                }
             }
 
             // Trigger drop rate updates as needed. Here we convert the incoming

@@ -180,5 +180,38 @@ void UASSkyeControlAdvancedWidget::clickedWoAU4RadioButton()
 
 void UASSkyeControlAdvancedWidget::updateAllocCase(int allocCase)
 {
-    // Do something
+
+    // reset all radio buttons
+    ui->radioButtonAllAU->setStyleSheet("QLabel {color: #000;}");
+    ui->radioButtonWoAU1->setStyleSheet("QLabel {color: #000;}");
+    ui->radioButtonWoAU2->setStyleSheet("QLabel {color: #000;}");
+    ui->radioButtonWoAU3->setStyleSheet("QLabel {color: #000;}");
+    ui->radioButtonWoAU4->setStyleSheet("QLabel {color: #000;}");
+
+    // highlight active radio button
+    switch(allocCase)
+    {
+    case 0:
+        ui->radioButtonAllAU->setStyleSheet("QLabel {color: #00DD00;}");
+        ui->radioButtonAllAU->setChecked(true);
+        break;
+    case 1:
+        ui->radioButtonWoAU1->setStyleSheet("QLabel {color: #00DD00;}");
+        ui->radioButtonWoAU1->setChecked(true);
+        break;
+    case 2:
+        ui->radioButtonWoAU2->setStyleSheet("QLabel {color: #00DD00;}");
+        ui->radioButtonWoAU2->setChecked(true);
+        break;
+    case 3:
+        ui->radioButtonWoAU3->setStyleSheet("QLabel {color: #00DD00;}");
+        ui->radioButtonWoAU3->setChecked(true);
+        break;
+    case 4:
+        ui->radioButtonWoAU4->setStyleSheet("QLabel {color: #00DD00;}");
+        ui->radioButtonWoAU4->setChecked(true);
+        break;
+    default: break;
+    }
 }
+
