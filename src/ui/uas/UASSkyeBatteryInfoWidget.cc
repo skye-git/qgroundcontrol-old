@@ -86,7 +86,12 @@ void UASSkyeBatteryInfoWidget::changeBatteryPack(mavlink_battery_status_t* batte
     // Update battery pack widget
     if (batteryPacks.value(packId))
     {
-        batteryPacks.value(packId)->changeBatteryStatus( voltages, 6, current, remaining);
+        int size = 0;
+        for (int i=0; i<sizeof(voltages)/sizeof(double); i++)
+        {
+            if (voltages[i] > 0.0) {size++;}
+        }
+        batteryPacks.value(packId)->changeBatteryStatus( voltages, size, current, remaining);
     }
 
 }
