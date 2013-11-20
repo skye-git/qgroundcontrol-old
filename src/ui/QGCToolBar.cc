@@ -170,7 +170,7 @@ void QGCToolBar::createUI()
     baudcomboBox = new QComboBox(this);
     baudcomboBox->setToolTip(tr("Choose what baud rate to use"));
     baudcomboBox->setEnabled(true);
-    baudcomboBox->setMinimumWidth(40);
+    baudcomboBox->setMinimumWidth(80);
     baudcomboBox->addItem("9600", 9600);
     baudcomboBox->addItem("14400", 14400);
     baudcomboBox->addItem("19200", 19200);
@@ -180,7 +180,7 @@ void QGCToolBar::createUI()
     baudcomboBox->addItem("230400", 230400);
     baudcomboBox->addItem("460800", 460800);
     baudcomboBox->addItem("921600", 921600);
-    baudcomboBox->setCurrentIndex(baudcomboBox->findData(57600));
+    baudcomboBox->setCurrentIndex(baudcomboBox->findData(115200));
     toolBarBaudAction = addWidget(baudcomboBox);
     connect(baudcomboBox, SIGNAL(activated(int)), this, SLOT(baudSelected(int)));
     connect(portComboBox, SIGNAL(activated(int)), this, SLOT(portSelected(int)));
@@ -721,6 +721,11 @@ void QGCToolBar::updateComboBox()
                 }
             }
         }
+
+        // Begin Code Skye
+        userBaudChoice = true;
+        baudcomboBox->setCurrentIndex(baudcomboBox->findData(115200));
+        // End Code Skye
 
         if (!userBaudChoice) {
             int index = baudcomboBox->findData(slink->getBaudRate());
