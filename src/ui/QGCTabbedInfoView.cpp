@@ -21,6 +21,9 @@ QGCTabbedInfoView::QGCTabbedInfoView(QWidget *parent) : QWidget(parent)
     ui.tabWidget->setTabToolTip(ui.tabWidget->indexOf(messageView), "Messages from UAV");
     ui.tabWidget->setTabToolTip(ui.tabWidget->indexOf(advancedWidget), "Set advanced settings");
     ui.tabWidget->setTabToolTip(ui.tabWidget->indexOf(ledWidget), "Control LED color");
+
+    // show default tab
+    ui.tabWidget->setCurrentWidget(advancedWidget);
 }
 void QGCTabbedInfoView::addSource(MAVLinkDecoder *decoder)
 {

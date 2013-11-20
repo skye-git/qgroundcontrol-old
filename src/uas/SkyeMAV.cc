@@ -197,15 +197,25 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
 
 void SkyeMAV::setManual6DOFControlCommands(double x , double y , double z , double a , double b, double c)
 {
-
-    manualXVel = x * (double)sensitivityFactorTrans;
-    manualYVel = y * (double)sensitivityFactorTrans;
-    manualZVel = z * (double)sensitivityFactorTrans - (double)liftFactor;
-    manualXRot = a * (double)sensitivityFactorRot + addRollValue;
-    manualYRot = b * (double)sensitivityFactorRot + addPitchValue;
-    manualZRot = c * (double)sensitivityFactorRot + addYawValue;
-//    qDebug() << ": SENT 6DOF CONTROL MESSAGE: x velocity" << manualXVel << " y velocity: " << manualYVel << " z velocity: " << manualZVel << " x rotation: " << manualXRot << " y rotation: " << manualYRot << " z rotation: " << manualZRot;
-    sendManualControlCommands6DoF(manualXVel, manualYVel, manualZVel, manualXRot, manualYRot, manualZRot);
+    // make sure input device is defined
+    if (inputMode != QGC_INPUT_MODE_NONE)
+    {
+        manualXVel = x * (double)sensitivityFactorTrans;
+        manualYVel = y * (double)sensitivityFactorTrans;
+        manualZVel = z * (double)sensitivityFactorTrans - (double)liftFactor;
+        manualXRot = a * (double)sensitivityFactorRot + addRollValue;
+        manualYRot = b * (double)sensitivityFactorRot + addPitchValue;
+        manualZRot = c * (double)sensitivityFactorRot + addYawValue;
+        //    qDebug() << ": SENT 6DOF CONTROL MESSAGE: x velocity" << manualXVel << " y velocity: " << manualYVel << " z velocity: " << manualZVel << " x rotation: " << manualXRot << " y rotation: " << manualYRot << " z rotation: " << manualZRot;
+        sendManualControlCommands6DoF(manualXVel, manualYVel, manualZVel, manualXRot, manualYRot, manualZRot);
+    } else {
+        manualXVel = 0.0;
+        manualYVel = 0.0;
+        manualZVel = 0.0;
+        manualXRot = 0.0;
+        manualYRot = 0.0;
+        manualZRot = 0.0;
+    }
 }
 
 void SkyeMAV::set6DOFCommandsByWidget(double x, double y, double z, double a, double b, double c)

@@ -74,8 +74,6 @@ void QGCSkyeTestControl::setUAS(UASInterface *mav)
         connect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
         connect(uas, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
         updateState(uas->getState());
-        uas->setMode(MAV_MODE_PREFLIGHT, 0);
-        uas->setInputMode(SkyeMAV::QGC_INPUT_MODE_NONE);
     }
 }
 
