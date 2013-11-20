@@ -218,16 +218,21 @@ void MainWindow::init()
         // Add actions for average users (displayed next to each other)
         QList<QAction*> actions;
         actions << ui.actionFlightView;
+#ifndef QGC_LIGHT_VIEW
         actions << ui.actionMissionView;
+#endif // not QGC_LIGHT_VIEW
         actions << ui.actionHardwareConfig;
         toolBar->setPerspectiveChangeActions(actions);
 
+#ifndef QGC_LIGHT_VIEW
         // Add actions for advanced users (displayed in dropdown under "advanced")
         QList<QAction*> advancedActions;
         advancedActions << ui.actionSimulation_View;
         advancedActions << ui.actionEngineersView;
 
         toolBar->setPerspectiveChangeAdvancedActions(advancedActions);
+#endif // not QGC_LIGHT_VIEW
+
     }
 
     customStatusBar = new QGCStatusBar(this);
@@ -499,9 +504,11 @@ void MainWindow::buildCommonWidgets()
     connect(mavlinkDecoder, SIGNAL(valueChanged(int,QString,QString,QVariant,quint64)),
                       this, SIGNAL(valueChanged(int,QString,QString,QVariant,quint64)));
 
+#ifndef QGC_LIGHT_VIEW
     // Log player
     logPlayer = new QGCMAVLinkLogPlayer(mavlink, customStatusBar);
     customStatusBar->setLogPlayer(logPlayer);
+#endif // not QGC_LIGHT_VIEW
 
     // Center widgets
     if (!plannerView)

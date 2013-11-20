@@ -42,7 +42,11 @@ QGCStatusBar::QGCStatusBar(QWidget *parent) :
     toggleLoggingButton->setCheckable(true);
 
     addPermanentWidget(new UASSkyeBatteryInfoWidget);       // Code Skye
+#ifndef QGC_LIGHT_VIEW
     addPermanentWidget(toggleLoggingButton);
+#else
+    toggleLoggingButton->hide();
+#endif // not QGC_LIGHT_VIEW
 
     loadSettings();
 }

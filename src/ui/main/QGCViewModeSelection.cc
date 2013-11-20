@@ -29,6 +29,11 @@ QGCViewModeSelection::QGCViewModeSelection(QWidget *parent) :
     ui->label_2->hide();
     ui->label_3->hide();
     ui->label_4->hide();
+
+#ifdef QGC_LIGHT_VIEW
+    ui->viewModeSim->hide();
+    ui->label_5->hide();
+#endif // QGC_SKYE_VIEW
     // End Code Skye
 }
 

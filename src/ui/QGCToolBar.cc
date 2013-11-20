@@ -152,6 +152,11 @@ void QGCToolBar::createUI()
     toolBarWpLabel->setAlignment(Qt::AlignCenter);
     toolBarWpAction = addWidget(toolBarWpLabel);
 
+#ifdef QGC_LIGHT_VIEW
+    toolBarBatteryBar->hide();
+    toolBarWpLabel->hide();
+#endif // QGC_LIGHT_VIEW
+
     toolBarMessageLabel = new QLabel(this);
     toolBarMessageLabel->setToolTip(tr("Most recent system message"));
     toolBarMessageLabel->setObjectName("toolBarMessageLabel");
@@ -309,6 +314,7 @@ void QGCToolBar::setPerspectiveChangeActions(const QList<QAction*> &actions)
             group->addButton(btn);
         }
 
+#ifndef QGC_LIGHT_VIEW
         // Add last button
         advancedButton = new QToolButton(this);
         advancedButton->setIcon(QIcon(":/files/images/apps/utilities-system-monitor.svg"));
@@ -320,6 +326,7 @@ void QGCToolBar::setPerspectiveChangeActions(const QList<QAction*> &actions)
         advancedButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
         addWidget(advancedButton);
         group->addButton(advancedButton);
+#endif // not QGC_LIGHT_VIEW
     } else {
         qDebug() << __FILE__ << __LINE__ << "Not enough perspective change actions provided";
     }

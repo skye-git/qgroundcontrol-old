@@ -36,14 +36,18 @@ QGCSkyeConfig::~QGCSkyeConfig()
 
 void QGCSkyeConfig::showEvent(QShowEvent *event)
 {
-    //testControl->changeMode(MAV_MODE_PREFLIGHT);
-    //qDebug() << "DISARMED system because Skye config is shown.";
+#ifdef QGC_LIGHT_VIEW
+    testControl->changeMode(MAV_MODE_PREFLIGHT);
+    qDebug() << "DISARMED system because Skye config is shown.";
+#endif // QGC_LIGHT_VIEW
     QWidget::showEvent(event);
 }
 
 void QGCSkyeConfig::hideEvent(QHideEvent *event)
 {
-    //testControl->changeMode(MAV_MODE_PREFLIGHT);
-    //qDebug() << "DISARMED system because Skye config has been left.";
+#ifdef QGC_LIGHT_VIEW
+    testControl->changeMode(MAV_MODE_PREFLIGHT);
+    qDebug() << "DISARMED system because Skye config has been left.";
+#endif // QGC_LIGHT_VIEW
     QWidget::hideEvent(event);
 }

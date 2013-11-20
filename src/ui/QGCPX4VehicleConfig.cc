@@ -258,6 +258,15 @@ QGCPX4VehicleConfig::QGCPX4VehicleConfig(QWidget *parent) :
     connect(skyeMenuButton, SIGNAL(clicked()), this, SLOT(skyeMenuButtonClicked()));
 
     skyeMenuButtonClicked();
+
+#ifdef QGC_LIGHT_VIEW
+    ui->firmwareMenuButton->hide();
+    ui->rcMenuButton->hide();
+    ui->sensorMenuButton->hide();
+    ui->airframeMenuButton->hide();
+    ui->generalMenuButton->hide();
+    ui->advancedMenuButton->hide();
+#endif // QGC_LIGHT_VIEW
     // End Code Skye
 
     //firmwareMenuButtonClicked();
