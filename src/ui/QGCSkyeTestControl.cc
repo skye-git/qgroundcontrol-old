@@ -253,7 +253,7 @@ void QGCSkyeTestControl::tabChanged(int tab)
         ui->setZeroButton->hide();
 
         ui->manPushButton->show();
-        ui->ratePushButton->show();
+        //ui->ratePushButton->show();
         ui->attPushButton->show();
     }
 }

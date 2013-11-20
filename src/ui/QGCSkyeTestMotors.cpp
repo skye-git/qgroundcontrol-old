@@ -3,6 +3,9 @@
 #include <QDebug>
 #include "UASManager.h"
 
+#define QGC_MAX_THRUST 400
+#define QGC_MAX_ABS_DEGREE 180
+
 QGCSkyeTestMotors::QGCSkyeTestMotors(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::QGCSkyeTestMotors),
@@ -38,6 +41,24 @@ QGCSkyeTestMotors::QGCSkyeTestMotors(QWidget *parent) :
     connect(ui->dialOrientation4, SIGNAL(valueChanged(int)), ui->spinBoxOrientation4, SLOT(setValue(int)));
     connect(ui->spinBoxOrientation4, SIGNAL(valueChanged(int)), ui->dialOrientation4, SLOT(setValue(int)));
 
+    // set limits
+    ui->SliderThrust1->setMaximum(QGC_MAX_THRUST);
+    ui->SliderThrust2->setMaximum(QGC_MAX_THRUST);
+    ui->SliderThrust3->setMaximum(QGC_MAX_THRUST);
+    ui->SliderThrust4->setMaximum(QGC_MAX_THRUST);
+    ui->spinBoxThrust1->setMaximum(QGC_MAX_THRUST);
+    ui->spinBoxThrust2->setMaximum(QGC_MAX_THRUST);
+    ui->spinBoxThrust3->setMaximum(QGC_MAX_THRUST);
+    ui->spinBoxThrust4->setMaximum(QGC_MAX_THRUST);
+
+    ui->dialOrientation1->setRange(-QGC_MAX_ABS_DEGREE, QGC_MAX_ABS_DEGREE);
+    ui->dialOrientation2->setRange(-QGC_MAX_ABS_DEGREE, QGC_MAX_ABS_DEGREE);
+    ui->dialOrientation3->setRange(-QGC_MAX_ABS_DEGREE, QGC_MAX_ABS_DEGREE);
+    ui->dialOrientation4->setRange(-QGC_MAX_ABS_DEGREE, QGC_MAX_ABS_DEGREE);
+    ui->spinBoxOrientation1->setRange(-QGC_MAX_ABS_DEGREE, QGC_MAX_ABS_DEGREE);
+    ui->spinBoxOrientation2->setRange(-QGC_MAX_ABS_DEGREE, QGC_MAX_ABS_DEGREE);
+    ui->spinBoxOrientation3->setRange(-QGC_MAX_ABS_DEGREE, QGC_MAX_ABS_DEGREE);
+    ui->spinBoxOrientation4->setRange(-QGC_MAX_ABS_DEGREE, QGC_MAX_ABS_DEGREE);
 
     // Start Timer
     timer = new QTimer(this);
@@ -73,7 +94,13 @@ void QGCSkyeTestMotors::setUAS(UASInterface* uas)
 
 void QGCSkyeTestMotors::emitValues()
 {
-    emit valueTestControlChanged(ui->SliderThrust1->value(), ui->SliderThrust2->value(), ui->SliderThrust3->value(), ui->SliderThrust4->value(), ui->spinBoxOrientation1->value(), ui->spinBoxOrientation2->value(), ui->spinBoxOrientation3->value(), ui->spinBoxOrientation4->value());
+    // scale orientation from degree to QC
+    int orient1 = (int)( ((double)ui->dialOrientation1->value()) / 180.0 * 86016.0 );
+    int orient2 = (int)( ((double)ui->dialOrientation2->value()) / 180.0 * 86016.0 );
+    int orient3 = (int)( ((double)ui->dialOrientation3->value()) / 180.0 * 86016.0 );
+    int orient4 = (int)( ((double)ui->dialOrientation4->value()) / 180.0 * 86016.0 );
+
+    emit valueTestControlChanged(ui->SliderThrust1->value(), ui->SliderThrust2->value(), ui->SliderThrust3->value(), ui->SliderThrust4->value(), orient1, orient2, orient3, orient4);
 }
 
 void QGCSkyeTestMotors::setZero()
