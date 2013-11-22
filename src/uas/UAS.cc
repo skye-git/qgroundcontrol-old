@@ -3338,59 +3338,78 @@ QString UAS::getShortModeTextFor(uint8_t base_mode, uint32_t custom_mode, int au
 {
     QString mode = "";
 
-    if (base_mode & MAV_MODE_FLAG_CUSTOM_MODE_ENABLED) {
-        // use custom_mode - autopilot-specific
-        if (autopilot == MAV_AUTOPILOT_PX4) {
-            union px4_custom_mode px4_mode;
-            px4_mode.data = custom_mode;
-            if (px4_mode.main_mode == PX4_CUSTOM_MAIN_MODE_MANUAL) {
-                mode += "|MANUAL";
-            } else if (px4_mode.main_mode == PX4_CUSTOM_MAIN_MODE_SEATBELT) {
-                mode += "|SEATBELT";
-            } else if (px4_mode.main_mode == PX4_CUSTOM_MAIN_MODE_EASY) {
-                mode += "|EASY";
-            } else if (px4_mode.main_mode == PX4_CUSTOM_MAIN_MODE_AUTO) {
-                mode += "|AUTO";
-                if (px4_mode.sub_mode == PX4_CUSTOM_SUB_MODE_AUTO_READY) {
-                    mode += "|READY";
-                } else if (px4_mode.sub_mode == PX4_CUSTOM_SUB_MODE_AUTO_TAKEOFF) {
-                    mode += "|TAKEOFF";
-                } else if (px4_mode.sub_mode == PX4_CUSTOM_SUB_MODE_AUTO_LOITER) {
-                    mode += "|LOITER";
-                } else if (px4_mode.sub_mode == PX4_CUSTOM_SUB_MODE_AUTO_MISSION) {
-                    mode += "|MISSION";
-                } else if (px4_mode.sub_mode == PX4_CUSTOM_SUB_MODE_AUTO_RTL) {
-                    mode += "|RTL";
-                } else if (px4_mode.sub_mode == PX4_CUSTOM_SUB_MODE_AUTO_LAND) {
-                    mode += "|LAND";
-                }
-            }
-        }
-    }
+//    if (base_mode & MAV_MODE_FLAG_CUSTOM_MODE_ENABLED) {
+//        // use custom_mode - autopilot-specific
+//        if (autopilot == MAV_AUTOPILOT_PX4) {
+//            union px4_custom_mode px4_mode;
+//            px4_mode.data = custom_mode;
+//            if (px4_mode.main_mode == PX4_CUSTOM_MAIN_MODE_MANUAL) {
+//                mode += "|MANUAL";
+//            } else if (px4_mode.main_mode == PX4_CUSTOM_MAIN_MODE_SEATBELT) {
+//                mode += "|SEATBELT";
+//            } else if (px4_mode.main_mode == PX4_CUSTOM_MAIN_MODE_EASY) {
+//                mode += "|EASY";
+//            } else if (px4_mode.main_mode == PX4_CUSTOM_MAIN_MODE_AUTO) {
+//                mode += "|AUTO";
+//                if (px4_mode.sub_mode == PX4_CUSTOM_SUB_MODE_AUTO_READY) {
+//                    mode += "|READY";
+//                } else if (px4_mode.sub_mode == PX4_CUSTOM_SUB_MODE_AUTO_TAKEOFF) {
+//                    mode += "|TAKEOFF";
+//                } else if (px4_mode.sub_mode == PX4_CUSTOM_SUB_MODE_AUTO_LOITER) {
+//                    mode += "|LOITER";
+//                } else if (px4_mode.sub_mode == PX4_CUSTOM_SUB_MODE_AUTO_MISSION) {
+//                    mode += "|MISSION";
+//                } else if (px4_mode.sub_mode == PX4_CUSTOM_SUB_MODE_AUTO_RTL) {
+//                    mode += "|RTL";
+//                } else if (px4_mode.sub_mode == PX4_CUSTOM_SUB_MODE_AUTO_LAND) {
+//                    mode += "|LAND";
+//                }
+//            }
+//        }
+//    }
 
-    // fallback to using base_mode
-    if (mode.length() == 0) {
-        // use base_mode - not autopilot-specific
-        if (base_mode == 0) {
-            mode += "|PREFLIGHT";
-        } else if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_AUTO) {
-            mode += "|AUTO";
-        } else if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) {
-            mode += "|MANUAL";
-            if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_GUIDED) {
-                mode += "|GUIDED";
-            } else if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) {
-                mode += "|STABILIZED";
-            }
-            // Begin Skye Code
-        } else if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) {
+//    // fallback to using base_mode
+//    if (mode.length() == 0) {
+//        // use base_mode - not autopilot-specific
+//        if (base_mode == 0) {
+//            mode += "|PREFLIGHT";
+//        } else if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_AUTO) {
+//            mode += "|AUTO";
+//        } else if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) {
+//            mode += "|MANUAL";
+//            if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_GUIDED) {
+//                mode += "|GUIDED";
+//            } else if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) {
+//                mode += "|STABILIZED";
+//            }
+//            // Begin Skye Code
+//        } else if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) {
+//            if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE) {
+//                mode += "|5DOF";
+//            } else {
+//                mode += "|6DOF";
+//            }
+//        }   // End Skye Code
+//    }
+
+
+    // SKYE SPECIFIC MODE DECODING
+    if (base_mode == 0) {
+        mode += "|PREFLIGHT";
+    } else if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL) {
+        if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) {
             if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE) {
                 mode += "|5DOF";
             } else {
                 mode += "|6DOF";
             }
-        }   // End Skye Code
+        } else {
+                mode += "|MANUAL";
+        }
+    } else if (base_mode & MAV_MODE_FLAG_DECODE_POSITION_TEST) {
+        mode += "|TEST";
     }
+
 
     if (mode.length() == 0)
     {
