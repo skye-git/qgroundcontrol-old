@@ -39,8 +39,8 @@ LedControlWidget::LedControlWidget(QWidget *parent) :
     mode(LED_CONTROL_MODE_CONSTANT),
     frequency(0.0),
     dialog(new QColorDialog),
-    dialogVisible(false)
-
+    dialogVisible(false),
+    enabled(true)
 {
     ui->setupUi(this);
 
@@ -52,7 +52,7 @@ LedControlWidget::LedControlWidget(QWidget *parent) :
     connect(dialog, SIGNAL(currentColorChanged(QColor)), this, SLOT(changeColor(QColor)));
     dialog->setOption(QColorDialog::NoButtons);
     this->layout()->addWidget(dialog);
-    dialog->hide();
+    dialog->close();
 
     // connect color spinboxes
     connect(this, SIGNAL(redColorChanged(int)), ui->spinBoxRed, SLOT(setValue(int)));
@@ -82,6 +82,11 @@ LedControlWidget::LedControlWidget(QWidget *parent) :
     ui->doubleSpinBoxFrequency->setRange(0.0, 100.0);
     ui->doubleSpinBoxFrequency->setSingleStep(0.1);
     connect(ui->doubleSpinBoxFrequency, SIGNAL(valueChanged(double)), this, SLOT(changeFrequency(double)));
+
+    // connect on/off switch and do initial update
+    connect(ui->ledOnOffButton, SIGNAL(toggled(bool)), this, SLOT(setLedEnabled(bool)));
+    ui->ledOnOffButton->setChecked(enabled);
+
 }
 
 LedControlWidget::~LedControlWidget()
@@ -125,10 +130,10 @@ void LedControlWidget::changeColorDialogVisibility()
 {
     if (dialogVisible)
     {
-        dialog->hide();
+        dialog->close();
         ui->ledColorButton->setText("Show colors");
     } else {
-        dialog->show();
+        dialog->open();
         ui->ledColorButton->setText("Hide colors");
     }
     dialogVisible = !dialogVisible;
@@ -200,8 +205,12 @@ void LedControlWidget::sendColor()
         // rate limit transmission to 200ms (5Hz)
         if (timeOfSubmit.elapsed() > 200)
         {
-            timeOfSubmit.restart();
-            emit transmitColor(0, (uint8_t)red, (uint8_t)green, (uint8_t)blue, mode, (float)frequency);
+            if (enabled) {
+                timeOfSubmit.restart();
+                emit transmitColor(0, (uint8_t)red, (uint8_t)green, (uint8_t)blue, mode, (float)frequency);
+            } else {
+                qDebug() << "Changed color, but LED are disabled";
+            }
         }
     }
 }
@@ -243,4 +252,21 @@ QString LedControlWidget::GetNameForLedColorMode(LED_CONTROL_MODE m)
         break;
     }
     return modeName;
+}
+
+void LedControlWidget::setLedEnabled(bool checked)
+{
+    enabled = checked;
+
+    if (enabled == true) {
+        // update to current color and mode
+        emit transmitColor(0, (uint8_t)red, (uint8_t)green, (uint8_t)blue, mode, (float)frequency);
+        ui->ledOnOffButton->setText("LED ON");
+        ui->ledOnOffButton->setToolTip("LED illumination is ON. Uncheck to switch OFF.");
+    } else {
+        // black is off
+        emit transmitColor(0, (uint8_t)0, (uint8_t)0, (uint8_t)0, LED_CONTROL_MODE_CONSTANT, 0.0f);
+        ui->ledOnOffButton->setText("LED OFF");
+        ui->ledOnOffButton->setToolTip("LED illumination is OFF. Uncheck to switch ON.");
+    }
 }

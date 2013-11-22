@@ -36,7 +36,7 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Force X [%]</string>
+         <string>Front [%]</string>
         </property>
        </widget>
       </item>
@@ -79,7 +79,7 @@
       <item>
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>Moment X [%]</string>
+         <string>Roll [%]</string>
         </property>
        </widget>
       </item>
@@ -144,7 +144,7 @@
       <item>
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Forec Y [%]</string>
+         <string>Right [%]</string>
         </property>
        </widget>
       </item>
@@ -181,7 +181,7 @@
       <item>
        <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>Moment Y [%]</string>
+         <string>Pitch [%]</string>
         </property>
        </widget>
       </item>
@@ -243,7 +243,7 @@
       <item>
        <widget class="QLabel" name="label_5">
         <property name="text">
-         <string>Forece Z [%]</string>
+         <string>Down [%]</string>
         </property>
        </widget>
       </item>
@@ -280,7 +280,7 @@
       <item>
        <widget class="QLabel" name="label_6">
         <property name="text">
-         <string>Moment Z [%]</string>
+         <string>Yaw [%]</string>
         </property>
        </widget>
       </item>
