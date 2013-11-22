@@ -220,7 +220,11 @@ void SkyeMAV::setManual6DOFControlCommands(double x , double y , double z , doub
 
 void SkyeMAV::set6DOFCommandsByWidget(double x, double y, double z, double a, double b, double c)
 {
-    sendManualControlCommands6DoF(x, y, z, a, b, c);
+    // only accept widget inputs when no input device defined
+    if (inputMode == QGC_INPUT_MODE_NONE)
+    {
+        sendManualControlCommands6DoF(x, y, z, a, b, c);
+    }
 }
 
 void SkyeMAV::sendManualControlCommands6DoF(double x, double y, double z, double phi, double theta, double psi)
