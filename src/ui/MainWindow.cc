@@ -657,6 +657,7 @@ void MainWindow::buildCommonWidgets()
     //createDockWidget(pilotView,new UASActionsWidget(this),tr("Actions"),"UNMANNED_SYSTEM_ACTION_DOCKWIDGET",VIEW_FLIGHT,Qt::RightDockWidgetArea);
 
     // Custom widgets, added last to all menus and layouts
+    qDebug() << "Build custom widgets";
     buildCustomWidget();
 
 

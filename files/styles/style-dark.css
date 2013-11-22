@@ -445,7 +445,7 @@ QPushButton#manControlButtonGray, QPushButton#rateControlButtonGray, QPushButton
     border-radius: 12px;
     min-height: 45px;
     max-height: 60px;
-    min-width: 80px;
+    min-width: 70px;
     max-width: 80px;
     border: 3px solid;
     font-size: 15pt;
@@ -456,7 +456,7 @@ QPushButton#manControlButtonGreen, QPushButton#rateControlButtonGreen, QPushButt
     border-radius: 12px;
     min-height: 45px;
     max-height: 60px;
-    min-width: 80px;
+    min-width: 70px;
     max-width: 80px;
     border: 3px solid;
     font-size: 15pt;
@@ -467,7 +467,7 @@ QPushButton#manControlButtonWhite, QPushButton#rateControlButtonWhite, QPushButt
     border-radius: 12px;
     min-height: 45px;
     max-height: 60px;
-    min-width: 80px;
+    min-width: 70px;
     max-width: 80px;
     border: 3px solid;
     font-size: 15pt;
@@ -479,8 +479,7 @@ QPushButton#controlButtonRed {
     border-radius: 12px;
     min-height: 60px;
     max-height: 80px;
-    min-width: 260px;
-    max-width: 260px;
+    min-width: 280px;
     border: 3px solid yellow;
     font-size: 15pt;
 }
@@ -491,8 +490,7 @@ QPushButton#controlButtonGreen {
     border-radius: 12px;x;
     min-height: 60px;
     max-height: 80px;
-    min-width: 260px;
-    max-width: 260px;
+    min-width: 280px;
     border: 3px solid yellow;
     font-size: 15pt;
 }
