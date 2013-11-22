@@ -310,7 +310,7 @@ void SkyeMAV::sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t bl
     mavlink_message_t msg;
     mavlink_msg_led_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, ledId, red, green, blue, mode, frequency);
     sendMessage(msg);
-    qDebug("[SkyeMAV] Sent LED Color Message");
+    qDebug() << "[SkyeMAV] Sent LED Color Message. ledId:" << ledId << "red: " << red << "green: " << green << "blue: " << blue << "mode: " << mode << "frequency" << frequency;
 }
 
 void SkyeMAV::sendAUConfiguration(int disabledAU)

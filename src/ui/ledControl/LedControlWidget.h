@@ -48,6 +48,8 @@ private slots:
     void updateWidget();
     /** Send new color to UAS */
     void sendColor();
+    /** Switch LED on/off */
+    void setLedEnabled(bool checked);
 
 private:
     QString GetNameForLedColorMode(LED_CONTROL_MODE m);
@@ -61,6 +63,7 @@ private:
 
     LED_CONTROL_MODE mode;              ///< current led control mode
     double frequency;                   ///< current frequency for led color change
+    bool enabled;                       ///< true if LED enabled
 
     QColorDialog *dialog;               ///< Dialog to choose color
     bool dialogVisible;                 ///< boolean to hide/show color dialog
