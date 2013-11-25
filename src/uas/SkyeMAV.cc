@@ -125,7 +125,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             }
 
             // LOW BATTERY ALARM
-            if (lpVoltage < ALARM_VOLTAGE)
+            if (currentVoltage < ALARM_VOLTAGE)
             {
                 lowBatteryFront = true;
                 if (!lowBattery)
@@ -134,7 +134,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
                     lowBattery = true;
                 }
                 //emit batteryLow((double)lpVoltage);
-                emit batteryLow((double)lpVoltage, true, QGC::groundTimeMilliseconds() - lowBatteryMs);
+                emit batteryLow(currentVoltage, true, QGC::groundTimeMilliseconds() - lowBatteryMs);
             } else {
                 lowBatteryFront = false;
                 lowBattery = lowBatteryAU;
