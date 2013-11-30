@@ -19,7 +19,7 @@ QAction *MenuActionHelper::createToolAction(const QString &title, const QString 
     action->setCheckable(true);
     connect(action,SIGNAL(triggered(bool)),this,SLOT(showTool(bool)));
     m_menuToDockNameMap[action] = name;
-    m_menu->addAction(action);
+    //m_menu->addAction(action);
     return action;
 }
 

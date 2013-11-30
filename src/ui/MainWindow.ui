@@ -46,75 +46,25 @@
    </property>
   </widget>
   <widget class="QMenuBar" name="menuBar">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
      <width>1024</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMGround">
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionJoystick_Settings"/>
-    <addaction name="actionSimulate"/>
-    <addaction name="separator"/>
-    <addaction name="actionMuteAudioOutput"/>
-    <addaction name="actionJoystickSettings"/>
-    <addaction name="actionSettings"/>
-    <addaction name="actionAdvanced_Mode"/>
-    <addaction name="separator"/>
+    <addaction name="action"/>
     <addaction name="actionExit"/>
    </widget>
-   <widget class="QMenu" name="menuNetwork">
-    <property name="title">
-     <string>Communication</string>
-    </property>
-    <addaction name="actionAdd_Link"/>
-    <addaction name="separator"/>
-   </widget>
-   <widget class="QMenu" name="menuTools">
-    <property name="title">
-     <string>Tool Widgets</string>
-    </property>
-    <addaction name="actionNewCustomWidget"/>
-    <addaction name="actionLoadCustomWidgetFile"/>
-    <addaction name="separator"/>
-   </widget>
-   <widget class="QMenu" name="menuHelp">
-    <property name="title">
-     <string>Help</string>
-    </property>
-    <addaction name="actionOnline_Documentation"/>
-    <addaction name="actionProject_Roadmap_2"/>
-    <addaction name="actionDeveloper_Credits"/>
-   </widget>
-   <widget class="QMenu" name="menuPerspectives">
-    <property name="title">
-     <string>Perspectives</string>
-    </property>
-    <addaction name="actionMissionView"/>
-    <addaction name="actionFlightView"/>
-    <addaction name="actionHardwareConfig"/>
-    <addaction name="actionSoftwareConfig"/>
-    <addaction name="actionTerminalView"/>
-    <addaction name="actionEngineersView"/>
-    <addaction name="actionSimulationView"/>
-    <addaction name="separator"/>
-    <addaction name="actionFirmwareUpdateView"/>
-    <addaction name="actionMavlinkView"/>
-    <addaction name="actionUnconnectedView"/>
-    <addaction name="separator"/>
-    <addaction name="actionFullscreen"/>
-    <addaction name="actionNormal"/>
-   </widget>
    <addaction name="menuMGround"/>
-   <addaction name="menuNetwork"/>
-   <addaction name="menuPerspectives"/>
-   <addaction name="menuTools"/>
-   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionExit">
@@ -232,7 +182,7 @@
     <string>Show Slugs View</string>
    </property>
   </action>
-  <action name="actionJoystick_Settings">
+  <action name="action">
    <property name="icon">
     <iconset resource="../../qgroundcontrol.qrc">
      <normaloff>:/files/images/devices/input-gaming.svg</normaloff>:/files/images/devices/input-gaming.svg</iconset>

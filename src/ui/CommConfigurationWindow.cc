@@ -281,15 +281,15 @@ void CommConfigurationWindow::setLinkType(qgc_link_t linktype)
 	const int32_t& linkIndex(LinkManager::instance()->getLinks().indexOf(tmpLink));
 	const int32_t& linkID(LinkManager::instance()->getLinks()[linkIndex]->getId());
 
-	QList<QAction*> actions = MainWindow::instance()->listLinkMenuActions();
-	foreach (QAction* act, actions) 
-	{
-        if (act->data().toInt() == linkID) 
-        {
-            act->trigger();
-            break;
-        }
-    }
+//	QList<QAction*> actions = MainWindow::instance()->listLinkMenuActions();
+//	foreach (QAction* act, actions)
+//	{
+//        if (act->data().toInt() == linkID)
+//        {
+//            act->trigger();
+//            break;
+//        }
+//    }
 }
 
 void CommConfigurationWindow::setProtocol(int protocol)

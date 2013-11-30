@@ -332,6 +332,7 @@ void UASSkyeControlWidget::setDirectControlMode()
     if (engineOn) {
 
         newMode = newMode | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED;
+        qDebug() << "newMode is " << newMode;
         transmitMode(newMode);
 
         if (uasMode != newMode)
@@ -350,7 +351,7 @@ void UASSkyeControlWidget::setRateControlMode()
 {
     uint8_t newMode = MAV_MODE_PREFLIGHT;
     if (engineOn) {
-        newMode = newMode | MAV_MODE_FLAG_SAFETY_ARMED;
+        newMode = newMode | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED;
         // Set rate control
         newMode |= MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
         transmitMode(newMode);
@@ -369,7 +370,7 @@ void UASSkyeControlWidget::setAttitudeControlMode()
 {
     uint8_t newMode = MAV_MODE_PREFLIGHT;
     if (engineOn) {
-        newMode = newMode | MAV_MODE_FLAG_SAFETY_ARMED;
+        newMode = newMode | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED;
         // Set attitude control
         newMode |= MAV_MODE_FLAG_STABILIZE_ENABLED;
         transmitMode(newMode);
@@ -435,10 +436,10 @@ void UASSkyeControlWidget::transmitMode(int mode)
     {
         mav->setModeCommand(mode);
 
-        QString modeStr = UAS::getShortModeTextFor(mode, 0, MAV_AUTOPILOT_PX4);
+        QString modeStr = UAS::getShortModeTextFor((uint8_t)mode, 0, MAV_AUTOPILOT_PX4);
         ui.lastActionLabel->setText(QString("Sent mode %1 to %2").arg(modeStr).arg(mav->getUASName()));
 
-        qDebug() << "Send mode" << modeStr << "to" << mav->getUASName();
+        qDebug() << "Send mode (" << mode << ")" << modeStr << "to" << mav->getUASName();
     }
     else
     {

@@ -188,7 +188,7 @@ void MainWindow::init()
     // Setup user interface
     ui.setupUi(this);
     hide();
-    menuActionHelper->setMenu(ui.menuTools);
+    menuActionHelper->setMenu(ui.menuMGround);
 
     // We only need this menu if we have more than one system
     //    ui.menuConnected_Systems->setEnabled(false);
@@ -443,7 +443,7 @@ void MainWindow::buildCustomWidget()
 
     if (widgets.size() > 0)
     {
-        ui.menuTools->addSeparator();
+        //ui.menuTools->addSeparator();
     }
 
     for(int i = 0; i < widgets.size(); ++i)
@@ -607,9 +607,9 @@ void MainWindow::buildCommonWidgets()
             debugConsole = new DebugConsole();
             debugConsole->setWindowTitle("Communications Console");
             debugConsole->hide();
-            QAction* tempAction = ui.menuTools->addAction(tr("Communication Console"));
-            tempAction->setCheckable(true);
-            connect(tempAction,SIGNAL(triggered(bool)),debugConsole,SLOT(setShown(bool)));
+            //QAction* tempAction = ui.menuTools->addAction(tr("Communication Console"));
+            //tempAction->setCheckable(true);
+            //connect(tempAction,SIGNAL(triggered(bool)),debugConsole,SLOT(setShown(bool)));
         }
     }
     createDockWidget(simView,new HSIDisplay(this),tr("Horizontal Situation"),"HORIZONTAL_SITUATION_INDICATOR_DOCKWIDGET",VIEW_SIMULATION,Qt::BottomDockWidgetArea);
@@ -894,7 +894,7 @@ void MainWindow::createCustomWidget()
     if (QGCToolWidget::instances()->isEmpty())
     {
         // This is the first widget
-        ui.menuTools->addSeparator();
+        //ui.menuTools->addSeparator();
     }
     QString objectName;
     int customToolIndex = 0;
@@ -986,8 +986,8 @@ void MainWindow::loadCustomWidget(const QString& fileName, bool singleinstance)
             {
             //Delete tool, create menu item to tie it to.
             customWidgetNameToFilenameMap[tool->objectName()+"DOCK"] = fileName;
-            QAction *action = menuActionHelper->createToolAction(tool->getTitle(), tool->objectName()+"DOCK");
-            ui.menuTools->addAction(action);
+            //QAction *action = menuActionHelper->createToolAction(tool->getTitle(), tool->objectName()+"DOCK");
+            //ui.menuTools->addAction(action);
             tool->deleteLater();
             }
             break;
@@ -1242,20 +1242,20 @@ void MainWindow::showInfoMessage(const QString& title, const QString& message)
 void MainWindow::connectCommonActions()
 {
     // Bind together the perspective actions
-    QActionGroup* perspectives = new QActionGroup(ui.menuPerspectives);
-    perspectives->addAction(ui.actionEngineersView);
-    perspectives->addAction(ui.actionMavlinkView);
-    perspectives->addAction(ui.actionFlightView);
-    perspectives->addAction(ui.actionSimulation_View);
-    perspectives->addAction(ui.actionMissionView);
-    //perspectives->addAction(ui.actionConfiguration_2);
-    perspectives->addAction(ui.actionHardwareConfig);
-    if (getCustomMode() == CUSTOM_MODE_APM) {
-        perspectives->addAction(ui.actionSoftwareConfig);
-    }
-    perspectives->addAction(ui.actionTerminalView);
-    perspectives->addAction(ui.actionUnconnectedView);
-    perspectives->setExclusive(true);
+//    QActionGroup* perspectives = new QActionGroup(ui.menuPerspectives);
+//    perspectives->addAction(ui.actionEngineersView);
+//    perspectives->addAction(ui.actionMavlinkView);
+//    perspectives->addAction(ui.actionFlightView);
+//    perspectives->addAction(ui.actionSimulation_View);
+//    perspectives->addAction(ui.actionMissionView);
+//    //perspectives->addAction(ui.actionConfiguration_2);
+//    perspectives->addAction(ui.actionHardwareConfig);
+//    if (getCustomMode() == CUSTOM_MODE_APM) {
+//        perspectives->addAction(ui.actionSoftwareConfig);
+//    }
+//    perspectives->addAction(ui.actionTerminalView);
+//    perspectives->addAction(ui.actionUnconnectedView);
+//    perspectives->setExclusive(true);
 
     // Mark the right one as selected
     if (currentView == VIEW_ENGINEER)
@@ -1443,19 +1443,19 @@ LinkInterface* MainWindow::addLink()
     LinkManager::instance()->addProtocol(link, mavlink);
 
     // Go fishing for this link's configuration window
-    QList<QAction*> actions = ui.menuNetwork->actions();
+//    QList<QAction*> actions = ui.menuNetwork->actions();
 
-    const int32_t& linkIndex(LinkManager::instance()->getLinks().indexOf(link));
-    const int32_t& linkID(LinkManager::instance()->getLinks()[linkIndex]->getId());
+//    const int32_t& linkIndex(LinkManager::instance()->getLinks().indexOf(link));
+//    const int32_t& linkID(LinkManager::instance()->getLinks()[linkIndex]->getId());
 
-    foreach (QAction* act, actions)
-    {
-        if (act->data().toInt() == linkID)
-        { // LinkManager::instance()->getLinks().indexOf(link)
-            act->trigger();
-            break;
-        }
-    }
+//    foreach (QAction* act, actions)
+//    {
+//        if (act->data().toInt() == linkID)
+//        { // LinkManager::instance()->getLinks().indexOf(link)
+//            act->trigger();
+//            break;
+//        }
+//    }
 
     return link;
 }
@@ -1464,21 +1464,21 @@ LinkInterface* MainWindow::addLink()
 bool MainWindow::configLink(LinkInterface *link)
 {
     // Go searching for this link's configuration window
-    QList<QAction*> actions = ui.menuNetwork->actions();
+//    QList<QAction*> actions = ui.menuNetwork->actions();
 
     bool found(false);
 
-    const int32_t& linkIndex(LinkManager::instance()->getLinks().indexOf(link));
-    const int32_t& linkID(LinkManager::instance()->getLinks()[linkIndex]->getId());
+//    const int32_t& linkIndex(LinkManager::instance()->getLinks().indexOf(link));
+//    const int32_t& linkID(LinkManager::instance()->getLinks()[linkIndex]->getId());
 
-    foreach (QAction* action, actions)
-    {
-        if (action->data().toInt() == linkID)
-        { // LinkManager::instance()->getLinks().indexOf(link)
-            found = true;
-            action->trigger(); // Show the Link Config Dialog
-        }
-    }
+//    foreach (QAction* action, actions)
+//    {
+//        if (action->data().toInt() == linkID)
+//        { // LinkManager::instance()->getLinks().indexOf(link)
+//            found = true;
+//            action->trigger(); // Show the Link Config Dialog
+//        }
+//    }
 
     return found;
 }
@@ -1503,28 +1503,28 @@ void MainWindow::addLink(LinkInterface *link)
     LinkManager::instance()->addProtocol(link, mavlink);
 
     // Go fishing for this link's configuration window
-    QList<QAction*> actions = ui.menuNetwork->actions();
+//    QList<QAction*> actions = ui.menuNetwork->actions();
 
     bool found(false);
 
-    const int32_t& linkIndex(LinkManager::instance()->getLinks().indexOf(link));
-    const int32_t& linkID(LinkManager::instance()->getLinks()[linkIndex]->getId());
+//    const int32_t& linkIndex(LinkManager::instance()->getLinks().indexOf(link));
+//    const int32_t& linkID(LinkManager::instance()->getLinks()[linkIndex]->getId());
 
-    foreach (QAction* act, actions)
-    {
-        if (act->data().toInt() == linkID)
-        { // LinkManager::instance()->getLinks().indexOf(link)
-            found = true;
-        }
-    }
+//    foreach (QAction* act, actions)
+//    {
+//        if (act->data().toInt() == linkID)
+//        { // LinkManager::instance()->getLinks().indexOf(link)
+//            found = true;
+//        }
+//    }
 
     if (!found)
     {
         CommConfigurationWindow* commWidget = new CommConfigurationWindow(link, mavlink, this);
         commsWidgetList.append(commWidget);
         connect(commWidget,SIGNAL(destroyed(QObject*)),this,SLOT(commsWidgetDestroyed(QObject*)));
-        QAction* action = commWidget->getAction();
-        ui.menuNetwork->addAction(action);
+        //QAction* action = commWidget->getAction();
+        //ui.menuNetwork->addAction(action);
 
         // Error handling
         connect(link, SIGNAL(communicationError(QString,QString)), this, SLOT(showCriticalMessage(QString,QString)), Qt::QueuedConnection);
@@ -2058,7 +2058,7 @@ void MainWindow::loadMAVLinkView()
 
 QList<QAction*> MainWindow::listLinkMenuActions()
 {
-    return ui.menuNetwork->actions();
+//    return ui.menuNetwork->actions();
 }
 
 bool MainWindow::dockWidgetTitleBarsEnabled() const
