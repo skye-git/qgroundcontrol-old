@@ -1709,6 +1709,29 @@
              <field type="int16_t" name="zacc">Z acceleration (mg)</field>
          </message>
          
+          <message id="134" name="POSITION_CONTROLLER_RAW">
+               <description>Raw position controller output values</description>
+               <field type="float" name="F_x">Force in x axis [N]</field>
+               <field type="float" name="F_y">Force in y axis [N]</field>
+               <field type="float" name="F_z">Force in z axis [N]</field>
+          </message>          
+          <message id="135" name="ATTITUDE_CONTROLLER_RAW">
+               <description>Raw allocation sensor values</description>
+               <field type="float" name="M_x">Moment around x axis [Nm]</field>
+               <field type="float" name="M_y">Moment around y axis [Nm]</field>
+               <field type="float" name="M_z">Moment around z axis [Nm]</field>
+          </message>
+          <message id="136" name="ALLOCATION_CONTROLLER_RAW">
+               <description>Raw allocation sensor values</description>
+               <field type="int32_t" name="pos_1">Orientation motor setpoint of AU 1</field>
+               <field type="int32_t" name="pos_2">Orientation motor setpoint of of AU 2</field>
+               <field type="int32_t" name="pos_3">Orientation motor setpoint of of AU 3</field>
+               <field type="int32_t" name="pos_4">Orientation motor setpoint of of AU 4</field>
+               <field type="uint16_t" name="thrust_1">Thrust motor setpoint of AU 1</field>
+               <field type="uint16_t" name="thrust_2">Thrust motor setpoint of AU 2</field>
+               <field type="uint16_t" name="thrust_3">Thrust motor setpoint of AU 3</field>
+               <field type="uint16_t" name="thrust_4">Thrust motor setpoint of AU 4</field>
+          </message>
           <message id="137" name="ALLOCATION_SENSOR_RAW">
                <description>Raw allocation sensor values</description>
                <field type="int32_t" name="pos_1">Orientation motor position readout of AU 1</field>
@@ -1779,8 +1802,16 @@
                <field type="uint8_t" name="mode">Compare LED_CONTROL_MODE enumerator - 0: Constant light, 1: Blink on/off, 2: Pulsate, 3: Colorloop, 4: Disco</field>
                <field type="float" name="frequency">Frequency parameter, Hz</field>
           </message>
-         <message id="147" name="BATTERY_STATUS">
-               <description>Transmit battery informations for an accu pack.</description>
+         <message id="146" name="BATTERY_STATUS">
+               <description>Transmit informations about a battery.</description>
+               <field type="uint8_t" name="accu_id">Accupack ID</field>
+               <field type="int8_t" name="status">bit 0: attached flag, bit 1: undervoltage flag, bit 2: disabled flag, bit 3: charging flag, bit 4: balancing flag, bit 5: battery full, bit 7: error</field>
+               <field type="uint16_t" name="voltage">Battery voltage, in millivolts (1 = 1 millivolt)</field>
+               <field type="int32_t" name="current">Battery current, in milliamperes (1 = 1 milliampere), negative: outgoing current, positive: charging current</field>
+               <field type="int32_t" name="energy">Accumulated current since last reset, in milliamperehours (1 = 1 mAh), negative: outgoing energy, positive: charging energy</field>
+          </message>
+         <message id="147" name="BATTERY_CELLS_STATUS">
+               <description>Transmit informations about the cells of a battery.</description>
                <field type="uint8_t" name="accu_id">Accupack ID</field>
                <field type="uint16_t" name="voltage_cell_1">Battery voltage of cell 1, in millivolts (1 = 1 millivolt)</field>
                <field type="uint16_t" name="voltage_cell_2">Battery voltage of cell 2, in millivolts (1 = 1 millivolt), -1: no cell</field>
@@ -1788,8 +1819,6 @@
                <field type="uint16_t" name="voltage_cell_4">Battery voltage of cell 4, in millivolts (1 = 1 millivolt), -1: no cell</field>
                <field type="uint16_t" name="voltage_cell_5">Battery voltage of cell 5, in millivolts (1 = 1 millivolt), -1: no cell</field>
                <field type="uint16_t" name="voltage_cell_6">Battery voltage of cell 6, in millivolts (1 = 1 millivolt), -1: no cell</field>
-               <field type="int16_t" name="current_battery">Battery current, in 10*milliamperes (1 = 10 milliampere), -1: autopilot does not measure the current</field>
-               <field type="int8_t" name="battery_remaining">Remaining battery energy: (0%: 0, 100%: 100), -1: autopilot does not estimate the remaining battery</field>
           </message>
           <message id="148" name="SETPOINT_8DOF">
                <description>Set the 8 DOF setpoint for a controller.</description>

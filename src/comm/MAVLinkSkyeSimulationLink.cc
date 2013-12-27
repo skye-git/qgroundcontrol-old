@@ -225,8 +225,8 @@ void MAVLinkSkyeSimulationLink::mainloop()
 
     // Fake system values
 
-    static float fullVoltage = 4.2f * 6.0f - 2.11f;
-    static float emptyVoltage = 3.35f * 6.0f;
+    static float fullVoltage = 4.2f * 1.0f - 2.11f/6.0f;
+    static float emptyVoltage = 3.35f * 1.0f;
     static float voltage = fullVoltage;
     static float drainRate = 0.025f; // x.xx% of the capacity is linearly drained per second
 
@@ -360,15 +360,18 @@ void MAVLinkSkyeSimulationLink::mainloop()
     if (rate1hzCounter == 1000 / rate / 1) {
 
 
-        battery_pack_id = 1;//(int)(0.5*sin(time_boot*0.001)+1);
+        if (++battery_pack_id >= 4)
+        {
+            battery_pack_id = 0;
+        }
 
         battery.accu_id = battery_pack_id;
-        battery.voltage_cell_1 = 1000*(22 + sin(3.14159*time_boot/1000.0/10.0)); //(uint16_t)(1000*voltage);
+        battery.voltage_cell_1 = 1000*(3.88 + sin(3.14159*time_boot/1000.0/10.0)); //(uint16_t)(1000*voltage);
         battery.voltage_cell_2 = (uint16_t)(1000*voltage);  //1000*(3 + cos(time_boot*0.002));
         battery.voltage_cell_3 = (uint16_t)(1000*voltage);  //1000*(3 - sin(time_boot*0.002));
-        battery.voltage_cell_4 = (uint16_t)(1000*voltage);  //1000*(3 - sin(time_boot*0.002));
-        battery.voltage_cell_5 = 0;
-        battery.voltage_cell_6 = 0;
+        battery.voltage_cell_4 = (uint16_t)(1000*voltage+05);  //1000*(3 - sin(time_boot*0.002));
+        battery.voltage_cell_5 = (uint16_t)(1000*voltage+10);
+        battery.voltage_cell_6 = (uint16_t)(1000*voltage-20);
         battery.current_battery = (int16_t)212;
         battery.battery_remaining = (int8_t)-1;//(int8_t)floor((float)(100 - 0.0005*time_boot));
         messageSize = mavlink_msg_battery_status_encode(systemId, componentId, &msg, &battery);
@@ -379,7 +382,7 @@ void MAVLinkSkyeSimulationLink::mainloop()
 
 
 
-        status.voltage_battery = voltage * 1000; // millivolts
+        status.voltage_battery = voltage * 6 * 1000; // millivolts
         status.load = 0;
 
         // Pack message and get size of encoded byte string

@@ -314,7 +314,9 @@ FORMS += src/ui/MainWindow.ui \
     src/ui/QGCSkyeTestForce.ui \
     src/ui/QGCSkyeTestControl.ui \
     src/ui/designer/QGCXYPlot.ui \
-    src/ui/uas/UASSkyeAlertWidget.ui
+    src/ui/uas/UASSkyeAlertWidget.ui \
+    src/ui/SkyeAUStatusList.ui \
+    src/ui/SkyeAUStatus.ui
 
 INCLUDEPATH += src \
     src/ui \
@@ -536,7 +538,9 @@ HEADERS += src/MG.h \
     src/ui/uas/UASSkyeInputMixer.h \
     src/ui/designer/QGCXYPlot.h \
     src/ui/menuactionhelper.h \
-    src/ui/uas/UASSkyeAlertWidget.h
+    src/ui/uas/UASSkyeAlertWidget.h \
+    src/ui/SkyeAUStatusList.h \
+    src/ui/SkyeAUStatus.h
 
 # Google Earth is only supported on Mac OS and Windows with Visual Studio Compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010|win32-msvc2012::HEADERS += src/ui/map3D/QGCGoogleEarthView.h
@@ -774,7 +778,9 @@ SOURCES += src/main.cc \
     src/ui/uas/UASSkyeInputMixer.cc \
     src/ui/designer/QGCXYPlot.cc \
     src/ui/menuactionhelper.cpp \
-    src/ui/uas/UASSkyeAlertWidget.cc
+    src/ui/uas/UASSkyeAlertWidget.cc \
+    src/ui/SkyeAUStatusList.cc \
+    src/ui/SkyeAUStatus.cc
 
 # Enable Google Earth only on Mac OS and Windows with Visual Studio compiler
 macx|macx-g++|macx-g++42|win32-msvc2008|win32-msvc2010|win32-msvc2012::SOURCES += src/ui/map3D/QGCGoogleEarthView.cc
