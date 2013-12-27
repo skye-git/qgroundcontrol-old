@@ -93,6 +93,14 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             emit batteryCellsStatusChanged(&battery);
         }
         break;
+        case MAVLINK_MSG_ID_ALLOCATION_CONTROLLER_RAW:
+        {
+            mavlink_allocation_controller_raw_t allocation;
+            mavlink_msg_allocation_controller_raw_decode(&message, &allocation);
+
+            emit allocationValueChanged(&allocation);
+        }
+        break;
 
         case MAVLINK_MSG_ID_SYS_STATUS:
         {

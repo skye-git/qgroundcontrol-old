@@ -25,6 +25,8 @@ public slots:
     void updateBatteryStatus(mavlink_battery_status_t *battery);
     /** @brief update battery cells status of this actuation unit */
     void updateBatteryCellsStatus(mavlink_battery_cells_status_t *battery);
+    /** @brief update thruster value of this actuation unit */
+    void updateThrustValue(mavlink_allocation_controller_raw_t *alloc);
     /** @brief rewrite tooltip */
     void updateToolTipText();
 
@@ -37,7 +39,11 @@ private:
     int uasId;                          ///< Reference to the current uas
     int auId;                           ///< ID of this actuation unit
 
-    mavlink_battery_cells_status_t *bat;       ///< battery status of this actuation unit
+    mavlink_battery_status_t *batt;             ///< battery status of this actuation unit
+    mavlink_battery_cells_status_t *cells;      ///< battery cells status of this actuation unit
+    uint8_t thrust;                             ///< thrust of this actuation unit in percent [%]
+
+    QString getStringForAccuStatus(int status);
 
 };
 

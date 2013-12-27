@@ -385,11 +385,29 @@ void MAVLinkSkyeSimulationLink::mainloop()
         battery.current = 2120;
         battery.energy = 999;
         battery.status = BATTERY_STATUS_BIT_ATTACHED | BATTERY_STATUS_BIT_FULL;
+        battery.charge = time_boot*0.002;
+        battery.time = time_boot;
         messageSize = mavlink_msg_battery_status_encode(systemId, componentId, &msg, &battery);
         bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
         //add data into datastream
         memcpy(stream+streampointer,buffer, bufferlength);
         streampointer += bufferlength;
+
+        mavlink_allocation_controller_raw_t alloc;
+        alloc.thrust_1 = 100;
+        alloc.thrust_2 = 200;
+        alloc.thrust_3 = 300;
+        alloc.thrust_4 = 400;
+        alloc.pos_1 = 0;
+        alloc.pos_2 = 0;
+        alloc.pos_3 = 0;
+        alloc.pos_4 = 0;
+        messageSize = mavlink_msg_allocation_controller_raw_encode(systemId, componentId, &msg, &alloc);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
+
 
 
 
