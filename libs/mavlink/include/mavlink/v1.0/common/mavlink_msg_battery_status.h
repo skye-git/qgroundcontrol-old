@@ -6,27 +6,31 @@ typedef struct __mavlink_battery_status_t
 {
  int32_t current; ///< Battery current, in milliamperes (1 = 1 milliampere), negative: outgoing current, positive: charging current
  int32_t energy; ///< Accumulated current since last reset, in milliamperehours (1 = 1 mAh), negative: outgoing energy, positive: charging energy
+ int32_t charge; ///< Accumulated charge current since last battery charge, in milliamperehours (1 = 1 mAh), negative: outgoing energy, positive: charging energy
+ int32_t time; ///< Charging time, in seconds
  uint16_t voltage; ///< Battery voltage, in millivolts (1 = 1 millivolt)
  uint8_t accu_id; ///< Accupack ID
  int8_t status; ///< bit 0: attached flag, bit 1: undervoltage flag, bit 2: disabled flag, bit 3: charging flag, bit 4: balancing flag, bit 5: battery full, bit 7: error
 } mavlink_battery_status_t;
 
-#define MAVLINK_MSG_ID_BATTERY_STATUS_LEN 12
-#define MAVLINK_MSG_ID_146_LEN 12
+#define MAVLINK_MSG_ID_BATTERY_STATUS_LEN 20
+#define MAVLINK_MSG_ID_146_LEN 20
 
-#define MAVLINK_MSG_ID_BATTERY_STATUS_CRC 170
-#define MAVLINK_MSG_ID_146_CRC 170
+#define MAVLINK_MSG_ID_BATTERY_STATUS_CRC 90
+#define MAVLINK_MSG_ID_146_CRC 90
 
 
 
 #define MAVLINK_MESSAGE_INFO_BATTERY_STATUS { \
 	"BATTERY_STATUS", \
-	5, \
+	7, \
 	{  { "current", NULL, MAVLINK_TYPE_INT32_T, 0, 0, offsetof(mavlink_battery_status_t, current) }, \
          { "energy", NULL, MAVLINK_TYPE_INT32_T, 0, 4, offsetof(mavlink_battery_status_t, energy) }, \
-         { "voltage", NULL, MAVLINK_TYPE_UINT16_T, 0, 8, offsetof(mavlink_battery_status_t, voltage) }, \
-         { "accu_id", NULL, MAVLINK_TYPE_UINT8_T, 0, 10, offsetof(mavlink_battery_status_t, accu_id) }, \
-         { "status", NULL, MAVLINK_TYPE_INT8_T, 0, 11, offsetof(mavlink_battery_status_t, status) }, \
+         { "charge", NULL, MAVLINK_TYPE_INT32_T, 0, 8, offsetof(mavlink_battery_status_t, charge) }, \
+         { "time", NULL, MAVLINK_TYPE_INT32_T, 0, 12, offsetof(mavlink_battery_status_t, time) }, \
+         { "voltage", NULL, MAVLINK_TYPE_UINT16_T, 0, 16, offsetof(mavlink_battery_status_t, voltage) }, \
+         { "accu_id", NULL, MAVLINK_TYPE_UINT8_T, 0, 18, offsetof(mavlink_battery_status_t, accu_id) }, \
+         { "status", NULL, MAVLINK_TYPE_INT8_T, 0, 19, offsetof(mavlink_battery_status_t, status) }, \
          } \
 }
 
@@ -42,24 +46,30 @@ typedef struct __mavlink_battery_status_t
  * @param voltage Battery voltage, in millivolts (1 = 1 millivolt)
  * @param current Battery current, in milliamperes (1 = 1 milliampere), negative: outgoing current, positive: charging current
  * @param energy Accumulated current since last reset, in milliamperehours (1 = 1 mAh), negative: outgoing energy, positive: charging energy
+ * @param charge Accumulated charge current since last battery charge, in milliamperehours (1 = 1 mAh), negative: outgoing energy, positive: charging energy
+ * @param time Charging time, in seconds
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_battery_status_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-						       uint8_t accu_id, int8_t status, uint16_t voltage, int32_t current, int32_t energy)
+						       uint8_t accu_id, int8_t status, uint16_t voltage, int32_t current, int32_t energy, int32_t charge, int32_t time)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_BATTERY_STATUS_LEN];
 	_mav_put_int32_t(buf, 0, current);
 	_mav_put_int32_t(buf, 4, energy);
-	_mav_put_uint16_t(buf, 8, voltage);
-	_mav_put_uint8_t(buf, 10, accu_id);
-	_mav_put_int8_t(buf, 11, status);
+	_mav_put_int32_t(buf, 8, charge);
+	_mav_put_int32_t(buf, 12, time);
+	_mav_put_uint16_t(buf, 16, voltage);
+	_mav_put_uint8_t(buf, 18, accu_id);
+	_mav_put_int8_t(buf, 19, status);
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_BATTERY_STATUS_LEN);
 #else
 	mavlink_battery_status_t packet;
 	packet.current = current;
 	packet.energy = energy;
+	packet.charge = charge;
+	packet.time = time;
 	packet.voltage = voltage;
 	packet.accu_id = accu_id;
 	packet.status = status;
@@ -86,25 +96,31 @@ static inline uint16_t mavlink_msg_battery_status_pack(uint8_t system_id, uint8_
  * @param voltage Battery voltage, in millivolts (1 = 1 millivolt)
  * @param current Battery current, in milliamperes (1 = 1 milliampere), negative: outgoing current, positive: charging current
  * @param energy Accumulated current since last reset, in milliamperehours (1 = 1 mAh), negative: outgoing energy, positive: charging energy
+ * @param charge Accumulated charge current since last battery charge, in milliamperehours (1 = 1 mAh), negative: outgoing energy, positive: charging energy
+ * @param time Charging time, in seconds
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_battery_status_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
 							   mavlink_message_t* msg,
-						           uint8_t accu_id,int8_t status,uint16_t voltage,int32_t current,int32_t energy)
+						           uint8_t accu_id,int8_t status,uint16_t voltage,int32_t current,int32_t energy,int32_t charge,int32_t time)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_BATTERY_STATUS_LEN];
 	_mav_put_int32_t(buf, 0, current);
 	_mav_put_int32_t(buf, 4, energy);
-	_mav_put_uint16_t(buf, 8, voltage);
-	_mav_put_uint8_t(buf, 10, accu_id);
-	_mav_put_int8_t(buf, 11, status);
+	_mav_put_int32_t(buf, 8, charge);
+	_mav_put_int32_t(buf, 12, time);
+	_mav_put_uint16_t(buf, 16, voltage);
+	_mav_put_uint8_t(buf, 18, accu_id);
+	_mav_put_int8_t(buf, 19, status);
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_BATTERY_STATUS_LEN);
 #else
 	mavlink_battery_status_t packet;
 	packet.current = current;
 	packet.energy = energy;
+	packet.charge = charge;
+	packet.time = time;
 	packet.voltage = voltage;
 	packet.accu_id = accu_id;
 	packet.status = status;
@@ -130,7 +146,7 @@ static inline uint16_t mavlink_msg_battery_status_pack_chan(uint8_t system_id, u
  */
 static inline uint16_t mavlink_msg_battery_status_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_battery_status_t* battery_status)
 {
-	return mavlink_msg_battery_status_pack(system_id, component_id, msg, battery_status->accu_id, battery_status->status, battery_status->voltage, battery_status->current, battery_status->energy);
+	return mavlink_msg_battery_status_pack(system_id, component_id, msg, battery_status->accu_id, battery_status->status, battery_status->voltage, battery_status->current, battery_status->energy, battery_status->charge, battery_status->time);
 }
 
 /**
@@ -144,7 +160,7 @@ static inline uint16_t mavlink_msg_battery_status_encode(uint8_t system_id, uint
  */
 static inline uint16_t mavlink_msg_battery_status_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_battery_status_t* battery_status)
 {
-	return mavlink_msg_battery_status_pack_chan(system_id, component_id, chan, msg, battery_status->accu_id, battery_status->status, battery_status->voltage, battery_status->current, battery_status->energy);
+	return mavlink_msg_battery_status_pack_chan(system_id, component_id, chan, msg, battery_status->accu_id, battery_status->status, battery_status->voltage, battery_status->current, battery_status->energy, battery_status->charge, battery_status->time);
 }
 
 /**
@@ -156,18 +172,22 @@ static inline uint16_t mavlink_msg_battery_status_encode_chan(uint8_t system_id,
  * @param voltage Battery voltage, in millivolts (1 = 1 millivolt)
  * @param current Battery current, in milliamperes (1 = 1 milliampere), negative: outgoing current, positive: charging current
  * @param energy Accumulated current since last reset, in milliamperehours (1 = 1 mAh), negative: outgoing energy, positive: charging energy
+ * @param charge Accumulated charge current since last battery charge, in milliamperehours (1 = 1 mAh), negative: outgoing energy, positive: charging energy
+ * @param time Charging time, in seconds
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_battery_status_send(mavlink_channel_t chan, uint8_t accu_id, int8_t status, uint16_t voltage, int32_t current, int32_t energy)
+static inline void mavlink_msg_battery_status_send(mavlink_channel_t chan, uint8_t accu_id, int8_t status, uint16_t voltage, int32_t current, int32_t energy, int32_t charge, int32_t time)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
 	char buf[MAVLINK_MSG_ID_BATTERY_STATUS_LEN];
 	_mav_put_int32_t(buf, 0, current);
 	_mav_put_int32_t(buf, 4, energy);
-	_mav_put_uint16_t(buf, 8, voltage);
-	_mav_put_uint8_t(buf, 10, accu_id);
-	_mav_put_int8_t(buf, 11, status);
+	_mav_put_int32_t(buf, 8, charge);
+	_mav_put_int32_t(buf, 12, time);
+	_mav_put_uint16_t(buf, 16, voltage);
+	_mav_put_uint8_t(buf, 18, accu_id);
+	_mav_put_int8_t(buf, 19, status);
 
 #if MAVLINK_CRC_EXTRA
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_BATTERY_STATUS, buf, MAVLINK_MSG_ID_BATTERY_STATUS_LEN, MAVLINK_MSG_ID_BATTERY_STATUS_CRC);
@@ -178,6 +198,8 @@ static inline void mavlink_msg_battery_status_send(mavlink_channel_t chan, uint8
 	mavlink_battery_status_t packet;
 	packet.current = current;
 	packet.energy = energy;
+	packet.charge = charge;
+	packet.time = time;
 	packet.voltage = voltage;
 	packet.accu_id = accu_id;
 	packet.status = status;
@@ -202,7 +224,7 @@ static inline void mavlink_msg_battery_status_send(mavlink_channel_t chan, uint8
  */
 static inline uint8_t mavlink_msg_battery_status_get_accu_id(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint8_t(msg,  10);
+	return _MAV_RETURN_uint8_t(msg,  18);
 }
 
 /**
@@ -212,7 +234,7 @@ static inline uint8_t mavlink_msg_battery_status_get_accu_id(const mavlink_messa
  */
 static inline int8_t mavlink_msg_battery_status_get_status(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_int8_t(msg,  11);
+	return _MAV_RETURN_int8_t(msg,  19);
 }
 
 /**
@@ -222,7 +244,7 @@ static inline int8_t mavlink_msg_battery_status_get_status(const mavlink_message
  */
 static inline uint16_t mavlink_msg_battery_status_get_voltage(const mavlink_message_t* msg)
 {
-	return _MAV_RETURN_uint16_t(msg,  8);
+	return _MAV_RETURN_uint16_t(msg,  16);
 }
 
 /**
@@ -246,6 +268,26 @@ static inline int32_t mavlink_msg_battery_status_get_energy(const mavlink_messag
 }
 
 /**
+ * @brief Get field charge from battery_status message
+ *
+ * @return Accumulated charge current since last battery charge, in milliamperehours (1 = 1 mAh), negative: outgoing energy, positive: charging energy
+ */
+static inline int32_t mavlink_msg_battery_status_get_charge(const mavlink_message_t* msg)
+{
+	return _MAV_RETURN_int32_t(msg,  8);
+}
+
+/**
+ * @brief Get field time from battery_status message
+ *
+ * @return Charging time, in seconds
+ */
+static inline int32_t mavlink_msg_battery_status_get_time(const mavlink_message_t* msg)
+{
+	return _MAV_RETURN_int32_t(msg,  12);
+}
+
+/**
  * @brief Decode a battery_status message into a struct
  *
  * @param msg The message to decode
@@ -256,6 +298,8 @@ static inline void mavlink_msg_battery_status_decode(const mavlink_message_t* ms
 #if MAVLINK_NEED_BYTE_SWAP
 	battery_status->current = mavlink_msg_battery_status_get_current(msg);
 	battery_status->energy = mavlink_msg_battery_status_get_energy(msg);
+	battery_status->charge = mavlink_msg_battery_status_get_charge(msg);
+	battery_status->time = mavlink_msg_battery_status_get_time(msg);
 	battery_status->voltage = mavlink_msg_battery_status_get_voltage(msg);
 	battery_status->accu_id = mavlink_msg_battery_status_get_accu_id(msg);
 	battery_status->status = mavlink_msg_battery_status_get_status(msg);

@@ -5,11 +5,11 @@
 typedef struct __mavlink_battery_cells_status_t
 {
  uint16_t voltage_cell_1; ///< Battery voltage of cell 1, in millivolts (1 = 1 millivolt)
- uint16_t voltage_cell_2; ///< Battery voltage of cell 2, in millivolts (1 = 1 millivolt), -1: no cell
- uint16_t voltage_cell_3; ///< Battery voltage of cell 3, in millivolts (1 = 1 millivolt), -1: no cell
- uint16_t voltage_cell_4; ///< Battery voltage of cell 4, in millivolts (1 = 1 millivolt), -1: no cell
- uint16_t voltage_cell_5; ///< Battery voltage of cell 5, in millivolts (1 = 1 millivolt), -1: no cell
- uint16_t voltage_cell_6; ///< Battery voltage of cell 6, in millivolts (1 = 1 millivolt), -1: no cell
+ uint16_t voltage_cell_2; ///< Battery voltage of cell 2, in millivolts (1 = 1 millivolt)
+ uint16_t voltage_cell_3; ///< Battery voltage of cell 3, in millivolts (1 = 1 millivolt)
+ uint16_t voltage_cell_4; ///< Battery voltage of cell 4, in millivolts (1 = 1 millivolt)
+ uint16_t voltage_cell_5; ///< Battery voltage of cell 5, in millivolts (1 = 1 millivolt)
+ uint16_t voltage_cell_6; ///< Battery voltage of cell 6, in millivolts (1 = 1 millivolt)
  uint8_t accu_id; ///< Accupack ID
 } mavlink_battery_cells_status_t;
 
@@ -43,11 +43,11 @@ typedef struct __mavlink_battery_cells_status_t
  *
  * @param accu_id Accupack ID
  * @param voltage_cell_1 Battery voltage of cell 1, in millivolts (1 = 1 millivolt)
- * @param voltage_cell_2 Battery voltage of cell 2, in millivolts (1 = 1 millivolt), -1: no cell
- * @param voltage_cell_3 Battery voltage of cell 3, in millivolts (1 = 1 millivolt), -1: no cell
- * @param voltage_cell_4 Battery voltage of cell 4, in millivolts (1 = 1 millivolt), -1: no cell
- * @param voltage_cell_5 Battery voltage of cell 5, in millivolts (1 = 1 millivolt), -1: no cell
- * @param voltage_cell_6 Battery voltage of cell 6, in millivolts (1 = 1 millivolt), -1: no cell
+ * @param voltage_cell_2 Battery voltage of cell 2, in millivolts (1 = 1 millivolt)
+ * @param voltage_cell_3 Battery voltage of cell 3, in millivolts (1 = 1 millivolt)
+ * @param voltage_cell_4 Battery voltage of cell 4, in millivolts (1 = 1 millivolt)
+ * @param voltage_cell_5 Battery voltage of cell 5, in millivolts (1 = 1 millivolt)
+ * @param voltage_cell_6 Battery voltage of cell 6, in millivolts (1 = 1 millivolt)
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_battery_cells_status_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
@@ -93,11 +93,11 @@ static inline uint16_t mavlink_msg_battery_cells_status_pack(uint8_t system_id, 
  * @param msg The MAVLink message to compress the data into
  * @param accu_id Accupack ID
  * @param voltage_cell_1 Battery voltage of cell 1, in millivolts (1 = 1 millivolt)
- * @param voltage_cell_2 Battery voltage of cell 2, in millivolts (1 = 1 millivolt), -1: no cell
- * @param voltage_cell_3 Battery voltage of cell 3, in millivolts (1 = 1 millivolt), -1: no cell
- * @param voltage_cell_4 Battery voltage of cell 4, in millivolts (1 = 1 millivolt), -1: no cell
- * @param voltage_cell_5 Battery voltage of cell 5, in millivolts (1 = 1 millivolt), -1: no cell
- * @param voltage_cell_6 Battery voltage of cell 6, in millivolts (1 = 1 millivolt), -1: no cell
+ * @param voltage_cell_2 Battery voltage of cell 2, in millivolts (1 = 1 millivolt)
+ * @param voltage_cell_3 Battery voltage of cell 3, in millivolts (1 = 1 millivolt)
+ * @param voltage_cell_4 Battery voltage of cell 4, in millivolts (1 = 1 millivolt)
+ * @param voltage_cell_5 Battery voltage of cell 5, in millivolts (1 = 1 millivolt)
+ * @param voltage_cell_6 Battery voltage of cell 6, in millivolts (1 = 1 millivolt)
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_battery_cells_status_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
@@ -169,11 +169,11 @@ static inline uint16_t mavlink_msg_battery_cells_status_encode_chan(uint8_t syst
  *
  * @param accu_id Accupack ID
  * @param voltage_cell_1 Battery voltage of cell 1, in millivolts (1 = 1 millivolt)
- * @param voltage_cell_2 Battery voltage of cell 2, in millivolts (1 = 1 millivolt), -1: no cell
- * @param voltage_cell_3 Battery voltage of cell 3, in millivolts (1 = 1 millivolt), -1: no cell
- * @param voltage_cell_4 Battery voltage of cell 4, in millivolts (1 = 1 millivolt), -1: no cell
- * @param voltage_cell_5 Battery voltage of cell 5, in millivolts (1 = 1 millivolt), -1: no cell
- * @param voltage_cell_6 Battery voltage of cell 6, in millivolts (1 = 1 millivolt), -1: no cell
+ * @param voltage_cell_2 Battery voltage of cell 2, in millivolts (1 = 1 millivolt)
+ * @param voltage_cell_3 Battery voltage of cell 3, in millivolts (1 = 1 millivolt)
+ * @param voltage_cell_4 Battery voltage of cell 4, in millivolts (1 = 1 millivolt)
+ * @param voltage_cell_5 Battery voltage of cell 5, in millivolts (1 = 1 millivolt)
+ * @param voltage_cell_6 Battery voltage of cell 6, in millivolts (1 = 1 millivolt)
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
@@ -240,7 +240,7 @@ static inline uint16_t mavlink_msg_battery_cells_status_get_voltage_cell_1(const
 /**
  * @brief Get field voltage_cell_2 from battery_cells_status message
  *
- * @return Battery voltage of cell 2, in millivolts (1 = 1 millivolt), -1: no cell
+ * @return Battery voltage of cell 2, in millivolts (1 = 1 millivolt)
  */
 static inline uint16_t mavlink_msg_battery_cells_status_get_voltage_cell_2(const mavlink_message_t* msg)
 {
@@ -250,7 +250,7 @@ static inline uint16_t mavlink_msg_battery_cells_status_get_voltage_cell_2(const
 /**
  * @brief Get field voltage_cell_3 from battery_cells_status message
  *
- * @return Battery voltage of cell 3, in millivolts (1 = 1 millivolt), -1: no cell
+ * @return Battery voltage of cell 3, in millivolts (1 = 1 millivolt)
  */
 static inline uint16_t mavlink_msg_battery_cells_status_get_voltage_cell_3(const mavlink_message_t* msg)
 {
@@ -260,7 +260,7 @@ static inline uint16_t mavlink_msg_battery_cells_status_get_voltage_cell_3(const
 /**
  * @brief Get field voltage_cell_4 from battery_cells_status message
  *
- * @return Battery voltage of cell 4, in millivolts (1 = 1 millivolt), -1: no cell
+ * @return Battery voltage of cell 4, in millivolts (1 = 1 millivolt)
  */
 static inline uint16_t mavlink_msg_battery_cells_status_get_voltage_cell_4(const mavlink_message_t* msg)
 {
@@ -270,7 +270,7 @@ static inline uint16_t mavlink_msg_battery_cells_status_get_voltage_cell_4(const
 /**
  * @brief Get field voltage_cell_5 from battery_cells_status message
  *
- * @return Battery voltage of cell 5, in millivolts (1 = 1 millivolt), -1: no cell
+ * @return Battery voltage of cell 5, in millivolts (1 = 1 millivolt)
  */
 static inline uint16_t mavlink_msg_battery_cells_status_get_voltage_cell_5(const mavlink_message_t* msg)
 {
@@ -280,7 +280,7 @@ static inline uint16_t mavlink_msg_battery_cells_status_get_voltage_cell_5(const
 /**
  * @brief Get field voltage_cell_6 from battery_cells_status message
  *
- * @return Battery voltage of cell 6, in millivolts (1 = 1 millivolt), -1: no cell
+ * @return Battery voltage of cell 6, in millivolts (1 = 1 millivolt)
  */
 static inline uint16_t mavlink_msg_battery_cells_status_get_voltage_cell_6(const mavlink_message_t* msg)
 {

@@ -105,11 +105,9 @@ signals:
      *          voltage_cell_4 Voltage of cell 4 in volt
      *          voltage_cell_5 Voltage of cell 5 in volt
      *          voltage_cell_6 Voltage of cell 6 in volt
-     *          current_battery Recent current of accu pack in ampere
-     *          accu_id see ENUM MAV_SKYE_BATTERY_PACK_ID
-     *          battery_remaining Estimated remaining battery in percent, -1 when not estimated
     **/
-    void batteryPackChanged(mavlink_battery_status_t* battery);
+    void batteryCellsStatusChanged(mavlink_battery_cells_status_t* cells);
+    void batteryStatusChanged(mavlink_battery_status_t* battery);
     void reportUDPLinkFailed(QString errorStr);
     void mouseButtonRotationChanged(bool active);
     void mouseButtonTranslationChanged(bool active);

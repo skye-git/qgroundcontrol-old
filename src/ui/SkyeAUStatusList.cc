@@ -33,7 +33,7 @@ void SkyeAUStatusList::setUAS(UASInterface *uas)
         if (mav)
         {
             // disconnect
-            disconnect(mav, SIGNAL(batteryPackChanged(mavlink_battery_status_t*)), this, SLOT(checkBatteryStatusId(mavlink_battery_status_t*)));
+            disconnect(mav, SIGNAL(batteryStatusChanged(mavlink_battery_status_t*)), this, SLOT(checkBatteryStatusId(mavlink_battery_status_t*)));
         }
     }
 
@@ -44,7 +44,7 @@ void SkyeAUStatusList::setUAS(UASInterface *uas)
         this->uasId = mav->getUASID();
 
         // connect
-        connect(mav, SIGNAL(batteryPackChanged(mavlink_battery_status_t*)), this, SLOT(checkBatteryStatusId(mavlink_battery_status_t*)));
+        connect(mav, SIGNAL(batteryStatusChanged(mavlink_battery_status_t*)), this, SLOT(checkBatteryStatusId(mavlink_battery_status_t*)));
 
     }
 }
@@ -57,8 +57,8 @@ void SkyeAUStatusList::checkBatteryStatusId(mavlink_battery_status_t *battery)
         // widget already exists
     } else {
         auList.insert(battery->accu_id, new SkyeAUStatus(battery->accu_id, this));
-
         ui->horizontalLayout->insertWidget(battery->accu_id, auList.value(battery->accu_id));
+        auList.value(battery->accu_id)->updateBatteryStatus(battery);
     }
 
 }

@@ -23,6 +23,8 @@ public slots:
     void setAU(int id);
     /** @brief update battery status of this actuation unit */
     void updateBatteryStatus(mavlink_battery_status_t *battery);
+    /** @brief update battery cells status of this actuation unit */
+    void updateBatteryCellsStatus(mavlink_battery_cells_status_t *battery);
     /** @brief rewrite tooltip */
     void updateToolTipText();
 
@@ -35,7 +37,7 @@ private:
     int uasId;                          ///< Reference to the current uas
     int auId;                           ///< ID of this actuation unit
 
-    mavlink_battery_status_t *bat;       ///< battery status of this actuation unit
+    mavlink_battery_cells_status_t *bat;       ///< battery status of this actuation unit
 
 };
 

@@ -132,6 +132,7 @@ protected:
     mavlink_heartbeat_t system;
     mavlink_sys_status_t status;
     mavlink_battery_status_t battery;
+    mavlink_battery_cells_status_t cells;
 
     QMap<QString, float> onboardParams;
 

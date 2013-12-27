@@ -266,8 +266,8 @@ FORMS += src/ui/MainWindow.ui \
     src/ui/QGCTabbedInfoView.ui \
     src/ui/UASRawStatusView.ui \
     src/ui/uas/QGCMessageView.ui \
-    src/ui/uas/UASSkyeBatteryInfoWidget.ui \
-    src/ui/uas/UASSkyeBatteryPackWidget.ui \
+#    src/ui/uas/UASSkyeBatteryInfoWidget.ui \
+#    src/ui/uas/UASSkyeBatteryPackWidget.ui \
     src/ui/JoystickButton.ui \
     src/ui/JoystickAxis.ui \
     src/ui/configuration/ApmHardwareConfig.ui \
@@ -355,8 +355,8 @@ HEADERS += src/MG.h \
     src/ui/MainWindow.h \
     src/ui/uas/UASControlWidget.h \
     src/ui/uas/UASSkyeControlWidget.h \
-    src/ui/uas/UASSkyeBatteryInfoWidget.h \
-    src/ui/uas/UASSkyeBatteryPackWidget.h \
+#    src/ui/uas/UASSkyeBatteryInfoWidget.h \
+#    src/ui/uas/UASSkyeBatteryPackWidget.h \
     src/ui/uas/UASListWidget.h \
     src/ui/uas/UASInfoWidget.h \
     src/ui/HUD.h \
@@ -600,8 +600,8 @@ SOURCES += src/main.cc \
     src/ui/MainWindow.cc \
     src/ui/uas/UASControlWidget.cc \
     src/ui/uas/UASSkyeControlWidget.cc \
-    src/ui/uas/UASSkyeBatteryInfoWidget.cc \
-    src/ui/uas/UASSkyeBatteryPackWidget.cc \
+#    src/ui/uas/UASSkyeBatteryInfoWidget.cc \
+#    src/ui/uas/UASSkyeBatteryPackWidget.cc \
     src/ui/uas/UASListWidget.cc \
     src/ui/uas/UASInfoWidget.cc \
     src/ui/HUD.cc \

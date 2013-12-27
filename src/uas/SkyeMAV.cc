@@ -62,17 +62,10 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             mavlink_battery_status_t battery;
             mavlink_msg_battery_status_decode(&message, &battery);
 
-            emit batteryPackChanged(&battery);
-            uint16_t lowestVolt = 99999;
-            lowestVolt = (battery.voltage_cell_1 < lowestVolt && battery.voltage_cell_1 > 0) ? battery.voltage_cell_1 : lowestVolt;
-            lowestVolt = (battery.voltage_cell_2 < lowestVolt && battery.voltage_cell_2 > 0) ? battery.voltage_cell_2 : lowestVolt;
-            lowestVolt = (battery.voltage_cell_3 < lowestVolt && battery.voltage_cell_3 > 0) ? battery.voltage_cell_3 : lowestVolt;
-            lowestVolt = (battery.voltage_cell_4 < lowestVolt && battery.voltage_cell_4 > 0) ? battery.voltage_cell_4 : lowestVolt;
-            lowestVolt = (battery.voltage_cell_5 < lowestVolt && battery.voltage_cell_5 > 0) ? battery.voltage_cell_5 : lowestVolt;
-            lowestVolt = (battery.voltage_cell_6 < lowestVolt && battery.voltage_cell_6 > 0) ? battery.voltage_cell_6 : lowestVolt;
+            emit batteryStatusChanged(&battery);
 
             // LOW BATTERY ALARM
-            if (lowestVolt < (uint16_t)(ALARM_VOLTAGE * 1000))
+            if (battery.voltage < (uint16_t)(ALARM_VOLTAGE * 1000))
             {
                 lowBatteryAU = true;
                 if (!lowBattery)
@@ -81,7 +74,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
                     lowBattery = true;
                 }
                 //emit batteryLow(0.001*(double)lowestVolt);
-                emit batteryLow(0.001*(double)lowestVolt, true, QGC::groundTimeMilliseconds() - lowBatteryMs);
+                emit batteryLow(0.001*(double)battery.voltage, true, QGC::groundTimeMilliseconds() - lowBatteryMs);
             } else {
                 lowBatteryAU = false;
                 lowBattery = lowBatteryFront;
@@ -90,6 +83,14 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
                     emit batteryLow(0.0, false, 0);
                 }
             }
+        }
+        break;
+        case MAVLINK_MSG_ID_BATTERY_CELLS_STATUS:
+        {
+            mavlink_battery_cells_status_t battery;
+            mavlink_msg_battery_cells_status_decode(&message, &battery);
+
+            emit batteryCellsStatusChanged(&battery);
         }
         break;
 

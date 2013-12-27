@@ -1809,16 +1809,18 @@
                <field type="uint16_t" name="voltage">Battery voltage, in millivolts (1 = 1 millivolt)</field>
                <field type="int32_t" name="current">Battery current, in milliamperes (1 = 1 milliampere), negative: outgoing current, positive: charging current</field>
                <field type="int32_t" name="energy">Accumulated current since last reset, in milliamperehours (1 = 1 mAh), negative: outgoing energy, positive: charging energy</field>
+               <field type="int32_t" name="charge">Accumulated charge current since last battery charge, in milliamperehours (1 = 1 mAh), negative: outgoing energy, positive: charging energy</field>
+               <field type="int32_t" name="time">Charging time, in seconds</field>
           </message>
          <message id="147" name="BATTERY_CELLS_STATUS">
                <description>Transmit informations about the cells of a battery.</description>
                <field type="uint8_t" name="accu_id">Accupack ID</field>
                <field type="uint16_t" name="voltage_cell_1">Battery voltage of cell 1, in millivolts (1 = 1 millivolt)</field>
-               <field type="uint16_t" name="voltage_cell_2">Battery voltage of cell 2, in millivolts (1 = 1 millivolt), -1: no cell</field>
-               <field type="uint16_t" name="voltage_cell_3">Battery voltage of cell 3, in millivolts (1 = 1 millivolt), -1: no cell</field>
-               <field type="uint16_t" name="voltage_cell_4">Battery voltage of cell 4, in millivolts (1 = 1 millivolt), -1: no cell</field>
-               <field type="uint16_t" name="voltage_cell_5">Battery voltage of cell 5, in millivolts (1 = 1 millivolt), -1: no cell</field>
-               <field type="uint16_t" name="voltage_cell_6">Battery voltage of cell 6, in millivolts (1 = 1 millivolt), -1: no cell</field>
+               <field type="uint16_t" name="voltage_cell_2">Battery voltage of cell 2, in millivolts (1 = 1 millivolt)</field>
+               <field type="uint16_t" name="voltage_cell_3">Battery voltage of cell 3, in millivolts (1 = 1 millivolt)</field>
+               <field type="uint16_t" name="voltage_cell_4">Battery voltage of cell 4, in millivolts (1 = 1 millivolt)</field>
+               <field type="uint16_t" name="voltage_cell_5">Battery voltage of cell 5, in millivolts (1 = 1 millivolt)</field>
+               <field type="uint16_t" name="voltage_cell_6">Battery voltage of cell 6, in millivolts (1 = 1 millivolt)</field>
           </message>
           <message id="148" name="SETPOINT_8DOF">
                <description>Set the 8 DOF setpoint for a controller.</description>

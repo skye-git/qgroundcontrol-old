@@ -365,15 +365,26 @@ void MAVLinkSkyeSimulationLink::mainloop()
             battery_pack_id = 0;
         }
 
+        cells.accu_id = battery_pack_id;
+        cells.voltage_cell_1 = 1000*(3.88 + sin(3.14159*time_boot/1000.0/10.0)); //(uint16_t)(1000*voltage);
+        cells.voltage_cell_2 = (uint16_t)(1000*voltage);  //1000*(3 + cos(time_boot*0.002));
+        cells.voltage_cell_3 = (uint16_t)(1000*voltage);  //1000*(3 - sin(time_boot*0.002));
+        cells.voltage_cell_4 = (uint16_t)(1000*voltage+05);  //1000*(3 - sin(time_boot*0.002));
+        cells.voltage_cell_5 = (uint16_t)(1000*voltage+10);
+        cells.voltage_cell_6 = (uint16_t)(1000*voltage-20);
+        //battery.current_battery = (int16_t)212;
+        //battery.battery_remaining = (int8_t)-1;//(int8_t)floor((float)(100 - 0.0005*time_boot));
+        messageSize = mavlink_msg_battery_cells_status_encode(systemId, componentId, &msg, &cells);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
+
         battery.accu_id = battery_pack_id;
-        battery.voltage_cell_1 = 1000*(3.88 + sin(3.14159*time_boot/1000.0/10.0)); //(uint16_t)(1000*voltage);
-        battery.voltage_cell_2 = (uint16_t)(1000*voltage);  //1000*(3 + cos(time_boot*0.002));
-        battery.voltage_cell_3 = (uint16_t)(1000*voltage);  //1000*(3 - sin(time_boot*0.002));
-        battery.voltage_cell_4 = (uint16_t)(1000*voltage+05);  //1000*(3 - sin(time_boot*0.002));
-        battery.voltage_cell_5 = (uint16_t)(1000*voltage+10);
-        battery.voltage_cell_6 = (uint16_t)(1000*voltage-20);
-        battery.current_battery = (int16_t)212;
-        battery.battery_remaining = (int8_t)-1;//(int8_t)floor((float)(100 - 0.0005*time_boot));
+        battery.voltage = 6*voltage*1000;
+        battery.current = 2120;
+        battery.energy = 999;
+        battery.status = BATTERY_STATUS_BIT_ATTACHED | BATTERY_STATUS_BIT_FULL;
         messageSize = mavlink_msg_battery_status_encode(systemId, componentId, &msg, &battery);
         bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
         //add data into datastream
