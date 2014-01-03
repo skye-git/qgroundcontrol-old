@@ -32,7 +32,7 @@ public slots:
     /** @brief Update stylesheets according to values */
     void updateStyleSheets();
     /** @brief Update GUI to Allocation Case of Skye */
-    void updateAllocationCase(uint allocCase);
+    void updateAllocationCase(int allocCase);
 
 signals:
     /** @brief Change allocation case. Set this actuation unit to activated (true or false) */

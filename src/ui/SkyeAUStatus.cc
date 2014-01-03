@@ -61,7 +61,7 @@ void SkyeAUStatus::setUAS(UASInterface *uas)
         connect(mav, SIGNAL(batteryCellsStatusChanged(mavlink_battery_cells_status_t*)), this, SLOT(updateBatteryCellsStatus(mavlink_battery_cells_status_t*)));
         connect(mav, SIGNAL(batteryStatusChanged(mavlink_battery_status_t*)), this, SLOT(updateBatteryStatus(mavlink_battery_status_t*)));
         connect(mav, SIGNAL(allocationValueChanged(mavlink_allocation_controller_raw_t*)), this, SLOT(updateThrustValue(mavlink_allocation_controller_raw_t*)));
-        connect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocationCase(uint)));
+        connect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocationCase(int)));
 
     }
 }
@@ -222,8 +222,9 @@ void SkyeAUStatus::clickedCheckBox(bool checked)
     emit requestAllocationCase(this->auId+1, checked);
 }
 
-void SkyeAUStatus::updateAllocationCase(uint allocCase)
+void SkyeAUStatus::updateAllocationCase(int allocCase)
 {
     // Is this actuation unit excluded?
-    ui->checkBox->setChecked((allocCase != (auId+1)) || (allocCase == 0));
+    ui->checkBox->setChecked(allocCase != (auId+1));
+    //qDebug() << "THIS IS AU+1" << this->auId+1 << "and allocCase is" << allocCase;
 }
