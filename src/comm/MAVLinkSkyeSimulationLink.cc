@@ -386,7 +386,7 @@ void MAVLinkSkyeSimulationLink::mainloop()
         battery.energy = 999;
         if (battery_pack_id == 2)
         {
-            battery.status = 0;
+            battery.status = (int8_t)time_boot;
         } else {
             battery.status = BATTERY_STATUS_BIT_ATTACHED | BATTERY_STATUS_BIT_FULL;
         }

@@ -71,11 +71,11 @@ void SkyeAUStatus::setAU(int id)
     ui->labelName->setText(QString("AU %1").arg(id));
 }
 
-void SkyeAUStatus::updateBatteryCellsStatus(mavlink_battery_cells_status_t *battery)
+void SkyeAUStatus::updateBatteryCellsStatus(mavlink_battery_cells_status_t *battery_cells)
 {
-    if (this->auId == battery->accu_id)
+    if (this->auId == battery_cells->accu_id)
     {
-        memcpy(cells, battery, sizeof(*battery));
+        memcpy(cells, battery_cells, sizeof(*battery_cells));
 
         updateToolTipText();
         updateStyleSheets();
@@ -86,6 +86,8 @@ void SkyeAUStatus::updateBatteryStatus(mavlink_battery_status_t *battery)
 {
     if (this->auId == battery->accu_id)
     {
+        memcpy(batt, battery, sizeof(*battery));
+
         ui->lcdNumberVoltage->display(battery->voltage/1000.0);
         ui->lcdNumberCurrent->display(battery->current/1000.0);
         ui->labelMessage->setText(getStringForAccuStatus((int)battery->status));
@@ -150,22 +152,26 @@ void SkyeAUStatus::updateStyleSheets()
     }
 
     // status color (increasing importance)
-    QString style = "";
+    QPalette pal(palette());
     if (batt->status & BATTERY_STATUS_BIT_ATTACHED)
     {
-        style = "QWidget { background: black;}";
+        this->setAutoFillBackground(false);
+        pal.setColor(QPalette::Background, Qt::black);
     } else {
-        style = "QWidget { background: gray;}";
+        this->setAutoFillBackground(true);
+        pal.setColor(QPalette::Background, Qt::gray);
     }
     if (batt->status & BATTERY_STATUS_BIT_UNDERVOLTAGE)
     {
-        style = "QWidget { background: orange;}";
+        this->setAutoFillBackground(true);
+        pal.setColor(QPalette::Background, Qt::red);
     }
     if (batt->status & BATTERY_STATUS_BIT_ERROR)
     {
-        style = "QWidget { background: red;}";
+        this->setAutoFillBackground(true);
+        pal.setColor(QPalette::Background, Qt::darkRed);
     }
-    // this->setStyleSheet(style);
+    this->setPalette(pal);
 }
 
 QString SkyeAUStatus::getStringForAccuStatus(int status)
