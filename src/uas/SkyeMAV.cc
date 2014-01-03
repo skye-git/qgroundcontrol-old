@@ -11,8 +11,6 @@
 #define QGC_COS_LATITUDE 0.67716
 #endif
 
-#define ALARM_VOLTAGE 22.0f
-
 SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
     UAS(mavlink, id),
     airframe(QGC_AIRFRAME_SKYE),
@@ -65,7 +63,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             emit batteryStatusChanged(&battery);
 
             // LOW BATTERY ALARM
-            if (battery.voltage < (uint16_t)(ALARM_VOLTAGE * 1000))
+            if (battery.voltage < (uint16_t)(SKYE_ALARM_VOLTAGE * 1000))
             {
                 lowBatteryAU = true;
                 if (!lowBattery)
@@ -134,7 +132,7 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             }
 
             // LOW BATTERY ALARM
-            if (currentVoltage < ALARM_VOLTAGE)
+            if (currentVoltage < SKYE_ALARM_VOLTAGE)
             {
                 lowBatteryFront = true;
                 if (!lowBattery)

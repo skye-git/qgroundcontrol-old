@@ -24,20 +24,9 @@ SkyeAUStatus::SkyeAUStatus(int id, QWidget *parent) :
     setUAS(UASManager::instance()->getActiveUAS());
 
     batt = new mavlink_battery_status_t;
-    batt->accu_id = 0;
-    batt->status = 0;
-    batt->voltage = 0;
-    batt->current = 0;
-    batt->energy = 0;
-
     cells = new mavlink_battery_cells_status_t;
-    cells->accu_id = 0;
-    cells->voltage_cell_1 = 0;
-    cells->voltage_cell_2 = 0;
-    cells->voltage_cell_3 = 0;
-    cells->voltage_cell_4 = 0;
-    cells->voltage_cell_5 = 0;
-    cells->voltage_cell_6 = 0;
+    memset(batt, 0, sizeof(*batt));
+    memset(cells, 0, sizeof(*cells));
 
 }
 
@@ -89,6 +78,7 @@ void SkyeAUStatus::updateBatteryCellsStatus(mavlink_battery_cells_status_t *batt
         memcpy(cells, battery, sizeof(*battery));
 
         updateToolTipText();
+        updateStyleSheets();
     }
 }
 
@@ -102,6 +92,7 @@ void SkyeAUStatus::updateBatteryStatus(mavlink_battery_status_t *battery)
         ui->labelMessage->setToolTip(getStringForAccuStatus((int)battery->status));
 
         updateToolTipText();
+        updateStyleSheets();
     }
 }
 
@@ -140,6 +131,41 @@ void SkyeAUStatus::updateToolTipText()
                      .arg(batt->charge)
                      .arg(batt->time/60)
                      .arg(batt->time-(batt->time/60)*60));
+}
+
+void SkyeAUStatus::updateStyleSheets()
+{
+    // style for voltage display
+    if (batt->voltage > SKYE_CRITICAL_VOLTAGE*1000)
+    {
+        ui->lcdNumberVoltage->setPalette(QColor(50, 205, 50));
+    }
+    else if (batt->voltage > SKYE_ALARM_VOLTAGE*1000)
+    {
+        ui->lcdNumberVoltage->setPalette(QColor(255, 165, 0));
+    }
+    else
+    {
+        ui->lcdNumberVoltage->setPalette(QColor(255, 0, 0));
+    }
+
+    // status color (increasing importance)
+    QString style = "";
+    if (batt->status & BATTERY_STATUS_BIT_ATTACHED)
+    {
+        style = "QWidget { background: black;}";
+    } else {
+        style = "QWidget { background: gray;}";
+    }
+    if (batt->status & BATTERY_STATUS_BIT_UNDERVOLTAGE)
+    {
+        style = "QWidget { background: orange;}";
+    }
+    if (batt->status & BATTERY_STATUS_BIT_ERROR)
+    {
+        style = "QWidget { background: red;}";
+    }
+    // this->setStyleSheet(style);
 }
 
 QString SkyeAUStatus::getStringForAccuStatus(int status)

@@ -384,7 +384,12 @@ void MAVLinkSkyeSimulationLink::mainloop()
         battery.voltage = 6*voltage*1000;
         battery.current = 2120;
         battery.energy = 999;
-        battery.status = BATTERY_STATUS_BIT_ATTACHED | BATTERY_STATUS_BIT_FULL;
+        if (battery_pack_id == 2)
+        {
+            battery.status = 0;
+        } else {
+            battery.status = BATTERY_STATUS_BIT_ATTACHED | BATTERY_STATUS_BIT_FULL;
+        }
         battery.charge = time_boot*0.002;
         battery.time = time_boot;
         messageSize = mavlink_msg_battery_status_encode(systemId, componentId, &msg, &battery);

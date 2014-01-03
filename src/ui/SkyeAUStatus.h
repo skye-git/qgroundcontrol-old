@@ -29,6 +29,8 @@ public slots:
     void updateThrustValue(mavlink_allocation_controller_raw_t *alloc);
     /** @brief rewrite tooltip */
     void updateToolTipText();
+    /** @brief Update stylesheets according to values */
+    void updateStyleSheets();
 
 private slots:
     /** enable/disable actuation unit for allocation */

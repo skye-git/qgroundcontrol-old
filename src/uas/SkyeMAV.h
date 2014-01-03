@@ -1,6 +1,9 @@
 #ifndef SKYEMAV_H
 #define SKYEMAV_H
 
+#define SKYE_ALARM_VOLTAGE 22.0f
+#define SKYE_CRITICAL_VOLTAGE 23.0f
+
 #include <QPolygonF>
 #include <QTimer>
 #include <QVector>
