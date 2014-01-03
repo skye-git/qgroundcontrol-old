@@ -13,7 +13,7 @@ class SkyeAUStatus : public QWidget
     Q_OBJECT
 
 public:
-    explicit SkyeAUStatus(int id, QWidget *parent = 0);
+    explicit SkyeAUStatus(int id, QWidget *parent);
     ~SkyeAUStatus();
 
 public slots:
@@ -31,13 +31,20 @@ public slots:
     void updateToolTipText();
     /** @brief Update stylesheets according to values */
     void updateStyleSheets();
+    /** @brief Update GUI to Allocation Case of Skye */
+    void updateAllocationCase(uint allocCase);
+
+signals:
+    /** @brief Change allocation case. Set this actuation unit to activated (true or false) */
+    void requestAllocationCase(uint au, bool activated);
 
 private slots:
     /** enable/disable actuation unit for allocation */
-    //void toggledCheckBox(bool activated);
+    void clickedCheckBox(bool checked);
 
 private:
     Ui::SkyeAUStatus *ui;
+
     int uasId;                          ///< Reference to the current uas
     int auId;                           ///< ID of this actuation unit
 

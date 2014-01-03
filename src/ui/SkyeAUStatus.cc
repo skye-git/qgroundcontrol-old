@@ -16,8 +16,7 @@ SkyeAUStatus::SkyeAUStatus(int id, QWidget *parent) :
     ui->lcdNumberCurrent->setToolTip("Battery current [A]");
     ui->lcdNumberVoltage->setToolTip("Battery voltage [V]");
     ui->pushButton->setDisabled(true);
-    ui->checkBox->setDisabled(true);
-    //connect(ui->checkBox, SIGNAL(toggled(bool)), this,
+    connect(ui->checkBox, SIGNAL(clicked(bool)), this, SLOT(clickedCheckBox(bool)));
 
 
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
@@ -48,6 +47,7 @@ void SkyeAUStatus::setUAS(UASInterface *uas)
             disconnect(mav, SIGNAL(batteryCellsStatusChanged(mavlink_battery_cells_status_t*)), this, SLOT(updateBatteryCellsStatus(mavlink_battery_cells_status_t*)));
             disconnect(mav, SIGNAL(batteryStatusChanged(mavlink_battery_status_t*)), this, SLOT(updateBatteryStatus(mavlink_battery_status_t*)));
             disconnect(mav, SIGNAL(allocationValueChanged(mavlink_allocation_controller_raw_t*)), this, SLOT(updateThrustValue(mavlink_allocation_controller_raw_t*)));
+            disconnect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocationCase(uint)));
         }
     }
 
@@ -61,6 +61,7 @@ void SkyeAUStatus::setUAS(UASInterface *uas)
         connect(mav, SIGNAL(batteryCellsStatusChanged(mavlink_battery_cells_status_t*)), this, SLOT(updateBatteryCellsStatus(mavlink_battery_cells_status_t*)));
         connect(mav, SIGNAL(batteryStatusChanged(mavlink_battery_status_t*)), this, SLOT(updateBatteryStatus(mavlink_battery_status_t*)));
         connect(mav, SIGNAL(allocationValueChanged(mavlink_allocation_controller_raw_t*)), this, SLOT(updateThrustValue(mavlink_allocation_controller_raw_t*)));
+        connect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocationCase(uint)));
 
     }
 }
@@ -214,4 +215,15 @@ QString SkyeAUStatus::getStringForAccuStatus(int status)
     }
 
     return str;
+}
+
+void SkyeAUStatus::clickedCheckBox(bool checked)
+{
+    emit requestAllocationCase(this->auId+1, checked);
+}
+
+void SkyeAUStatus::updateAllocationCase(uint allocCase)
+{
+    // Is this actuation unit excluded?
+    ui->checkBox->setChecked((allocCase != (auId+1)) || (allocCase == 0));
 }

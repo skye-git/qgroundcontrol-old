@@ -153,7 +153,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
             disconnect(infoViewWidget->advancedWidget, SIGNAL(yawSliderValueChanged(double)), mav, SLOT(setAddYawValue(double)));
 
             // Disconnect slots for Change of Actuation Unit Configuration
-            disconnect(infoViewWidget->advancedWidget, SIGNAL(requestAUConfiguration(int)), this, SLOT(changeAUConfiguration(int)));
+            disconnect(infoViewWidget->advancedWidget, SIGNAL(requestAUConfiguration(int)), mav, SLOT(sendAUConfiguration(int)));
             disconnect(mav, SIGNAL(allocCaseChanged(int)), infoViewWidget->advancedWidget, SLOT(updateAllocCase(int)));
             disconnect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(getAllocCase(int)));
 

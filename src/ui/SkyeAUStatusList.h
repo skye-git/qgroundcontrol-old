@@ -23,12 +23,22 @@ public slots:
     void setUAS(UASInterface* uas);
     /** @brief Create new widget for every id */
     void checkBatteryStatusId(mavlink_battery_status_t *battery);
+    /** @brief Change allocation case */
+    void changeAllocationCase(uint au, bool status);
+    /** @brief Update GUI to Allocation Case of Skye */
+    void updateAllocationCase(int allocCase);
+
+signals:
+    /** @brief Send a new allocation case to Skye */
+    void requestAllocationCase(int alloc);
 
 private:
     Ui::SkyeAUStatusList *ui;
     int uasId;                          ///< Reference to the current uas
 
     QMap<int, SkyeAUStatus*> auList;    ///< Actuation unit info widget list
+
+    int allocationCase;                 ///< Allocation case. 0: all AUs, 1: w/o AU1, 2: w/o AU2, 3: w/o AU3, 4: w/o AU4
 
 
 };

@@ -8,7 +8,8 @@
 SkyeAUStatusList::SkyeAUStatusList(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::SkyeAUStatusList),
-    uasId(0)
+    uasId(0),
+    allocationCase(0)
 {
     ui->setupUi(this);
     auList = QMap<int, SkyeAUStatus*>();
@@ -34,6 +35,8 @@ void SkyeAUStatusList::setUAS(UASInterface *uas)
         {
             // disconnect
             disconnect(mav, SIGNAL(batteryStatusChanged(mavlink_battery_status_t*)), this, SLOT(checkBatteryStatusId(mavlink_battery_status_t*)));
+            disconnect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocationCase(int)));
+            disconnect(this, SIGNAL(requestAllocationCase(int)), mav, SLOT(sendAUConfiguration(int)));
         }
     }
 
@@ -45,6 +48,8 @@ void SkyeAUStatusList::setUAS(UASInterface *uas)
 
         // connect
         connect(mav, SIGNAL(batteryStatusChanged(mavlink_battery_status_t*)), this, SLOT(checkBatteryStatusId(mavlink_battery_status_t*)));
+        connect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocationCase(int)));
+        connect(this, SIGNAL(requestAllocationCase(int)), mav, SLOT(sendAUConfiguration(int)));
 
     }
 }
@@ -59,6 +64,28 @@ void SkyeAUStatusList::checkBatteryStatusId(mavlink_battery_status_t *battery)
         auList.insert(battery->accu_id, new SkyeAUStatus(battery->accu_id, this));
         ui->horizontalLayout->insertWidget(battery->accu_id, auList.value(battery->accu_id));
         auList.value(battery->accu_id)->updateBatteryStatus(battery);
+        connect(auList.value(battery->accu_id), SIGNAL(requestAllocationCase(uint,bool)), this, SLOT(changeAllocationCase(uint,bool)));
     }
 
+}
+
+void SkyeAUStatusList::changeAllocationCase(uint au, bool status)
+{
+    if (status == false && au <= 4)
+    {
+        emit requestAllocationCase(au);
+    }
+    if (status == true)
+    {
+        // AU was only disabled if allocationCase == au
+        if (allocationCase == au)
+        {
+            emit requestAllocationCase(0);
+        }
+    }
+}
+
+void SkyeAUStatusList::updateAllocationCase(int allocCase)
+{
+    allocationCase = allocCase;
 }
