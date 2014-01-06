@@ -907,6 +907,30 @@
                   <description>Useful non-operational messages that can assist in debugging. These should not occur during normal operation.</description>
                </entry>
           </enum>
+          <enum name="MAV_ACTUATION_UNIT_STATUS">
+               <description>Indicates the severity level, generally used for status messages to indicate their relative urgency. Based on RFC-5424 using expanded definitions at: http://www.kiwisyslog.com/kb/info:-syslog-message-levels/.</description>
+               <entry value="6" name="MAV_ACTUATION_UNIT_STATUS_UNKNOWN">
+                  <description>Actuation unit state has not been determined yet.</description>
+               </entry>
+               <entry value="0" name="MAV_ACTUATION_UNIT_STATUS_DETACHED">
+                  <description>Actuation unit is detached.</description>
+               </entry>
+               <entry value="1" name="MAV_ACTUATION_UNIT_STATUS_INITIALIZING">
+                  <description>Actuation unit is initializing.</description>
+               </entry>
+               <entry value="2" name="MAV_ACTUATION_UNIT_STATUS_HOMING">
+                  <description>Actuation unit is currently homing.</description>
+               </entry>
+               <entry value="3" name="MAV_ACTUATION_UNIT_STATUS_READY">
+                  <description>Actuation unit is ready to work.</description>
+               </entry>
+               <entry value="4" name="MAV_ACTUATION_UNIT_STATUS_DISABLED">
+                  <description>Actuation unit is disabled. (Either because of low battery or because of the disable switch)</description>
+               </entry>
+               <entry value="5" name="MAV_ACTUATION_UNIT_STATUS_ERROR">
+                  <description>An error occurred while initialising or operating.</description>
+               </entry>
+          </enum>
      </enums>
      <messages>
           <message id="0" name="HEARTBEAT">
@@ -1802,7 +1826,12 @@
                <field type="uint8_t" name="mode">Compare LED_CONTROL_MODE enumerator - 0: Constant light, 1: Blink on/off, 2: Pulsate, 3: Colorloop, 4: Disco</field>
                <field type="float" name="frequency">Frequency parameter, Hz</field>
           </message>
-         <message id="146" name="BATTERY_STATUS">
+          <message id="145" name="ACTUATION_STATUS">
+               <description>Status of an actuation unit</description>
+               <field type="uint8_t" name="au_id">a ID</field>
+               <field type="int8_t" name="status">-1: unknown, 0: detached:, 1: init, 2: homing, 3: ready, 4: disabled, 5: error</field>
+          </message>
+          <message id="146" name="BATTERY_STATUS">
                <description>Transmit informations about a battery.</description>
                <field type="uint8_t" name="accu_id">Accupack ID</field>
                <field type="int8_t" name="status">bit 0: attached flag, bit 1: undervoltage flag, bit 2: disabled flag, bit 3: charging flag, bit 4: balancing flag, bit 5: battery full, bit 7: error</field>
@@ -1812,7 +1841,7 @@
                <field type="int32_t" name="charge">Accumulated charge current since last battery charge, in milliamperehours (1 = 1 mAh), negative: outgoing energy, positive: charging energy</field>
                <field type="int32_t" name="time">Charging time, in seconds</field>
           </message>
-         <message id="147" name="BATTERY_CELLS_STATUS">
+          <message id="147" name="BATTERY_CELLS_STATUS">
                <description>Transmit informations about the cells of a battery.</description>
                <field type="uint8_t" name="accu_id">Accupack ID</field>
                <field type="uint16_t" name="voltage_cell_1">Battery voltage of cell 1, in millivolts (1 = 1 millivolt)</field>

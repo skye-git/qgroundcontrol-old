@@ -33,6 +33,8 @@ public slots:
     void updateStyleSheets();
     /** @brief Update GUI to Allocation Case of Skye */
     void updateAllocationCase(int allocCase);
+    /** @brief Update to actuation unit status */
+    void updateActuationStatus(mavlink_actuation_status_t *au_status);
 
 signals:
     /** @brief Change allocation case. Set this actuation unit to activated (true or false) */
@@ -53,6 +55,7 @@ private:
     uint8_t thrust;                             ///< thrust of this actuation unit in percent [%]
 
     QString getStringForAccuStatus(int status);
+    QString getStringForAUStatus(int status);   ///< See MAV_ACTUATION_STATUS enum
 
 };
 

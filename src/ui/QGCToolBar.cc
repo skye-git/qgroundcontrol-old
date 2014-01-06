@@ -723,8 +723,8 @@ void QGCToolBar::updateComboBox()
         }
 
         // Begin Code Skye
-        userBaudChoice = true;
-        baudcomboBox->setCurrentIndex(baudcomboBox->findData(115200));
+        //userBaudChoice = true;
+        //baudcomboBox->setCurrentIndex(baudcomboBox->findData(115200));
         // End Code Skye
 
         if (!userBaudChoice) {

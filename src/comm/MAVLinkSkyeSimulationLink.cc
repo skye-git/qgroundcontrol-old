@@ -391,7 +391,7 @@ void MAVLinkSkyeSimulationLink::mainloop()
             battery.status = BATTERY_STATUS_BIT_ATTACHED | BATTERY_STATUS_BIT_FULL;
         }
         battery.charge = time_boot*0.002;
-        battery.time = time_boot;
+        battery.time = 200; // seconds
         messageSize = mavlink_msg_battery_status_encode(systemId, componentId, &msg, &battery);
         bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
         //add data into datastream
@@ -408,6 +408,20 @@ void MAVLinkSkyeSimulationLink::mainloop()
         alloc.pos_3 = 0;
         alloc.pos_4 = 0;
         messageSize = mavlink_msg_allocation_controller_raw_encode(systemId, componentId, &msg, &alloc);
+        bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
+        //add data into datastream
+        memcpy(stream+streampointer,buffer, bufferlength);
+        streampointer += bufferlength;
+
+
+        mavlink_actuation_status_t au_status;
+        au_status.au_id = battery_pack_id;
+        au_status.status = MAV_ACTUATION_UNIT_STATUS_READY;
+        if (battery_pack_id == 1)
+            au_status.status = MAV_ACTUATION_UNIT_STATUS_HOMING;
+        if (battery_pack_id == 0)
+            au_status.status = MAV_ACTUATION_UNIT_STATUS_ERROR;
+        messageSize = mavlink_msg_actuation_status_encode(systemId, componentId, &msg, &au_status);
         bufferlength = mavlink_msg_to_send_buffer(buffer, &msg);
         //add data into datastream
         memcpy(stream+streampointer,buffer, bufferlength);

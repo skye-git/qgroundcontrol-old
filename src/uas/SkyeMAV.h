@@ -112,6 +112,7 @@ signals:
     void batteryCellsStatusChanged(mavlink_battery_cells_status_t* cells);
     void batteryStatusChanged(mavlink_battery_status_t* battery);
     void allocationValueChanged(mavlink_allocation_controller_raw_t* allocation);
+    void actuationStatusChanged(mavlink_actuation_status_t* au_status);
     void reportUDPLinkFailed(QString errorStr);
     void mouseButtonRotationChanged(bool active);
     void mouseButtonTranslationChanged(bool active);

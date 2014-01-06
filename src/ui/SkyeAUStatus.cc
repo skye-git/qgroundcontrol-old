@@ -13,6 +13,10 @@ SkyeAUStatus::SkyeAUStatus(int id, QWidget *parent) :
     setAU(id);
 
     ui->labelName->setStyleSheet("QLabel { font-size: 12pt;}");
+    ui->labelBatteryStatus->setText("");
+    ui->labelBatteryStatus->setToolTip("Battery status");
+    ui->labelAUStatus->setText("");
+    ui->labelAUStatus->setToolTip("Actuation unit status");
     ui->lcdNumberCurrent->setToolTip("Battery current [A]");
     ui->lcdNumberVoltage->setToolTip("Battery voltage [V]");
     ui->pushButton->setDisabled(true);
@@ -48,6 +52,7 @@ void SkyeAUStatus::setUAS(UASInterface *uas)
             disconnect(mav, SIGNAL(batteryStatusChanged(mavlink_battery_status_t*)), this, SLOT(updateBatteryStatus(mavlink_battery_status_t*)));
             disconnect(mav, SIGNAL(allocationValueChanged(mavlink_allocation_controller_raw_t*)), this, SLOT(updateThrustValue(mavlink_allocation_controller_raw_t*)));
             disconnect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocationCase(uint)));
+            disconnect(mav, SIGNAL(actuationStatusChanged(mavlink_actuation_status_t*)), this, SLOT(updateActuationStatus(mavlink_actuation_status_t*)));
         }
     }
 
@@ -62,6 +67,7 @@ void SkyeAUStatus::setUAS(UASInterface *uas)
         connect(mav, SIGNAL(batteryStatusChanged(mavlink_battery_status_t*)), this, SLOT(updateBatteryStatus(mavlink_battery_status_t*)));
         connect(mav, SIGNAL(allocationValueChanged(mavlink_allocation_controller_raw_t*)), this, SLOT(updateThrustValue(mavlink_allocation_controller_raw_t*)));
         connect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocationCase(int)));
+        connect(mav, SIGNAL(actuationStatusChanged(mavlink_actuation_status_t*)), this, SLOT(updateActuationStatus(mavlink_actuation_status_t*)));
 
     }
 }
@@ -91,8 +97,8 @@ void SkyeAUStatus::updateBatteryStatus(mavlink_battery_status_t *battery)
 
         ui->lcdNumberVoltage->display(battery->voltage/1000.0);
         ui->lcdNumberCurrent->display(battery->current/1000.0);
-        ui->labelMessage->setText(getStringForAccuStatus((int)battery->status));
-        ui->labelMessage->setToolTip(getStringForAccuStatus((int)battery->status));
+        ui->labelBatteryStatus->setText(getStringForAccuStatus((int)battery->status));
+        ui->labelBatteryStatus->setToolTip(getStringForAccuStatus((int)battery->status));
 
         updateToolTipText();
         updateStyleSheets();
@@ -217,6 +223,48 @@ QString SkyeAUStatus::getStringForAccuStatus(int status)
     return str;
 }
 
+QString SkyeAUStatus::getStringForAUStatus(int status)
+{
+    QString str = "";
+
+    if (status & MAV_ACTUATION_UNIT_STATUS_DETACHED)
+    {
+        str.append("detached");
+    }
+    if (status & MAV_ACTUATION_UNIT_STATUS_DISABLED)
+    {
+        if (str.length()) str.append(", ");
+        str.append("disabled");
+    }
+    if (status & MAV_ACTUATION_UNIT_STATUS_ERROR)
+    {
+        if (str.length()) str.append(", ");
+        str.append("ERROR");
+    }
+    if (status & MAV_ACTUATION_UNIT_STATUS_HOMING)
+    {
+        if (str.length()) str.append(", ");
+        str.append("homing");
+    }
+    if (status & MAV_ACTUATION_UNIT_STATUS_INITIALIZING)
+    {
+        if (str.length()) str.append(", ");
+        str.append("init");
+    }
+    if (status & MAV_ACTUATION_UNIT_STATUS_READY)
+    {
+        if (str.length()) str.append(", ");
+        str.append("ready");
+    }
+    if (status & MAV_ACTUATION_UNIT_STATUS_UNKNOWN)
+    {
+        if (str.length()) str.append(", ");
+        str.append("unknown");
+    }
+
+    return str;
+}
+
 void SkyeAUStatus::clickedCheckBox(bool checked)
 {
     emit requestAllocationCase(this->auId+1, checked);
@@ -227,4 +275,12 @@ void SkyeAUStatus::updateAllocationCase(int allocCase)
     // Is this actuation unit excluded?
     ui->checkBox->setChecked(allocCase != (auId+1));
     //qDebug() << "THIS IS AU+1" << this->auId+1 << "and allocCase is" << allocCase;
+}
+
+void SkyeAUStatus::updateActuationStatus(mavlink_actuation_status_t *au_status)
+{
+    if (au_status->au_id == this->auId)
+    {
+        ui->labelAUStatus->setText(getStringForAUStatus((int)au_status->status));
+    }
 }

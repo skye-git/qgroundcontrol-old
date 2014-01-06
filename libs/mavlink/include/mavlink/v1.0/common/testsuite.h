@@ -5059,6 +5059,51 @@ static void mavlink_test_led_control(uint8_t system_id, uint8_t component_id, ma
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }
 
+static void mavlink_test_actuation_status(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
+{
+	mavlink_message_t msg;
+        uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
+        uint16_t i;
+	mavlink_actuation_status_t packet_in = {
+		5,
+	72,
+	};
+	mavlink_actuation_status_t packet1, packet2;
+        memset(&packet1, 0, sizeof(packet1));
+        	packet1.au_id = packet_in.au_id;
+        	packet1.status = packet_in.status;
+        
+        
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_actuation_status_encode(system_id, component_id, &msg, &packet1);
+	mavlink_msg_actuation_status_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_actuation_status_pack(system_id, component_id, &msg , packet1.au_id , packet1.status );
+	mavlink_msg_actuation_status_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_actuation_status_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.au_id , packet1.status );
+	mavlink_msg_actuation_status_decode(&msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+
+        memset(&packet2, 0, sizeof(packet2));
+        mavlink_msg_to_send_buffer(buffer, &msg);
+        for (i=0; i<mavlink_msg_get_send_buffer_length(&msg); i++) {
+        	comm_send_ch(MAVLINK_COMM_0, buffer[i]);
+        }
+	mavlink_msg_actuation_status_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+        
+        memset(&packet2, 0, sizeof(packet2));
+	mavlink_msg_actuation_status_send(MAVLINK_COMM_1 , packet1.au_id , packet1.status );
+	mavlink_msg_actuation_status_decode(last_msg, &packet2);
+        MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
+}
+
 static void mavlink_test_battery_status(uint8_t system_id, uint8_t component_id, mavlink_message_t *last_msg)
 {
 	mavlink_message_t msg;
@@ -5664,6 +5709,7 @@ static void mavlink_test_common(uint8_t system_id, uint8_t component_id, mavlink
 	mavlink_test_nanotron_skye_sender_5_raw(system_id, component_id, last_msg);
 	mavlink_test_nanotron_skye_sender_6_raw(system_id, component_id, last_msg);
 	mavlink_test_led_control(system_id, component_id, last_msg);
+	mavlink_test_actuation_status(system_id, component_id, last_msg);
 	mavlink_test_battery_status(system_id, component_id, last_msg);
 	mavlink_test_battery_cells_status(system_id, component_id, last_msg);
 	mavlink_test_setpoint_8dof(system_id, component_id, last_msg);

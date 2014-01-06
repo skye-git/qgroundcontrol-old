@@ -99,6 +99,14 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
             emit allocationValueChanged(&allocation);
         }
         break;
+        case MAVLINK_MSG_ID_ACTUATION_STATUS:
+        {
+            mavlink_actuation_status_t au_status;
+            mavlink_msg_actuation_status_decode(&message, &au_status);
+
+            emit actuationStatusChanged(&au_status);
+        }
+        break;
 
         case MAVLINK_MSG_ID_SYS_STATUS:
         {
