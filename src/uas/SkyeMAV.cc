@@ -335,3 +335,11 @@ void SkyeMAV::sendAUConfiguration(int disabledAU)
     sendMessage(msg);
     qDebug() << "[SkyeMAV] Sent SKYE_ALOC_CASE" << disabledAU;
 }
+
+void SkyeMAV::sendAUReset(int auId)
+{
+    mavlink_message_t msg;
+    mavlink_msg_command_long_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, this->uasId, (uint8_t)MAV_COMP_ID_ALL, MAV_CMD_RESET_SKYE_AU, 0, (float)auId, 1.0f, 0, 0, 0, 0, 0);
+    sendMessage(msg);
+    qDebug() << "[SkyeMAV] Sent reset command for AU id" << auId;
+}

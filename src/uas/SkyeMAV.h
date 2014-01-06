@@ -99,6 +99,8 @@ public slots:
 
     /** @brief Send parameter for actuation unit configuration (SKYE_ALOC_CASE) */
     void sendAUConfiguration(int);
+    /** @brief Send AU reset command */
+    void sendAUReset(int auId);
 
 signals:
     /** @brief Emit new detailed accu info for one accu pack

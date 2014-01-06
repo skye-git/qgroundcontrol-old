@@ -17,9 +17,10 @@ SkyeAUStatus::SkyeAUStatus(int id, QWidget *parent) :
     ui->labelBatteryStatus->setToolTip("Battery status");
     ui->labelAUStatus->setText("");
     ui->labelAUStatus->setToolTip("Actuation unit status");
+    ui->progressBarThrust->setValue(0);
     ui->lcdNumberCurrent->setToolTip("Battery current [A]");
     ui->lcdNumberVoltage->setToolTip("Battery voltage [V]");
-    ui->pushButton->setDisabled(true);
+    connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(clickedResetButton()));
     connect(ui->checkBox, SIGNAL(clicked(bool)), this, SLOT(clickedCheckBox(bool)));
 
 
@@ -53,6 +54,7 @@ void SkyeAUStatus::setUAS(UASInterface *uas)
             disconnect(mav, SIGNAL(allocationValueChanged(mavlink_allocation_controller_raw_t*)), this, SLOT(updateThrustValue(mavlink_allocation_controller_raw_t*)));
             disconnect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocationCase(uint)));
             disconnect(mav, SIGNAL(actuationStatusChanged(mavlink_actuation_status_t*)), this, SLOT(updateActuationStatus(mavlink_actuation_status_t*)));
+            disconnect(this, SIGNAL(requestAUReset(int)), mav, SLOT(sendAUReset(int)));
         }
     }
 
@@ -68,6 +70,7 @@ void SkyeAUStatus::setUAS(UASInterface *uas)
         connect(mav, SIGNAL(allocationValueChanged(mavlink_allocation_controller_raw_t*)), this, SLOT(updateThrustValue(mavlink_allocation_controller_raw_t*)));
         connect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocationCase(int)));
         connect(mav, SIGNAL(actuationStatusChanged(mavlink_actuation_status_t*)), this, SLOT(updateActuationStatus(mavlink_actuation_status_t*)));
+        connect(this, SIGNAL(requestAUReset(int)), mav, SLOT(sendAUReset(int)));
 
     }
 }
@@ -75,7 +78,7 @@ void SkyeAUStatus::setUAS(UASInterface *uas)
 void SkyeAUStatus::setAU(int id)
 {
     this->auId = id;
-    ui->labelName->setText(QString("AU %1").arg(id));
+    ui->labelName->setText(QString("AU %1").arg(id+1));
 }
 
 void SkyeAUStatus::updateBatteryCellsStatus(mavlink_battery_cells_status_t *battery_cells)
@@ -226,42 +229,44 @@ QString SkyeAUStatus::getStringForAccuStatus(int status)
 QString SkyeAUStatus::getStringForAUStatus(int status)
 {
     QString str = "";
-
-    if (status & MAV_ACTUATION_UNIT_STATUS_DETACHED)
+    switch (status)
+    {
+    case MAV_ACTUATION_UNIT_STATUS_DETACHED:
     {
         str.append("detached");
-    }
-    if (status & MAV_ACTUATION_UNIT_STATUS_DISABLED)
+    } break;
+    case MAV_ACTUATION_UNIT_STATUS_DISABLED:
     {
         if (str.length()) str.append(", ");
         str.append("disabled");
-    }
-    if (status & MAV_ACTUATION_UNIT_STATUS_ERROR)
+    } break;
+    case MAV_ACTUATION_UNIT_STATUS_ERROR:
     {
         if (str.length()) str.append(", ");
         str.append("ERROR");
-    }
-    if (status & MAV_ACTUATION_UNIT_STATUS_HOMING)
+    } break;
+    case MAV_ACTUATION_UNIT_STATUS_HOMING:
     {
         if (str.length()) str.append(", ");
         str.append("homing");
-    }
-    if (status & MAV_ACTUATION_UNIT_STATUS_INITIALIZING)
+    } break;
+    case MAV_ACTUATION_UNIT_STATUS_INITIALIZING:
     {
         if (str.length()) str.append(", ");
         str.append("init");
-    }
-    if (status & MAV_ACTUATION_UNIT_STATUS_READY)
+    } break;
+    case MAV_ACTUATION_UNIT_STATUS_READY:
     {
         if (str.length()) str.append(", ");
         str.append("ready");
-    }
-    if (status & MAV_ACTUATION_UNIT_STATUS_UNKNOWN)
+    } break;
+    case MAV_ACTUATION_UNIT_STATUS_UNKNOWN:
     {
         if (str.length()) str.append(", ");
         str.append("unknown");
+    } break;
+    default: break;
     }
-
     return str;
 }
 
@@ -282,5 +287,30 @@ void SkyeAUStatus::updateActuationStatus(mavlink_actuation_status_t *au_status)
     if (au_status->au_id == this->auId)
     {
         ui->labelAUStatus->setText(getStringForAUStatus((int)au_status->status));
+        switch (au_status->status)
+        {
+        case MAV_ACTUATION_UNIT_STATUS_ERROR:
+        case MAV_ACTUATION_UNIT_STATUS_DETACHED:
+        case MAV_ACTUATION_UNIT_STATUS_DISABLED:
+            ui->labelAUStatus->setStyleSheet("QLabel {background-color: rgba(255, 0, 0, 170);}");
+            break;
+        case MAV_ACTUATION_UNIT_STATUS_READY:
+            ui->labelAUStatus->setStyleSheet("QLabel {background-color: rgba(0, 200, 50, 100);}");
+            break;
+        case MAV_ACTUATION_UNIT_STATUS_INITIALIZING:
+            ui->labelAUStatus->setStyleSheet("QLabel {background-color: rgba(255, 140, 0, 170);}");
+            break;
+        case MAV_ACTUATION_UNIT_STATUS_HOMING:
+            ui->labelAUStatus->setStyleSheet("QLabel {background-color: rgba(255, 255, 0, 170);}");
+            break;
+        default:
+            ui->labelAUStatus->setStyleSheet("QLabel {background-color: rgba(255, 255, 255, 0);}");
+            break;
+        }
     }
+}
+
+void SkyeAUStatus::clickedResetButton()
+{
+    emit requestAUReset(this->auId);
 }

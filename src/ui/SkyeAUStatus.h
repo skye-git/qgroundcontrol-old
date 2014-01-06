@@ -35,10 +35,15 @@ public slots:
     void updateAllocationCase(int allocCase);
     /** @brief Update to actuation unit status */
     void updateActuationStatus(mavlink_actuation_status_t *au_status);
+    /** @brief Clicked reset button. Emit reset command */
+    void clickedResetButton();
+
 
 signals:
     /** @brief Change allocation case. Set this actuation unit to activated (true or false) */
     void requestAllocationCase(uint au, bool activated);
+    /** @brief Change allocation case. Set this actuation unit to activated (true or false) */
+    void requestAUReset(int au);
 
 private slots:
     /** enable/disable actuation unit for allocation */

@@ -674,6 +674,16 @@
                     <param index="6">Empty</param>
                     <param index="7">Empty</param>
                </entry>
+               <entry value="247" name="MAV_CMD_RESET_SKYE_AU">
+                    <description>Request the reset of an actuation unit.</description>
+                    <param index="1">index of the actuation unit (0-3)</param>
+                    <param index="2">0: do nothing, 1: reset</param>
+                    <param index="3">Empty</param>
+                    <param index="4">Empty</param>
+                    <param index="5">Empty</param>
+                    <param index="6">Empty</param>
+                    <param index="7">Empty</param>
+               </entry>
                <entry value="252" name="MAV_CMD_OVERRIDE_GOTO">
                     <description>Hold / continue the current action</description>
                     <param index="1">MAV_GOTO_DO_HOLD: hold MAV_GOTO_DO_CONTINUE: continue with next item in mission plan</param>
