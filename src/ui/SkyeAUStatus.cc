@@ -23,7 +23,6 @@ SkyeAUStatus::SkyeAUStatus(int id, QWidget *parent) :
     connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(clickedResetButton()));
     connect(ui->checkBox, SIGNAL(clicked(bool)), this, SLOT(clickedCheckBox(bool)));
 
-
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
     setUAS(UASManager::instance()->getActiveUAS());
 
@@ -286,31 +285,52 @@ void SkyeAUStatus::updateActuationStatus(mavlink_actuation_status_t *au_status)
 {
     if (au_status->au_id == this->auId)
     {
+        QPalette pal;
         ui->labelAUStatus->setText(getStringForAUStatus((int)au_status->status));
         switch (au_status->status)
         {
         case MAV_ACTUATION_UNIT_STATUS_ERROR:
         case MAV_ACTUATION_UNIT_STATUS_DETACHED:
         case MAV_ACTUATION_UNIT_STATUS_DISABLED:
-            ui->labelAUStatus->setStyleSheet("QLabel {background-color: rgba(255, 0, 0, 170);}");
+            ui->widgetTop->setAutoFillBackground(true);
+            pal.setColor(QPalette::Background, QColor(255, 0, 0, 170));
             break;
         case MAV_ACTUATION_UNIT_STATUS_READY:
-            ui->labelAUStatus->setStyleSheet("QLabel {background-color: rgba(0, 200, 50, 100);}");
+            ui->widgetTop->setAutoFillBackground(true);
+            pal.setColor(QPalette::Background, QColor(0, 200, 50, 100));
             break;
         case MAV_ACTUATION_UNIT_STATUS_INITIALIZING:
-            ui->labelAUStatus->setStyleSheet("QLabel {background-color: rgba(255, 140, 0, 170);}");
+            ui->widgetTop->setAutoFillBackground(true);
+            pal.setColor(QPalette::Background, QColor(255, 140, 0, 170));
             break;
         case MAV_ACTUATION_UNIT_STATUS_HOMING:
-            ui->labelAUStatus->setStyleSheet("QLabel {background-color: rgba(255, 255, 0, 170);}");
+            ui->widgetTop->setAutoFillBackground(true);
+            pal.setColor(QPalette::Background, QColor(255, 255, 0, 170));
             break;
         default:
-            ui->labelAUStatus->setStyleSheet("QLabel {background-color: rgba(255, 255, 255, 0);}");
+            ui->widgetTop->setAutoFillBackground(false);
+            pal.setColor(QPalette::Background, QColor(255, 255, 255, 0));
             break;
         }
+        ui->widgetTop->setPalette(pal);
     }
 }
 
 void SkyeAUStatus::clickedResetButton()
 {
     emit requestAUReset(this->auId);
+}
+
+void SkyeAUStatus::reduceWidget()
+{
+    ui->labelBatteryStatus->hide();
+    ui->lcdNumberCurrent->hide();
+    ui->widgetTop->hide();
+}
+
+void SkyeAUStatus::expandWidget()
+{
+    ui->labelBatteryStatus->show();
+    ui->lcdNumberCurrent->show();
+    ui->widgetTop->show();
 }

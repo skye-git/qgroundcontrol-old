@@ -27,6 +27,8 @@ public slots:
     void changeAllocationCase(uint au, bool status);
     /** @brief Update GUI to Allocation Case of Skye */
     void updateAllocationCase(int allocCase);
+    /** @brief Right-click menu */
+    void showContextMenu(const QPoint& pos);
 
 signals:
     /** @brief Send a new allocation case to Skye */
@@ -40,7 +42,7 @@ private:
 
     int allocationCase;                 ///< Allocation case. 0: all AUs, 1: w/o AU1, 2: w/o AU2, 3: w/o AU3, 4: w/o AU4
 
-
+    QMenu menu;
 };
 
 #endif // SKYEAUSTATUSLIST_H

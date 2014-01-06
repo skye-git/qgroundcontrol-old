@@ -16,6 +16,12 @@ SkyeAUStatusList::SkyeAUStatusList(QWidget *parent) :
 
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 
+    // right-click menu
+    this->setContextMenuPolicy(Qt::CustomContextMenu);
+    menu.addAction("Minimize");
+    menu.actions().first()->setCheckable(true);
+    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
+        this, SLOT(showContextMenu(const QPoint&)));
 }
 
 SkyeAUStatusList::~SkyeAUStatusList()
@@ -88,4 +94,27 @@ void SkyeAUStatusList::changeAllocationCase(uint au, bool status)
 void SkyeAUStatusList::updateAllocationCase(int allocCase)
 {
     allocationCase = allocCase;
+}
+
+
+void SkyeAUStatusList::showContextMenu(const QPoint& pos)
+{
+    QPoint globalPos = this->mapToGlobal(pos);
+    QAction* selectedItem = menu.exec(globalPos);
+
+    if (selectedItem)
+    {
+        if (selectedItem->isChecked())
+        {
+            QMap<int, SkyeAUStatus*>::iterator i;
+            for (i = auList.begin(); i != auList.end(); ++i)
+                i.value()->reduceWidget();
+        }
+        else
+        {
+            QMap<int, SkyeAUStatus*>::iterator i;
+            for (i = auList.begin(); i != auList.end(); ++i)
+                i.value()->expandWidget();
+        }
+    }
 }

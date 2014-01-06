@@ -2,6 +2,7 @@
 #define SKYEAUSTATUS_H
 
 #include <QWidget>
+#include <QMenu>
 #include "UASInterface.h"
 
 namespace Ui {
@@ -39,6 +40,10 @@ public slots:
     void clickedResetButton();
 
 
+    void reduceWidget();
+    void expandWidget();
+
+
 signals:
     /** @brief Change allocation case. Set this actuation unit to activated (true or false) */
     void requestAllocationCase(uint au, bool activated);
@@ -48,6 +53,7 @@ signals:
 private slots:
     /** enable/disable actuation unit for allocation */
     void clickedCheckBox(bool checked);
+
 
 private:
     Ui::SkyeAUStatus *ui;
