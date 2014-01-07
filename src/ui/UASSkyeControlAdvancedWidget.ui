@@ -202,7 +202,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="groupBoxAllocation">
      <property name="title">
       <string>Number of actuation units</string>
      </property>

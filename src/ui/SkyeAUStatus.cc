@@ -3,6 +3,8 @@
 #include "UASManager.h"
 #include "SkyeMAV.h"
 
+#define SKYE_AU_STATUS_INTERVAL 15000
+
 SkyeAUStatus::SkyeAUStatus(int id, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::SkyeAUStatus),
@@ -33,8 +35,13 @@ SkyeAUStatus::SkyeAUStatus(int id, QWidget *parent) :
     memset(batt, 0, sizeof(*batt));
     memset(cells, 0, sizeof(*cells));
 
-    // Inform SkyeAUStatusList, that au is present
+    // inform SkyeAUStatusList, that au is present
     requestAllocationCase(auId, enabled);
+
+    // start timer to check whether info is up-to-date
+    lastUpdate.start();
+    connect(&timer, SIGNAL(timeout()), this, SLOT(checkUpToDate()));
+    timer.start(SKYE_AU_STATUS_INTERVAL);
 }
 
 SkyeAUStatus::~SkyeAUStatus()
@@ -148,8 +155,22 @@ void SkyeAUStatus::updateToolTipText()
                      .arg(batt->time-(batt->time/60)*60));
 }
 
+void SkyeAUStatus::checkUpToDate()
+{
+    // check whether data is outdated
+    if (lastUpdate.restart() > SKYE_AU_STATUS_INTERVAL)
+    {
+        ui->widgetTop->setStyleSheet("QWidget#widgetTop {background-color: rgba(200, 200, 200, 100);}");
+        ui->widgetBottom->setStyleSheet("QWidget#widgetBottom {background-color: rgba(200, 200, 200, 100);}");
+        ui->labelBatteryStatus->setText("Outdated!");
+        this->update();
+    }
+}
+
 void SkyeAUStatus::updateStyleSheets()
 {
+    lastUpdate.restart();
+
     // style for voltage display
     if (batt->voltage > SKYE_CRITICAL_VOLTAGE*1000)
     {

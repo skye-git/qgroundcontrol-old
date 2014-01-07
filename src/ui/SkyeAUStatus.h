@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QMenu>
+#include <QTimer>
 #include "UASInterface.h"
 
 namespace Ui {
@@ -30,6 +31,8 @@ public slots:
     void updateThrustValue(mavlink_allocation_controller_raw_t *alloc);
     /** @brief rewrite tooltip */
     void updateToolTipText();
+    /** @brief Regularely check whether data is up-to-date */
+    void checkUpToDate();
     /** @brief Update stylesheets according to values */
     void updateStyleSheets();
     /** @brief Update GUI to Allocation Case of Skye */
@@ -72,6 +75,8 @@ private:
     QString getShortStringForAccuStatus(int status);
     QString getStringForAUStatus(int status);   ///< See MAV_ACTUATION_STATUS enum
 
+    QTimer timer;                               ///< Timer to check novelity of data
+    QTime lastUpdate;                           ///< Timestamp of last AU or battery info
 };
 
 #endif // SKYEAUSTATUS_H

@@ -10,6 +10,8 @@ UASSkyeControlAdvancedWidget::UASSkyeControlAdvancedWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->groupBoxAllocation->hide();
+
     // connect spinboxes
     connect(ui->doubleSpinBoxTranslation, SIGNAL(valueChanged(double)), this, SLOT(changeTransValue(double)));
     connect(ui->doubleSpinBoxRotation, SIGNAL(valueChanged(double)), this, SLOT(changeRotValue(double)));
