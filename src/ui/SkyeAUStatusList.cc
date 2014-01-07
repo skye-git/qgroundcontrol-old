@@ -41,6 +41,8 @@ void SkyeAUStatusList::setUAS(UASInterface *uas)
         {
             // disconnect
             disconnect(mav, SIGNAL(batteryStatusChanged(mavlink_battery_status_t*)), this, SLOT(checkBatteryStatusId(mavlink_battery_status_t*)));
+            disconnect(mav, SIGNAL(batteryCellsStatusChanged(mavlink_battery_cells_status_t*)), this, SLOT(checkBatteryCellsStatusId(mavlink_battery_cells_status_t*)));
+            disconnect(mav, SIGNAL(actuationStatusChanged(mavlink_actuation_status_t*)), this, SLOT(checkActuationStatusId(mavlink_actuation_status_t*)));
             disconnect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocationCase(int)));
             disconnect(this, SIGNAL(requestAllocationCase(int)), mav, SLOT(sendAUConfiguration(int)));
         }
@@ -54,6 +56,8 @@ void SkyeAUStatusList::setUAS(UASInterface *uas)
 
         // connect
         connect(mav, SIGNAL(batteryStatusChanged(mavlink_battery_status_t*)), this, SLOT(checkBatteryStatusId(mavlink_battery_status_t*)));
+        connect(mav, SIGNAL(batteryCellsStatusChanged(mavlink_battery_cells_status_t*)), this, SLOT(checkBatteryCellsStatusId(mavlink_battery_cells_status_t*)));
+        connect(mav, SIGNAL(actuationStatusChanged(mavlink_actuation_status_t*)), this, SLOT(checkActuationStatusId(mavlink_actuation_status_t*)));
         connect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocationCase(int)));
         connect(this, SIGNAL(requestAllocationCase(int)), mav, SLOT(sendAUConfiguration(int)));
 
@@ -62,17 +66,43 @@ void SkyeAUStatusList::setUAS(UASInterface *uas)
 
 void SkyeAUStatusList::checkBatteryStatusId(mavlink_battery_status_t *battery)
 {
-    //qDebug() << "battery status of id " << battery->accu_id;
-    if (auList.contains(battery->accu_id))
+    if ( createAUStatusWidget(battery->accu_id) )
+    {
+        // Widget has been newly created. Forward data.
+        auList.value(battery->accu_id)->updateBatteryStatus(battery);
+    }
+}
+
+void SkyeAUStatusList::checkBatteryCellsStatusId(mavlink_battery_cells_status_t *cells)
+{
+    if ( createAUStatusWidget(cells->accu_id) )
+    {
+        // Widget has been newly created. Forward data.
+        auList.value(cells->accu_id)->updateBatteryCellsStatus(cells);
+    }
+}
+
+void SkyeAUStatusList::checkActuationStatusId(mavlink_actuation_status_t *au_status)
+{
+    if ( createAUStatusWidget(au_status->au_id) )
+    {
+        // Widget has been newly created. Forward data.
+        auList.value(au_status->au_id)->updateActuationStatus(au_status);
+    }
+}
+
+bool SkyeAUStatusList::createAUStatusWidget(int id)
+{
+    if (auList.contains(id))
     {
         // widget already exists
+        return false;
     } else {
-        auList.insert(battery->accu_id, new SkyeAUStatus(battery->accu_id, this));
-        ui->horizontalLayout->insertWidget(battery->accu_id, auList.value(battery->accu_id));
-        auList.value(battery->accu_id)->updateBatteryStatus(battery);
-        connect(auList.value(battery->accu_id), SIGNAL(requestAllocationCase(uint,bool)), this, SLOT(changeAllocationCase(uint,bool)));
+        auList.insert(id, new SkyeAUStatus(id, this));
+        ui->horizontalLayout->insertWidget(id, auList.value(id));
+        connect(auList.value(id), SIGNAL(requestAllocationCase(uint,bool)), this, SLOT(changeAllocationCase(uint,bool)));
+        return true;
     }
-
 }
 
 void SkyeAUStatusList::changeAllocationCase(uint au, bool status)

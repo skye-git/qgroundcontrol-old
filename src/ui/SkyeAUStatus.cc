@@ -7,7 +7,8 @@ SkyeAUStatus::SkyeAUStatus(int id, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::SkyeAUStatus),
     uasId(0),
-    thrust(0)
+    thrust(0),
+    status(MAV_ACTUATION_UNIT_STATUS_UNKNOWN)
 {
     ui->setupUi(this);
     setAU(id);
@@ -99,7 +100,7 @@ void SkyeAUStatus::updateBatteryStatus(mavlink_battery_status_t *battery)
 
         ui->lcdNumberVoltage->display(battery->voltage/1000.0);
         ui->lcdNumberCurrent->display(battery->current/1000.0);
-        ui->labelBatteryStatus->setText(getStringForAccuStatus((int)battery->status));
+        ui->labelBatteryStatus->setText(getShortStringForAccuStatus((int)battery->status));
         ui->labelBatteryStatus->setToolTip(getStringForAccuStatus((int)battery->status));
 
         updateToolTipText();
@@ -160,27 +161,70 @@ void SkyeAUStatus::updateStyleSheets()
         ui->lcdNumberVoltage->setPalette(QColor(255, 0, 0));
     }
 
-    // status color (increasing importance)
+    QString str;
+//    switch (status)
+//    {
+//    case MAV_ACTUATION_UNIT_STATUS_ERROR:
+//    case MAV_ACTUATION_UNIT_STATUS_DETACHED:
+//    case MAV_ACTUATION_UNIT_STATUS_DISABLED:
+//        str = "SkyeAUStatus {background-color: rgba(255, 0, 0, 170);}";
+//        break;
+//    case MAV_ACTUATION_UNIT_STATUS_READY:
+//        str = "SkyeAUStatus {background-color: rgba(0, 200, 0, 170);}";
+//        break;
+//    case MAV_ACTUATION_UNIT_STATUS_INITIALIZING:
+//        str = "SkyeAUStatus {background-color: rgba(255, 140, 0, 170);}";
+//        break;
+//    case MAV_ACTUATION_UNIT_STATUS_HOMING:
+//        str = "SkyeAUStatus {background-color: rgba(255, 255, 0, 170);}";
+//        break;
+//    default:
+//        str = "SkyeAUStatus {background-color: rgba(0, 0, 0, 0);}";
+//        break;
+//    }
+//    this->setStyleSheet(str);
+
+
+    switch (status)
+    {
+    case MAV_ACTUATION_UNIT_STATUS_ERROR:
+    case MAV_ACTUATION_UNIT_STATUS_DETACHED:
+    case MAV_ACTUATION_UNIT_STATUS_DISABLED:
+        str = "QWidget#widgetTop {background-color: rgba(255, 0, 0, 170);}";
+        break;
+    case MAV_ACTUATION_UNIT_STATUS_READY:
+        str = "QWidget#widgetTop {background-color: rgba(0, 200, 0, 170);}";
+        break;
+    case MAV_ACTUATION_UNIT_STATUS_INITIALIZING:
+        str = "QWidget#widgetTop {background-color: rgba(255, 140, 0, 170);}";
+        break;
+    case MAV_ACTUATION_UNIT_STATUS_HOMING:
+        str = "QWidget#widgetTop {background-color: rgba(255, 255, 0, 170);}";
+        break;
+    default:
+        str = "QWidget#widgetTop {background-color: rgba(0, 0, 0, 0);}";
+        break;
+    }
+    ui->widgetTop->setStyleSheet(str);
+
+
+    // battery status color (increasing importance)
     QPalette pal(palette());
     if (batt->status & BATTERY_STATUS_BIT_ATTACHED)
     {
-        this->setAutoFillBackground(false);
-        pal.setColor(QPalette::Background, Qt::black);
+        str = "QWidget#widgetBottom {background-color: rgba(0, 0, 0, 255); }";
     } else {
-        this->setAutoFillBackground(true);
-        pal.setColor(QPalette::Background, Qt::gray);
+        str = "QWidget#widgetBottom {background-color: rgba(160, 160, 160, 255); }";
     }
     if (batt->status & BATTERY_STATUS_BIT_UNDERVOLTAGE)
     {
-        this->setAutoFillBackground(true);
-        pal.setColor(QPalette::Background, Qt::red);
+        str = "QWidget#widgetBottom {background-color: rgba(255, 100, 0, 255); }";
     }
     if (batt->status & BATTERY_STATUS_BIT_ERROR)
     {
-        this->setAutoFillBackground(true);
-        pal.setColor(QPalette::Background, Qt::darkRed);
+        str = "QWidget#widgetBottom {background-color: rgba(200, 0, 0, 255); }";
     }
-    this->setPalette(pal);
+    ui->widgetBottom->setStyleSheet(str);
 }
 
 QString SkyeAUStatus::getStringForAccuStatus(int status)
@@ -220,6 +264,48 @@ QString SkyeAUStatus::getStringForAccuStatus(int status)
     {
         if (str.length()) str.append(", ");
         str.append("undervoltage");
+    }
+
+    return str;
+}
+
+QString SkyeAUStatus::getShortStringForAccuStatus(int status)
+{
+    QString str = "";
+
+    if (status & BATTERY_STATUS_BIT_ATTACHED)
+    {
+        str.append("AT");
+    }
+    if (status & BATTERY_STATUS_BIT_BALANCING)
+    {
+        if (str.length()) str.append("|");
+        str.append("BAL");
+    }
+    if (status & BATTERY_STATUS_BIT_CHARGING)
+    {
+        if (str.length()) str.append("|");
+        str.append("CH");
+    }
+    if (status & BATTERY_STATUS_BIT_DISABLED)
+    {
+        if (str.length()) str.append("|");
+        str.append("DIS");
+    }
+    if (status & BATTERY_STATUS_BIT_ERROR)
+    {
+        if (str.length()) str.append("|");
+        str.append("ERR");
+    }
+    if (status & BATTERY_STATUS_BIT_FULL)
+    {
+        if (str.length()) str.append("|");
+        str.append("FULL");
+    }
+    if (status & BATTERY_STATUS_BIT_UNDERVOLTAGE)
+    {
+        if (str.length()) str.append("|");
+        str.append("UV");
     }
 
     return str;
@@ -285,34 +371,9 @@ void SkyeAUStatus::updateActuationStatus(mavlink_actuation_status_t *au_status)
 {
     if (au_status->au_id == this->auId)
     {
-        QPalette pal;
+        status = (MAV_ACTUATION_UNIT_STATUS)au_status->status;
         ui->labelAUStatus->setText(getStringForAUStatus((int)au_status->status));
-        switch (au_status->status)
-        {
-        case MAV_ACTUATION_UNIT_STATUS_ERROR:
-        case MAV_ACTUATION_UNIT_STATUS_DETACHED:
-        case MAV_ACTUATION_UNIT_STATUS_DISABLED:
-            ui->widgetTop->setAutoFillBackground(true);
-            pal.setColor(QPalette::Background, QColor(255, 0, 0, 170));
-            break;
-        case MAV_ACTUATION_UNIT_STATUS_READY:
-            ui->widgetTop->setAutoFillBackground(true);
-            pal.setColor(QPalette::Background, QColor(0, 200, 50, 100));
-            break;
-        case MAV_ACTUATION_UNIT_STATUS_INITIALIZING:
-            ui->widgetTop->setAutoFillBackground(true);
-            pal.setColor(QPalette::Background, QColor(255, 140, 0, 170));
-            break;
-        case MAV_ACTUATION_UNIT_STATUS_HOMING:
-            ui->widgetTop->setAutoFillBackground(true);
-            pal.setColor(QPalette::Background, QColor(255, 255, 0, 170));
-            break;
-        default:
-            ui->widgetTop->setAutoFillBackground(false);
-            pal.setColor(QPalette::Background, QColor(255, 255, 255, 0));
-            break;
-        }
-        ui->widgetTop->setPalette(pal);
+        updateStyleSheets();
     }
 }
 

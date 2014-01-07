@@ -63,9 +63,11 @@ private:
 
     mavlink_battery_status_t *batt;             ///< battery status of this actuation unit
     mavlink_battery_cells_status_t *cells;      ///< battery cells status of this actuation unit
+    MAV_ACTUATION_UNIT_STATUS status;           ///< actuation status
     uint8_t thrust;                             ///< thrust of this actuation unit in percent [%]
 
     QString getStringForAccuStatus(int status);
+    QString getShortStringForAccuStatus(int status);
     QString getStringForAUStatus(int status);   ///< See MAV_ACTUATION_STATUS enum
 
 };
