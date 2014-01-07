@@ -8,7 +8,8 @@ SkyeAUStatus::SkyeAUStatus(int id, QWidget *parent) :
     ui(new Ui::SkyeAUStatus),
     uasId(0),
     thrust(0),
-    status(MAV_ACTUATION_UNIT_STATUS_UNKNOWN)
+    status(MAV_ACTUATION_UNIT_STATUS_UNKNOWN),
+    enabled(true)
 {
     ui->setupUi(this);
     setAU(id);
@@ -32,6 +33,8 @@ SkyeAUStatus::SkyeAUStatus(int id, QWidget *parent) :
     memset(batt, 0, sizeof(*batt));
     memset(cells, 0, sizeof(*cells));
 
+    // Inform SkyeAUStatusList, that au is present
+    requestAllocationCase(auId, enabled);
 }
 
 SkyeAUStatus::~SkyeAUStatus()
@@ -357,21 +360,31 @@ QString SkyeAUStatus::getStringForAUStatus(int status)
 
 void SkyeAUStatus::clickedCheckBox(bool checked)
 {
-    emit requestAllocationCase(this->auId+1, checked);
+    enabled = checked;
+    emitEnabled();
+}
+
+void SkyeAUStatus::emitEnabled()
+{
+    emit requestAllocationCase(this->auId+1, enabled && status == MAV_ACTUATION_UNIT_STATUS_READY);
 }
 
 void SkyeAUStatus::updateAllocationCase(int allocCase)
 {
     // Is this actuation unit excluded?
-    ui->checkBox->setChecked(allocCase != (auId+1));
-    //qDebug() << "THIS IS AU+1" << this->auId+1 << "and allocCase is" << allocCase;
+    // ui->checkBox->setChecked(allocCase != (auId+1));
+    // qDebug() << "THIS IS AU+1" << this->auId+1 << "and allocCase is" << allocCase;
 }
 
 void SkyeAUStatus::updateActuationStatus(mavlink_actuation_status_t *au_status)
 {
     if (au_status->au_id == this->auId)
     {
-        status = (MAV_ACTUATION_UNIT_STATUS)au_status->status;
+        if (status != (MAV_ACTUATION_UNIT_STATUS)au_status->status)
+        {
+            status = (MAV_ACTUATION_UNIT_STATUS)au_status->status;
+            emitEnabled();
+        }
         ui->labelAUStatus->setText(getStringForAUStatus((int)au_status->status));
         updateStyleSheets();
     }

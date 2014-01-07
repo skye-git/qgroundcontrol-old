@@ -29,8 +29,8 @@ public slots:
     void checkActuationStatusId(mavlink_actuation_status_t *au_status);
     /** @brief Create new widget. Returns true when newly created. Returns false when already existing. */
     bool createAUStatusWidget(int id);
-    /** @brief Change allocation case */
-    void changeAllocationCase(uint au, bool status);
+    /** @brief Allocation case request of an single AU that changed enabled flag */
+    void changeAllocationCase(uint allocCase, bool enabled);
     /** @brief Update GUI to Allocation Case of Skye */
     void updateAllocationCase(int allocCase);
     /** @brief Right-click menu */
@@ -45,6 +45,7 @@ private:
     int uasId;                          ///< Reference to the current uas
 
     QMap<int, SkyeAUStatus*> auList;    ///< Actuation unit info widget list
+    QMap<int, bool> auEnabledList;      ///< Enabled/disabled flags of actuation units
 
     int allocationCase;                 ///< Allocation case. 0: all AUs, 1: w/o AU1, 2: w/o AU2, 3: w/o AU3, 4: w/o AU4
 

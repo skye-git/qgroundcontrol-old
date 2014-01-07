@@ -38,7 +38,8 @@ public slots:
     void updateActuationStatus(mavlink_actuation_status_t *au_status);
     /** @brief Clicked reset button. Emit reset command */
     void clickedResetButton();
-
+    /** @brief Request redefining of allocation case depending on status and enabled checkbox */
+    void emitEnabled();
 
     void reduceWidget();
     void expandWidget();
@@ -51,7 +52,7 @@ signals:
     void requestAUReset(int au);
 
 private slots:
-    /** enable/disable actuation unit for allocation */
+    /** @brief enable/disable actuation unit for allocation */
     void clickedCheckBox(bool checked);
 
 
@@ -60,6 +61,7 @@ private:
 
     int uasId;                          ///< Reference to the current uas
     int auId;                           ///< ID of this actuation unit
+    bool enabled;                       ///< User flag to enable/disable this actuation unit
 
     mavlink_battery_status_t *batt;             ///< battery status of this actuation unit
     mavlink_battery_cells_status_t *cells;      ///< battery cells status of this actuation unit

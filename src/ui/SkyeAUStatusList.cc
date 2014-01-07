@@ -13,6 +13,7 @@ SkyeAUStatusList::SkyeAUStatusList(QWidget *parent) :
 {
     ui->setupUi(this);
     auList = QMap<int, SkyeAUStatus*>();
+    auEnabledList = QMap<int, bool>();
 
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 
@@ -105,20 +106,34 @@ bool SkyeAUStatusList::createAUStatusWidget(int id)
     }
 }
 
-void SkyeAUStatusList::changeAllocationCase(uint au, bool status)
+void SkyeAUStatusList::changeAllocationCase(uint allocCase, bool enabled)
 {
-    if (status == false && au <= 4)
+    auEnabledList[allocCase-1] = enabled;       // allocationCase is auId+1
+
+    int numberOfEnabledAUs = 0;
+
+    QMap<int, bool>::iterator i;
+    for (i = auEnabledList.begin(); i != auEnabledList.end(); ++i)
     {
-        emit requestAllocationCase(au);
+        numberOfEnabledAUs += i.value();
     }
-    if (status == true)
+
+    switch (numberOfEnabledAUs)
     {
-        // AU was only disabled if allocationCase == au
-        if (allocationCase == au)
-        {
-            emit requestAllocationCase(0);
-        }
+    case 3:
+        // one AU is disabled. Submit AlloctionCase = au_id + 1
+        requestAllocationCase( auEnabledList.key(false)+1 );
+        break;
+    case 4:
+        // all AUs are enabled. AllocationCase 0
+        requestAllocationCase( 0 );
+        break;
+    default:
+        // invalid allocationCase
+        requestAllocationCase( -1 );
+        break;
     }
+
 }
 
 void SkyeAUStatusList::updateAllocationCase(int allocCase)
