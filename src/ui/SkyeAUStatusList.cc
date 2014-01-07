@@ -5,6 +5,8 @@
 
 #include <QDebug>
 
+#define AU_ID_MAX 3
+
 SkyeAUStatusList::SkyeAUStatusList(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::SkyeAUStatusList),
@@ -94,6 +96,11 @@ void SkyeAUStatusList::checkActuationStatusId(mavlink_actuation_status_t *au_sta
 
 bool SkyeAUStatusList::createAUStatusWidget(int id)
 {
+    if (id > AU_ID_MAX || id < 0)
+    {
+        qDebug() << "AU id" << id << "ignored because of id restriction to" << AU_ID_MAX;
+        return false;
+    }
     if (auList.contains(id))
     {
         // widget already exists

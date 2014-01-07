@@ -174,10 +174,10 @@ protected:
 
     QGC_INPUT_MODE inputMode;
 
-    bool lowBatteryFront;                   ///< true if electronics platform battery is low
-    bool lowBatteryAU;                      ///< true if actuation units battery is low
-    bool lowBattery;                        ///< true if any battery is low
-    unsigned int lowBatteryMs;              ///< QGC Groundtime Millisecond when battery droped below critical value
+    //bool lowBatteryFront;                   ///< true if electronics platform battery is low
+    //int lowBatteryAU;                       ///< id of actuation units that battery is low; -1 otherwise
+    //bool lowBattery;                        ///< true if any battery is low
+    //unsigned int lowBatteryMs;              ///< QGC Groundtime Millisecond when battery droped below critical value
 
 };
 

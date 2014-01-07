@@ -33,11 +33,11 @@ SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
     addPitchValue(0.0),
     addYawValue(0.0),
 //    currentTrajectoryStamp(0),
-    inputMode(QGC_INPUT_MODE_TOUCH),
-    lowBatteryFront(false),
-    lowBatteryAU(false),
-    lowBattery(false),
-    lowBatteryMs(0)
+    inputMode(QGC_INPUT_MODE_TOUCH)
+//    lowBatteryFront(false),
+//    lowBatteryAU(false),
+//    lowBattery(false),
+//    lowBatteryMs(0)
 {
     imagePacketsArrived = 0;
     this->setUASName("SKYE");
@@ -62,25 +62,31 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
 
             emit batteryStatusChanged(&battery);
 
-            // LOW BATTERY ALARM
-            if (battery.voltage < (uint16_t)(SKYE_ALARM_VOLTAGE * 1000))
-            {
-                lowBatteryAU = true;
-                if (!lowBattery)
-                {
-                    lowBatteryMs = QGC::groundTimeMilliseconds();
-                    lowBattery = true;
-                }
-                //emit batteryLow(0.001*(double)lowestVolt);
-                emit batteryLow(0.001*(double)battery.voltage, true, QGC::groundTimeMilliseconds() - lowBatteryMs);
-            } else {
-                lowBatteryAU = false;
-                lowBattery = lowBatteryFront;
-                if (!lowBattery)
-                {
-                    emit batteryLow(0.0, false, 0);
-                }
-            }
+//            // LOW BATTERY ALARM
+//            if (battery.status & BATTERY_STATUS_BIT_ATTACHED)
+//            {
+//                if (battery.voltage < (uint16_t)(SKYE_ALARM_VOLTAGE * 1000))
+//                {
+//                    lowBatteryAU = battery.accu_id;
+//                    if (!lowBattery)
+//                    {
+//                        lowBatteryMs = QGC::groundTimeMilliseconds();
+//                        lowBattery = true;
+//                    }
+//                    //emit batteryLow(0.001*(double)lowestVolt);
+//                    emit batteryLow(0.001*(double)battery.voltage, true, QGC::groundTimeMilliseconds() - lowBatteryMs);
+//                } else {
+//                    if (lowBatteryAU == battery.accu_id)
+//                    {
+//                        lowBatteryAU = -1;
+//                    }
+//                    lowBattery = lowBatteryFront;
+//                    if (!lowBattery)
+//                    {
+//                        emit batteryLow(0.0, false, 0);
+//                    }
+//                }
+//            }
         }
         break;
         case MAVLINK_MSG_ID_BATTERY_CELLS_STATUS:
@@ -139,25 +145,25 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
                 emit valueChanged(uasId, name.arg("battery_current"), "A", currentCurrent, time);
             }
 
-            // LOW BATTERY ALARM
-            if (currentVoltage < SKYE_ALARM_VOLTAGE)
-            {
-                lowBatteryFront = true;
-                if (!lowBattery)
-                {
-                    lowBatteryMs = QGC::groundTimeMilliseconds();
-                    lowBattery = true;
-                }
-                //emit batteryLow((double)lpVoltage);
-                emit batteryLow(currentVoltage, true, QGC::groundTimeMilliseconds() - lowBatteryMs);
-            } else {
-                lowBatteryFront = false;
-                lowBattery = lowBatteryAU;
-                if (!lowBattery)
-                {
-                    emit batteryLow(0.0, false, 0);
-                }
-            }
+//            // LOW BATTERY ALARM
+//            if (currentVoltage < SKYE_ALARM_VOLTAGE)
+//            {
+//                lowBatteryFront = true;
+//                if (!lowBattery)
+//                {
+//                    lowBatteryMs = QGC::groundTimeMilliseconds();
+//                    lowBattery = true;
+//                }
+//                //emit batteryLow((double)lpVoltage);
+//                emit batteryLow(currentVoltage, true, QGC::groundTimeMilliseconds() - lowBatteryMs);
+//            } else {
+//                lowBatteryFront = false;
+//                lowBattery = (lowBatteryAU != -1);
+//                if (!lowBattery)
+//                {
+//                    emit batteryLow(0.0, false, 0);
+//                }
+//            }
 
             // Trigger drop rate updates as needed. Here we convert the incoming
             // drop_rate_comm value from 1/100 of a percent in a uint16 to a true
