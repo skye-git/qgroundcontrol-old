@@ -918,7 +918,7 @@
                </entry>
           </enum>
           <enum name="MAV_ACTUATION_UNIT_STATUS">
-               <description>Indicates the severity level, generally used for status messages to indicate their relative urgency. Based on RFC-5424 using expanded definitions at: http://www.kiwisyslog.com/kb/info:-syslog-message-levels/.</description>
+               <description>This is the ActuationNode status enum.</description>
                <entry value="6" name="MAV_ACTUATION_UNIT_STATUS_UNKNOWN">
                   <description>Actuation unit state has not been determined yet.</description>
                </entry>

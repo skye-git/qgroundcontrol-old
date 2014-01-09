@@ -30,11 +30,13 @@ public slots:
     /** @brief Create new widget. Returns true when newly created. Returns false when already existing. */
     bool createAUStatusWidget(int id);
     /** @brief Allocation case request of an single AU that changed enabled flag */
-    void changeAllocationCase(uint allocCase, bool enabled);
-    /** @brief Update GUI to Allocation Case of Skye */
-    void updateAllocationCase(int allocCase);
+    void changeAUStatus(uint auId, bool ready, bool enabled);
+    /** @brief Update Allocation Case for Skye */
+    void updateAllocationCase();
     /** @brief Right-click menu */
     void showContextMenu(const QPoint& pos);
+    /** @brief setAllocationAutoMode */
+    void setAllocationAutoMode(bool allocAuto);
 
 signals:
     /** @brief Send a new allocation case to Skye */
@@ -45,8 +47,9 @@ private:
     int uasId;                          ///< Reference to the current uas
 
     QMap<int, SkyeAUStatus*> auList;    ///< Actuation unit info widget list
-    QMap<int, bool> auEnabledList;      ///< Enabled/disabled flags of actuation units
+    QMap<int, bool> auActiveList;       ///< Active AU: auto: ready & enabled, manual: enabled
 
+    bool allocationAuto;                ///< If true, allocation considers state of actuation units
     int allocationCase;                 ///< Allocation case. 0: all AUs, 1: w/o AU1, 2: w/o AU2, 3: w/o AU3, 4: w/o AU4
 
     QMenu menu;

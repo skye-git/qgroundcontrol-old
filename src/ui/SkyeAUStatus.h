@@ -5,6 +5,9 @@
 #include <QMenu>
 #include <QTimer>
 #include "UASInterface.h"
+#include "UASManager.h"
+#include "SkyeMAV.h"
+
 
 namespace Ui {
 class SkyeAUStatus;
@@ -17,6 +20,8 @@ class SkyeAUStatus : public QWidget
 public:
     explicit SkyeAUStatus(int id, QWidget *parent);
     ~SkyeAUStatus();
+    bool isAUReady() {return status == MAV_ACTUATION_UNIT_STATUS_READY;}
+    bool isAUEnabled() {return enabled;}
 
 public slots:
     /** @brief Set the system this widget controls */
@@ -49,9 +54,9 @@ public slots:
 
 
 signals:
-    /** @brief Change allocation case. Set this actuation unit to activated (true or false) */
-    void requestAllocationCase(uint au, bool activated);
-    /** @brief Change allocation case. Set this actuation unit to activated (true or false) */
+    /** @brief Status has changed  */
+    void AUStatusChanged(uint au, bool ready, bool activated);
+    /** @brief Reset actuation unit */
     void requestAUReset(int au);
 
 private slots:
