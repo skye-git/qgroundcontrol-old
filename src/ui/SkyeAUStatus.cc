@@ -1,7 +1,5 @@
 #include "SkyeAUStatus.h"
 #include "ui_SkyeAUStatus.h"
-#include "UASManager.h"
-#include "SkyeMAV.h"
 
 #define SKYE_AU_STATUS_INTERVAL 15000
 
@@ -35,8 +33,8 @@ SkyeAUStatus::SkyeAUStatus(int id, QWidget *parent) :
     memset(batt, 0, sizeof(*batt));
     memset(cells, 0, sizeof(*cells));
 
-    // inform SkyeAUStatusList, that au is present
-    requestAllocationCase(auId, enabled);
+    // update AU status list a first time
+    emitEnabled();
 
     // start timer to check whether info is up-to-date
     lastUpdate.start();
@@ -387,7 +385,7 @@ void SkyeAUStatus::clickedCheckBox(bool checked)
 
 void SkyeAUStatus::emitEnabled()
 {
-    emit requestAllocationCase(this->auId+1, enabled && status == MAV_ACTUATION_UNIT_STATUS_READY);
+    emit AUStatusChanged(this->auId+1, status == MAV_ACTUATION_UNIT_STATUS_READY, enabled);
 }
 
 void SkyeAUStatus::updateAllocationCase(int allocCase)
