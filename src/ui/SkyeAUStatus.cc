@@ -156,7 +156,7 @@ void SkyeAUStatus::updateToolTipText()
 void SkyeAUStatus::checkUpToDate()
 {
     // check whether data is outdated
-    if (lastUpdate.restart() > SKYE_AU_STATUS_INTERVAL)
+    if (lastUpdate.elapsed() > SKYE_AU_STATUS_INTERVAL)
     {
         ui->widgetTop->setStyleSheet("QWidget#widgetTop {background-color: rgba(200, 200, 200, 100);}");
         ui->widgetBottom->setStyleSheet("QWidget#widgetBottom {background-color: rgba(200, 200, 200, 100);}");
