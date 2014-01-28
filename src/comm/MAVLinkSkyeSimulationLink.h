@@ -58,7 +58,6 @@ public:
     bool disconnect();
 
     /* Extensive statistics for scientific purposes */
-    qint64 getNominalDataRate() const;
     qint64 getTotalUpstream();
     qint64 getShortTermUpstream();
     qint64 getCurrentUpstream();
@@ -69,6 +68,7 @@ public:
     qint64 getMaxDownstream();
     qint64 getBitsSent() const;
     qint64 getBitsReceived() const;
+    qint64 getConnectionSpeed() const;
 
     QString getName() const;
     int getId() const;

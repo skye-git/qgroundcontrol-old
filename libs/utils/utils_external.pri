@@ -120,4 +120,15 @@ SOURCES += reloadpromptutils.cpp \
         worldmagmodel.cpp \
         homelocationutil.cpp \
            xmlconfig.cpp
-RESOURCES += utils.qrc
+RESOURCES += utils.qrc \
+    qgroundcontrol.qrc
+
+OTHER_FILES += \
+    qupgrade.pro \
+    qserialport.pri \
+    qgroundcontrol.rc \
+    qgroundcontrol.pro \
+    qgcvideo.pro \
+    QGCSetup.pri \
+    QGCExternalLibs.pri \
+    Custom-Info.plist

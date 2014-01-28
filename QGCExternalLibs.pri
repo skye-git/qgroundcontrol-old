@@ -82,7 +82,10 @@ exists(user_config.pri) {
     message("Adding support for additional MAVLink messages for: " $$MAVLINK_CONF)
     message("------------------------------------------------------------------------")
 } else {
-    MAVLINK_CONF += ardupilotmega
+    # MAVLINK_CONF += ardupilotmega	    # MATTHIAS: THIS IS SOMEHOW MISSLEADING
+
+    # Use special interface for Project Skye (move this maybe into user_config.pri)
+    DEFINES += QGC_USE_SKYE_INTERFACE
 }
 INCLUDEPATH += $$MAVLINKPATH
 isEmpty(MAVLINK_CONF) {

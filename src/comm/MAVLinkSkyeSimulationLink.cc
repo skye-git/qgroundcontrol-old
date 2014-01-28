@@ -54,7 +54,7 @@ This file is part of the QGROUNDCONTROL project
 * @param writeFile The received messages are written to that file
 * @param rate The rate at which the messages are sent (in intervals of milliseconds)
 **/
-MAVLinkSkyeSimulationLink::MAVLinkSkyeSimulationLink(QString readFile, QString writeFile, int rate, QObject* parent) : LinkInterface(parent),
+MAVLinkSkyeSimulationLink::MAVLinkSkyeSimulationLink(QString readFile, QString writeFile, int rate, QObject* parent) :
     readyBytes(0),
     timeOffset(0),
     time_boot(0),
@@ -954,12 +954,6 @@ QString MAVLinkSkyeSimulationLink::getName() const
     return name;
 }
 
-qint64 MAVLinkSkyeSimulationLink::getNominalDataRate() const
-{
-    /* 100 Mbit is reasonable fast and sufficient for all embedded applications */
-    return 100000000;
-}
-
 qint64 MAVLinkSkyeSimulationLink::getTotalUpstream()
 {
     return 0;
@@ -990,6 +984,12 @@ qint64 MAVLinkSkyeSimulationLink::getBitsSent() const
 qint64 MAVLinkSkyeSimulationLink::getBitsReceived() const
 {
     return 0;
+}
+
+qint64 MAVLinkSkyeSimulationLink::getConnectionSpeed() const
+{
+    /* 100 Mbit is reasonable fast and sufficient for all embedded applications */
+    return 100000000;
 }
 
 qint64 MAVLinkSkyeSimulationLink::getTotalDownstream()

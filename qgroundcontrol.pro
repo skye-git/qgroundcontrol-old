@@ -800,7 +800,6 @@ SOURCES += \
     src/ui/QGCSkyeTestControl.cc \
     src/ui/uas/UASSkyeInputMixer.cc \
     src/ui/designer/QGCXYPlot.cc \
-    src/ui/menuactionhelper.cpp \
     src/ui/uas/UASSkyeAlertWidget.cc \
     src/ui/SkyeAUStatusList.cc \
     src/ui/SkyeAUStatus.cc \
