@@ -134,7 +134,7 @@ bool QGCMapWidget::setHomeActionTriggered()
         QMessageBox::information(0,"Error","Please connect first");
         return false;
     }
-    UASManager *uasManager = UASManager::instance();
+    UASManagerInterface *uasManager = UASManager::instance();
     if (!uasManager) { return false; }
 
     // Enter an altitude
@@ -267,15 +267,12 @@ void QGCMapWidget::loadSettings(bool changePosition)
     if (trailType == mapcontrol::UAVTrailType::ByDistance)
     {
         // XXX
-#ifdef Q_OS_WIN
-#pragma message ("WARNING: Settings loading for trail type not implemented")
-#else
-#warning Settings loading for trail type not implemented
-#endif
+        qDebug() << "WARNING: Settings loading for trail type (ByDistance) not implemented";
     }
     else if (trailType == mapcontrol::UAVTrailType::ByTimeElapsed)
     {
         // XXX
+        qDebug() << "WARNING: Settings loading for trail type (ByTimeElapsed) not implemented";
     }
 
     // SET TRAIL TYPE
@@ -462,7 +459,7 @@ void QGCMapWidget::updateGlobalPosition()
 
         // Set new lat/lon position of UAV icon
         internals::PointLatLng pos_lat_lon = internals::PointLatLng(system->getLatitude(), system->getLongitude());
-        uav->SetUAVPos(pos_lat_lon, system->getAltitude());
+        uav->SetUAVPos(pos_lat_lon, system->getAltitudeAMSL());
         // Follow status
         if (followUAVEnabled && system->getUASID() == followUAVID) SetCurrentPosition(pos_lat_lon);
         // Convert from radians to degrees and apply
@@ -490,7 +487,7 @@ void QGCMapWidget::updateLocalPosition()
 
         // Set new lat/lon position of UAV icon
         internals::PointLatLng pos_lat_lon = internals::PointLatLng(system->getLatitude(), system->getLongitude());
-        uav->SetUAVPos(pos_lat_lon, system->getAltitude());
+        uav->SetUAVPos(pos_lat_lon, system->getAltitudeAMSL());
         // Follow status
         if (followUAVEnabled && system->getUASID() == followUAVID) SetCurrentPosition(pos_lat_lon);
         // Convert from radians to degrees and apply
