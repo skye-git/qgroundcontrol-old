@@ -61,11 +61,11 @@ void UASSkyeInputMixer::run()
             }
         }
 
-        if (timeXBox.elapsed() < INPUTMIXER_MAX_DELAY_MS)
+        if (timeXbox.elapsed() < INPUTMIXER_MAX_DELAY_MS)
         {
             for (int i=0; i<6; i++)
             {
-                valuesAccum[i] = valuesAccum[i] + valuesXBox[i];
+                valuesAccum[i] = valuesAccum[i] + valuesXbox[i];
             }
         }
 
@@ -122,19 +122,19 @@ void UASSkyeInputMixer::updateTouchValues(double x, double y, double z, double a
     //qDebug() << "[MIXER] Update Touch values" << x << y << z << a << b << c;
 }
 
-void UASSkyeInputMixer::updateXBoxValues(double x, double y, double z, double a, double b, double c)
+void UASSkyeInputMixer::updateXboxValues(double x, double y, double z, double a, double b, double c)
 {
 
     // update time and values
-    timeXBox.restart();
+    timeXbox.restart();
 
-    valuesXBox[0] = x;
-    valuesXBox[1] = y;
-    valuesXBox[2] = z;
-    valuesXBox[3] = a;
-    valuesXBox[4] = b;
-    valuesXBox[5] = c;
+    valuesXbox[0] = x;
+    valuesXbox[1] = y;
+    valuesXbox[2] = z;
+    valuesXbox[3] = a;
+    valuesXbox[4] = b;
+    valuesXbox[5] = c;
 
-    //qDebug() << "[MIXER] Update XBox values" << x << y << z << a << b << c;
+    //qDebug() << "[MIXER] Update Xbox values" << x << y << z << a << b << c;
 }
 

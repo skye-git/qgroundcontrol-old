@@ -26,7 +26,7 @@ public slots:
     /** @brief get new 6dof values from touchscreen and set timestamp **/
     void updateTouchValues(double x, double y, double z, double a, double b, double c);
     /** @brief get new 6dof values from xbox controller and set timestamp **/
-    void updateXBoxValues(double x, double y, double z, double a, double b, double c);
+    void updateXboxValues(double x, double y, double z, double a, double b, double c);
 
 signals:
     void changed6DOFInput(double, double, double, double, double, double);
@@ -39,8 +39,8 @@ private:
     QTime timeMouse;                ///< timestamp of mouse values
     double valuesTouch[6];          ///< touch input values (x,y,z,a,b,c)
     QTime timeTouch;                ///< timestamp of touch screen values
-    double valuesXBox[6];           ///< xbox input values  (x,y,z,a,b,c)
-    QTime timeXBox;                 ///< timestamp of xbox values
+    double valuesXbox[6];           ///< xbox input values  (x,y,z,a,b,c)
+    QTime timeXbox;                 ///< timestamp of xbox values
 
     double valuesAccum[6];          ///< accumulated (mouse & touch) input values (x,y,z,a,b,c)
 

@@ -392,8 +392,7 @@ FORMS += \
     src/ui/designer/QGCXYPlot.ui \
     src/ui/uas/UASSkyeAlertWidget.ui \
     src/ui/SkyeAUStatusList.ui \
-    src/ui/SkyeAUStatus.ui \
-    src/ui/uas/temporary.ui
+    src/ui/SkyeAUStatus.ui
 
 HEADERS += \
     src/MG.h \

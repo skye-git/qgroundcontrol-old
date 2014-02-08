@@ -85,6 +85,8 @@ public slots:
     void changeMouseRotationEnabled(bool rotEnabled);
     /** @brief Get 3dmouse control commands */
     void getMouse6DOFControlCommands(double x, double y, double z, double a, double b, double c);
+    /** @brief Get xbox control commands */
+    void getXboxControlCommands(double x, double y, double z, double a, double b, double c);
 
     /** @brief Alert user that battery is low */
     void alertBatteryLow(double voltage);

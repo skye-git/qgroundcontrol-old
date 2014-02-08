@@ -141,7 +141,7 @@ void UASSkyeControlAdvancedWidget::changeLiftValue(double value)
 
         ui->doubleSpinBoxLift->setStyleSheet(getStyleString(value));
 
-        emit liftSliderValueChanged((int)(value));
+        emit liftSliderValueChanged(liftValue);
     }
 }
 

@@ -38,9 +38,9 @@ LedControlWidget::LedControlWidget(QWidget *parent) :
     blue(0),
     mode(LED_CONTROL_MODE_CONSTANT),
     frequency(0.0),
+    enabled(true),
     dialog(new QColorDialog),
-    dialogVisible(false),
-    enabled(true)
+    dialogVisible(false)
 {
     ui->setupUi(this);
 

@@ -57,6 +57,8 @@ Mouse6dofInput::Mouse6dofInput(QWidget* parent) :
     mouse3DMaxA(390.0),   // TODO: check maximum value for plugged device
     mouse3DMaxB(390.0),   // TODO: check maximum value for plugged device
     mouse3DMaxC(350.0),   // TODO: check maximum value for plugged device
+    parentWidget(parent),
+    timerInit3dxDaemon(NULL),
     uas(NULL),
     done(false),
     mouseActive(false),
@@ -67,9 +69,7 @@ Mouse6dofInput::Mouse6dofInput(QWidget* parent) :
     zValue(0.0),
     aValue(0.0),
     bValue(0.0),
-    cValue(0.0),
-    parentWidget(parent),
-    timerInit3dxDaemon(NULL)
+    cValue(0.0)
 {
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setActiveUAS(UASInterface*)));
 }

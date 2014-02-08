@@ -117,7 +117,7 @@ void XboxController::setActiveUAS(UASInterface* uas)
         SkyeMAV* mav = dynamic_cast<SkyeMAV*>(tmp);
         if(mav)
         {
-            disconnect(this, SIGNAL(xboxControllerChanged(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
+            //disconnect(this, SIGNAL(xboxControllerChanged(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
             disconnect(this, SIGNAL(SetLiftValue(int)), mav, SLOT(setLiftValue(int)));
             disconnect(mav, SIGNAL(liftValueChanged(int)), this, SLOT(liftValueChanged(int)));
             disconnect(mav, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(updateInputMode(SkyeMAV::QGC_INPUT_MODE)));
@@ -135,7 +135,7 @@ void XboxController::setActiveUAS(UASInterface* uas)
     SkyeMAV* mav = dynamic_cast<SkyeMAV*>(tmp);
     if(mav)
     {
-        connect(this, SIGNAL(xboxControllerChanged(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
+        //connect(this, SIGNAL(xboxControllerChanged(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
         connect(this, SIGNAL(SetLiftValue(int)), mav, SLOT(setLiftValue(int)));
         connect(mav, SIGNAL(liftValueChanged(int)), this, SLOT(liftValueChanged(int)));
         connect(this, SIGNAL(resetInputMode(SkyeMAV::QGC_INPUT_MODE)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));

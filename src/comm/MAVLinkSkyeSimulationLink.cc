@@ -57,7 +57,6 @@ This file is part of the QGROUNDCONTROL project
 MAVLinkSkyeSimulationLink::MAVLinkSkyeSimulationLink(QString readFile, QString writeFile, int rate, QObject* parent) :
     readyBytes(0),
     timeOffset(0),
-    time_boot(0),
     roll(0),            // Attitude
     pitch(0),
     yaw(0),
@@ -91,7 +90,8 @@ MAVLinkSkyeSimulationLink::MAVLinkSkyeSimulationLink(QString readFile, QString w
     orientation3(0),
     orientation4(0),
     battery_pack_id(0),
-    homing(0)
+    homing(0),
+    time_boot(0)
 {
     this->rate = rate;
     _isConnected = false;

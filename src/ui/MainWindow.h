@@ -56,6 +56,7 @@ This file is part of the QGROUNDCONTROL project
 #if (defined MOUSE_ENABLED_WIN) | (defined MOUSE_ENABLED_LINUX)
 #include "Mouse6dofInput.h"
 #endif // MOUSE_ENABLED_WIN
+//#include "xboxcontroller.h"
 #include "DebugConsole.h"
 #include "ParameterInterface.h"
 #include "XMLCommProtocolWidget.h"
@@ -493,6 +494,7 @@ protected:
     bool x11Event(XEvent *event);
     Mouse6dofInput* mouse;                  ///< Implementation for 3dMouse input
 #endif // MOUSE_ENABLED_LINUX
+    //XboxController* xbox;                   ///< Implementation for xbox controller input
 
     UASSkyeControlWidget* skyeControl;
 

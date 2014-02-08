@@ -561,6 +561,14 @@ void UASSkyeControlWidget::getMouse6DOFControlCommands(double x, double y, doubl
     }
 }
 
+void UASSkyeControlWidget::getXboxControlCommands(double x, double y, double z, double a, double b, double c)
+{
+    if (inputMode == SkyeMAV::QGC_INPUT_MODE_XBOX)
+    {
+        inputMixer->updateXboxValues(x, y, z, a, b, c);
+    }
+}
+
 void UASSkyeControlWidget::uncheckAllModeButtons()
 {
 ////    modeButtonGroup->setExclusive(false);

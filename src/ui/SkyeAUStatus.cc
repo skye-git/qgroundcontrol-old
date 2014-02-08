@@ -7,9 +7,9 @@ SkyeAUStatus::SkyeAUStatus(int id, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::SkyeAUStatus),
     uasId(0),
-    thrust(0),
+    enabled(true),
     status(MAV_ACTUATION_UNIT_STATUS_UNKNOWN),
-    enabled(true)
+    thrust(0)
 {
     ui->setupUi(this);
     setAU(id);
