@@ -89,6 +89,7 @@ This file is part of the QGROUNDCONTROL project
 #include "UASSkyeBatteryPackWidget.h" // Ende Code MA (15.03.2012)
 #include "UASVoltageInfoWidget.h" // Ende Code MA (02.04.2013)
 #include "UASCurrentInfoWidget.h" // Ende Code MA (02.04.2013)
+#include "xboxcontroller.h"
 
 class QGCMapTool;
 class QGCMAVLinkMessageSender;
@@ -436,6 +437,9 @@ protected:
     bool x11Event(XEvent *event);
     Mouse6dofInput* mouse;                  ///< Implementation for 3dMouse input
 #endif // MOUSE_ENABLED_LINUX
+
+
+    XboxController* xbox;
 
     /** User interface actions **/
     QAction* connectUASAct;

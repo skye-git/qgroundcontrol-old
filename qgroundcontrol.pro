@@ -702,7 +702,7 @@ win32-msvc2008|win32-msvc2010 {
 
 
 #libjoystick for xbox 360 controller support
-linux-g++|linus-g++64{
+linux-g++|linux-g++64{
     SOURCES  += thirdParty/xbox/joystick.cpp
     HEADERS  += thirdParty/xbox/joystick.h
 }

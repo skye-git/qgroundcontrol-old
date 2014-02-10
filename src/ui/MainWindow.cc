@@ -210,11 +210,10 @@ MainWindow::MainWindow(QWidget *parent):
     connect(this, SIGNAL(x11EventOccured(XEvent*)), mouse, SLOT(handleX11Event(XEvent*)));
 #endif //MOUSE_ENABLED_LINUX
 
-#if MOUSE_ENABLED_LINUX
+
     emit initStatusChanged("Initializing Xbox interface.");
 
-    xbox = new XboxController(this);
-#endif //MOUSE_ENABLED_LINUX
+    xbox = new XboxController();
 
 
     // Connect link

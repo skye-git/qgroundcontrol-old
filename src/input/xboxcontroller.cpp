@@ -1,4 +1,5 @@
 #include "xboxcontroller.h"
+#include <QDebug>
 
 XboxController::XboxController():
     uas(NULL),
@@ -11,9 +12,9 @@ XboxController::XboxController():
     bValue(0.0),
     cValue(0.0),
     liftValue(0),
-    liftValueButtonCounter(5)
+    liftValueButtonCounter(XBOX_ANSCHLAGVERZOEGERUNG),
+    initialized(0)
 {
-    joystick_.init("/dev/input/js0");
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setActiveUAS(UASInterface*)));
 }
 
@@ -37,20 +38,23 @@ void XboxController::run()
 
         if (xboxActive)
         {
-            xValue = zerosnap(XBOX_FILTER_FACTOR*xValue + (1-XBOX_FILTER_FACTOR)*progressive(normalize(joystick_.getAxis(XBOX_XAXIS))));
+
+            xValue = zerosnap(XBOX_FILTER_FACTOR*xValue + (1-XBOX_FILTER_FACTOR)*progressive(normalize(-joystick_.getAxis(XBOX_XAXIS))));
             yValue = zerosnap(XBOX_FILTER_FACTOR*yValue + (1-XBOX_FILTER_FACTOR)*progressive(normalize(joystick_.getAxis(XBOX_YAXIS))));
             bValue = zerosnap(XBOX_FILTER_FACTOR*bValue + (1-XBOX_FILTER_FACTOR)*progressive(normalize(joystick_.getAxis(XBOX_BAXIS))));
             cValue = zerosnap(XBOX_FILTER_FACTOR*cValue + (1-XBOX_FILTER_FACTOR)*progressive(normalize(joystick_.getAxis(XBOX_CAXIS))));
 
-            zValue = zerosnap(XBOX_FILTER_FACTOR*zValue + (1-XBOX_FILTER_FACTOR)*progressive((joystick_.getAxis(XBOX_ZAXIS1)-joystick_.getAxis(XBOX_ZAXIS2))/XBOX_RESOLUTION_TRIGGER));
 
-            if (joystick_.getButton(XBOX_AAXIS) > 0 and aValue < 0.99)
+            zValue = zerosnap(XBOX_FILTER_FACTOR*zValue + (1-XBOX_FILTER_FACTOR)*progressive(normalize((joystick_.getAxis(XBOX_ZAXIS2)-joystick_.getAxis(XBOX_ZAXIS1))/2)));
+            //qDebug() << "JOYSTICK DEBUG AXIS Z  HAS VALUE" << zValue;
+
+            if (joystick_.getButton(XBOX_AAXIS_PLUS_BUTTON) and aValue >= 0)
             {
-                aValue += 0.01;
+                if (aValue < 0.99) aValue += 0.01;
             }
-            else if (joystick_.getButton(XBOX_AAXIS) < 0 and aValue > -0.99)
+            else if (joystick_.getButton(XBOX_AAXIS_MINUS_BUTTON) and aValue <= 0)
             {
-                aValue -= 0.01;
+                if (aValue > -0.99)aValue -= 0.01;
             }
             else
             {
@@ -62,7 +66,7 @@ void XboxController::run()
                 switch (liftValueButtonCounter)
                 {
                 case 0:
-                case 5:
+                case XBOX_ANSCHLAGVERZOEGERUNG:
                     emit setLiftValue(++liftValue);
                     liftValueButtonCounter--;
                     break;
@@ -75,7 +79,7 @@ void XboxController::run()
                 switch (liftValueButtonCounter)
                 {
                 case 0:
-                case 5:
+                case XBOX_ANSCHLAGVERZOEGERUNG:
                     emit setLiftValue(--liftValue);
                     liftValueButtonCounter--;
                     break;
@@ -85,14 +89,14 @@ void XboxController::run()
             }
             else
             {
-                liftValueButtonCounter = 5;
+                liftValueButtonCounter = XBOX_ANSCHLAGVERZOEGERUNG;
             }
 
 
             SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uas);
             if (mav)
             {
-                if (mav->getInputMode() == SkyeMAV::QGC_INPUT_MODE_MOUSE)
+                if (mav->getInputMode() == SkyeMAV::QGC_INPUT_MODE_XBOX)
                 {
                     emit xboxControllerChanged(xValue, yValue, zValue, aValue, bValue, cValue);
                 }
@@ -161,8 +165,25 @@ void XboxController::updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
 {
     if (inputMode == SkyeMAV::QGC_INPUT_MODE_XBOX)
     {
-        xboxActive = true;
-        emit setLiftValue(0);
+        if (!initialized)
+        {
+            if (joystick_.init("/dev/input/js0") == 0)
+            {
+                initialized=1;
+                xboxActive = true;
+                emit setLiftValue(0);
+            }
+            else
+            {
+                qDebug() << "No Controller found" << endl;
+                xboxActive = false;
+            }
+        }
+        else
+        {
+            xboxActive = true;
+            emit setLiftValue(0);
+        }
     }else{
         xboxActive = false;
     }
