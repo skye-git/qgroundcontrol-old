@@ -22,11 +22,9 @@
 
 
 #define XBOX_RESOLUTION_AXIS 32768
-#define XBOX_THRESHOLD_AXIS 5000
-#define XBOX_RESOLUTION_TRIGGER 255
-#define XBOX_THRESHOLD_TRIGGER 10
+#define XBOX_THRESHOLD_AXIS 6000
 #define XBOX_PROGRESSION_FACTOR 0.5 //the higher, the stronger the progressrion (1-a)*x+a*x²
-#define XBOX_FILTER_FACTOR 0.2 //the higher, the lower the cutoff freqency a*x_old+(1-a)*x_new
+#define XBOX_FILTER_FACTOR 0.7 //the higher, the lower the cutoff freqency a*x_old+(1-a)*x_new
 #define XBOX_ZERO_SNAP_THRESHOLD 0.001
 #define XBOX_XAXIS 1
 #define XBOX_YAXIS 0
@@ -34,9 +32,11 @@
 #define XBOX_ZAXIS2 4
 #define XBOX_CAXIS 2
 #define XBOX_BAXIS 3
-#define XBOX_AAXIS  6
+#define XBOX_AAXIS_PLUS_BUTTON  2
+#define XBOX_AAXIS_MINUS_BUTTON  0
 #define XBOX_UPLIFT_PLUS_BUTTON 3
 #define XBOX_UPLIFT_MINUS_BUTTON 1
+#define XBOX_ANSCHLAGVERZOEGERUNG 5
 
 
 class XboxController : public QThread
@@ -49,6 +49,7 @@ public:
     double progressive(double);
     double zerosnap(double);
     double normalize(double);
+    double normalize_z(double);
     int sign(double);
 protected:
     Joystick joystick_;
@@ -64,6 +65,7 @@ protected:
     double cValue;
     int liftValue;
     int liftValueButtonCounter;
+    int initialized;
 
 signals:
     void xboxControllerChanged(double x, double y, double z, double a, double b, double c);

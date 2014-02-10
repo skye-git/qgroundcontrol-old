@@ -17,9 +17,20 @@
  #ifndef __JOYSTICK_H__
  #define __JOYSTICK_H__ 1
 
-#include <linux/joystick.h>
+//#include <stdint.h>
+#include <linux/types.h>
 
-#ifdef __cplusplus              /* If the language is C++, use the Joystick class */
+
+struct Joy_js_event {
+    //uint32_t time;	/* event timestamp in milliseconds */
+    //int16_t value;	/* value */
+    //uint8_t type;	/* event type */
+    //uint8_t number;	/* axis/button number */
+    __u32 time;	/* event timestamp in milliseconds */
+    __s16 value;	/* value */
+    __u8 type;	/* event type */
+    __u8 number;	/* axis/button number */
+};
 
 class Joystick {
 protected:
@@ -30,7 +41,7 @@ protected:
     char name[80];              /* Holds the name of the joystick */
     int *axes;                  /* A pointer to the values of the axes of the joystick */
     char *buttons;              /* A pointer to the values of the buttons of the joystick */
-    struct js_event event;      /* The joystick event structure */
+    struct Joy_js_event event;      /* The joystick event structure */
 public:
     Joystick();                 /* A constructor that does nothing, open must then be called before any other function int the class */
     Joystick( const char* joydev ); /* The constructor for the object, must have the joystick port */
@@ -44,28 +55,5 @@ public:
     int numButtons();           /* Returns the number of buttons the joystick has */
     int connected;              /* Holds status of the connection state to the joystick */
 };
-
-#else                           /* If the language is C, use the c implementation */
-
-typedef struct {                /* A Structure to house the variable required in maintaining a joystick */
-    char *device;               /* Holds the path to the device file */
-    int js_fd;                  /* Holds the joystick file descriptor */
-    int axis_count;             /* Holds the number of axes the joystick has */
-    int button_count;           /* Holds the number of buttons the joystick has */
-    char name[80];              /* Holds the name of the joystick */
-    int *axes;                  /* A pointer to the values of the axes of the joystick */
-    char *buttons;              /* A pointer to the values of the buttons of the joystick */
-    struct js_event event;      /* The joystick event structure */
-} Joystick ;
-
-Joystick* js_open ( const char* joydev );      /* Function to open the joystick from a device file */
-
-char getJSButton( Joystick* js, int button );  /* Returns the value of a button of the joystick */
-
-int getJSAxis( Joystick* js, int axis );       /* Returns the value of an axis of the joystick */
-
-void js_close( Joystick* js );                 /* Closes a joystick instance */
-
-#endif
 
 #endif

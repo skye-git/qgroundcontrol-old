@@ -304,8 +304,10 @@ void MainWindow::init()
 
 #endif //MOUSE_ENABLED_LINUX
 
-    //xbox = new XboxController;
-    //connect(xbox, SIGNAL(xboxControllerChanged(double,double,double,double,double,double)), skyeControl, SLOT(getXboxControlCommands(double,double,double,double,double,double)));
+    xbox = new XboxController();
+    emit initStatusChanged(tr("Initializing Xbox interface."), Qt::AlignLeft | Qt::AlignBottom, QColor(62, 93, 141));
+
+    connect(xbox, SIGNAL(xboxControllerChanged(double,double,double,double,double,double)), skyeControl, SLOT(getXboxControlCommands(double,double,double,double,double,double)));
 
 
     // Connect link

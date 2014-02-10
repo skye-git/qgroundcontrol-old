@@ -56,7 +56,7 @@ This file is part of the QGROUNDCONTROL project
 #if (defined MOUSE_ENABLED_WIN) | (defined MOUSE_ENABLED_LINUX)
 #include "Mouse6dofInput.h"
 #endif // MOUSE_ENABLED_WIN
-//#include "xboxcontroller.h"
+#include "xboxcontroller.h"
 #include "DebugConsole.h"
 #include "ParameterInterface.h"
 #include "XMLCommProtocolWidget.h"
@@ -497,6 +497,9 @@ protected:
     //XboxController* xbox;                   ///< Implementation for xbox controller input
 
     UASSkyeControlWidget* skyeControl;
+
+
+    XboxController* xbox;
 
     /** User interface actions **/
     QAction* connectUASAct;

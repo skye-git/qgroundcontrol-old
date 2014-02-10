@@ -14,6 +14,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -48,8 +49,8 @@ int Joystick::init( const char* joydev ) {
     ioctl(js_fd, JSIOCGAXES, &axis_count);
     ioctl(js_fd, JSIOCGBUTTONS, &button_count);
     ioctl(js_fd, JSIOCGNAME(80), &name);
-    axes = (int*) malloc(axis_count * sizeof(int));
-    buttons = (char*) malloc(button_count * sizeof(char));
+    axes = (int*) calloc(axis_count , sizeof(int));
+    buttons = (char*) calloc(button_count , sizeof(char));
     fcntl(js_fd, F_SETFL, O_NONBLOCK);
     connected = 1;
     return 0;
@@ -65,7 +66,12 @@ void Joystick::stop() {
 }
 
 char Joystick::getButton( int button ) {
-    int res = read(js_fd, &event, sizeof(struct js_event)); res = 0;
+    struct js_event jse_in;
+    int res = read(js_fd, &jse_in, sizeof(struct js_event)); res = 0;
+    event.time = jse_in.time;
+    event.value = jse_in.value;
+    event.type = jse_in.type;
+    event.number = jse_in.number;
     switch ((event.type) & ~JS_EVENT_INIT)  {
         case JS_EVENT_AXIS: (axes)[event.number] = event.value;
             break;
@@ -79,9 +85,15 @@ char Joystick::getButton( int button ) {
 }
 
 int Joystick::getAxis( int axis ) {
-    int res = read(js_fd, &event, sizeof(struct js_event)); res = 0;
+    struct js_event jse_in;
+    int res = read(js_fd, &jse_in, sizeof(struct js_event)); res = 0;
+    event.time = jse_in.time;
+    event.value = jse_in.value;
+    event.type = jse_in.type;
+    event.number = jse_in.number;
     switch ((event.type) & ~JS_EVENT_INIT)  {
-        case JS_EVENT_AXIS: (axes)[event.number] = event.value;
+        case JS_EVENT_AXIS:
+            (axes)[event.number] = event.value;
             break;
         case JS_EVENT_BUTTON: (buttons)[event.number] = event.value;
             break;
