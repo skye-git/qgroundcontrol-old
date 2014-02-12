@@ -46,7 +46,7 @@ void XboxController::run()
 
 
             zValue = zerosnap(XBOX_FILTER_FACTOR*zValue + (1-XBOX_FILTER_FACTOR)*progressive(normalize((joystick_.getAxis(XBOX_ZAXIS2)-joystick_.getAxis(XBOX_ZAXIS1))/2)));
-            //qDebug() << "JOYSTICK DEBUG AXIS Z  HAS VALUE" << zValue;
+            //qDebug() << "JOYSTICK DEBUG" << xValue << yValue << bValue << cValue << zValue;
 
             if (joystick_.getButton(XBOX_AAXIS_PLUS_BUTTON) and aValue >= 0)
             {

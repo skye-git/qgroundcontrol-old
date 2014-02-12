@@ -135,6 +135,6 @@ void UASSkyeInputMixer::updateXboxValues(double x, double y, double z, double a,
     valuesXbox[4] = b;
     valuesXbox[5] = c;
 
-    //qDebug() << "[MIXER] Update Xbox values" << x << y << z << a << b << c;
+    qDebug() << "[MIXER] Update Xbox values" << x << y << z << a << b << c;
 }
 

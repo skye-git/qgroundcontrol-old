@@ -150,6 +150,7 @@ void UASSkyeControlAdvancedWidget::changeLiftValue(int value)
     if (liftValue != value)
     {
         liftValue = value;
+        ui->doubleSpinBoxLift->setValue((double)liftValue/LIFT_RESOLUTION);
 
         ui->doubleSpinBoxLift->setStyleSheet(getStyleString(double(value)/double(LIFT_RESOLUTION)));
 
