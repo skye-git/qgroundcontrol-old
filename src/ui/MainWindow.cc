@@ -296,8 +296,8 @@ void MainWindow::init()
 
     mouse = new Mouse6dofInput(this);
     connect(this, SIGNAL(x11EventOccured(XEvent*)), mouse, SLOT(handleX11Event(XEvent*)));
-    connect(skyeControl, SIGNAL(changedInput(SkyeMAV::QGC_INPUT_MODE)), mouse, SLOT(updateInputMode(SkyeMAV::QGC_INPUT_MODE)));
-    connect(mouse, SIGNAL(resetInputMode(SkyeMAV::QGC_INPUT_MODE)), skyeControl, SLOT(updateInput(SkyeMAV::QGC_INPUT_MODE)));
+    connect(skyeControl, SIGNAL(changedInput(int)), mouse, SLOT(updateInputMode(int))); // todo
+    connect(mouse, SIGNAL(resetInputMode(int)), skyeControl, SLOT(updateInput(int)));
     connect(mouse, SIGNAL(mouseRotationActiveChanged(bool)), skyeControl, SLOT(changeMouseRotationEnabled(bool)));
     connect(mouse, SIGNAL(mouseTranslationActiveChanged(bool)), skyeControl, SLOT(changeMouseTranslationEnabled(bool)));
     connect(mouse, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), skyeControl, SLOT(getMouse6DOFControlCommands(double,double,double,double,double,double)));

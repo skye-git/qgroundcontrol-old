@@ -107,7 +107,7 @@ signals:
       * @brief Reset input mode (if initialization fails)
       * @param inputMode, none if mouse initialization fails
       */
-    void resetInputMode(SkyeMAV::QGC_INPUT_MODE);
+    void resetInputMode(int);
 
 public slots:
     void setActiveUAS(UASInterface* uas);
@@ -124,7 +124,7 @@ public slots:
     void callInputModeMouse();
 #endif //MOUSE_ENABLED_LINUX
     /** @brief Input mode changed. Start 3dMouse if requested. */
-    void updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode);
+    void updateInputMode(int inputMode);
 
 };
 

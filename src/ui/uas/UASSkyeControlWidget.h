@@ -97,7 +97,7 @@ public slots:
 
 signals:
     void changedMode(int);
-    void changedInput(SkyeMAV::QGC_INPUT_MODE);
+    void changedInput(SkyeMAV::QGC_INPUT_MODE, bool);
     void changed6DOFControlCommands(double, double, double, double, double, double);
 
     /** @brief change actuation unit configuration parameter */

@@ -24,11 +24,11 @@ public:
     ~SkyeMAV();
 
     enum QGC_INPUT_MODE {
-        QGC_INPUT_MODE_NONE,
-        QGC_INPUT_MODE_MOUSE,
-        QGC_INPUT_MODE_TOUCH,
-        QGC_INPUT_MODE_KEYBOARD,
-        QGC_INPUT_MODE_XBOX
+        QGC_INPUT_MODE_NONE=0,
+        QGC_INPUT_MODE_MOUSE=1,
+        QGC_INPUT_MODE_TOUCH=2,
+        QGC_INPUT_MODE_KEYBOARD=4,
+        QGC_INPUT_MODE_XBOX=8
     };
 
     /** @brief Get the airframe */

@@ -73,7 +73,7 @@ signals:
 
 public slots:
     void setActiveUAS(UASInterface* uas);
-    void updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode);
+    void updateInputMode(int inputMode);
     void liftValueChanged(int up);
 
 };

@@ -46,7 +46,7 @@ void XboxController::run()
 
 
             zValue = zerosnap(XBOX_FILTER_FACTOR*zValue + (1-XBOX_FILTER_FACTOR)*progressive(normalize((joystick_.getAxis(XBOX_ZAXIS2)-joystick_.getAxis(XBOX_ZAXIS1))/2)));
-            //qDebug() << "JOYSTICK DEBUG" << xValue << yValue << bValue << cValue << zValue;
+            qDebug() << "JOYSTICK DEBUG" << xValue << yValue << bValue << cValue << zValue;
 
             if (joystick_.getButton(XBOX_AAXIS_PLUS_BUTTON) and aValue >= 0)
             {
@@ -142,7 +142,6 @@ void XboxController::setActiveUAS(UASInterface* uas)
         //connect(this, SIGNAL(xboxControllerChanged(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
         connect(this, SIGNAL(SetLiftValue(int)), mav, SLOT(setLiftValue(int)));
         connect(mav, SIGNAL(liftValueChanged(int)), this, SLOT(liftValueChanged(int)));
-        connect(this, SIGNAL(resetInputMode(SkyeMAV::QGC_INPUT_MODE)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
         connect(mav, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(updateInputMode(SkyeMAV::QGC_INPUT_MODE)));
 
     }else{
@@ -161,9 +160,9 @@ void XboxController::setActiveUAS(UASInterface* uas)
 
 }
 
-void XboxController::updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
+void XboxController::updateInputMode(int inputMode)
 {
-    if (inputMode == SkyeMAV::QGC_INPUT_MODE_XBOX)
+    if (inputMode & SkyeMAV::QGC_INPUT_MODE_XBOX)
     {
         if (!initialized)
         {

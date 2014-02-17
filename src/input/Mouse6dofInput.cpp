@@ -292,10 +292,10 @@ void Mouse6dofInput::callInputModeMouse()
 }
 #endif // MOUSE_ENABLED_LINUX
 
-void Mouse6dofInput::updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
+void Mouse6dofInput::updateInputMode(int inputMode)
 {
 #ifdef MOUSE_ENABLED_WIN
-    if (inputMode == SkyeMAV::QGC_INPUT_MODE_MOUSE)
+    if (inputMode & SkyeMAV::QGC_INPUT_MODE_MOUSE)
     {
         mouseActive = true;
     }else{
@@ -304,7 +304,7 @@ void Mouse6dofInput::updateInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
 #endif //MOUSE_ENABLED_WIN
 
 #ifdef MOUSE_ENABLED_LINUX
-    if (inputMode == SkyeMAV::QGC_INPUT_MODE_MOUSE)
+    if (inputMode & SkyeMAV::QGC_INPUT_MODE_MOUSE)
     {
         ///////////////// Reinitialize 3DMouse //////////////////
         display = QX11Info::display();
