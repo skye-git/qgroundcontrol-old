@@ -92,7 +92,7 @@ void QGCSkyeTestControl::changeMode(int mode)
     if (this->uas)
     {
         uas->setModeCommand(mode);
-        uas->setInputMode(SkyeMAV::QGC_INPUT_MODE_NONE);
+        //uas->setInputMode(SkyeMAV::QGC_INPUT_MODE_NONE);
         //emit emitValues();
     }
 }

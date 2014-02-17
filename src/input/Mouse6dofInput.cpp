@@ -59,7 +59,7 @@ Mouse6dofInput::Mouse6dofInput(QWidget* parent) :
     mouse3DMaxC(350.0),   // TODO: check maximum value for plugged device
     parentWidget(parent),
     timerInit3dxDaemon(NULL),
-    uas(NULL),
+    uasId(NULL),
     done(false),
     mouseActive(false),
     translationActive(true),
@@ -83,6 +83,31 @@ Mouse6dofInput::~Mouse6dofInput()
 
 void Mouse6dofInput::setActiveUAS(UASInterface* uas)
 {
+    if (this->uasId!= 0)
+    {
+        UASInterface* oldUAS = UASManager::instance()->getUASForId(this->uasId);
+        this->uasId = 0;
+        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(oldUAS);
+        if (mav)
+        {
+            disconnect(mav, SIGNAL(inputModeChanged(int)), this, SLOT(updateInputMode(int)));
+        }
+    }
+
+
+    SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uas);
+    if (mav)
+    {
+        this->uasId = mav->getUASID();
+
+        qDebug() << "[Mouse6DOF] connecting uav slots";
+
+        connect(mav, SIGNAL(inputModeChanged(int)), this, SLOT(updateInputMode(int)));
+        connect(this, SIGNAL(resetInputMode(SkyeMAV::QGC_INPUT_MODE,bool)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE,bool)));
+    }
+
+
+
     if (!isRunning())
     {
         start();
@@ -284,14 +309,6 @@ void Mouse6dofInput::handleX11Event(XEvent *event)
 }
 #endif //MOUSE_ENABLED_LINUX
 
-#ifdef MOUSE_ENABLED_LINUX
-void Mouse6dofInput::callInputModeMouse()
-{
-    qDebug() << "QProcess finished, WORKS:)";
-    updateInputMode(SkyeMAV::QGC_INPUT_MODE_MOUSE);
-}
-#endif // MOUSE_ENABLED_LINUX
-
 void Mouse6dofInput::updateInputMode(int inputMode)
 {
 #ifdef MOUSE_ENABLED_WIN
@@ -304,6 +321,7 @@ void Mouse6dofInput::updateInputMode(int inputMode)
 #endif //MOUSE_ENABLED_WIN
 
 #ifdef MOUSE_ENABLED_LINUX
+    qDebug() << "[Mouse6dofInput] update input called with" << inputMode;
     if (inputMode & SkyeMAV::QGC_INPUT_MODE_MOUSE)
     {
         ///////////////// Reinitialize 3DMouse //////////////////
@@ -330,13 +348,13 @@ void Mouse6dofInput::updateInputMode(int inputMode)
             process3dxDaemon->start(processProgramm, processArguments);
 
             // 3dxsrv was not running, therefore return return to touch input
-            emit resetInputMode(SkyeMAV::QGC_INPUT_MODE_NONE);
+            emit resetInputMode(SkyeMAV::QGC_INPUT_MODE_MOUSE, false);
         }
         else
         {
             qDebug() << "[Mouse6dofInput] Initialized 3dMouse";
             mouseActive = true;
-            emit resetInputMode(SkyeMAV::QGC_INPUT_MODE_MOUSE);
+            emit resetInputMode(SkyeMAV::QGC_INPUT_MODE_MOUSE, true);
         }
     }
     else

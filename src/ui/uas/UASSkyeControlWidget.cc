@@ -130,6 +130,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
             disconnect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
             disconnect(mav, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
             disconnect(this, SIGNAL(changedInput(SkyeMAV::QGC_INPUT_MODE, bool)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE, bool)));
+            disconnect(mav, SIGNAL(inputModeChanged(int)), this, SLOT(updateInput(int)));
 
             disconnect(mav, SIGNAL(mouseButtonRotationChanged(bool)), this, SLOT(changeMouseRotationEnabled(bool)));
             disconnect(mav, SIGNAL(mouseButtonTranslationChanged(bool)), this, SLOT(changeMouseTranslationEnabled(bool)));
@@ -175,7 +176,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(mav, SIGNAL(batteryLow(double,bool,uint)), alertWidget, SLOT(batteryLow(double,bool,uint)));
 
         connect(this, SIGNAL(changedInput(SkyeMAV::QGC_INPUT_MODE, bool)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE, bool)));
-        //connect(mav, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(updateInput(SkyeMAV::QGC_INPUT_MODE)));
+        connect(mav, SIGNAL(inputModeChanged(int)), this, SLOT(updateInput(int)));
 
         connect(inputMixer, SIGNAL(changed6DOFInput(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
 
@@ -264,41 +265,16 @@ void UASSkyeControlWidget::updateState(int state)
     updateStatemachine();
 }
 
-void UASSkyeControlWidget::updateInput(SkyeMAV::QGC_INPUT_MODE input)
+void UASSkyeControlWidget::updateInput(int input)
 {
-    inputMode = input;
-    switch ((int)input)
+    if (inputMode != input)
     {
-    case (int)SkyeMAV::QGC_INPUT_MODE_NONE:
+        inputMode = input;
 
-        ui.mouseButton->setChecked(false);
-        ui.touchButton->setChecked(false);
-        ui.keyboardButton->setChecked(false);
-        ui.xboxButton->setChecked(false);
-        //ui.lastActionLabel->setText("No input set");
-        break;
-    case (int)SkyeMAV::QGC_INPUT_MODE_MOUSE:
-        ui.mouseButton->setChecked(true);
-        ui.touchButton->setChecked(false);
-        ui.keyboardButton->setChecked(false);
-        ui.lastActionLabel->setText("Mouse input activated.");
-        break;
-    case (int)SkyeMAV::QGC_INPUT_MODE_TOUCH:
-        ui.mouseButton->setChecked(false);
-        ui.touchButton->setChecked(true);
-        ui.keyboardButton->setChecked(false);
-        ui.lastActionLabel->setText("Touch input activated.");
-        break;
-    case (int)SkyeMAV::QGC_INPUT_MODE_KEYBOARD:
-        ui.mouseButton->setChecked(true);
-        ui.touchButton->setChecked(false);
-        ui.keyboardButton->setChecked(false);
-        ui.lastActionLabel->setText("Keyboard input activated.");
-        break;
-    case (int)SkyeMAV::QGC_INPUT_MODE_XBOX:
-        ui.xboxButton->setChecked(true);
-        ui.lastActionLabel->setText("Xbox input set");
-        break;
+        ui.mouseButton->setChecked(inputMode & SkyeMAV::QGC_INPUT_MODE_MOUSE);
+        ui.touchButton->setChecked(inputMode & SkyeMAV::QGC_INPUT_MODE_TOUCH);
+        ui.keyboardButton->setChecked(inputMode & SkyeMAV::QGC_INPUT_MODE_KEYBOARD);
+        ui.xboxButton->setChecked(inputMode & SkyeMAV::QGC_INPUT_MODE_XBOX);
     }
     updateStyleSheet();
 }
@@ -381,21 +357,38 @@ void UASSkyeControlWidget::setInputMouse(bool checked)
 
 void UASSkyeControlWidget::setInputTouch(bool checked)
 {
-    ui.lastActionLabel->setText(tr("Activating Touchscreen..."));
+    if (checked)
+    {
+        ui.lastActionLabel->setText(tr("Activating Touchscreen..."));
+    } else {
+        ui.lastActionLabel->setText(tr("Deactivated Touchscreen"));
+    }
+
     emit changedInput(SkyeMAV::QGC_INPUT_MODE_TOUCH, checked);
 }
 
 void UASSkyeControlWidget::setInputKeyboard(bool checked)
 {
-    ui.lastActionLabel->setText(tr("Activating Keyboard..."));
+    if (checked)
+    {
+        ui.lastActionLabel->setText(tr("Activating Keyboard..."));
+    } else {
+        ui.lastActionLabel->setText(tr("Deactivating Keyboard"));
+    }
+
     emit changedInput(SkyeMAV::QGC_INPUT_MODE_KEYBOARD, checked);
 }
 
 void UASSkyeControlWidget::setInputXbox(bool checked)
 {
+    if (checked)
+    {
         ui.lastActionLabel->setText(tr("Xbox Controller activated!"));
-        inputMode = SkyeMAV::QGC_INPUT_MODE_XBOX;
-        emit changedInput(SkyeMAV::QGC_INPUT_MODE_XBOX, checked);
+    } else {
+        ui.lastActionLabel->setText(tr("Xbox Controller deactivated!"));
+    }
+
+    emit changedInput(SkyeMAV::QGC_INPUT_MODE_XBOX, checked);
 }
 
 void UASSkyeControlWidget::transmitMode(int mode)

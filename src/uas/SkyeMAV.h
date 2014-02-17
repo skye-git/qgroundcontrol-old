@@ -36,29 +36,23 @@ public:
     {
         return airframe;
     }
+
     /** @brief Get the current state of active UAS */
     int getState() const
     {
         return status;
     }
+
     /** @brief Get mode */
     uint8_t getMode();
-    /** @brief Get activated input mode for this uas */
-    QGC_INPUT_MODE getInputMode()
+
+    /** @brief Get activated input mode flags for this uas */
+    int getInputMode()
     {
         return inputMode;
     }
-//    /** @brief Trajectory controller */
-//    int getCurrentTrajectoryStamp()
-//    {
-//        return currentTrajectoryStamp;
-//    }
 
-private:
-//    /** @brief Transforms a Vector from inertial to uas coordinates
-//                used for trajectory controller */
-//    void InertialToCamera(const double inertFrame[3], double camFrame[3]);
-//    void updateTrigonometry();
+
 
 public slots:
     /** @brief Set the specific airframe type */
@@ -92,9 +86,8 @@ public slots:
     /** @brief Set additive value for yaw manual control */
     void setAddYawValue(double val) {addYawValue = val;}
 
-//    void followTrajectory();
-//    /** @brief Set active Input Mode for this UAS */
-    void setInputMode(SkyeMAV::QGC_INPUT_MODE input);
+    /** @brief Set active input flag for this UAS */
+    void setInputMode(SkyeMAV::QGC_INPUT_MODE input, bool active);
     /** @brief Report de-/activation of rotative 3DMouse input */
     void changeMouseRotationActive(bool active){emit mouseButtonRotationChanged(active);}
     /** @brief Report de-/activation of translative 3DMouse input */
@@ -123,7 +116,7 @@ signals:
     void reportUDPLinkFailed(QString errorStr);
     void mouseButtonRotationChanged(bool active);
     void mouseButtonTranslationChanged(bool active);
-    void inputModeChanged(SkyeMAV::QGC_INPUT_MODE);
+    void inputModeChanged(int inputMode);
     /** @brief Battery is low. Shutdown required */
     void batteryLow(double voltage);
     /** @brief Battery is low. Shutdown required */
@@ -179,7 +172,7 @@ protected:
     double sinPsi;
     double fromItoC[9];
 
-    QGC_INPUT_MODE inputMode;
+    int inputMode;                          // input device bit flags (see QGC_INPUT_MODE)
 
     //bool lowBatteryFront;                   ///< true if electronics platform battery is low
     //int lowBatteryAU;                       ///< id of actuation units that battery is low; -1 otherwise

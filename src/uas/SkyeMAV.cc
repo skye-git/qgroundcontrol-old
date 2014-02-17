@@ -319,11 +319,30 @@ uint8_t SkyeMAV::getMode()
     return this->base_mode;
 }
 
-void SkyeMAV::setInputMode(SkyeMAV::QGC_INPUT_MODE input)
+void SkyeMAV::setInputMode(SkyeMAV::QGC_INPUT_MODE input, bool active)
 {
-    qDebug() << "[SkyeMAV] Set new input mode" << input;
-    inputMode = input;
-    emit inputModeChanged(inputMode);
+    bool oldInputState = inputMode & input;
+    qDebug() << "[SkyeMAV] setInputMode: request flag" << input << "set from" << oldInputState << "to" << active;
+
+    // check whether input mode has changed
+    if (oldInputState != active)
+    {
+        qDebug() << "[SkyeMAV] Set input" << input << "to" << active;
+        if (active)
+        {
+        // Activate this input
+        inputMode += input;
+        } else {
+        // Deactivate this input
+
+            inputMode -= input;
+        }
+
+        emit inputModeChanged(inputMode);
+    } else {
+        // do nothing
+        qDebug() << "[SkyeMAV] Input" << input << "was already" << active;
+    }
 }
 
 void SkyeMAV::sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t blue, uint8_t mode, float frequency)

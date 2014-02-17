@@ -105,7 +105,7 @@ void DirectControlWidget::setUAS(UASInterface* mav)
         updateState(uas->getState());
 //        uas->setMode(MAV_MODE_DIRECT_CONTROL_DISARMED);
         uas->setMode(MAV_MODE_PREFLIGHT, 0);
-        uas->setInputMode(SkyeMAV::QGC_INPUT_MODE_NONE);
+        //uas->setInputMode(SkyeMAV::QGC_INPUT_MODE_NONE);
     }
 }
 
@@ -131,7 +131,7 @@ void DirectControlWidget::changeMode(int mode)
     if(uas)
     {
         uas->setMode(mode, 0);
-        uas->setInputMode(SkyeMAV::QGC_INPUT_MODE_NONE);
+        //uas->setInputMode(SkyeMAV::QGC_INPUT_MODE_NONE);
         emit emitValues();
     }
 }

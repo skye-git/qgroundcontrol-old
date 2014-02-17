@@ -78,7 +78,7 @@ public slots:
     /** @brief Update internal state machine */
     void updateStatemachine();
     /** @brief Update input buttons */
-    void updateInput(SkyeMAV::QGC_INPUT_MODE input);
+    void updateInput(int input);
     /** @brief Update 3dMouse button image */
     void changeMouseTranslationEnabled(bool transEnabled);
     /** @brief Update 3dMouse button image */
@@ -133,7 +133,7 @@ signals:
         int uasId;                          ///< Reference to the current uas
         unsigned int uasMode;               ///< Current uas mode
         bool engineOn;                      ///< Engine state
-        SkyeMAV::QGC_INPUT_MODE inputMode;           ///< Current device for input
+        int inputMode;                      ///< Active device flags for input (see SkyeMAV::QGC_INPUT_MODE)
         bool mouseTranslationEnabled;       ///< True when translational motions enabled
         bool mouseRotationEnabled;          ///< True when rotational motions enabled
 

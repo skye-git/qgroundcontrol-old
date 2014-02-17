@@ -64,7 +64,7 @@ protected:
     QTimer* timerInit3dxDaemon;
 #endif // MOUSE_ENABLED_LINUX
 
-    UASInterface* uas;
+    int uasId;
     bool done;
     bool mouseActive;
     bool translationActive;
@@ -105,9 +105,10 @@ signals:
 
     /**
       * @brief Reset input mode (if initialization fails)
-      * @param inputMode, none if mouse initialization fails
+      * @param inputMode: mouse flag
+      *        active: true if mouse activated
       */
-    void resetInputMode(int);
+    void resetInputMode(SkyeMAV::QGC_INPUT_MODE inputMode, bool active);
 
 public slots:
     void setActiveUAS(UASInterface* uas);
@@ -120,8 +121,6 @@ public slots:
 #ifdef MOUSE_ENABLED_LINUX
     /** @brief Get an XEvent to check it for an 3DMouse event (motion or button) */
     void handleX11Event(XEvent* event);
-    /** @brief Input mode changed to 3dMouse. */
-    void callInputModeMouse();
 #endif //MOUSE_ENABLED_LINUX
     /** @brief Input mode changed. Start 3dMouse if requested. */
     void updateInputMode(int inputMode);
