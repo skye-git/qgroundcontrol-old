@@ -204,7 +204,7 @@
         <file>files/images/skye/input/3dx_spacenavigator_200x198_trans_rot.png</file>
         <file>files/images/skye/input/FingerPointing.png</file>
         <file>files/images/skye/input/keyboard-icon_64.png</file>
-        <file>images/skye_images/input/xbox_controller.png</file>
+        <file>files/images/skye/input/xbox_controller.png</file>
     </qresource>
     <qresource prefix="/general">
         <file alias="vera.ttf">files/styles/Vera.ttf</file>

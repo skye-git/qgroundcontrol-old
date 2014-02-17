@@ -168,22 +168,25 @@ void XboxController::updateInputMode(int inputMode)
         {
             if (joystick_.init("/dev/input/js0") == 0)
             {
+                qDebug() << "[xboxcontroller] Initialized xbox controller";
                 initialized=1;
                 xboxActive = true;
                 emit setLiftValue(0);
             }
             else
             {
-                qDebug() << "No Controller found" << endl;
+                qDebug() << "[xboxcontroller] No controller found";
                 xboxActive = false;
             }
         }
         else
         {
+            qDebug() << "[xboxcontroller] Activated xbox controller (was initialized before)";
             xboxActive = true;
             emit setLiftValue(0);
         }
     }else{
+        qDebug() << "[xboxcontroller] Deactivated xbox controller";
         xboxActive = false;
     }
 }

@@ -472,9 +472,9 @@ void UASSkyeControlWidget::updateStyleSheet()
     }else{
         style.append("QPushButton#mouseButton {image: url(:files/images/skye/input/3dx_spacenavigator_200x198.png);}");
     }
-    style.append("QPushButton#touchButton {image: url(:images/skye_images/input/FingerPointing.png);}");
-    style.append("QPushButton#keyboardButton {image: url(:images/skye_images/input/keyboard-icon_64.png); }");
-    style.append("QPushButton#xboxButton {image: url(:images/skye_images/input/xbox_controller.png); }");
+    style.append("QPushButton#touchButton {image: url(:files/images/skye/input/FingerPointing.png);}");
+    style.append("QPushButton#keyboardButton {image: url(:files/images/skye/input/keyboard-icon_64.png); }");
+    style.append("QPushButton#xboxButton {image: url(:files/images/skye/input/xbox_controller.png); }");
     style.append("QPushButton:disabled {background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #BBBBBB, stop: 1 #444444); color: #333333 }");
     this->setStyleSheet(style);
 }
