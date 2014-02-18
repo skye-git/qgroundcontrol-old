@@ -59,7 +59,7 @@ Mouse6dofInput::Mouse6dofInput(QWidget* parent) :
     mouse3DMaxC(350.0),   // TODO: check maximum value for plugged device
     parentWidget(parent),
     timerInit3dxDaemon(NULL),
-    uasId(NULL),
+	uasId(0),
     done(false),
     mouseActive(false),
     translationActive(true),

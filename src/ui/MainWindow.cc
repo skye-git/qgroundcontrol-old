@@ -135,8 +135,7 @@ MainWindow::MainWindow(QWidget *parent):
     simulationLink(NULL),
     lowPowerMode(false),
     customMode(CUSTOM_MODE_NONE),
-    inputMode(SkyeMAV::QGC_INPUT_MODE_NONE),     // FIXME: Remove asap, Code Skye
-    menuActionHelper(new MenuActionHelper())
+	menuActionHelper(new MenuActionHelper())
 {
     this->setAttribute(Qt::WA_DeleteOnClose);
     connect(menuActionHelper, SIGNAL(needToShowDockWidget(QString,bool)),SLOT(showDockWidget(QString,bool)));
@@ -2072,30 +2071,3 @@ bool MainWindow::x11Event(XEvent *event)
 }
 #endif // MOUSE_ENABLED_LINUX
 
-// Remove asap //Skye
-void MainWindow::setInputMode(SkyeMAV::QGC_INPUT_MODE inputMode)
-{
-    this->inputMode = inputMode;
-
-    switch ((int)inputMode)
-    {
-    case (int)SkyeMAV::QGC_INPUT_MODE_MOUSE:
-//            emit emitTouchInputVisibility(false);
-            break;
-    case (int)SkyeMAV::QGC_INPUT_MODE_TOUCH:
-//            emit emitTouchInputVisibility(true);
-            break;
-    case (int)SkyeMAV::QGC_INPUT_MODE_KEYBOARD:
-//            emit emitTouchInputVisibility(false);
-            break;
-    case (int)SkyeMAV::QGC_INPUT_MODE_XBOX:
-            this->inputMode = SkyeMAV::QGC_INPUT_MODE_XBOX;
-            emit emitTouchInputVisibility(false);
-            break;
-    default:
-//            emit emitTouchInputVisibility(false);
-            qDebug() << "No input device set!";
-            break;
-    }
-// qDebug() << "New Input: " << inputMode;
-}

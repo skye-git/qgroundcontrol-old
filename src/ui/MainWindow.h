@@ -300,12 +300,6 @@ public slots:
 
     void commsWidgetDestroyed(QObject *obj);
 
-// Begin Code Skye
-    /** @brief Set input mode, as this is still needed for the touch interface.
-        FIXME: Remove that asap to separate touch interface */
-    void setInputMode(SkyeMAV::QGC_INPUT_MODE inputMode);
-// End Code Skye
-
 protected slots:
     void showDockWidget(const QString &name, bool show);
 
@@ -319,11 +313,6 @@ signals:
     /** @brief Forward X11Event to catch 3DMouse inputs */
     void x11EventOccured(XEvent *event);
 #endif //MOUSE_ENABLED_LINUX
-    /** @brief Emits bool whether TouchInput Interface is shown or not */ // Beginn code AL(10.04.2012)
-    void emitTouchInputVisibility(bool);
-    /** @brief Emits new contol values for UAS given by keyboard in range [-1, 1] */
-//    void valueTouchInputChanged(double xValue, double yValue, double zValue, double rollValue, double pitchValue, double yawValue); //Ende Code AL(11.04.12)
-
 
 
 public:
@@ -538,8 +527,6 @@ private:
 
     QString getWindowStateKey();
     QString getWindowGeometryKey();
-
-    SkyeMAV::QGC_INPUT_MODE inputMode; // FIXME: Remove asap.. Begin & End Code Skye (07.03.2012)
 
     friend class MenuActionHelper; //For VIEW_SECTIONS
 
