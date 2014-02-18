@@ -330,11 +330,10 @@ void SkyeMAV::setInputMode(SkyeMAV::QGC_INPUT_MODE input, bool active)
         qDebug() << "[SkyeMAV] Set input" << input << "to" << active;
         if (active)
         {
-        // Activate this input
-        inputMode += input;
+			// Activate this input
+			inputMode += input;
         } else {
-        // Deactivate this input
-
+			// Deactivate this input
             inputMode -= input;
         }
 
