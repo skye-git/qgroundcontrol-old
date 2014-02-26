@@ -267,14 +267,26 @@ void UASSkyeControlWidget::updateState(int state)
 
 void UASSkyeControlWidget::updateInput(int input)
 {
+	qDebug() << "[UASSkyeControl] changing input from" << inputMode << "to" << input;
     if (inputMode != input)
     {
-        inputMode = input;
+		// 3dMouse has been changed from inactive to active
+		if ( ((inputMode & SkyeMAV::QGC_INPUT_MODE_MOUSE) == false) && ((input & SkyeMAV::QGC_INPUT_MODE_MOUSE) == true) )
+		{
+			ui.lastActionLabel->setText("3dMouse activated");
+		}
+		// 3dMouse has been changed from active to inactive
+		if ( ((inputMode & SkyeMAV::QGC_INPUT_MODE_MOUSE) == true) && ((input & SkyeMAV::QGC_INPUT_MODE_MOUSE) == false) )
+		{
+			ui.lastActionLabel->setText("3dMouse inactive. Click for activation.");
+		}
 
-        ui.mouseButton->setChecked(inputMode & SkyeMAV::QGC_INPUT_MODE_MOUSE);
-        ui.touchButton->setChecked(inputMode & SkyeMAV::QGC_INPUT_MODE_TOUCH);
-        ui.keyboardButton->setChecked(inputMode & SkyeMAV::QGC_INPUT_MODE_KEYBOARD);
-        ui.xboxButton->setChecked(inputMode & SkyeMAV::QGC_INPUT_MODE_XBOX);
+		ui.mouseButton->setChecked(input & SkyeMAV::QGC_INPUT_MODE_MOUSE);
+		ui.touchButton->setChecked(input & SkyeMAV::QGC_INPUT_MODE_TOUCH);
+		ui.keyboardButton->setChecked(input & SkyeMAV::QGC_INPUT_MODE_KEYBOARD);
+		ui.xboxButton->setChecked(input & SkyeMAV::QGC_INPUT_MODE_XBOX);
+
+		inputMode = input;
     }
     updateStyleSheet();
 }
@@ -338,18 +350,14 @@ void UASSkyeControlWidget::setAttitudeControlMode()
     }
 }
 
-void UASSkyeControlWidget::mouseActivated(bool success)
-{
-    if (!success)
-    {
-        ui.mouseButton->setChecked(false);
-    }
-    qDebug() << "Mouse activated is" << success;
-}
-
 void UASSkyeControlWidget::setInputMouse(bool checked)
 {
-    ui.lastActionLabel->setText(tr("Starting 3dMouse... Click again for activate."));
+	if (checked)
+	{
+		ui.lastActionLabel->setText(tr("Starting 3dMouse... Click again for activate."));
+	} else {
+		ui.lastActionLabel->setText(tr("Deactivated 3dMouse"));
+	}
     emit changedInput(SkyeMAV::QGC_INPUT_MODE_MOUSE, checked);
 
     //updateStyleSheet();
@@ -452,7 +460,7 @@ void UASSkyeControlWidget::updateStyleSheet()
     style.append("QPushButton { min-height: 30; }");
     if (inputMode == SkyeMAV::QGC_INPUT_MODE_MOUSE)
     {
-//        qDebug() << "3dMouse TRANSLATION is: " << mouseTranslationEnabled << ", ROTATION is: " << mouseRotationEnabled;
+		qDebug() << "3dMouse TRANSLATION is: " << mouseTranslationEnabled << ", ROTATION is: " << mouseRotationEnabled;
         if (mouseTranslationEnabled && mouseRotationEnabled)
         {
             style.append("QPushButton#mouseButton {image: url(:files/images/skye/input/3dx_spacenavigator_200x198_trans_rot.png);}");
