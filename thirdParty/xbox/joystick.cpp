@@ -65,40 +65,37 @@ void Joystick::stop() {
     }
 }
 
-char Joystick::getButton( int button ) {
-    struct js_event jse_in;
-    int res = read(js_fd, &jse_in, sizeof(struct js_event)); res = 0;
-    event.time = jse_in.time;
-    event.value = jse_in.value;
-    event.type = jse_in.type;
-    event.number = jse_in.number;
-    switch ((event.type) & ~JS_EVENT_INIT)  {
-        case JS_EVENT_AXIS: (axes)[event.number] = event.value;
+void Joystick::readEvents() {
+    while (1) {
+        struct js_event event;
+        int res = read(js_fd, &event, sizeof(struct js_event));
+
+        if (res != sizeof(struct js_event)) {
             break;
-        case JS_EVENT_BUTTON: (buttons)[event.number] = event.value;
-            break;
+        }
+
+        if ((event.type) & JS_EVENT_AXIS)  {
+            if(event.number <= axis_count) {
+                (axes)[event.number] = event.value;
+            }
+        }
+        if ((event.type) & JS_EVENT_BUTTON)  {
+            if(event.number <= button_count) {
+                (buttons)[event.number] = event.value;
+            }
+        }
     }
-    if(button <= (button_count)) {
+}
+
+char Joystick::getButton( int button ) {
+    if(button >= 0 && button <= (button_count)) {
          return (buttons)[button];
     }
     return -1;
 }
 
 int Joystick::getAxis( int axis ) {
-    struct js_event jse_in;
-    int res = read(js_fd, &jse_in, sizeof(struct js_event)); res = 0;
-    event.time = jse_in.time;
-    event.value = jse_in.value;
-    event.type = jse_in.type;
-    event.number = jse_in.number;
-    switch ((event.type) & ~JS_EVENT_INIT)  {
-        case JS_EVENT_AXIS:
-            (axes)[event.number] = event.value;
-            break;
-        case JS_EVENT_BUTTON: (buttons)[event.number] = event.value;
-            break;
-    }
-    if(axis <= axis_count) {
+    if(axis >= 0 && axis <= axis_count) {
         return (axes)[axis];
     }
     return -65535;

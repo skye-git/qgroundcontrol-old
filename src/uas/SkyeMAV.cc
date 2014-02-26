@@ -271,7 +271,7 @@ void SkyeMAV::sendManualControlCommands6DoF(double x, double y, double z, double
         mavlink_message_t message;
         mavlink_msg_setpoint_6dof_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (float)x, (float)y, (float)z, (float)phi, (float)theta, (float)psi);
         sendMessage(message);
-        //qDebug() << "SENT 6DOF CONTROL MESSAGE:" << x << y << z << phi << theta << psi;
+        // qDebug() << "SENT 6DOF CONTROL MESSAGE:" << x << y << z << phi << theta << psi;
     }
 }
 
@@ -377,7 +377,7 @@ void SkyeMAV::setLiftValue(int val)
         liftValue = val;
         qDebug() << "lift factor" << val;
         emit liftValueChanged(liftValue);
-        liftValueFloat = liftValue / LIFT_RESOLUTION;
+        liftValueFloat = liftValue / (float)LIFT_RESOLUTION;
     }
 
 }

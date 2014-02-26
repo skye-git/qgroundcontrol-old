@@ -21,17 +21,6 @@
 #include <linux/types.h>
 
 
-struct Joy_js_event {
-    //uint32_t time;	/* event timestamp in milliseconds */
-    //int16_t value;	/* value */
-    //uint8_t type;	/* event type */
-    //uint8_t number;	/* axis/button number */
-    __u32 time;	/* event timestamp in milliseconds */
-    __s16 value;	/* value */
-    __u8 type;	/* event type */
-    __u8 number;	/* axis/button number */
-};
-
 class Joystick {
 protected:
     char *device;               /* Holds the path to the device file */
@@ -41,12 +30,12 @@ protected:
     char name[80];              /* Holds the name of the joystick */
     int *axes;                  /* A pointer to the values of the axes of the joystick */
     char *buttons;              /* A pointer to the values of the buttons of the joystick */
-    struct Joy_js_event event;      /* The joystick event structure */
 public:
     Joystick();                 /* A constructor that does nothing, open must then be called before any other function int the class */
     Joystick( const char* joydev ); /* The constructor for the object, must have the joystick port */
     int init( const char* joydev ); /* Opens a joystick following a blank constructor or after a close */
     void stop();                /* A function that calls the deconstructor to close an open joystick */
+    void readEvents();          /* Read out events from driver */
     char getButton( int button ); /* Returns the value of the specified button */
     int getAxis( int axis );    /* Returns the value of the specified axis */
     char* getName();            /* Returns the name of the name of the joystick */

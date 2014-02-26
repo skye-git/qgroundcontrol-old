@@ -755,7 +755,9 @@ void MAVLinkSkyeSimulationLink::writeBytes(const char* data, qint64 size)
             case MAVLINK_MSG_ID_SETPOINT_6DOF: {
                 mavlink_setpoint_6dof_t m6c;
                 mavlink_msg_setpoint_6dof_decode(&msg, &m6c);
-                if (m6c.target_system == this->systemId) {
+                // qDebug() << "Simulation received 6dof message" << m6c.trans_x << m6c.rot_x;
+                //if (m6c.target_system == this->systemId)
+                {
                     thrustX = m6c.trans_x;
                     thrustY = m6c.trans_y;
                     thrustZ = m6c.trans_z;

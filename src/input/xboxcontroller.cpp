@@ -38,7 +38,9 @@ void XboxController::run()
 
         if (xboxActive)
         {
-
+            // read events from driver:
+            joystick_.readEvents();
+            // extract data: (normalize, progressive mapping, exponential filter, zerosnap)
             xValue = zerosnap(XBOX_FILTER_FACTOR*xValue + (1-XBOX_FILTER_FACTOR)*progressive(normalize(-joystick_.getAxis(XBOX_XAXIS))));
             yValue = zerosnap(XBOX_FILTER_FACTOR*yValue + (1-XBOX_FILTER_FACTOR)*progressive(normalize(joystick_.getAxis(XBOX_YAXIS))));
             bValue = zerosnap(XBOX_FILTER_FACTOR*bValue + (1-XBOX_FILTER_FACTOR)*progressive(normalize(joystick_.getAxis(XBOX_BAXIS))));
@@ -65,10 +67,11 @@ void XboxController::run()
             {
                 switch (liftValueButtonCounter)
                 {
-                case 0:
                 case XBOX_ANSCHLAGVERZOEGERUNG:
-                    emit setLiftValue(++liftValue);
                     liftValueButtonCounter--;
+                case 0:
+                    qDebug() << "increase lift";
+                    emit setLiftValue(++liftValue);
                     break;
                 default:
                     liftValueButtonCounter--;
@@ -78,10 +81,11 @@ void XboxController::run()
             {
                 switch (liftValueButtonCounter)
                 {
-                case 0:
                 case XBOX_ANSCHLAGVERZOEGERUNG:
-                    emit setLiftValue(--liftValue);
                     liftValueButtonCounter--;
+                case 0:
+                    qDebug() << "decrease lift";
+                    emit setLiftValue(--liftValue);
                     break;
                 default:
                     liftValueButtonCounter--;
@@ -92,17 +96,7 @@ void XboxController::run()
                 liftValueButtonCounter = XBOX_ANSCHLAGVERZOEGERUNG;
             }
 
-
-            SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uas);
-            if (mav)
-            {
-                if (mav->getInputMode() == SkyeMAV::QGC_INPUT_MODE_XBOX)
-                {
-                    emit xboxControllerChanged(xValue, yValue, zValue, aValue, bValue, cValue);
-                }
-            }else{
-                emit xboxControllerChanged(xValue, yValue, zValue, aValue, bValue, cValue);
-            }
+            emit xboxControllerChanged(xValue, yValue, zValue, aValue, bValue, cValue);
         }
 
         // Sleep - Update rate is approx. 20 Hz (1000 ms / 20 Hz = 50 ms)
@@ -122,7 +116,7 @@ void XboxController::setActiveUAS(UASInterface* uas)
         if(mav)
         {
             //disconnect(this, SIGNAL(xboxControllerChanged(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
-            disconnect(this, SIGNAL(SetLiftValue(int)), mav, SLOT(setLiftValue(int)));
+            disconnect(this, SIGNAL(setLiftValue(int)), mav, SLOT(setLiftValue(int)));
             disconnect(mav, SIGNAL(liftValueChanged(int)), this, SLOT(liftValueChanged(int)));
             disconnect(mav, SIGNAL(inputModeChanged(int)), this, SLOT(updateInputMode(int)));
         }else{
@@ -140,7 +134,7 @@ void XboxController::setActiveUAS(UASInterface* uas)
     if(mav)
     {
         //connect(this, SIGNAL(xboxControllerChanged(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
-        connect(this, SIGNAL(SetLiftValue(int)), mav, SLOT(setLiftValue(int)));
+        connect(this, SIGNAL(setLiftValue(int)), mav, SLOT(setLiftValue(int)));
         connect(mav, SIGNAL(liftValueChanged(int)), this, SLOT(liftValueChanged(int)));
         connect(mav, SIGNAL(inputModeChanged(int)), this, SLOT(updateInputMode(int)));
 
@@ -166,7 +160,7 @@ void XboxController::updateInputMode(int inputMode)
     {
         if (!initialized)
         {
-            if (joystick_.init("/dev/input/js0") == 0)
+            if (joystick_.init("/dev/input/js1") == 0)
             {
                 qDebug() << "[xboxcontroller] Initialized xbox controller";
                 initialized=1;

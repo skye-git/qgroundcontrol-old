@@ -103,7 +103,7 @@ void UASSkyeInputMixer::updateMouseValues(double x, double y, double z, double a
     valuesMouse[4] = b;
     valuesMouse[5] = c;
 
-    qDebug() << "[MIXER] Update Mouse values" << x << y << z << a << b << c;
+    //qDebug() << "[MIXER] Update Mouse values" << x << y << z << a << b << c;
 }
 
 void UASSkyeInputMixer::updateTouchValues(double x, double y, double z, double a, double b, double c)
@@ -135,6 +135,6 @@ void UASSkyeInputMixer::updateXboxValues(double x, double y, double z, double a,
     valuesXbox[4] = b;
     valuesXbox[5] = c;
 
-    qDebug() << "[MIXER] Update Xbox values" << x << y << z << a << b << c;
+    //qDebug() << "[MIXER] Update Xbox values" << x << y << z << a << b << c;
 }
 
