@@ -3,14 +3,6 @@
 #include "SkyeMAV.h"
 #include "UDPLink.h"
 
-#ifndef QGC_EARTH_RADIUS
-#define QGC_EARTH_RADIUS 6367449.0
-#endif
-
-#ifndef QGC_COS_LATITUDE
-#define QGC_COS_LATITUDE 0.67716
-#endif
-
 SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
     UAS(mavlink, id),
     airframe(QGC_AIRFRAME_SKYE),
@@ -26,14 +18,14 @@ SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
     manualXRot(0.0),
     manualYRot(0.0),
     manualZRot(0.0),
-    sensitivityFactorTrans(0.0f),
-    sensitivityFactorRot(0.0f),
-    liftValue(0),
-    liftValueFloat(0.0f),
+    sensitivityFactorTrans(QGC_SENSITIVITY_TRANS_DEFAULT),
+    sensitivityFactorRot(QGC_SENSITIVITY_ROT_DEFAULT),
+    liftValue(QGC_LIFT_VALUE_DEFAULT*LIFT_RESOLUTION),
+    liftValueFloat(QGC_LIFT_VALUE_DEFAULT),
     addRollValue(0.0),
     addPitchValue(0.0),
     addYawValue(0.0),
-    inputMode(QGC_INPUT_MODE_TOUCH)
+    inputMode(QGC_INPUT_MODE_NONE)
 //    lowBatteryFront(false),
 //    lowBatteryAU(false),
 //    lowBattery(false),
@@ -41,6 +33,7 @@ SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
 {
     imagePacketsArrived = 0;
     this->setUASName("SKYE");
+
 }
 
 SkyeMAV::~SkyeMAV(void)
@@ -344,6 +337,28 @@ void SkyeMAV::setInputMode(SkyeMAV::QGC_INPUT_MODE input, bool active)
     }
 }
 
+void SkyeMAV::updateMouseInputStatus(bool active)
+{
+    if (active == false)
+    {
+        // 3dMouse starting not succeded. User must press button again
+        if ((inputMode & QGC_INPUT_MODE_MOUSE) == true)
+        {
+            inputMode -= QGC_INPUT_MODE_MOUSE;
+        }
+        emit resetMouseInput(false);
+    } else {
+        // 3dMouse starting succeded,
+        if ((inputMode & QGC_INPUT_MODE_MOUSE) == false)
+        {
+            inputMode += QGC_INPUT_MODE_MOUSE;
+        }
+        emit resetMouseInput(true);
+    }
+
+
+}
+
 void SkyeMAV::sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t blue, uint8_t mode, float frequency)
 {
     mavlink_message_t msg;
@@ -374,9 +389,33 @@ void SkyeMAV::setLiftValue(int val)
     if (val != liftValue and val >= 0 and val <= LIFT_RESOLUTION)
     {
         liftValue = val;
-        qDebug() << "lift factor" << val;
+        qDebug() << "[SkyeMAV] lift factor" << val;
         emit liftValueChanged(liftValue);
         liftValueFloat = liftValue / (float)LIFT_RESOLUTION;
     }
 
 }
+
+void SkyeMAV::setSensitivityFactorTrans(float val)
+{
+    if (sensitivityFactorTrans!= val)
+    {
+        sensitivityFactorTrans = val;
+        qDebug() << "[SkyeMAV] sensitivity translation" << val;
+        emit sensitivityTransChanged((double)sensitivityFactorTrans);
+    }
+}
+
+void SkyeMAV::setSensitivityFactorRot(float val)
+{
+    if (sensitivityFactorRot!= val)
+    {
+        sensitivityFactorRot = val;
+        qDebug() << "[SkyeMAV] sensitivity rotation" << val;
+        emit sensitivityRotChanged((double)sensitivityFactorRot);
+    }
+}
+
+
+
+

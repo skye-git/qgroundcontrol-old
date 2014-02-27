@@ -79,6 +79,7 @@ public slots:
     void updateStatemachine();
     /** @brief Update input buttons */
     void updateInput(int input);
+    void updateMouseInput(bool active);
     /** @brief Update 3dMouse button image */
     void changeMouseTranslationEnabled(bool transEnabled);
     /** @brief Update 3dMouse button image */

@@ -177,6 +177,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
 
         connect(this, SIGNAL(changedInput(SkyeMAV::QGC_INPUT_MODE, bool)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE, bool)));
         connect(mav, SIGNAL(inputModeChanged(int)), this, SLOT(updateInput(int)));
+        connect(mav, SIGNAL(resetMouseInput(bool)), this, SLOT(updateMouseInput(bool)));
 
         connect(inputMixer, SIGNAL(changed6DOFInput(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
 
@@ -268,27 +269,70 @@ void UASSkyeControlWidget::updateState(int state)
 void UASSkyeControlWidget::updateInput(int input)
 {
 	qDebug() << "[UASSkyeControl] changing input from" << inputMode << "to" << input;
-    if (inputMode != input)
+
+    // Update last-action-label when input mode has changed
+    if ( (inputMode & SkyeMAV::QGC_INPUT_MODE_MOUSE) != (input & SkyeMAV::QGC_INPUT_MODE_MOUSE) )
     {
-		// 3dMouse has been changed from inactive to active
-		if ( ((inputMode & SkyeMAV::QGC_INPUT_MODE_MOUSE) == false) && ((input & SkyeMAV::QGC_INPUT_MODE_MOUSE) == true) )
-		{
-			ui.lastActionLabel->setText("3dMouse activated");
-		}
-		// 3dMouse has been changed from active to inactive
-		if ( ((inputMode & SkyeMAV::QGC_INPUT_MODE_MOUSE) == true) && ((input & SkyeMAV::QGC_INPUT_MODE_MOUSE) == false) )
-		{
-			ui.lastActionLabel->setText("3dMouse inactive. Click for activation.");
-		}
-
-		ui.mouseButton->setChecked(input & SkyeMAV::QGC_INPUT_MODE_MOUSE);
-		ui.touchButton->setChecked(input & SkyeMAV::QGC_INPUT_MODE_TOUCH);
-		ui.keyboardButton->setChecked(input & SkyeMAV::QGC_INPUT_MODE_KEYBOARD);
-		ui.xboxButton->setChecked(input & SkyeMAV::QGC_INPUT_MODE_XBOX);
-
-		inputMode = input;
+        if (input & SkyeMAV::QGC_INPUT_MODE_MOUSE)
+        {
+            ui.lastActionLabel->setText("3dMouse input activated.");
+        } else {
+            ui.lastActionLabel->setText("3dMouse input deactivated.");
+        }
     }
+
+    if ( (inputMode & SkyeMAV::QGC_INPUT_MODE_TOUCH) != (input & SkyeMAV::QGC_INPUT_MODE_TOUCH) )
+    {
+        if (input & SkyeMAV::QGC_INPUT_MODE_TOUCH)
+        {
+            ui.lastActionLabel->setText("Touch input activated.");
+        } else {
+            ui.lastActionLabel->setText("Touch input deactivated.");
+        }
+    }
+
+    if ( (inputMode & SkyeMAV::QGC_INPUT_MODE_XBOX) != (input & SkyeMAV::QGC_INPUT_MODE_XBOX) )
+    {
+        if (input & SkyeMAV::QGC_INPUT_MODE_XBOX)
+        {
+            ui.lastActionLabel->setText("Xbox input activated.");
+        } else {
+            ui.lastActionLabel->setText("Xbox input deactivated.");
+        }
+    }
+
+    ui.mouseButton->setChecked(input & SkyeMAV::QGC_INPUT_MODE_MOUSE);
+    ui.touchButton->setChecked(input & SkyeMAV::QGC_INPUT_MODE_TOUCH);
+    ui.keyboardButton->setChecked(input & SkyeMAV::QGC_INPUT_MODE_KEYBOARD);
+    ui.xboxButton->setChecked(input & SkyeMAV::QGC_INPUT_MODE_XBOX);
+
+    inputMode = input;
+
     updateStyleSheet();
+}
+
+void UASSkyeControlWidget::updateMouseInput(bool active)
+{
+    ui.mouseButton->setChecked(active);
+    if (active)
+    {
+        // 3d mouse has successfully been started
+        ui.lastActionLabel->setText("3dMouse started");
+
+        if ((inputMode & SkyeMAV::QGC_INPUT_MODE_MOUSE) == false)
+        {
+            inputMode += SkyeMAV::QGC_INPUT_MODE_MOUSE;
+        }
+
+    } else {
+        // 3d mouse starting not succeeded. User must push the button again
+        ui.lastActionLabel->setText("3dMouse was not initialized. Click again to activate...");
+
+        if ((inputMode & SkyeMAV::QGC_INPUT_MODE_MOUSE) == true)
+        {
+            inputMode -= SkyeMAV::QGC_INPUT_MODE_MOUSE;
+        }
+    }
 }
 
 void UASSkyeControlWidget::setDirectControlMode()
@@ -354,9 +398,9 @@ void UASSkyeControlWidget::setInputMouse(bool checked)
 {
 	if (checked)
 	{
-		ui.lastActionLabel->setText(tr("Starting 3dMouse... Click again for activate."));
+        ui.lastActionLabel->setText(tr("Starting 3dMouse..."));
 	} else {
-		ui.lastActionLabel->setText(tr("Deactivated 3dMouse"));
+        ui.lastActionLabel->setText(tr("Stopping 3dMouse..."));
 	}
     emit changedInput(SkyeMAV::QGC_INPUT_MODE_MOUSE, checked);
 
@@ -369,7 +413,7 @@ void UASSkyeControlWidget::setInputTouch(bool checked)
     {
         ui.lastActionLabel->setText(tr("Activating Touchscreen..."));
     } else {
-        ui.lastActionLabel->setText(tr("Deactivated Touchscreen"));
+        ui.lastActionLabel->setText(tr("Deactivating Touchscreen..."));
     }
 
     emit changedInput(SkyeMAV::QGC_INPUT_MODE_TOUCH, checked);
@@ -381,7 +425,7 @@ void UASSkyeControlWidget::setInputKeyboard(bool checked)
     {
         ui.lastActionLabel->setText(tr("Activating Keyboard..."));
     } else {
-        ui.lastActionLabel->setText(tr("Deactivating Keyboard"));
+        ui.lastActionLabel->setText(tr("Deactivating Keyboard..."));
     }
 
     emit changedInput(SkyeMAV::QGC_INPUT_MODE_KEYBOARD, checked);
@@ -391,9 +435,9 @@ void UASSkyeControlWidget::setInputXbox(bool checked)
 {
     if (checked)
     {
-        ui.lastActionLabel->setText(tr("Xbox Controller activated!"));
+        ui.lastActionLabel->setText(tr("Activating Xbox Controller..."));
     } else {
-        ui.lastActionLabel->setText(tr("Xbox Controller deactivated!"));
+        ui.lastActionLabel->setText(tr("Deactivating Xbox Controller..."));
     }
 
     emit changedInput(SkyeMAV::QGC_INPUT_MODE_XBOX, checked);

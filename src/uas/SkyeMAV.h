@@ -4,6 +4,10 @@
 #define SKYE_ALARM_VOLTAGE 22.0f
 #define SKYE_CRITICAL_VOLTAGE 23.0f
 
+#define QGC_SENSITIVITY_TRANS_DEFAULT 0.5f
+#define QGC_SENSITIVITY_ROT_DEFAULT 0.5f
+#define QGC_LIFT_VALUE_DEFAULT 0.0f
+
 #include <QPolygonF>
 #include <QTimer>
 #include <QVector>
@@ -72,9 +76,9 @@ public slots:
     /** @brief Send the 8 DOF command (from Testphase Widget) to MAV */
     void setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 ); //AL (06.03.12)
     /** @brief Set multiplication factor for manual control */
-    void setSensitivityFactorTrans(float val) {sensitivityFactorTrans = val;}
+    void setSensitivityFactorTrans(float val);
     /** @brief Set multiplication factor for manual control */
-    void setSensitivityFactorRot(float val) {sensitivityFactorRot = val;}
+    void setSensitivityFactorRot(float val);
     /** @brief Send mode via mavlink command */
     void setModeCommand(int mode);
     /** @brief Set additive value for z manual control */
@@ -88,6 +92,8 @@ public slots:
 
     /** @brief Set active input flag for this UAS */
     void setInputMode(SkyeMAV::QGC_INPUT_MODE input, bool active);
+    /** @brief Reset mouse input mode after initialization */
+    void updateMouseInputStatus(bool active);
     /** @brief Report de-/activation of rotative 3DMouse input */
     void changeMouseRotationActive(bool active){emit mouseButtonRotationChanged(active);}
     /** @brief Report de-/activation of translative 3DMouse input */
@@ -117,11 +123,14 @@ signals:
     void mouseButtonRotationChanged(bool active);
     void mouseButtonTranslationChanged(bool active);
     void inputModeChanged(int inputMode);
+    void resetMouseInput(bool active);
     /** @brief Battery is low. Shutdown required */
     void batteryLow(double voltage);
     /** @brief Battery is low. Shutdown required */
     void batteryLow(double voltage, bool isLow, unsigned int ms);
     void allocCaseChanged(int allocCase);
+    void sensitivityTransChanged(double);
+    void sensitivityRotChanged(double);
     void liftValueChanged(int);
 
 protected:

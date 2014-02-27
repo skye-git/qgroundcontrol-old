@@ -57,6 +57,9 @@ private:
     bool addYawEnabled;
 
     int liftValue;
+    double sensitivityRot;
+    double sensitivityTrans;
+
     int uasId;
 
 private slots:

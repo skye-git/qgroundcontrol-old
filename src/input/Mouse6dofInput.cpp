@@ -103,7 +103,7 @@ void Mouse6dofInput::setActiveUAS(UASInterface* uas)
         qDebug() << "[Mouse6DOF] connecting uav slots";
 
         connect(mav, SIGNAL(inputModeChanged(int)), this, SLOT(updateInputMode(int)));
-        connect(this, SIGNAL(resetInputMode(SkyeMAV::QGC_INPUT_MODE,bool)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE,bool)));
+        connect(this, SIGNAL(resetMouseInputStatus(bool)), mav, SLOT(updateMouseInputStatus(bool)));
     }
 
 
@@ -350,13 +350,13 @@ void Mouse6dofInput::updateInputMode(int inputMode)
 				process3dxDaemon->start(processProgramm, processArguments);
 
 				// 3dxsrv was not running, therefore deactivate 3dMouse input
-				emit resetInputMode(SkyeMAV::QGC_INPUT_MODE_MOUSE, false);
+                emit resetMouseInputStatus(false);
 			}
 			else
 			{
 				qDebug() << "[Mouse6dofInput] Initialized 3dMouse";
 				mouseActive = true;
-				emit resetInputMode(SkyeMAV::QGC_INPUT_MODE_MOUSE, true);
+                emit resetMouseInputStatus(true);
 			}
 		} else {
 			// mouseActive already true. Do nothing.
