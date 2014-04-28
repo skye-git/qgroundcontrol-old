@@ -19,16 +19,14 @@ QGCSkyeTestMotors::QGCSkyeTestMotors(QWidget *parent) :
         panelMap.insert(i, new QGCSkyeTestMotorsPanel(this, i));
         ui->groupBoxPanel->layout()->addWidget(panelMap[i]);
     }
-    ui->verticalLayout->addSpacing(10);
+
+    // Insert box for periodic timing
+    timerWidget = new QGCSkyeTestTimerWidget(this);
+    ui->groupBoxTimer->layout()->addWidget(timerWidget);
 
     // Connect UAS
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
     setUAS(UASManager::instance()->getActiveUAS());
-
-    // Start Timer. Timer will pull values from children and then emit them.
-    timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()),this, SLOT(emitValues()));
-    timer->start(200); //5Hz emitValues is called
 }
 
 QGCSkyeTestMotors::~QGCSkyeTestMotors()

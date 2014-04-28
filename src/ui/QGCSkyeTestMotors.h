@@ -6,6 +6,7 @@
 #include <QMap>
 #include "SkyeMAV.h"
 #include "QGCSkyeTestMotorsPanel.h"
+#include "QGCSkyeTestTimerWidget.h"
 
 namespace Ui {
 class QGCSkyeTestMotors;
@@ -30,9 +31,9 @@ signals:
 
 private:
     Ui::QGCSkyeTestMotors *ui;
-    QTimer *timer;
     SkyeMAV* uas;
     QMap<int, QGCSkyeTestMotorsPanel*> panelMap;
+    QGCSkyeTestTimerWidget* timerWidget;
 };
 
 #endif // QGCSKYETESTMOTORS_H
