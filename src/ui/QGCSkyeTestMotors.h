@@ -3,7 +3,9 @@
 
 #include <QWidget>
 #include <QTimer>
+#include <QMap>
 #include "SkyeMAV.h"
+#include "QGCSkyeTestMotorsPanel.h"
 
 namespace Ui {
 class QGCSkyeTestMotors;
@@ -30,6 +32,7 @@ private:
     Ui::QGCSkyeTestMotors *ui;
     QTimer *timer;
     SkyeMAV* uas;
+    QMap<int, QGCSkyeTestMotorsPanel*> panelMap;
 };
 
 #endif // QGCSKYETESTMOTORS_H

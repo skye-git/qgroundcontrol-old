@@ -385,6 +385,7 @@ FORMS += \
     src/ui/ledControl/LedControlWidget.ui \
     src/ui/QGCSkyeConfig.ui \
     src/ui/QGCSkyeTestMotors.ui \
+    src/ui/QGCSkyeTestMotorsPanel.ui \
     src/ui/QGCSkyeTestForce.ui \
     src/ui/QGCSkyeTestControl.ui \
     src/ui/designer/QGCXYPlot.ui \
@@ -590,6 +591,7 @@ HEADERS += \
     src/comm/MAVLinkSkyeSimulationLink.h \
     src/ui/QGCSkyeConfig.h \
     src/ui/QGCSkyeTestMotors.h \
+    src/ui/QGCSkyeTestMotorsPanel.h \
     src/ui/QGCSkyeTestForce.h \
     src/ui/QGCSkyeTestControl.h \
     src/ui/uas/UASSkyeInputMixer.h \
@@ -791,6 +793,7 @@ SOURCES += \
     src/comm/MAVLinkSkyeSimulationLink.cc \
     src/ui/QGCSkyeConfig.cc \
     src/ui/QGCSkyeTestMotors.cpp \
+    src/ui/QGCSkyeTestMotorsPanel.cpp \
     src/ui/QGCSkyeTestForce.cpp \
     src/ui/QGCSkyeTestControl.cc \
     src/ui/uas/UASSkyeInputMixer.cc \
