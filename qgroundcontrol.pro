@@ -381,8 +381,6 @@ FORMS += \
     src/ui/px4_configuration/QGCPX4AirframeConfig.ui \
     src/ui/px4_configuration/QGCPX4MulticopterConfig.ui \
     src/ui/px4_configuration/QGCPX4SensorCalibration.ui \
-    src/ui/TestControlWidget.ui \
-    src/ui/DirectControlWidget.ui \
     src/ui/UASSkyeControlAdvancedWidget.ui \
     src/ui/ledControl/LedControlWidget.ui \
     src/ui/QGCSkyeConfig.ui \
@@ -587,8 +585,6 @@ HEADERS += \
     src/ui/QGCBaseParamWidget.h \
     src/ui/px4_configuration/QGCPX4MulticopterConfig.h \
     src/ui/px4_configuration/QGCPX4SensorCalibration.h \
-    src/ui/TestControlWidget.h \
-    src/ui/DirectControlWidget.h \
     src/ui/UASSkyeControlAdvancedWidget.h \
     src/ui/ledControl/LedControlWidget.h \
     src/comm/MAVLinkSkyeSimulationLink.h \
@@ -790,8 +786,6 @@ SOURCES += \
     src/ui/QGCBaseParamWidget.cc \
     src/ui/px4_configuration/QGCPX4MulticopterConfig.cc \
     src/ui/px4_configuration/QGCPX4SensorCalibration.cc \
-    src/ui/TestControlWidget.cc \
-    src/ui/DirectControlWidget.cc \
     src/ui/UASSkyeControlAdvancedWidget.cc \
     src/ui/ledControl/LedControlWidget.cc \
     src/comm/MAVLinkSkyeSimulationLink.cc \

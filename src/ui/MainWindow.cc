@@ -73,8 +73,6 @@ This file is part of the QGROUNDCONTROL project
 #include "terminalconsole.h"
 // Begin Code Skye
 #include "UASSkyeControlWidget.h"
-#include "TestControlWidget.h"
-#include "DirectControlWidget.h"
 // End Code Skye
 #include "menuactionhelper.h"
 
