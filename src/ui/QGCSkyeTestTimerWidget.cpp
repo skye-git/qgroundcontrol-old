@@ -1,5 +1,6 @@
 #include "QGCSkyeTestTimerWidget.h"
 #include "ui_QGCSkyeTestTimerWidget.h"
+#include <QDebug>
 
 QGCSkyeTestTimerWidget::QGCSkyeTestTimerWidget(QWidget *parent) :
     QWidget(parent),
@@ -18,6 +19,7 @@ QGCSkyeTestTimerWidget::QGCSkyeTestTimerWidget(QWidget *parent) :
 
     /* Connect Widgets */
     connect(ui->checkBoxUseTimer, SIGNAL(toggled(bool)), this, SLOT(toggledCheckBoxUseTimer(bool)));
+    connect(ui->pushButtonStart, SIGNAL(clicked()), this, SLOT(clickedPushButtonStart()));
 }
 
 QGCSkyeTestTimerWidget::~QGCSkyeTestTimerWidget()
@@ -37,6 +39,11 @@ void QGCSkyeTestTimerWidget::toggledCheckBoxUseTimer(bool checked)
 
 void QGCSkyeTestTimerWidget::clickedPushButtonStart()
 {
+    /* Activate checkbox if it has not been set yet */
+    if (ui->checkBoxUseTimer->isChecked() == false) {
+        ui->checkBoxUseTimer->toggle();
+    }
+
     /* Movement must start in right direction */
     isInvertedMovement = false;
 
@@ -52,6 +59,9 @@ void QGCSkyeTestTimerWidget::stopTimer(bool stop)
     /* Stop timer (and therefore any emits) */
     if (stop == true) {
         timer->stop();
+
+        /* send zero input command one time (XXX this might be unsecure) */
+        emit emitValues(0.0);
     }
 }
 
@@ -60,6 +70,7 @@ void QGCSkyeTestTimerWidget::startTimerCont(bool start, int msecInterval)
     /* Start timer (and therefore emits) until it is stopped externally */
     if (start == true) {
         shotsRemaining = -1;            // negativ value indicates no end
+        this->msecInterval = msecInterval;
         timer->start(msecInterval);
     }
 }
@@ -68,12 +79,15 @@ void QGCSkyeTestTimerWidget::startTimerPeriod(bool start, int msecInterval, int 
 {
     if (start == true) {
         shotsRemaining = msecPeriod / msecInterval;
+        this->msecInterval = msecInterval;
         timer->start(msecInterval);
     }
 }
 
 void QGCSkyeTestTimerWidget::timerTimeout()
 {
+    updateLabel();
+
     /* emit if period is either infinite (negative) or not expired (strict positiv) */
     if (shotsRemaining != 0) {
         if (isInvertedMovement) {
@@ -101,4 +115,21 @@ void QGCSkyeTestTimerWidget::timerTimeout()
             this->stopTimer();
         }
     }
+}
+
+void QGCSkyeTestTimerWidget::updateLabel()
+{
+    QString str;
+    if (shotsRemaining > 0)
+    {
+        str = QString("Start (%1 sec)").arg(QString::number(shotsRemaining * msecInterval / 1000.0, 'f', 3));
+        if (isInvertedMovement) {
+            str.append(" inv");
+        }
+
+    } else {
+        str = QString("Start");
+    }
+
+    ui->pushButtonStart->setText(str);
 }

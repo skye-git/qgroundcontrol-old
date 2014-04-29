@@ -28,9 +28,10 @@ private slots:
                           int msecInterval = QGC_SKYE_TEST_TIMER_MSEC_INTERVAL,
                           int msecPeriod =   QGC_SKYE_TEST_TIMER_MSEC_PERIOD);
     void timerTimeout();
+    void updateLabel();
 
 signals:
-    void emitValues(double inverseFactor);        ///< Set inverseFactor to -1 to send input into inverse (negative) direction
+    void emitValues(double inverseFactor);      ///< Set inverseFactor to -1 to send input into inverse (negative) direction
 
 private:
     Ui::QGCSkyeTestTimerWidget *ui;
@@ -38,6 +39,7 @@ private:
     int shotsRemaining;             ///< Counter for periodic inputs (negativ for endless)
     bool isInvertedMovement;        ///< When true, input must be in inverse direction
 
+    int msecInterval;               ///< Interval of timer (for emits)
     int msecPeriod;                 ///< Duration of movement into one direction in millisecond
 };
 
