@@ -2,8 +2,10 @@
 #define QGCSKYETESTFORCE_H
 
 #include <QWidget>
-#include <QTimer>
+#include <QMap>
 #include "SkyeMAV.h"
+#include "QGCSkyeTestForcePanel.h"
+#include "QGCSkyeTestTimerWidget.h"
 
 namespace Ui {
 class QGCSkyeTestForce;
@@ -28,10 +30,9 @@ signals:
 
 private:
     Ui::QGCSkyeTestForce *ui;
-    int maxThrust;
-    int maxMoment;
     SkyeMAV* uas;
-    QTimer *timer;
+    QMap<int, QGCSkyeTestForcePanel*> panelMap;
+    QGCSkyeTestTimerWidget* timerWidget;
 };
 
 #endif // QGCSKYETESTFORCE_H
