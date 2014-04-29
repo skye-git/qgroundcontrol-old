@@ -21,7 +21,7 @@ public:
 
 public slots:
     void setUAS(UASInterface* uas);
-    void emitValues();
+    void emitValues(double inverseFactor = 1.0);      ///< set inverse to -1 to do input into inverse direction
     void stopAll();
 
 signals:

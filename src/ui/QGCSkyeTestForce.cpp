@@ -48,13 +48,13 @@ void QGCSkyeTestForce::setUAS(UASInterface* uas)
     }
 }
 
-void QGCSkyeTestForce::emitValues()
+void QGCSkyeTestForce::emitValues(double inverseFactor)
 {
     double force[3];
     double moment[3];
     for (int i = 0; i<3; i++) {
-        force[i] = panelMap[i]->getForce();
-        moment[i] = panelMap[i]->getMoment();
+        force[i]  = inverseFactor * panelMap[i]->getForce();
+        moment[i] = inverseFactor * panelMap[i]->getMoment();
     }
 
     emit valueDirectControlChanged( force[0],  force[1],  force[2],
