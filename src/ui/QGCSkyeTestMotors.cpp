@@ -58,8 +58,8 @@ void QGCSkyeTestMotors::emitValues(double inverseFactor)
     int thrust[4];
     int orient[4];
     for (int i = 0; i<4; i++) {
-        thrust[i] = inverseFactor * panelMap[i]->getOrientationQC();
-        orient[i] = inverseFactor * panelMap[i]->getThrust();
+        thrust[i] = inverseFactor * panelMap[i]->getThrust();
+        orient[i] = inverseFactor * panelMap[i]->getOrientationQC();
     }
 
     emit valueTestControlChanged(thrust[0], thrust[1], thrust[2], thrust[3],
