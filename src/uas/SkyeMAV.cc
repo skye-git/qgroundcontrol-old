@@ -242,7 +242,7 @@ void SkyeMAV::set6DOFCommandsByWidget(double x, double y, double z, double a, do
     }
 }
 
-void SkyeMAV::sendManualControlCommands6DoF(double x, double y, double z, double phi, double theta, double psi)
+void SkyeMAV::sendManualControlCommands6DoF(float x, float y, float z, float phi, float theta, float psi)
 {
     if (this->base_mode & MAV_MODE_FLAG_SAFETY_ARMED)
     {
@@ -262,34 +262,47 @@ void SkyeMAV::sendManualControlCommands6DoF(double x, double y, double z, double
         psi   = psi   < -1.0 ? -1.0 : psi;
 
         mavlink_message_t message;
-        mavlink_msg_setpoint_6dof_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, (float)x, (float)y, (float)z, (float)phi, (float)theta, (float)psi);
+        mavlink_msg_setpoint_6dof_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId,
+                                       x,
+                                       y,
+                                       z,
+                                       phi,
+                                       theta,
+                                       psi);
         sendMessage(message);
         // qDebug() << "SENT 6DOF CONTROL MESSAGE:" << x << y << z << phi << theta << psi;
     }
 }
 
-void SkyeMAV::setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4)
+void SkyeMAV::setTestphaseCommandsByWidget(double Thrust1 , double Thrust2 , double Thrust3 , double Thrust4 , double Orientation1 , double Orientation2, double Orientation3, double Orientation4)
 {
-        sendManualControlCommands8DoF(Thrust1, Thrust2, Thrust3, Thrust4, Orientation1, Orientation2, Orientation3, Orientation4);
+        sendManualControlCommands8DoF((float)Thrust1,
+                                      (float)Thrust2,
+                                      (float)Thrust3,
+                                      (float)Thrust4,
+                                      (float)Orientation1,
+                                      (float)Orientation2,
+                                      (float)Orientation3,
+                                      (float)Orientation4);
 
     //qDebug() << "sendTestphaseControlCommands aufgerufen " << Thrust1 << Thrust2 << Thrust3 << Thrust4;
 }
 
-void SkyeMAV::sendManualControlCommands8DoF(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 )
+void SkyeMAV::sendManualControlCommands8DoF(float Thrust1 , float Thrust2 , float Thrust3 , float Thrust4 , float Orientation1 , float Orientation2, float Orientation3, float Orientation4 )
 {
     if ((base_mode & MAV_MODE_FLAG_SAFETY_ARMED) && (base_mode & MAV_MODE_FLAG_TEST_ENABLED))
     {
         mavlink_message_t message;
 
         mavlink_msg_setpoint_8dof_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId,
-                                             (float)Thrust1,
-                                             (float)Thrust2,
-                                             (float)Thrust3,
-                                             (float)Thrust4,
-                                             (float)Orientation1,
-                                             (float)Orientation2,
-                                             (float)Orientation3,
-                                             (float)Orientation4);
+                                                    Thrust1,
+                                                    Thrust2,
+                                                    Thrust3,
+                                                    Thrust4,
+                                                    Orientation1,
+                                                    Orientation2,
+                                                    Orientation3,
+                                                    Orientation4);
         sendMessage(message);
         //qDebug() << ": SENT 8DOF CONTROL MESSAGE: 1Thrust" << Thrust1 << " 2Thrust: " << Thrust2 << " 3Thrust: " << Thrust3 << " 4Thrust: " << Thrust4 << " 1Orientation: " << Orientation1 << " 2Orientation: " << Orientation2 << " 3Orientation: " << Orientation3 << " 4Orientation: " << Orientation4;
     }

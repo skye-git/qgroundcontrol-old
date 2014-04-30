@@ -31,6 +31,9 @@ private:
     void showEvent(QShowEvent *event);
     void hideEvent(QHideEvent *event);
 
+private slots:
+    void tabChanged(int tab);
+
 };
 
 #endif // QGCSKYECONFIG_H

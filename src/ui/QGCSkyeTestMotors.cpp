@@ -1,5 +1,4 @@
 #include "QGCSkyeTestMotors.h"
-#include "ui_QGCSkyeTestMotors.h"
 #include <QDebug>
 #include "UASManager.h"
 
@@ -7,22 +6,14 @@
 #define QGC_MAX_ABS_DEGREE 180
 
 QGCSkyeTestMotors::QGCSkyeTestMotors(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::QGCSkyeTestMotors),
-    uas(NULL)
+    QGCSkyeTest(parent)
 {
-    ui->setupUi(this);
-
     // Insert 4 Test Widget Panels
     for (int i = 0; i<4; i++)
     {
         panelMap.insert(i, new QGCSkyeTestMotorsPanel(this, i));
         ui->groupBoxPanel->layout()->addWidget(panelMap[i]);
     }
-
-    // Insert box for periodic timing
-    timerWidget = new QGCSkyeTestTimerWidget(this);
-    ui->groupBoxTimer->layout()->addWidget(timerWidget);
 
     // Connect UAS
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
@@ -40,7 +31,7 @@ void QGCSkyeTestMotors::setUAS(UASInterface* uas)
     // disconnect old UAS
     if (this->uas)
     {
-        disconnect(this, SIGNAL(valueTestControlChanged(int, int, int, int, int, int, int, int)), uas, SLOT(setTestphaseCommandsByWidget(int, int, int, int, int, int, int, int)));
+        disconnect(this, SIGNAL(valueTestControlChanged(double, double, double, double, double, double, double, double)), uas, SLOT(setTestphaseCommandsByWidget(double, double, double, double, double, double, double, double)));
         this->uas = NULL;
     }
 
@@ -49,17 +40,29 @@ void QGCSkyeTestMotors::setUAS(UASInterface* uas)
     // connect new UAS
     if (this->uas != NULL)
     {
-        connect(this, SIGNAL(valueTestControlChanged(int, int, int, int, int, int, int, int)), uas, SLOT(setTestphaseCommandsByWidget(int, int, int, int, int, int, int, int)));
+        connect(this, SIGNAL(valueTestControlChanged(double, double, double, double, double, double, double, double)), uas, SLOT(setTestphaseCommandsByWidget(double, double, double, double, double, double, double, double)));
     }
 }
 
 void QGCSkyeTestMotors::emitValues(double inverseFactor)
 {
-    int thrust[4];
-    int orient[4];
+    double thrust[4];
+    double orient[4];
     for (int i = 0; i<4; i++) {
-        thrust[i] = inverseFactor * panelMap[i]->getThrust();
-        orient[i] = inverseFactor * panelMap[i]->getOrientationQC();
+        if (inverseFactor > 0.0) {
+            thrust[i] = panelMap[i]->getThrust();
+            orient[i] = panelMap[i]->getOrientation();
+        } else if (inverseFactor == 0.0) {
+            thrust[i] = 0.0;
+            orient[i] = panelMap[i]->getOrientation();
+        } else if (inverseFactor < 0.0) {
+            thrust[i] = panelMap[i]->getThrust();
+            orient[i] = panelMap[i]->getOrientation();
+            if (orient [i] <= 0.0)
+                orient[i] += 180.0;
+            else
+                orient[i] -= 180.0;
+        }
     }
 
     emit valueTestControlChanged(thrust[0], thrust[1], thrust[2], thrust[3],

@@ -74,7 +74,7 @@ public slots:
     /** @brief Send the 6 DOF command (from test config window) to MAV */
     void set6DOFCommandsByWidget(double x , double y , double z , double a , double b, double c);
     /** @brief Send the 8 DOF command (from Testphase Widget) to MAV */
-    void setTestphaseCommandsByWidget(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 ); //AL (06.03.12)
+    void setTestphaseCommandsByWidget(double Thrust1 , double Thrust2 , double Thrust3 , double Thrust4 , double Orientation1 , double Orientation2, double Orientation3, double Orientation4 ); //AL (06.03.12)
     /** @brief Set multiplication factor for manual control */
     void setSensitivityFactorTrans(float val);
     /** @brief Set multiplication factor for manual control */
@@ -135,9 +135,9 @@ signals:
 
 protected:
     /** Send a Manual 6DoF Control Command to MAV */
-    void sendManualControlCommands6DoF(double x, double y, double z, double phi, double theta, double psi);
+    void sendManualControlCommands6DoF(float x, float y, float z, float phi, float theta, float psi);
     /** @brief Send a Testphase Control Command to MAV: */
-    void sendManualControlCommands8DoF(int Thrust1 , int Thrust2 , int Thrust3 , int Thrust4 , int Orientation1 , int Orientation2, int Orientation3, int Orientation4 );
+    void sendManualControlCommands8DoF(float Thrust1 , float Thrust2 , float Thrust3 , float Thrust4 , float Orientation1 , float Orientation2, float Orientation3, float Orientation4 );
 
     int airframe;                   ///< The airframe type
 

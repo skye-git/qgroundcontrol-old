@@ -2,17 +2,12 @@
 #define QGCSKYETESTMOTORS_H
 
 #include <QWidget>
-#include <QTimer>
 #include <QMap>
 #include "SkyeMAV.h"
+#include "QGCSkyeTest.h"
 #include "QGCSkyeTestMotorsPanel.h"
-#include "QGCSkyeTestTimerWidget.h"
 
-namespace Ui {
-class QGCSkyeTestMotors;
-}
-
-class QGCSkyeTestMotors : public QWidget
+class QGCSkyeTestMotors : public QGCSkyeTest
 {
     Q_OBJECT
 
@@ -24,16 +19,13 @@ public slots:
     void setUAS(UASInterface* uas);
     void stopAll();
     void setZero();
-    void emitValues(double inverseFactor = 1.0);      ///< set inverse to -1 to do input into inverse direction
+    virtual void emitValues(double inverseFactor = 1.0);    ///< set inverse to -1 to do input into inverse direction
 
 signals:
-    void valueTestControlChanged(int Thrust1, int Thrust2, int Thrust3, int Thrust4, int Orientation1, int Orientation2, int Orientation3, int Orientation4);
+    void valueTestControlChanged(double Thrust1, double Thrust2, double Thrust3, double Thrust4, double Orientation1, double Orientation2, double Orientation3, double Orientation4);
 
 private:
-    Ui::QGCSkyeTestMotors *ui;
-    SkyeMAV* uas;
     QMap<int, QGCSkyeTestMotorsPanel*> panelMap;
-    QGCSkyeTestTimerWidget* timerWidget;
 };
 
 #endif // QGCSKYETESTMOTORS_H

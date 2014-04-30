@@ -1,8 +1,6 @@
 #include "QGCSkyeTestForce.h"
-#include "ui_QGCSkyeTest.h"
 #include <QDebug>
 #include "UASManager.h"
-#include "SkyeMAV.h"
 
 QGCSkyeTestForce::QGCSkyeTestForce(QWidget *parent) :
     QGCSkyeTest(parent)
@@ -14,12 +12,30 @@ QGCSkyeTestForce::QGCSkyeTestForce(QWidget *parent) :
         ui->groupBoxPanel->layout()->addWidget(panelMap[i]);
     }
 
+    // connect UAV
+    connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
+    setUAS(UASManager::instance()->getActiveUAS());
+
 }
 
 QGCSkyeTestForce::~QGCSkyeTestForce()
 {
     //timer->stop();
     delete ui;
+}
+
+void QGCSkyeTestForce::setUAS(UASInterface* uas)
+{
+    if (this->uas != 0)
+    {
+        disconnect(this, SIGNAL(valueDirectControlChanged(double,double,double,double,double,double)), this->uas, SLOT(set6DOFCommandsByWidget(double,double,double,double,double,double)));
+    }
+
+    this->uas = dynamic_cast<SkyeMAV*>(uas);
+    if (this->uas)
+    {
+        connect(this, SIGNAL(valueDirectControlChanged(double,double,double,double,double,double)), this->uas, SLOT(set6DOFCommandsByWidget(double,double,double,double,double,double)));
+    }
 }
 
 void QGCSkyeTestForce::emitValues(double inverseFactor)

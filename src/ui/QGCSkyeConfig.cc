@@ -22,8 +22,10 @@ QGCSkyeConfig::QGCSkyeConfig(QWidget *parent) :
     connect(testControl, SIGNAL(setZeroRequested()), testMotor, SLOT(setZero()));
     connect(testControl, SIGNAL(stopAllRequested()), testForce, SLOT(stopAll()));
 
+    connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
     connect(tabWidget, SIGNAL(currentChanged(int)), testControl, SLOT(tabChanged(int)));
 
+    this->tabChanged(QGC_SKYE_CONFIG_TAB_MOTOR);
     testControl->tabChanged(QGC_SKYE_CONFIG_TAB_MOTOR);
     tabWidget->setCurrentIndex(QGC_SKYE_CONFIG_TAB_MOTOR);
 
@@ -46,4 +48,18 @@ void QGCSkyeConfig::hideEvent(QHideEvent *event)
     //testControl->changeMode(MAV_MODE_PREFLIGHT);
     //qDebug() << "DISARMED system because Skye config has been left.";
     QWidget::hideEvent(event);
+}
+
+void QGCSkyeConfig::tabChanged(int tab)
+{
+    for (int i = 0; i < tabWidget->count(); i++)
+    {
+        qDebug() << "tabChanged call" << i << "for current index" << tabWidget->currentIndex();
+        QGCSkyeTest* skyeTestTab = dynamic_cast<QGCSkyeTest*> (tabWidget->widget(i));
+        if (skyeTestTab)
+        {
+            /* inform each skyeTest widget about its visibility */
+            skyeTestTab->activeTabChanged(i == tabWidget->currentIndex());
+        }
+    }
 }

@@ -37,16 +37,16 @@ QGCSkyeTestMotorsPanel::~QGCSkyeTestMotorsPanel()
     delete ui;
 }
 
-int QGCSkyeTestMotorsPanel::getOrientationQC()
+double QGCSkyeTestMotorsPanel::getOrientation()
 {
-    // scale orientation from degree to QC
-    return (int)( ((double)ui->dialOrientation->value()) / 180.0 * 86016.0 );
+    // no scaling. degree
+    return (double)ui->dialOrientation->value();
 }
 
-int QGCSkyeTestMotorsPanel::getThrust()
+double QGCSkyeTestMotorsPanel::getThrust()
 {
     // no scaling. maximum by QGC_MAX_THRUST
-    return ui->SliderThrust->value();
+    return (double)ui->SliderThrust->value();
 }
 
 void QGCSkyeTestMotorsPanel::setZero()

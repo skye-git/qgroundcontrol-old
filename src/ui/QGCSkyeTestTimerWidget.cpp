@@ -12,10 +12,6 @@ QGCSkyeTestTimerWidget::QGCSkyeTestTimerWidget(QWidget *parent) :
     /* Create timer. Iteratively tell parent to emit signals */
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(timerTimeout()));
-    connect(this, SIGNAL(emitValues(double)), parent, SLOT(emitValues(double)));
-
-    /* Start continuous timer (5 Hz) */
-    this->startTimerCont();
 
     /* Connect Widgets */
     connect(ui->checkBoxUseTimer, SIGNAL(toggled(bool)), this, SLOT(toggledCheckBoxUseTimer(bool)));
@@ -25,6 +21,25 @@ QGCSkyeTestTimerWidget::QGCSkyeTestTimerWidget(QWidget *parent) :
 QGCSkyeTestTimerWidget::~QGCSkyeTestTimerWidget()
 {
     delete ui;
+}
+
+void QGCSkyeTestTimerWidget::activeTabChanged(bool active)
+{
+    /* start timer if this gets active tab
+     * or stop timer if tab gets hidden
+     */
+    if (active) {
+        if (ui->checkBoxUseTimer->isChecked() == false) {
+            this->startTimerCont();
+        }
+    } else {
+        if (isActiveTab) {
+            this->stopTimer();
+        }
+    }
+
+    isActiveTab = active;
+    qDebug() << "This TimerWidget isActiveTab is" << active;
 }
 
 void QGCSkyeTestTimerWidget::toggledCheckBoxUseTimer(bool checked)
@@ -88,8 +103,10 @@ void QGCSkyeTestTimerWidget::timerTimeout()
 {
     updateLabel();
 
-    /* emit if period is either infinite (negative) or not expired (strict positiv) */
-    if (shotsRemaining != 0) {
+    /* emit if period is either infinite (negative) or not expired (strict positiv)
+     * and this is the active tab of the tab widget
+     */
+    if (shotsRemaining != 0 && isActiveTab) {
         if (isInvertedMovement) {
             emit emitValues(-1.0);      // inverse direction
         } else {
@@ -100,7 +117,6 @@ void QGCSkyeTestTimerWidget::timerTimeout()
         if (shotsRemaining > 0) {
             shotsRemaining--;
         }
-        return;
     }
 
     /* period has expired (shotsRemaining == 0).

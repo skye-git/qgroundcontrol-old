@@ -230,28 +230,30 @@ void QGCSkyeTestControl::updateMode(int uas, int baseMode)
 
 void QGCSkyeTestControl::tabChanged(int tab)
 {
+    this->tab = tab;
+
+    /* disarm system at every tab change */
     if (this->uas)
     {
         uas->disarmSystem();
     }
 
-    this->tab = tab;
-
-    if (tab == QGC_SKYE_CONFIG_TAB_MOTOR)
-    {
+    /* adjust buttons according to current tab */
+    switch (tab) {
+    case QGC_SKYE_CONFIG_TAB_MOTOR:
         ui->manPushButton->hide();
         ui->ratePushButton->hide();
         ui->attPushButton->hide();
-
         ui->setZeroButton->show();
-    }
-
-    if (tab == QGC_SKYE_CONFIG_TAB_FORCE)
-    {
+        break;
+    case QGC_SKYE_CONFIG_TAB_FORCE:
         ui->setZeroButton->hide();
-
         ui->manPushButton->show();
         //ui->ratePushButton->show();
         ui->attPushButton->show();
+        break;
+    default:
+        // this should not be the case.
+        break;
     }
 }

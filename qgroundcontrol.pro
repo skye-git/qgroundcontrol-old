@@ -384,7 +384,6 @@ FORMS += \
     src/ui/UASSkyeControlAdvancedWidget.ui \
     src/ui/ledControl/LedControlWidget.ui \
     src/ui/QGCSkyeConfig.ui \
-    src/ui/QGCSkyeTestMotors.ui \
     src/ui/QGCSkyeTestMotorsPanel.ui \
     src/ui/QGCSkyeTestForce.ui \
     src/ui/QGCSkyeTestControl.ui \

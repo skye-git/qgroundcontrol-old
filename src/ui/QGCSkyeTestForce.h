@@ -16,8 +16,9 @@ public:
     ~QGCSkyeTestForce();
 
 public slots:
-    void emitValues(double inverseFactor = 1.0);      ///< set inverse to -1 to do input into inverse direction
+    void setUAS(UASInterface* uas);
     void stopAll();
+    virtual void emitValues(double inverseFactor = 1.0);      ///< set inverse to -1 to do input into inverse direction
 
 signals:
     void valueDirectControlChanged(double forceX, double forceY, double forceZ, double momentX, double momentY, double momentZ);

@@ -16,8 +16,8 @@ class QGCSkyeTestMotorsPanel : public QWidget
 public:
     explicit QGCSkyeTestMotorsPanel(QWidget *parent = 0, int index = 0);
     ~QGCSkyeTestMotorsPanel();
-    int getOrientationQC();
-    int getThrust();
+    double getOrientation();
+    double getThrust();
 
 public slots:
     void stopAll();

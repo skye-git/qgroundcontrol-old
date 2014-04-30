@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "SkyeMAV.h"
+#include "ui_QGCSkyeTest.h"
 #include "QGCSkyeTestTimerWidget.h"
 
 namespace Ui {
@@ -18,16 +19,14 @@ public:
     ~QGCSkyeTest();
 
 public slots:
-    virtual void emitValues(double inverseFactor = 1.0);      ///< set inverse to -1 to do input into inverse direction
-    virtual void stopAll();
-    void setUAS(UASInterface* uas);
+    virtual void emitValues(double inverseFactor = 1.0) = 0;
+    void activeTabChanged(bool active);
 
 protected:
     Ui::QGCSkyeTest *ui;
-
-private:
     SkyeMAV* uas;
-    QGCSkyeTestTimerWidget* timerWidget;
+    QGCSkyeTestTimerWidget *timerWidget;
+    bool isActiveTab;
 };
 
 #endif // QGCSKYETEST_H

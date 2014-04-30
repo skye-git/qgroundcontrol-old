@@ -1,6 +1,6 @@
 #include "QGCSkyeTest.h"
 #include "ui_QGCSkyeTest.h"
-#include "UASManager.h"
+#include <QDebug>
 
 QGCSkyeTest::QGCSkyeTest(QWidget *parent) :
     QWidget(parent),
@@ -10,13 +10,10 @@ QGCSkyeTest::QGCSkyeTest(QWidget *parent) :
     ui->setupUi(this);
 
     // Insert box for periodic timing
-    timerWidget = new QGCSkyeTestTimerWidget(this);
+    timerWidget =  new QGCSkyeTestTimerWidget(this);
+    connect(timerWidget, SIGNAL(emitValues(double)), this, SLOT(emitValues(double)));
+
     ui->groupBoxTimer->layout()->addWidget(timerWidget);
-
-    // connect UAV
-    connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
-    setUAS(UASManager::instance()->getActiveUAS());
-
 }
 
 QGCSkyeTest::~QGCSkyeTest()
@@ -24,17 +21,7 @@ QGCSkyeTest::~QGCSkyeTest()
     delete ui;
 }
 
-void QGCSkyeTest::setUAS(UASInterface* uas)
+void QGCSkyeTest::activeTabChanged(bool active)
 {
-    if (this->uas != 0)
-    {
-        disconnect(this, SIGNAL(valueDirectControlChanged(double,double,double,double,double,double)), this->uas, SLOT(set6DOFCommandsByWidget(double,double,double,double,double,double)));
-    }
-
-    this->uas = dynamic_cast<SkyeMAV*>(uas);
-    if (this->uas)
-    {
-        connect(this, SIGNAL(valueDirectControlChanged(double,double,double,double,double,double)), this->uas, SLOT(set6DOFCommandsByWidget(double,double,double,double,double,double)));
-    }
+    timerWidget->activeTabChanged(active);
 }
-
