@@ -4,14 +4,10 @@
 #include <QWidget>
 #include <QMap>
 #include "SkyeMAV.h"
+#include "QGCSkyeTest.h"
 #include "QGCSkyeTestForcePanel.h"
-#include "QGCSkyeTestTimerWidget.h"
 
-namespace Ui {
-class QGCSkyeTestForce;
-}
-
-class QGCSkyeTestForce : public QWidget
+class QGCSkyeTestForce : public QGCSkyeTest
 {
     Q_OBJECT
 
@@ -20,19 +16,15 @@ public:
     ~QGCSkyeTestForce();
 
 public slots:
-    void setUAS(UASInterface* uas);
     void emitValues(double inverseFactor = 1.0);      ///< set inverse to -1 to do input into inverse direction
     void stopAll();
 
 signals:
     void valueDirectControlChanged(double forceX, double forceY, double forceZ, double momentX, double momentY, double momentZ);
 
-
-private:
-    Ui::QGCSkyeTestForce *ui;
-    SkyeMAV* uas;
+private:    
     QMap<int, QGCSkyeTestForcePanel*> panelMap;
-    QGCSkyeTestTimerWidget* timerWidget;
+
 };
 
 #endif // QGCSKYETESTFORCE_H
