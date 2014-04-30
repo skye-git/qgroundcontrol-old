@@ -25,6 +25,7 @@ private:
 
     QTabWidget* tabWidget;
     QGCSkyeTestMotors* testMotor;
+    QGCSkyeTestMotors* testMotorPpm;
     QGCSkyeTestForce* testForce;
     QGCSkyeTestControl* testControl;
 

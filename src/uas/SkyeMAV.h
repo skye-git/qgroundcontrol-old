@@ -74,7 +74,7 @@ public slots:
     /** @brief Send the 6 DOF command (from test config window) to MAV */
     void set6DOFCommandsByWidget(double x , double y , double z , double a , double b, double c);
     /** @brief Send the 8 DOF command (from Testphase Widget) to MAV */
-    void setTestphaseCommandsByWidget(double Thrust1 , double Thrust2 , double Thrust3 , double Thrust4 , double Orientation1 , double Orientation2, double Orientation3, double Orientation4 ); //AL (06.03.12)
+    void setTestphaseCommandsByWidget(double Thrust1 , double Thrust2 , double Thrust3 , double Thrust4 , double Orientation1 , double Orientation2, double Orientation3, double Orientation4, bool usePpm);
     /** @brief Set multiplication factor for manual control */
     void setSensitivityFactorTrans(float val);
     /** @brief Set multiplication factor for manual control */

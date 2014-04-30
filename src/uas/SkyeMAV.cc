@@ -274,8 +274,20 @@ void SkyeMAV::sendManualControlCommands6DoF(float x, float y, float z, float phi
     }
 }
 
-void SkyeMAV::setTestphaseCommandsByWidget(double Thrust1 , double Thrust2 , double Thrust3 , double Thrust4 , double Orientation1 , double Orientation2, double Orientation3, double Orientation4)
+void SkyeMAV::setTestphaseCommandsByWidget(double Thrust1 , double Thrust2 , double Thrust3 , double Thrust4 , double Orientation1 , double Orientation2, double Orientation3, double Orientation4, bool usePpm)
 {
+    if (usePpm) {
+        // Negative thrust values are interpreted as PPM value (since skye2.1)
+        sendManualControlCommands8DoF(-(float)Thrust1,
+                                      -(float)Thrust2,
+                                      -(float)Thrust3,
+                                      -(float)Thrust4,
+                                      (float)Orientation1,
+                                      (float)Orientation2,
+                                      (float)Orientation3,
+                                      (float)Orientation4);
+    } else {
+        // Positive thrust values are interpreted as Newton (since skye2.1)
         sendManualControlCommands8DoF((float)Thrust1,
                                       (float)Thrust2,
                                       (float)Thrust3,
@@ -284,8 +296,7 @@ void SkyeMAV::setTestphaseCommandsByWidget(double Thrust1 , double Thrust2 , dou
                                       (float)Orientation2,
                                       (float)Orientation3,
                                       (float)Orientation4);
-
-    //qDebug() << "sendTestphaseControlCommands aufgerufen " << Thrust1 << Thrust2 << Thrust3 << Thrust4;
+    }
 }
 
 void SkyeMAV::sendManualControlCommands8DoF(float Thrust1 , float Thrust2 , float Thrust3 , float Thrust4 , float Orientation1 , float Orientation2, float Orientation3, float Orientation4 )

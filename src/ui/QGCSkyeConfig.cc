@@ -12,15 +12,19 @@ QGCSkyeConfig::QGCSkyeConfig(QWidget *parent) :
     ui->verticalLayout->addWidget(tabWidget);
     ui->verticalLayout->addWidget(testControl);
 
-    testMotor = new QGCSkyeTestMotors(this);
+    testMotor    = new QGCSkyeTestMotors(false, this);
+    testMotorPpm = new QGCSkyeTestMotors(true,  this);
     testForce = new QGCSkyeTestForce(this);
 
-    tabWidget->addTab(testMotor, "Motor Test");
-    tabWidget->addTab(testForce, "Force Test");
+    tabWidget->addTab(testMotor, "Motor Force");
+    tabWidget->addTab(testMotorPpm, "Motor PPM");
+    tabWidget->addTab(testForce, "Blimp Force");
 
-    connect(testControl, SIGNAL(stopAllRequested()), testMotor, SLOT(stopAll()));
-    connect(testControl, SIGNAL(setZeroRequested()), testMotor, SLOT(setZero()));
-    connect(testControl, SIGNAL(stopAllRequested()), testForce, SLOT(stopAll()));
+    connect(testControl, SIGNAL(stopAllRequested()), testMotor,    SLOT(stopAll()));
+    connect(testControl, SIGNAL(setZeroRequested()), testMotor,    SLOT(setZero()));
+    connect(testControl, SIGNAL(stopAllRequested()), testMotorPpm, SLOT(stopAll()));
+    connect(testControl, SIGNAL(setZeroRequested()), testMotorPpm, SLOT(setZero()));
+    connect(testControl, SIGNAL(stopAllRequested()), testForce,    SLOT(stopAll()));
 
     connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
     connect(tabWidget, SIGNAL(currentChanged(int)), testControl, SLOT(tabChanged(int)));

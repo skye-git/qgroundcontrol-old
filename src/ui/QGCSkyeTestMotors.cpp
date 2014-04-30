@@ -5,13 +5,14 @@
 #define QGC_MAX_THRUST 400
 #define QGC_MAX_ABS_DEGREE 180
 
-QGCSkyeTestMotors::QGCSkyeTestMotors(QWidget *parent) :
-    QGCSkyeTest(parent)
+QGCSkyeTestMotors::QGCSkyeTestMotors(bool ppm, QWidget *parent) :
+    QGCSkyeTest(parent),
+    usePpm(ppm)
 {
     // Insert 4 Test Widget Panels
     for (int i = 0; i<4; i++)
     {
-        panelMap.insert(i, new QGCSkyeTestMotorsPanel(this, i));
+        panelMap.insert(i, new QGCSkyeTestMotorsPanel(i, usePpm, this));
         ui->groupBoxPanel->layout()->addWidget(panelMap[i]);
     }
 
@@ -31,7 +32,7 @@ void QGCSkyeTestMotors::setUAS(UASInterface* uas)
     // disconnect old UAS
     if (this->uas)
     {
-        disconnect(this, SIGNAL(valueTestControlChanged(double, double, double, double, double, double, double, double)), uas, SLOT(setTestphaseCommandsByWidget(double, double, double, double, double, double, double, double)));
+        disconnect(this, SIGNAL(valueTestControlChanged(double, double, double, double, double, double, double, double, bool)), this->uas, SLOT(setTestphaseCommandsByWidget(double, double, double, double, double, double, double, double, bool)));
         this->uas = NULL;
     }
 
@@ -40,7 +41,7 @@ void QGCSkyeTestMotors::setUAS(UASInterface* uas)
     // connect new UAS
     if (this->uas != NULL)
     {
-        connect(this, SIGNAL(valueTestControlChanged(double, double, double, double, double, double, double, double)), uas, SLOT(setTestphaseCommandsByWidget(double, double, double, double, double, double, double, double)));
+        connect(this, SIGNAL(valueTestControlChanged(double, double, double, double, double, double, double, double, bool)), this->uas, SLOT(setTestphaseCommandsByWidget(double, double, double, double, double, double, double, double, bool)));
     }
 }
 
@@ -66,7 +67,8 @@ void QGCSkyeTestMotors::emitValues(double inverseFactor)
     }
 
     emit valueTestControlChanged(thrust[0], thrust[1], thrust[2], thrust[3],
-                                 orient[0], orient[1], orient[2], orient[3]);
+                                 orient[0], orient[1], orient[2], orient[3],
+                                 usePpm);
 }
 
 void QGCSkyeTestMotors::setZero()

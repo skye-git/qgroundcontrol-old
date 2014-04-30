@@ -137,7 +137,7 @@ void QGCSkyeTestControl::cycleContextButton()
         if (!engineOn)
         {
             engineOn=true;
-            if (tab == QGC_SKYE_CONFIG_TAB_MOTOR)
+            if (tab == QGC_SKYE_CONFIG_TAB_MOTOR || QGC_SKYE_CONFIG_TAB_MOTOR_PPM)
             {
                 uas->setModeCommand(MAV_MODE_FLAG_TEST_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED);
             } else {
@@ -241,6 +241,7 @@ void QGCSkyeTestControl::tabChanged(int tab)
     /* adjust buttons according to current tab */
     switch (tab) {
     case QGC_SKYE_CONFIG_TAB_MOTOR:
+    case QGC_SKYE_CONFIG_TAB_MOTOR_PPM:
         ui->manPushButton->hide();
         ui->ratePushButton->hide();
         ui->attPushButton->hide();
