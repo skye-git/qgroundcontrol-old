@@ -59,10 +59,16 @@
    </item>
    <item>
     <widget class="QDial" name="dialOrientation">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
-       <width>10</width>
-       <height>10</height>
+       <width>30</width>
+       <height>30</height>
       </size>
      </property>
      <property name="minimum">
