@@ -37,6 +37,8 @@ QGCSkyeTestMotorsPanel::QGCSkyeTestMotorsPanel(int index, bool ppm, QWidget *par
     // connect Sliders, spinBoxes and dials
     connect(ui->SliderThrust, SIGNAL(valueChanged(int)), this, SLOT(setThrustBySlider(int)));
     connect(ui->doubleSpinBoxThrust, SIGNAL(valueChanged(double)), this, SLOT(setThrust(double)));
+    connect(ui->dialOrientation, SIGNAL(valueChanged(int)), ui->spinBoxOrientation, SLOT(setValue(int)));
+    connect(ui->spinBoxOrientation, SIGNAL(valueChanged(int)), ui->dialOrientation, SLOT(setValue(int)));
 }
 
 QGCSkyeTestMotorsPanel::~QGCSkyeTestMotorsPanel()
