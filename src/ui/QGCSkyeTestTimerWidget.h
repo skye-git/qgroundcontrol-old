@@ -24,10 +24,8 @@ private slots:
     void toggledCheckBoxUseTimer(bool checked);
     void clickedPushButtonStart();
     void stopTimer(bool stop = true);
-    void startTimerCont(bool start = true, int msecInterval = QGC_SKYE_TEST_TIMER_MSEC_INTERVAL);
-    void startTimerPeriod(bool start = true,
-                          int msecInterval = QGC_SKYE_TEST_TIMER_MSEC_INTERVAL,
-                          int msecPeriod =   QGC_SKYE_TEST_TIMER_MSEC_PERIOD);
+    void startTimer(bool start = true, int msecInterval = QGC_SKYE_TEST_TIMER_MSEC_INTERVAL);
+    void startPeriod(int msecPeriod =   QGC_SKYE_TEST_TIMER_MSEC_PERIOD);
     void timerTimeout();
     void updateLabel();
 
@@ -39,7 +37,6 @@ private:
     QTimer *timer;
     int shotsRemaining;             ///< Counter for periodic inputs (negativ for endless)
     bool isInvertedMovement;        ///< When true, input must be in inverse direction
-    bool isActiveTab;               ///< Only emit if this is active tab
 
     int msecInterval;               ///< Interval of timer (for emits)
     int msecPeriod;                 ///< Duration of movement into one direction in millisecond

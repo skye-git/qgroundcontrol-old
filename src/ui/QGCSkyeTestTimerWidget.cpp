@@ -29,26 +29,23 @@ void QGCSkyeTestTimerWidget::activeTabChanged(bool active)
      * or stop timer if tab gets hidden
      */
     if (active) {
-        if (ui->checkBoxUseTimer->isChecked() == false) {
-            this->startTimerCont();
-        }
+        this->startTimer();
     } else {
-        if (isActiveTab) {
-            this->stopTimer();
-        }
+        this->stopTimer();
     }
 
-    isActiveTab = active;
     qDebug() << "This TimerWidget isActiveTab is" << active;
 }
 
 void QGCSkyeTestTimerWidget::toggledCheckBoxUseTimer(bool checked)
 {
+    // reset switch. This makes that we will always start with forward movement
+    isInvertedMovement = false;
+
     if (checked == true) {
-        this->stopTimer();
+        shotsRemaining = 0;     // stop. timeout will send 0
     } else {
-        isInvertedMovement = false;
-        this->startTimerCont();
+        shotsRemaining = -1;
     }
 }
 
@@ -66,7 +63,7 @@ void QGCSkyeTestTimerWidget::clickedPushButtonStart()
     msecPeriod = 1000 * ui->doubleSpinBoxPeriod->value();
 
     /* Start timer with default frequency for duration of period */
-    this->startTimerPeriod(true, QGC_SKYE_TEST_TIMER_MSEC_INTERVAL, msecPeriod);
+    this->startPeriod(msecPeriod);
 }
 
 void QGCSkyeTestTimerWidget::stopTimer(bool stop)
@@ -75,28 +72,31 @@ void QGCSkyeTestTimerWidget::stopTimer(bool stop)
     if (stop == true) {
         timer->stop();
 
-        /* send zero input command one time (XXX this might be unsecure) */
+        /* send zero input command one time when this timer stops */
         emit emitValues(0.0);
     }
 }
 
-void QGCSkyeTestTimerWidget::startTimerCont(bool start, int msecInterval)
+void QGCSkyeTestTimerWidget::startTimer(bool start, int msecInterval)
 {
-    /* Start timer (and therefore emits) until it is stopped externally */
+    /* reset number of emits */
+    if (ui->checkBoxUseTimer->isChecked()) {
+        shotsRemaining = 0;    // stop. timeout will send 0
+    } else {
+        shotsRemaining = -1;
+    }
+
+    /* Start timer until it will be stopped */
     if (start == true) {
-        shotsRemaining = -1;            // negativ value indicates no end
         this->msecInterval = msecInterval;
         timer->start(msecInterval);
     }
 }
 
-void QGCSkyeTestTimerWidget::startTimerPeriod(bool start, int msecInterval, int msecPeriod)
+void QGCSkyeTestTimerWidget::startPeriod(int msecPeriod)
 {
-    if (start == true) {
-        shotsRemaining = msecPeriod / msecInterval;
-        this->msecInterval = msecInterval;
-        timer->start(msecInterval);
-    }
+    shotsRemaining = msecPeriod / msecInterval;
+    this->msecPeriod = msecPeriod;
 }
 
 void QGCSkyeTestTimerWidget::timerTimeout()
@@ -106,7 +106,7 @@ void QGCSkyeTestTimerWidget::timerTimeout()
     /* emit if period is either infinite (negative) or not expired (strict positiv)
      * and this is the active tab of the tab widget
      */
-    if (shotsRemaining != 0 && isActiveTab) {
+    if (shotsRemaining != 0) {
         if (isInvertedMovement) {
             emit emitValues(-1.0);      // inverse direction
         } else {
@@ -125,10 +125,10 @@ void QGCSkyeTestTimerWidget::timerTimeout()
         if (ui->checkBoxInvertMovement->isChecked() && !isInvertedMovement) {
             /* start movement into inverse direction if requested */
             isInvertedMovement = true;
-            startTimerPeriod(true, QGC_SKYE_TEST_TIMER_MSEC_INTERVAL, msecPeriod);
+            startPeriod(msecPeriod);
         } else {
-            /* inverse movement not requested or this was already inverse movement. stop now */
-            this->stopTimer();
+            /* inverse movement not requested or this was already inverse movement. send zero */
+            emit emitValues(0.0);
         }
     }
 }
