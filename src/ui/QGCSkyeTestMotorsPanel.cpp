@@ -3,13 +3,16 @@
 #include <QDebug>
 #include "UASManager.h"
 
-#define QGC_MAX_NEWTON 15
-#define QGC_MAX_PPM 400
+#define QGC_MAX_NEWTON      15.0
+#define QGC_MAX_PPM        400.0
 #define QGC_MAX_ABS_DEGREE 180
+
+#define QGC_SLIDER_STEPS 1000
 
 QGCSkyeTestMotorsPanel::QGCSkyeTestMotorsPanel(int index, bool ppm, QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::QGCSkyeTestMotorsPanel)
+    ui(new Ui::QGCSkyeTestMotorsPanel),
+    usePpm(ppm)
 {
     ui->setupUi(this);
 
@@ -22,23 +25,18 @@ QGCSkyeTestMotorsPanel::QGCSkyeTestMotorsPanel(int index, bool ppm, QWidget *par
     ui->labelOrientation->setText(QString("Orientation %1 [deg]").arg(index+1));
 
     // set limits
+    ui->SliderThrust-> setMaximum(QGC_SLIDER_STEPS);    // there is no floating point slider
     if (ppm) {
-        ui->SliderThrust-> setMaximum(QGC_MAX_PPM);
-        ui->spinBoxThrust->setMaximum(QGC_MAX_PPM);
+        ui->doubleSpinBoxThrust->setMaximum(QGC_MAX_PPM);
     } else {
-        ui->SliderThrust-> setMaximum(QGC_MAX_NEWTON);
-        ui->spinBoxThrust->setMaximum(QGC_MAX_NEWTON);
+        ui->doubleSpinBoxThrust->setMaximum(QGC_MAX_NEWTON);
     }
     ui->   dialOrientation->setRange(-QGC_MAX_ABS_DEGREE, QGC_MAX_ABS_DEGREE);
     ui->spinBoxOrientation->setRange(-QGC_MAX_ABS_DEGREE, QGC_MAX_ABS_DEGREE);
 
     // connect Sliders, spinBoxes and dials
-    connect(ui->SliderThrust, SIGNAL(valueChanged(int)), ui->spinBoxThrust, SLOT(setValue(int)));
-    connect(ui->spinBoxThrust, SIGNAL(valueChanged(int)), ui->SliderThrust, SLOT(setValue(int)));
-
-    connect(ui->dialOrientation, SIGNAL(valueChanged(int)), ui->spinBoxOrientation, SLOT(setValue(int)));
-    connect(ui->spinBoxOrientation, SIGNAL(valueChanged(int)), ui->dialOrientation, SLOT(setValue(int)));
-
+    connect(ui->SliderThrust, SIGNAL(valueChanged(int)), this, SLOT(setThrustBySlider(int)));
+    connect(ui->doubleSpinBoxThrust, SIGNAL(valueChanged(double)), this, SLOT(setThrust(double)));
 }
 
 QGCSkyeTestMotorsPanel::~QGCSkyeTestMotorsPanel()
@@ -54,8 +52,8 @@ double QGCSkyeTestMotorsPanel::getOrientation()
 
 double QGCSkyeTestMotorsPanel::getThrust()
 {
-    // no scaling. maximum by QGC_MAX_THRUST
-    return (double)ui->SliderThrust->value();
+    // no scaling. doubleSpinBox holds true value
+    return ui->doubleSpinBoxThrust->value();
 }
 
 void QGCSkyeTestMotorsPanel::setZero()
@@ -66,4 +64,30 @@ void QGCSkyeTestMotorsPanel::setZero()
 void QGCSkyeTestMotorsPanel::stopAll()
 {
     ui->SliderThrust->setValue(0);
+}
+
+void QGCSkyeTestMotorsPanel::setThrust(double thrust)
+{
+    // calculate slider position
+    int sliderThrust;
+    if (usePpm) {
+        sliderThrust = (int)(thrust / QGC_MAX_PPM    * (double)QGC_SLIDER_STEPS);
+    } else {
+        sliderThrust = (int)(thrust / QGC_MAX_NEWTON * (double)QGC_SLIDER_STEPS);
+    }
+    if (sliderThrust != ui->SliderThrust->value()) {
+        ui->SliderThrust->setValue(sliderThrust);
+    }
+}
+
+void QGCSkyeTestMotorsPanel::setThrustBySlider(int intThrust)
+{
+    // calculate thrust from slider position
+    double thrust;
+    if (usePpm) {
+        thrust = (double)intThrust / (double)QGC_SLIDER_STEPS * QGC_MAX_PPM;
+    } else {
+        thrust = (double)intThrust / (double)QGC_SLIDER_STEPS * QGC_MAX_NEWTON;
+    }
+    ui->doubleSpinBoxThrust->setValue(thrust);
 }
