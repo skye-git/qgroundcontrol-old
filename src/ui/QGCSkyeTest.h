@@ -5,6 +5,7 @@
 #include "SkyeMAV.h"
 #include "ui_QGCSkyeTest.h"
 #include "QGCSkyeTestTimerWidget.h"
+#include "QGCSkyeTestSetpointsWidget.h"
 
 namespace Ui {
 class QGCSkyeTest;
@@ -26,6 +27,7 @@ protected:
     Ui::QGCSkyeTest *ui;
     SkyeMAV* uas;
     QGCSkyeTestTimerWidget *timerWidget;
+    QGCSkyeTestSetpointsWidget *setpointWidget;
     bool isActiveTab;
 };
 

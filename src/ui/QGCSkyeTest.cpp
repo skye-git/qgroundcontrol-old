@@ -11,9 +11,13 @@ QGCSkyeTest::QGCSkyeTest(QWidget *parent) :
 
     // Insert box for periodic timing
     timerWidget =  new QGCSkyeTestTimerWidget(this);
+    ui->groupBoxTimer->layout()->addWidget(timerWidget);
     connect(timerWidget, SIGNAL(emitValues(double)), this, SLOT(emitValues(double)));
 
-    ui->groupBoxTimer->layout()->addWidget(timerWidget);
+    // Insert box for setpoints
+    setpointWidget = new QGCSkyeTestSetpointsWidget(this);
+    ui->groupBoxSetpoints->layout()->addWidget(setpointWidget);
+    //connect()  XXX Todo
 }
 
 QGCSkyeTest::~QGCSkyeTest()

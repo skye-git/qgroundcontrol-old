@@ -393,7 +393,8 @@ FORMS += \
     src/ui/SkyeAUStatus.ui \
     src/ui/QGCSkyeTestTimerWidget.ui \
     src/ui/QGCSkyeTestForcePanel.ui \
-    src/ui/QGCSkyeTest.ui
+    src/ui/QGCSkyeTest.ui \
+    src/ui/QGCSkyeTestSetpointsWidget.ui
 
 HEADERS += \
     src/MG.h \
@@ -607,7 +608,8 @@ HEADERS += \
     src/uas/QGCUASParamManagerInterface.h \
     src/ui/QGCSkyeTestTimerWidget.h \
     src/ui/QGCSkyeTestForcePanel.h \
-    src/ui/QGCSkyeTest.h
+    src/ui/QGCSkyeTest.h \
+    src/ui/QGCSkyeTestSetpointsWidget.h
 
 SOURCES += \
     src/main.cc \
@@ -810,5 +812,6 @@ SOURCES += \
     src/input/xboxcontroller.cpp \
     src/ui/QGCSkyeTestTimerWidget.cpp \
     src/ui/QGCSkyeTestForcePanel.cpp \
-    src/ui/QGCSkyeTest.cpp
+    src/ui/QGCSkyeTest.cpp \
+    src/ui/QGCSkyeTestSetpointsWidget.cpp
 
