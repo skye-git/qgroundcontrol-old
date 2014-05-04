@@ -47,6 +47,9 @@ private:
     bool engineOn;
     int tab;
 
+    void showEvent(QShowEvent *event);
+    void hideEvent(QHideEvent *event);
+
 };
 
 #endif // QGCSKYETESTCONTROL_H

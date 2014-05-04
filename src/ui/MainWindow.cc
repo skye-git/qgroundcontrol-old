@@ -1556,23 +1556,6 @@ void MainWindow::setActiveUAS(UASInterface* uas)
         //settings.setValue(getWindowStateKey(), win->saveState(QGC::applicationVersion()))
         win->restoreState(settings.value(getWindowStateKey()).toByteArray(), QGC::applicationVersion());
     }
-
-//// Begin Code Skye (06.03.2012)
-//    // Connect input to (skye) Mavlink messages
-//    SkyeMAV* tmp = 0;
-//    tmp = dynamic_cast<SkyeMAV*>(UASManager::instance()->getActiveUAS());
-//    if (tmp) {
-//        disconnect(tmp, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
-//        //disconnect(this, SIGNAL(valueTouchInputChanged(double, double, double, double, double, double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));// Beginn und Ende Code AL (26.03.12)
-//    }
-
-//    tmp = dynamic_cast<SkyeMAV*>(uas);
-//    if(tmp) {
-//        connect(tmp, SIGNAL(inputModeChanged(SkyeMAV::QGC_INPUT_MODE)), this, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE)));
-//        //connect(this, SIGNAL(valueTouchInputChanged(double,double,double,double,double,double)), tmp, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
-//    }
-//// End Code Skye
-
 }
 
 void MainWindow::UASSpecsChanged(int uas)

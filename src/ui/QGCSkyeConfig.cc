@@ -40,20 +40,6 @@ QGCSkyeConfig::~QGCSkyeConfig()
     delete ui;
 }
 
-void QGCSkyeConfig::showEvent(QShowEvent *event)
-{
-    //testControl->changeMode(MAV_MODE_PREFLIGHT);
-    //qDebug() << "DISARMED system because Skye config is shown.";
-    QWidget::showEvent(event);
-}
-
-void QGCSkyeConfig::hideEvent(QHideEvent *event)
-{
-    //testControl->changeMode(MAV_MODE_PREFLIGHT);
-    //qDebug() << "DISARMED system because Skye config has been left.";
-    QWidget::hideEvent(event);
-}
-
 void QGCSkyeConfig::tabChanged(int tab)
 {
     for (int i = 0; i < tabWidget->count(); i++)

@@ -35,7 +35,6 @@ This file is part of the PIXHAWK project
 #include <QFileDialog>
 #include <QDebug>
 #include <QPalette>
-//#include <QMessageBox>
 
 #include "UASSkyeControlWidget.h"
 #include "UASManager.h"
@@ -63,12 +62,6 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     ui.controlButton->setObjectName("controlButtonGreen");
     ui.controlButton->setStyleSheet("");
 
-    // Uncheck and group buttons to enable exclusiv checkable
-//    ui.manControlButton->setChecked(uasMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL);
-//    ui.rateControlButton->setChecked(uasMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE);
-//    ui.attControlButton->setChecked(uasMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE);
-//    ui.halfAutomaticControlButton->setChecked(uasMode & MAV_MODE_HALF_AUTOMATIC_DISARMED);
-//    ui.fullAutomaticControlButton->setChecked(uasMode & MAV_MODE_FULL_AUTOMATIC_DISARMED);
     ui.manControlButton->setCheckable(false);
     ui.rateControlButton->setCheckable(false);
     ui.attControlButton->setCheckable(false);
@@ -101,9 +94,6 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     connect(ui.keyboardButton, SIGNAL(clicked(bool)), this, SLOT(setInputKeyboard(bool)));
     connect(ui.xboxButton, SIGNAL(clicked(bool)), this, SLOT(setInputXbox(bool)));
 
-    //ui.gridLayout->setAlignment(Qt::AlignTop);
-
-
 
     updateStyleSheet();
 
@@ -134,7 +124,6 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
 
             disconnect(mav, SIGNAL(mouseButtonRotationChanged(bool)), this, SLOT(changeMouseRotationEnabled(bool)));
             disconnect(mav, SIGNAL(mouseButtonTranslationChanged(bool)), this, SLOT(changeMouseTranslationEnabled(bool)));
-            //disconnect(mav, SIGNAL(batteryLow(double)), this, SLOT(alertBatteryLow(double)));
             disconnect(mav, SIGNAL(batteryLow(double,bool,uint)), alertWidget, SLOT(batteryLow(double,bool,uint)));
 
             disconnect(inputMixer, SIGNAL(changed6DOFInput(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
@@ -172,7 +161,6 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(ui.controlButton, SIGNAL(clicked()), this, SLOT(cycleContextButton()));
         connect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
         connect(mav, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
-        //connect(mav, SIGNAL(batteryLow(double)), this, SLOT(alertBatteryLow(double)));
         connect(mav, SIGNAL(batteryLow(double,bool,uint)), alertWidget, SLOT(batteryLow(double,bool,uint)));
 
         connect(this, SIGNAL(changedInput(SkyeMAV::QGC_INPUT_MODE, bool)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE, bool)));
@@ -404,7 +392,6 @@ void UASSkyeControlWidget::setInputMouse(bool checked)
 	}
     emit changedInput(SkyeMAV::QGC_INPUT_MODE_MOUSE, checked);
 
-    //updateStyleSheet();
 }
 
 void UASSkyeControlWidget::setInputTouch(bool checked)
@@ -474,16 +461,9 @@ void UASSkyeControlWidget::cycleContextButton()
     {
         if (!engineOn)
         {
-//            if (uasMode)
-//            {
-                mav->armSystem();
-                mav->setModeCommand(uasMode | MAV_MODE_FLAG_SAFETY_ARMED);
-
-                ui.lastActionLabel->setText(QString("Enabled motors on %1").arg(mav->getUASName()));
-//            } else {
-//                ui.lastActionLabel->setText("Set mode before!");
-//            }
-
+            mav->armSystem();
+            mav->setModeCommand(uasMode | MAV_MODE_FLAG_SAFETY_ARMED);
+            ui.lastActionLabel->setText(QString("Enabled motors on %1").arg(mav->getUASName()));
         } else {
             mav->disarmSystem();
             mav->setModeCommand(0);
@@ -588,38 +568,6 @@ void UASSkyeControlWidget::getXboxControlCommands(double x, double y, double z, 
     if (inputMode & SkyeMAV::QGC_INPUT_MODE_XBOX)
     {
         inputMixer->updateXboxValues(x, y, z, a, b, c);
-    }
-}
-
-void UASSkyeControlWidget::uncheckAllModeButtons()
-{
-////    modeButtonGroup->setExclusive(false);
-//    QAbstractButton* checkedButton = modeButtonGroup->checkedButton();
-//    if (checkedButton)
-//    {
-//        checkedButton->toggle();
-//        ui.lastActionLabel->setText("No mode set!");
-//    }
-////    modeButtonGroup->setExclusive(true);
-}
-
-void UASSkyeControlWidget::alertBatteryLow(double voltage)
-{
-    if ( (lastAlertTime.elapsed() > 60000) || (alertedBatteryLow == false) )
-    {
-        lastAlertTime.restart();
-        alertedBatteryLow = true;
-
-        msgBox->showMessage("Battery low! Shut down system immediately.");
-//        msgBox->exec();
-
-//        QMessageBox msgBox;
-//        msgBox.setIcon(QMessageBox::Information);
-//        msgBox.setText(tr("BATTERY LOW"));
-//        msgBox.setInformativeText(tr("Please shut down the system and charge the batteries."));
-//        msgBox.setStandardButtons(QMessageBox::Ok);
-//        msgBox.setDefaultButton(QMessageBox::Ok);
-//        msgBox.exec();
     }
 }
 

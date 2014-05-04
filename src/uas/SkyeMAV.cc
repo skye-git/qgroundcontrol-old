@@ -361,6 +361,18 @@ void SkyeMAV::setInputMode(SkyeMAV::QGC_INPUT_MODE input, bool active)
     }
 }
 
+void SkyeMAV::setInputMode(SkyeMAV::QGC_INPUT_MODE input)
+{
+    // check if input mode changes
+    if (inputMode != input) {
+        inputMode = input;
+        emit inputModeChanged(inputMode);
+    } else {
+        // do nothing
+        qDebug() << "[SkyeMAV] Input was already" << inputMode;
+    }
+}
+
 void SkyeMAV::updateMouseInputStatus(bool active)
 {
     if (active == false)

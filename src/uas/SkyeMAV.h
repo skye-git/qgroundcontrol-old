@@ -89,9 +89,10 @@ public slots:
     void setAddPitchValue(double val) {addPitchValue = val;}
     /** @brief Set additive value for yaw manual control */
     void setAddYawValue(double val) {addYawValue = val;}
-
     /** @brief Set active input flag for this UAS */
     void setInputMode(SkyeMAV::QGC_INPUT_MODE input, bool active);
+    /** @brief Set active input as exclusive input for this UAS */
+    void setInputMode(SkyeMAV::QGC_INPUT_MODE input);
     /** @brief Reset mouse input mode after initialization */
     void updateMouseInputStatus(bool active);
     /** @brief Report de-/activation of rotative 3DMouse input */

@@ -30,11 +30,11 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="controlButton">
+      <widget class="QPushButton" name="pushButtonControl">
        <property name="minimumSize">
         <size>
-         <width>70</width>
-         <height>50</height>
+         <width>125</width>
+         <height>60</height>
         </size>
        </property>
        <property name="text">
@@ -43,7 +43,13 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="manPushButton">
+      <widget class="QPushButton" name="pushButtonMan">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>60</height>
+        </size>
+       </property>
        <property name="maximumSize">
         <size>
          <width>50</width>
@@ -56,7 +62,13 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="ratePushButton">
+      <widget class="QPushButton" name="pushButton5dof">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>60</height>
+        </size>
+       </property>
        <property name="maximumSize">
         <size>
          <width>50</width>
@@ -69,7 +81,13 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="attPushButton">
+      <widget class="QPushButton" name="pushButton6dof">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>60</height>
+        </size>
+       </property>
        <property name="maximumSize">
         <size>
          <width>50</width>
@@ -95,7 +113,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="setZeroButton">
+      <widget class="QPushButton" name="pushButtonSetZero">
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -108,7 +126,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="stopAllButton">
+      <widget class="QPushButton" name="pushButtonStopAll">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>

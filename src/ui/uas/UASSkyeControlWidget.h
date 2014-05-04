@@ -45,7 +45,6 @@ This file is part of the QGROUNDCONTROL project
 #include <QtGui/QVBoxLayout>
 #include <ui_UASSkyeControl.h>
 #include <UASInterface.h>
-//#include "Ui_UASSkyeControl.h"
 #include "SkyeMAV.h"
 #include "QGCTabbedInfoView.h"
 #include "UASSkyeInputMixer.h"
@@ -88,13 +87,8 @@ public slots:
     void getMouse6DOFControlCommands(double x, double y, double z, double a, double b, double c);
     /** @brief Get xbox control commands */
     void getXboxControlCommands(double x, double y, double z, double a, double b, double c);
-
-    /** @brief Alert user that battery is low */
-    void alertBatteryLow(double voltage);
-
     /** @brief New allocation case has been set on UAV */
     void getAllocCase(int allocCase);
-
 
 signals:
     void changedMode(int);
@@ -105,18 +99,12 @@ signals:
     void changeAUConfiguration(int disabledAU);
 
     protected slots:
-//        /** @brief Set the background color for the widget */
-//        void setBackgroundColor(QColor color);
         /** @brief Set Direct Control */
         void setDirectControlMode();
         /** @brief Set Rate Control */
         void setRateControlMode();
         /** @brief Set Attitude Control */
         void setAttitudeControlMode();
-//        /** @brief Set uasMode to Half Automatic Control */
-//        void setHalfAutomaticControlMode(bool checked);
-//        /** @brief Set uasMode to Full Automatic Control */
-//        void setFullAutomaticControlMode(bool checked);
         /** @brief Set 3d Mouse as active inpute device */
         void setInputMouse(bool checked);
         /** @brief Set Touchscreen as active inpute device */
@@ -146,9 +134,6 @@ signals:
         void buildWidget();
         /** @brief Update stylesheet for SkyeControlWidget */
         void updateStyleSheet();
-        /** @brief Uncheck all mode buttons when mode is default */
-        void uncheckAllModeButtons();
-//        Ui_UASSkyeControl ui;
         Ui::uasSkyeControl ui;
         QButtonGroup *modeButtonGroup;
         QButtonGroup *inputButtonGroup;

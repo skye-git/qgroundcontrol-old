@@ -29,9 +29,6 @@ private:
     QGCSkyeTestForce* testForce;
     QGCSkyeTestControl* testControl;
 
-    void showEvent(QShowEvent *event);
-    void hideEvent(QHideEvent *event);
-
 private slots:
     void tabChanged(int tab);
 
