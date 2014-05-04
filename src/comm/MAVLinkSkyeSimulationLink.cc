@@ -294,7 +294,6 @@ void MAVLinkSkyeSimulationLink::mainloop()
     }
 
     readyBufferMutex.lock();
-    qDebug() << "[mainloop] locked mutex. Streampointer is" << streampointer << ".";
     for (unsigned int i = 0; i < streampointer; i++) {
         readyBuffer.enqueue(*(stream + i));
     }
@@ -441,7 +440,6 @@ void MAVLinkSkyeSimulationLink::writeBytes(const char* data, qint64 size)
                     y = lastY + qSin(yaw)*speedX*dTime + qCos(yaw)*speedY*dTime;
                     z = lastZ + speedZ*dTime;
                }
-                qDebug() << "Skye Simulation received 6dof setpoint.";
                 // Send back new setpoint
                 mavlink_message_t ret;
                 mavlink_msg_setpoint_6dof_pack(systemId, componentId, &ret, m6c.target_system, m6c.trans_x, m6c.trans_y, m6c.trans_z, m6c.rot_x, m6c.rot_y, m6c.rot_z);
@@ -465,7 +463,6 @@ void MAVLinkSkyeSimulationLink::writeBytes(const char* data, qint64 size)
                     orientation3 = m8c.val7;
                     orientation4 = m8c.val8;
                 }
-                qDebug() << "Skye Simulation received 8 DOF setpoint.";
                 // Send back new setpoint
                 mavlink_message_t ret;
                 mavlink_msg_setpoint_8dof_pack(systemId, componentId, &ret, m8c.target_system, m8c.val1, m8c.val2, m8c.val3, m8c.val4, m8c.val5, m8c.val6, m8c.val7, m8c.val8);
@@ -484,7 +481,6 @@ void MAVLinkSkyeSimulationLink::writeBytes(const char* data, qint64 size)
     //fprintf(stderr,"\n");
 
     readyBufferMutex.lock();
-    qDebug() << "[writeBytes] locked mutex. Streampointer is" << streampointer << ".";
     for (int i = 0; i < streampointer; i++)
     {
         readyBuffer.enqueue(*(stream + i));
