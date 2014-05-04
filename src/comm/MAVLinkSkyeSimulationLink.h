@@ -91,6 +91,17 @@ public slots:
     void connectLink();
     void sendMAVLinkMessage(const mavlink_message_t* msg);
 
+    void sendMsgBatteryCellsStatus(float voltage);
+    void sendMsgBatteryStatus(float voltage);
+    void sendMsgAllocationControllerRaw();
+    void sendMsgActuationStatus();
+    void sendMsgSysStatus();
+    void sendMsgHeartbeat();
+    void sendMsgStatustext();
+    void sendMsgGlobalPositionInt();
+    void sendMsgAttitude();
+
+
 
 protected:
 
@@ -119,7 +130,7 @@ protected:
     int maxTimeNoise;
     quint64 lastSent;
     static const int streamlength = 4096;
-    unsigned int streampointer;
+    uint8_t streampointer;
     //const int testoffset = 0;
     uint8_t stream[streamlength];
 
