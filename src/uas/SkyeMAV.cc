@@ -406,7 +406,7 @@ void SkyeMAV::sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t bl
 void SkyeMAV::sendAUConfiguration(int disabledAU)
 {
     mavlink_message_t msg;
-    mavlink_msg_param_set_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, this->uasId, (uint8_t)MAV_COMP_ID_ALL, "SKYE_ALOC_CASE", (float)disabledAU, (uint8_t)MAV_PARAM_TYPE_REAL32);
+    mavlink_msg_param_set_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, this->uasId, (uint8_t)MAV_COMP_ID_ALL, "SKYE_ALOC_CASE", (int32_t)disabledAU, (uint8_t)MAV_PARAM_TYPE_INT32);
     sendMessage(msg);
     qDebug() << "[SkyeMAV] Sent SKYE_ALOC_CASE" << disabledAU;
 }
