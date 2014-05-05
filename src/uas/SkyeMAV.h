@@ -100,6 +100,8 @@ public slots:
     /** @brief Report de-/activation of translative 3DMouse input */
     void changeMouseTranslationActive(bool active){emit mouseButtonTranslationChanged(active);}
 
+	void onboardParameterChanged(int uas, int component, QString parameterName, QVariant value);
+
     void sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t blue, uint8_t mode, float frequency);
 
     /** @brief Send parameter for actuation unit configuration (SKYE_ALOC_CASE) */

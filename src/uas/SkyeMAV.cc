@@ -34,6 +34,7 @@ SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
     imagePacketsArrived = 0;
     this->setUASName("SKYE");
 
+	this->connect(this, SIGNAL(parameterChanged(int,int,QString,QVariant)), this, SLOT(onboardParameterChanged(int,int,QString,QVariant)));
 }
 
 SkyeMAV::~SkyeMAV(void)
@@ -171,24 +172,6 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
         }
             break;
 
-        case MAVLINK_MSG_ID_PARAM_VALUE:
-        {
-            mavlink_param_value_t rawValue;
-            mavlink_msg_param_value_decode(&message, &rawValue);
-
-            // check for value of SKYE_ALOC_CASE parameter
-            if (strcmp(rawValue.param_id , "SKYE_ALOC_CASE") == 0)
-            {
-                //qDebug() << "[SkyeMAV] GOT PARAM" << rawValue.param_value;
-                emit allocCaseChanged((int)rawValue.param_value);
-            }
-
-            // Let UAS handle this message additionally
-            UAS::receiveMessage(link, message);
-
-         }
-         break;
-
         // Ignore these messages
         case MAVLINK_MSG_ID_SETPOINT_6DOF:
         case MAVLINK_MSG_ID_SETPOINT_8DOF:
@@ -207,6 +190,14 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
     } else {
         qDebug() << "[SkyeMAV] Got Message with wrong sysid" << message.sysid;
     }
+}
+
+void SkyeMAV::onboardParameterChanged(int uas, int component, QString parameterName, QVariant value) {
+	if (parameterName ==  QString("SKYE_ALOC_CASE"))
+	{
+		//qDebug() << "[SkyeMAV] GOT PARAM" << rawValue.param_value;
+		emit allocCaseChanged(value.toInt());
+	}
 }
 
 void SkyeMAV::setManual6DOFControlCommands(double x , double y , double z , double a , double b, double c)
@@ -405,9 +396,10 @@ void SkyeMAV::sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t bl
 
 void SkyeMAV::sendAUConfiguration(int disabledAU)
 {
-    mavlink_message_t msg;
-    mavlink_msg_param_set_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, this->uasId, (uint8_t)MAV_COMP_ID_ALL, "SKYE_ALOC_CASE", (int32_t)disabledAU, (uint8_t)MAV_PARAM_TYPE_INT32);
-    sendMessage(msg);
+	//mavlink_message_t msg;
+	//mavlink_msg_param_set_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, this->uasId, (uint8_t)MAV_COMP_ID_ALL, "SKYE_ALOC_CASE", (int32_t)disabledAU, (uint8_t)MAV_PARAM_TYPE_INT32);
+	//sendMessage(msg);
+	setParameter(mavlink->getComponentId(), QString("SKYE_ALOC_CASE"), QVariant((int32_t)disabledAU));
     qDebug() << "[SkyeMAV] Sent SKYE_ALOC_CASE" << disabledAU;
 }
 

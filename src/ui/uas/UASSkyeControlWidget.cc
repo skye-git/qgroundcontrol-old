@@ -573,5 +573,5 @@ void UASSkyeControlWidget::getXboxControlCommands(double x, double y, double z, 
 
 void UASSkyeControlWidget::getAllocCase(int allocCase)
 {
-    ui.lastActionLabel->setText(QString("Set allocation case %1").arg(allocCase));
+	ui.lastActionLabel->setText(QString("Set allocation case %1").arg(allocCase));
 }
