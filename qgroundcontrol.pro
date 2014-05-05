@@ -394,7 +394,8 @@ FORMS += \
     src/ui/QGCSkyeTestTimerWidget.ui \
     src/ui/QGCSkyeTestForcePanel.ui \
     src/ui/QGCSkyeTest.ui \
-    src/ui/QGCSkyeTestSetpointsWidget.ui
+    src/ui/QGCSkyeTestSetpointsWidget.ui \
+    src/ui/SkyeAUStatusSettingsDialog.ui
 
 HEADERS += \
     src/MG.h \
@@ -609,7 +610,8 @@ HEADERS += \
     src/ui/QGCSkyeTestTimerWidget.h \
     src/ui/QGCSkyeTestForcePanel.h \
     src/ui/QGCSkyeTest.h \
-    src/ui/QGCSkyeTestSetpointsWidget.h
+    src/ui/QGCSkyeTestSetpointsWidget.h \
+    src/ui/SkyeAUStatusSettingsDialog.h
 
 SOURCES += \
     src/main.cc \
@@ -813,5 +815,6 @@ SOURCES += \
     src/ui/QGCSkyeTestTimerWidget.cpp \
     src/ui/QGCSkyeTestForcePanel.cpp \
     src/ui/QGCSkyeTest.cpp \
-    src/ui/QGCSkyeTestSetpointsWidget.cpp
+    src/ui/QGCSkyeTestSetpointsWidget.cpp \
+    src/ui/SkyeAUStatusSettingsDialog.cpp
 

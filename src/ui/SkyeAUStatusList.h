@@ -5,6 +5,7 @@
 #include <QMap>
 #include "SkyeAUStatus.h"
 #include "UASInterface.h"
+#include "SkyeAUStatusSettingsDialog.h"
 
 namespace Ui {
 class SkyeAUStatusList;
@@ -53,6 +54,8 @@ private:
     int allocationCase;                 ///< Allocation case. 0: all AUs, 1: w/o AU1, 2: w/o AU2, 3: w/o AU3, 4: w/o AU4
 
     QMenu menu;
+
+    SkyeAUStatusSettingsDialog *settingsDialog; ///< Dialog widget for actuation config settings
 };
 
 #endif // SKYEAUSTATUSLIST_H

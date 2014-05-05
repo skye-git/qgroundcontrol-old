@@ -18,11 +18,17 @@ SkyeAUStatusList::SkyeAUStatusList(QWidget *parent) :
     auList = QMap<int, SkyeAUStatus*>();
     auActiveList = QMap<int, bool>();
 
+    // prepare auto allocation button
     ui->pushButtonAutomaticAllocation->setCheckable(true);
     ui->pushButtonAutomaticAllocation->setChecked(allocationAuto);
     connect(ui->pushButtonAutomaticAllocation, SIGNAL(toggled(bool)), this, SLOT(setAllocationAutoMode(bool)));
     setAllocationAutoMode(allocationAuto);
 
+    // connect settings button
+    settingsDialog = new SkyeAUStatusSettingsDialog(this);
+    connect(ui->pushButtonAuSettings, SIGNAL(clicked()), settingsDialog, SLOT(show()));
+
+    // connect uas manager
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 
     // right-click menu
