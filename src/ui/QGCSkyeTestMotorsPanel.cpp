@@ -4,8 +4,8 @@
 #include "UASManager.h"
 
 #define QGC_MAX_NEWTON      15.0
-#define QGC_MAX_PPM        400.0
-#define QGC_MAX_ABS_DEGREE 180
+#define QGC_MAX_PPM        800.0
+#define QGC_MAX_ABS_DEGREE 400
 
 #define QGC_SLIDER_STEPS 1000
 
@@ -18,8 +18,12 @@ QGCSkyeTestMotorsPanel::QGCSkyeTestMotorsPanel(int index, bool ppm, QWidget *par
 
     // label
     if (ppm) {
+		ui->doubleSpinBoxThrust->setDecimals(0);
+		ui->doubleSpinBoxThrust->setSingleStep(5);
         ui->labelThrust->setText(QString("Thrust %1 [PPM]").arg(index+1));
     } else {
+		ui->doubleSpinBoxThrust->setDecimals(1);
+		ui->doubleSpinBoxThrust->setSingleStep(0.1);
         ui->labelThrust->setText(QString("Thrust %1 [N]").arg(index+1));
     }
     ui->labelOrientation->setText(QString("Orientation %1 [deg]").arg(index+1));

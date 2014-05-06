@@ -135,14 +135,14 @@ void QGCSkyeTestControl::cycleContextButton()
         if (!engineOn)
         {
             engineOn=true;
-            if (tab == QGC_SKYE_CONFIG_TAB_MOTOR || QGC_SKYE_CONFIG_TAB_MOTOR_PPM)
+			if (tab == QGC_SKYE_CONFIG_TAB_MOTOR || tab == QGC_SKYE_CONFIG_TAB_MOTOR_PPM)
             {
-                uas->setModeCommand(MAV_MODE_FLAG_TEST_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED);
+				uas->setModeCommand(MAV_MODE_FLAG_TEST_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED);
             } else {
                 uas->armSystem();
             }
 
-        } else {
+		} else {
             //emit valueDirectControlChanged( 0, 0, 0, 0, 0, 0 );
             stopAll();
             uas->setMode(MAV_MODE_PREFLIGHT, 0);
