@@ -5,6 +5,10 @@
 QGCSkyeTestForce::QGCSkyeTestForce(QWidget *parent) :
     QGCSkyeTest(parent)
 {
+	{
+		QTime time = QTime::currentTime();
+		rand_generator.seed((uint)time.msec());
+	}
     // Insert 3 Force Widget Panels
     for (int i = 0; i<3; i++)
     {

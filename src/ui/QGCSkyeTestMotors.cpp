@@ -9,6 +9,10 @@ QGCSkyeTestMotors::QGCSkyeTestMotors(bool ppm, QWidget *parent) :
     QGCSkyeTest(parent),
     usePpm(ppm)
 {
+	{
+		QTime time = QTime::currentTime();
+		rand_generator.seed((uint)time.msec());
+	}
     // Insert 4 Test Widget Panels
     for (int i = 0; i<4; i++)
     {

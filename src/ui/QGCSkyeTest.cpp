@@ -16,8 +16,8 @@ QGCSkyeTest::QGCSkyeTest(QWidget *parent) :
 	connect(timerWidget, SIGNAL(randomizeInputs(double)), this, SLOT(randomizeInputs(double)));
 
     // Insert box for setpoints
-    setpointWidget = new QGCSkyeTestSetpointsWidget(this);
-    ui->groupBoxSetpoints->layout()->addWidget(setpointWidget);
+	//setpointWidget = new QGCSkyeTestSetpointsWidget(this);
+	//ui->groupBoxSetpoints->layout()->addWidget(setpointWidget);
     //connect()  XXX Todo
 }
 
