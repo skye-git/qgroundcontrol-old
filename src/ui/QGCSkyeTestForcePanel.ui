@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>477</width>
     <height>300</height>
    </rect>
   </property>
@@ -58,6 +58,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QCheckBox" name="checkBoxRngForce">
+     <property name="text">
+      <string>RNG</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -97,6 +104,16 @@
      </property>
      <property name="maximum">
       <number>10800</number>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="checkBoxRngMoment">
+     <property name="text">
+      <string>RNG</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

@@ -48,8 +48,12 @@ double QGCSkyeTestForcePanel::getMoment()
 void QGCSkyeTestForcePanel::randomize(double std_dev, std::tr1::ranlux64_base_01 &rng) {
 	std::tr1::normal_distribution<double> normal(0.0, std_dev);
 	//qDebug() << "Random value" << normal(rand_generator);
-	ui->sliderForce->setValue(0);
-	ui->sliderMoment->setValue(normal(rng));
+	if (ui->checkBoxRngForce->isChecked()) {
+		ui->sliderForce->setValue(normal(rng));
+	}
+	if (ui->checkBoxRngMoment->isChecked()) {
+		ui->sliderMoment->setValue(normal(rng));
+	}
 }
 
 void QGCSkyeTestForcePanel::stopAll()
