@@ -369,8 +369,29 @@ void LinechartWidget::appendData(int uasId, const QString& curve, const QString&
             if (logStartTime == 0) logStartTime = usec;
             qint64 time = usec - logStartTime;
             if (time < 0) time = 0;
-
-            logFile->write(QString(QString::number(time) + "\t" + QString::number(uasId) + "\t" + curve + "\t" + QString::number(value) + "\n").toLatin1());
+			switch(type) {
+				case QMetaType::Char:
+				case QMetaType::Int:
+				case QMetaType::Short:
+				case QMetaType::Long:
+				case QMetaType::LongLong:
+					// write as long long:
+					logFile->write(QString(QString::number(time) + "\t" + QString::number(uasId) + "\t" + curve + "\t" + QString::number(variant.toLongLong()) + "\n").toLatin1());
+					break;
+				case QMetaType::Bool:
+				case QMetaType::UChar:
+				case QMetaType::UInt:
+				case QMetaType::ULong:
+				case QMetaType::ULongLong:
+				case QMetaType::UShort:
+					// write as unsigned long long:
+					logFile->write(QString(QString::number(time) + "\t" + QString::number(uasId) + "\t" + curve + "\t" + QString::number(variant.toULongLong()) + "\n").toLatin1());
+					break;
+				default:
+					// write as double:
+					logFile->write(QString(QString::number(time) + "\t" + QString::number(uasId) + "\t" + curve + "\t" + QString::number(value) + "\n").toLatin1());
+					break;
+			}
         }
     }
 }
