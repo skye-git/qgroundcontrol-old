@@ -1,6 +1,7 @@
 #ifndef QGCSKYETESTMOTORSPANEL_H
 #define QGCSKYETESTMOTORSPANEL_H
 
+#include <tr1/random>
 #include <QWidget>
 #include <QTimer>
 #include "SkyeMAV.h"
@@ -18,6 +19,7 @@ public:
     ~QGCSkyeTestMotorsPanel();
     double getOrientation();
     double getThrust();
+	void randomize(double std_dev, std::tr1::ranlux64_base_01 &rng);
 
 public slots:
     void stopAll();

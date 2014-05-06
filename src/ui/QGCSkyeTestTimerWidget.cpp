@@ -5,7 +5,7 @@
 QGCSkyeTestTimerWidget::QGCSkyeTestTimerWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::QGCSkyeTestTimerWidget),
-    isInvertedMovement(false)
+	currentState(QGCSkyeTestTimerWidget::StateContinous)
 {
     ui->setupUi(this);
 
@@ -34,19 +34,17 @@ void QGCSkyeTestTimerWidget::activeTabChanged(bool active)
         this->stopTimer();
     }
 
-    qDebug() << "This TimerWidget isActiveTab is" << active;
+	//qDebug() << "This TimerWidget isActiveTab is" << active;
 }
 
 void QGCSkyeTestTimerWidget::toggledCheckBoxUseTimer(bool checked)
 {
-    // reset switch. This makes that we will always start with forward movement
-    isInvertedMovement = false;
-
-    if (checked == true) {
-        shotsRemaining = 0;     // stop. timeout will send 0
-    } else {
-        shotsRemaining = -1;
-    }
+	// reset switch. This makes that we will always start with forward movement
+	if (checked) {
+		currentState = StateStopped;
+	} else {
+		currentState = StateContinous;
+	}
 }
 
 void QGCSkyeTestTimerWidget::clickedPushButtonStart()
@@ -56,14 +54,12 @@ void QGCSkyeTestTimerWidget::clickedPushButtonStart()
         ui->checkBoxUseTimer->toggle();
     }
 
-    /* Movement must start in right direction */
-    isInvertedMovement = false;
-
     /* Update period time. This will also be needed for inverse direction (if inverse direction is activated) */
     msecPeriod = 1000 * ui->doubleSpinBoxPeriod->value();
+	msecPause  = 1000 * ui->doubleSpinBoxPause->value();
 
-    /* Start timer with default frequency for duration of period */
-    this->startPeriod(msecPeriod);
+	/* Start forward phase: */
+	startPhase(StateForward, msecPeriod);
 }
 
 void QGCSkyeTestTimerWidget::stopTimer(bool stop)
@@ -71,6 +67,7 @@ void QGCSkyeTestTimerWidget::stopTimer(bool stop)
     /* Stop timer (and therefore any emits) */
     if (stop == true) {
         timer->stop();
+		currentState = StateStopped;
 
         /* send zero input command one time when this timer stops */
         emit emitValues(0.0);
@@ -80,10 +77,10 @@ void QGCSkyeTestTimerWidget::stopTimer(bool stop)
 void QGCSkyeTestTimerWidget::startTimer(bool start, int msecInterval)
 {
     /* reset number of emits */
-    if (ui->checkBoxUseTimer->isChecked()) {
-        shotsRemaining = 0;    // stop. timeout will send 0
-    } else {
-        shotsRemaining = -1;
+	if (ui->checkBoxUseTimer->isChecked()) {
+		currentState = StateStopped;
+	} else {
+		currentState = StateContinous;
     }
 
     /* Start timer until it will be stopped */
@@ -93,59 +90,107 @@ void QGCSkyeTestTimerWidget::startTimer(bool start, int msecInterval)
     }
 }
 
-void QGCSkyeTestTimerWidget::startPeriod(int msecPeriod)
+void QGCSkyeTestTimerWidget::startPhase(QGCSkyeTestTimerWidget::State phase, int msecPeriod)
 {
-    shotsRemaining = msecPeriod / msecInterval;
-    this->msecPeriod = msecPeriod;
+	currentState = phase;
+	// divide with round-up:
+	shotsRemaining = (msecPeriod + msecInterval - 1) / msecInterval;
 }
 
 void QGCSkyeTestTimerWidget::timerTimeout()
 {
-    updateLabel();
-
-    /* emit if period is either infinite (negative) or not expired (strict positiv)
-     * and this is the active tab of the tab widget
-     */
-    if (shotsRemaining != 0) {
-        if (isInvertedMovement) {
-            emit emitValues(-1.0);      // inverse direction
-        } else {
-            emit emitValues( 1.0);      // forward direction
-        }
-
-        /* decrement counter if this is finite period */
-        if (shotsRemaining > 0) {
-            shotsRemaining--;
-        }
-    }
-
-    /* period has expired (shotsRemaining == 0).
-     * either stop or start movement into inverse direction */
-    else {
-        if (ui->checkBoxInvertMovement->isChecked() && !isInvertedMovement) {
-            /* start movement into inverse direction if requested */
-            isInvertedMovement = true;
-            startPeriod(msecPeriod);
-        } else {
-            /* inverse movement not requested or this was already inverse movement. send zero */
-            emit emitValues(0.0);
-        }
-    }
+	updateLabel();
+	// decide wether to update shotsRemaining:
+	switch(currentState)  {
+		case StateContinous:
+		case StateStopped:
+			break;
+		case StateForward:
+		case StatePause:
+		case StateReverse:
+			if (shotsRemaining > 0) {
+				shotsRemaining--;
+			}
+			break;
+	}
+	// update state:
+	if (shotsRemaining == 0) {
+		switch(currentState)  {
+			case StateContinous:
+			case StateStopped:
+				// stay in this state.
+				break;
+			case StateForward:
+				if (ui->checkBoxInvertMovement->isChecked()) {
+					if (msecPause > 0) {
+						// goto next phase:
+						startPhase(StatePause, msecPause);
+					} else {
+						startPhase(StateReverse, msecPeriod);
+					}
+				} else {
+					// goto stopped state:
+					currentState = StateStopped;
+					// emit randomize command:
+					if (ui->checkBoxRandomize->isChecked()) {
+						emit randomizeInputs(ui->doubleSpinBoxRandStd->value());
+					}
+				}
+				break;
+			case StatePause:
+				// goto next phase:
+				startPhase(StateReverse, msecPeriod);
+				break;
+			case StateReverse:
+				currentState = StateStopped;
+				// emit randomize command:
+				if (ui->checkBoxRandomize->isChecked()) {
+					emit randomizeInputs(ui->doubleSpinBoxRandStd->value());
+				}
+				break;
+		}
+	}
+	// decide what to emit:
+	switch(currentState)  {
+		case StateContinous:
+			emit emitValues( 1.0);
+			break;
+		case StateStopped:
+			emit emitValues( 0.0);
+			break;
+		case StateForward:
+			emit emitValues( 1.0);
+			break;
+		case StatePause:
+			// emit small negative value to make the acutators move:
+			emit emitValues(-0.001);
+			break;
+		case StateReverse:
+			emit emitValues(-1.0);
+			break;
+	}
 }
 
 void QGCSkyeTestTimerWidget::updateLabel()
 {
     QString str;
-    if (shotsRemaining > 0)
-    {
-        str = QString("Start (%1 sec)").arg(QString::number(shotsRemaining * msecInterval / 1000.0, 'f', 3));
-        if (isInvertedMovement) {
-            str.append(" inv");
-        }
-
-    } else {
-        str = QString("Start");
-    }
-
+	switch(currentState)  {
+		case StateContinous:
+			str = QString("Start");
+			break;
+		case StateStopped:
+			str = QString("Start");
+			break;
+		case StateForward:
+		case StatePause:
+		case StateReverse:
+			str = QString("Start (%1 sec)").arg(QString::number(shotsRemaining * msecInterval / 1000.0, 'f', 1));
+			if (currentState == StatePause) {
+				str.append(" p");
+			} else if (currentState == StateReverse) {
+				str.append(" inv");
+			}
+			break;
+	}
     ui->pushButtonStart->setText(str);
 }

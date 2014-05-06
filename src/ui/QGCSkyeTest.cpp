@@ -13,6 +13,7 @@ QGCSkyeTest::QGCSkyeTest(QWidget *parent) :
     timerWidget =  new QGCSkyeTestTimerWidget(this);
     ui->groupBoxTimer->layout()->addWidget(timerWidget);
     connect(timerWidget, SIGNAL(emitValues(double)), this, SLOT(emitValues(double)));
+	connect(timerWidget, SIGNAL(randomizeInputs(double)), this, SLOT(randomizeInputs(double)));
 
     // Insert box for setpoints
     setpointWidget = new QGCSkyeTestSetpointsWidget(this);

@@ -45,25 +45,31 @@ void QGCSkyeTestMotors::setUAS(UASInterface* uas)
     }
 }
 
+void QGCSkyeTestMotors::randomizeInputs(double std_dev) {
+	for (int i = 0; i<3; i++) {
+		panelMap[i]->randomize(std_dev, rand_generator);
+	}
+}
+
 void QGCSkyeTestMotors::emitValues(double inverseFactor)
 {
     double thrust[4];
     double orient[4];
     for (int i = 0; i<4; i++) {
         if (inverseFactor > 0.0) {
-            thrust[i] = panelMap[i]->getThrust();
-            orient[i] = panelMap[i]->getOrientation();
-        } else if (inverseFactor == 0.0) {
-            thrust[i] = 0.0;
-            orient[i] = panelMap[i]->getOrientation();
+			thrust[i] = panelMap[i]->getThrust() * fabs(inverseFactor);
+			orient[i] = panelMap[i]->getOrientation();
         } else if (inverseFactor < 0.0) {
-            thrust[i] = panelMap[i]->getThrust();
+			thrust[i] = panelMap[i]->getThrust() * fabs(inverseFactor);
             orient[i] = panelMap[i]->getOrientation();
             if (orient [i] <= 0.0)
                 orient[i] += 180.0;
             else
                 orient[i] -= 180.0;
-        }
+		} else {
+			thrust[i] = 0.0;
+			orient[i] = panelMap[i]->getOrientation();
+		}
     }
 
     emit valueTestControlChanged(thrust[0], thrust[1], thrust[2], thrust[3],

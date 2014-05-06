@@ -62,6 +62,10 @@ double QGCSkyeTestMotorsPanel::getThrust()
     return ui->doubleSpinBoxThrust->value();
 }
 
+void QGCSkyeTestMotorsPanel::randomize(double std_dev, std::tr1::ranlux64_base_01 &rng) {
+	std::tr1::normal_distribution<double> normal(0.0, std_dev);
+}
+
 void QGCSkyeTestMotorsPanel::setZero()
 {
     ui->dialOrientation->setValue(0);

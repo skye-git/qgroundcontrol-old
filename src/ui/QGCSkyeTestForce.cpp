@@ -8,7 +8,7 @@ QGCSkyeTestForce::QGCSkyeTestForce(QWidget *parent) :
     // Insert 3 Force Widget Panels
     for (int i = 0; i<3; i++)
     {
-        panelMap.insert(i, new QGCSkyeTestForcePanel(this, i));
+		panelMap.insert(i, new QGCSkyeTestForcePanel(this, i));
         ui->groupBoxPanel->layout()->addWidget(panelMap[i]);
     }
 
@@ -36,6 +36,12 @@ void QGCSkyeTestForce::setUAS(UASInterface* uas)
     {
         connect(this, SIGNAL(valueDirectControlChanged(double,double,double,double,double,double)), this->uas, SLOT(set6DOFCommandsByWidget(double,double,double,double,double,double)));
     }
+}
+
+void QGCSkyeTestForce::randomizeInputs(double std_dev) {
+	for (int i = 0; i<3; i++) {
+		panelMap[i]->randomize(std_dev, rand_generator);
+	}
 }
 
 void QGCSkyeTestForce::emitValues(double inverseFactor)

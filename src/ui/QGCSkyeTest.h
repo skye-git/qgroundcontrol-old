@@ -21,6 +21,7 @@ public:
 
 public slots:
     virtual void emitValues(double inverseFactor = 1.0) = 0;
+	virtual void randomizeInputs(double std_dev = 0.0) = 0;
     void activeTabChanged(bool active);
 
 protected:

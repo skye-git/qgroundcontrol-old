@@ -1,12 +1,13 @@
 #include "QGCSkyeTestForcePanel.h"
 #include "ui_QGCSkyeTestForcePanel.h"
+#include <QDebug>
 
 #define QGC_MAX_FORCE 100.0
 #define QGC_MAX_MOMENT 100.0
 
 QGCSkyeTestForcePanel::QGCSkyeTestForcePanel(QWidget *parent, int index) :
-    QWidget(parent),
-    ui(new Ui::QGCSkyeTestForcePanel)
+	QWidget(parent),
+	ui(new Ui::QGCSkyeTestForcePanel)
 {
     ui->setupUi(this);
 
@@ -42,6 +43,13 @@ double QGCSkyeTestForcePanel::getForce()
 double QGCSkyeTestForcePanel::getMoment()
 {
     return (double)ui->sliderMoment->value() / QGC_MAX_MOMENT;
+}
+
+void QGCSkyeTestForcePanel::randomize(double std_dev, std::tr1::ranlux64_base_01 &rng) {
+	std::tr1::normal_distribution<double> normal(0.0, std_dev);
+	//qDebug() << "Random value" << normal(rand_generator);
+	ui->sliderForce->setValue(0);
+	ui->sliderMoment->setValue(normal(rng));
 }
 
 void QGCSkyeTestForcePanel::stopAll()
