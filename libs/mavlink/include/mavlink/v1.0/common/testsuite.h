@@ -4963,9 +4963,10 @@ static void mavlink_test_skye_feedback_combined(uint8_t system_id, uint8_t compo
 	}{ 73.0, 74.0, 75.0 },
 	}{ 157.0, 158.0, 159.0 },
 	}{ 241.0, 242.0, 243.0 },
-	}{ 325.0, 326.0, 327.0, 328.0 },
-	}{ 437.0, 438.0, 439.0, 440.0, 441.0, 442.0 },
-	}{ 605.0, 606.0, 607.0, 608.0, 609.0, 610.0 },
+	}{ 325.0, 326.0, 327.0 },
+	}{ 409.0, 410.0, 411.0, 412.0 },
+	}{ 521.0, 522.0, 523.0, 524.0, 525.0, 526.0 },
+	}{ 689.0, 690.0, 691.0, 692.0, 693.0, 694.0 },
 	};
 	mavlink_skye_feedback_combined_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -4973,6 +4974,7 @@ static void mavlink_test_skye_feedback_combined(uint8_t system_id, uint8_t compo
         
         	mav_array_memcpy(packet1.omega_raw, packet_in.omega_raw, sizeof(float)*3);
         	mav_array_memcpy(packet1.accel_raw, packet_in.accel_raw, sizeof(float)*3);
+        	mav_array_memcpy(packet1.alpha_ekf, packet_in.alpha_ekf, sizeof(float)*3);
         	mav_array_memcpy(packet1.omega_ekf, packet_in.omega_ekf, sizeof(float)*3);
         	mav_array_memcpy(packet1.quat_ekf, packet_in.quat_ekf, sizeof(float)*4);
         	mav_array_memcpy(packet1.thrust, packet_in.thrust, sizeof(float)*6);
@@ -4985,12 +4987,12 @@ static void mavlink_test_skye_feedback_combined(uint8_t system_id, uint8_t compo
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_feedback_combined_pack(system_id, component_id, &msg , packet1.timestamp , packet1.omega_raw , packet1.accel_raw , packet1.omega_ekf , packet1.quat_ekf , packet1.thrust , packet1.angle );
+	mavlink_msg_skye_feedback_combined_pack(system_id, component_id, &msg , packet1.timestamp , packet1.omega_raw , packet1.accel_raw , packet1.alpha_ekf , packet1.omega_ekf , packet1.quat_ekf , packet1.thrust , packet1.angle );
 	mavlink_msg_skye_feedback_combined_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_feedback_combined_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.timestamp , packet1.omega_raw , packet1.accel_raw , packet1.omega_ekf , packet1.quat_ekf , packet1.thrust , packet1.angle );
+	mavlink_msg_skye_feedback_combined_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.timestamp , packet1.omega_raw , packet1.accel_raw , packet1.alpha_ekf , packet1.omega_ekf , packet1.quat_ekf , packet1.thrust , packet1.angle );
 	mavlink_msg_skye_feedback_combined_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -5003,7 +5005,7 @@ static void mavlink_test_skye_feedback_combined(uint8_t system_id, uint8_t compo
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-	mavlink_msg_skye_feedback_combined_send(MAVLINK_COMM_1 , packet1.timestamp , packet1.omega_raw , packet1.accel_raw , packet1.omega_ekf , packet1.quat_ekf , packet1.thrust , packet1.angle );
+	mavlink_msg_skye_feedback_combined_send(MAVLINK_COMM_1 , packet1.timestamp , packet1.omega_raw , packet1.accel_raw , packet1.alpha_ekf , packet1.omega_ekf , packet1.quat_ekf , packet1.thrust , packet1.angle );
 	mavlink_msg_skye_feedback_combined_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 }

@@ -1885,6 +1885,7 @@
                <field type="uint64_t"   name="timestamp">Onboard time</field>
                <field type="float[3]"   name="omega_raw">Raw angular velocity. IMU frame. rad/sec</field>
                <field type="float[3]"   name="accel_raw">Raw acceleration. IMU frame. m/s2</field>
+               <field type="float[3]"   name="alpha_ekf">Filtered angular acceleration. IMU frame. rad/sec</field>
                <field type="float[3]"   name="omega_ekf">Filtered angular velocity. IMU frame. rad/sec</field>
                <field type="float[4]"   name="quat_ekf">Filtered Orientation. IMU frame. rad/sec</field>
                <field type="float[6]"   name="thrust">Thrust estimate of actuation units in Newton</field>
