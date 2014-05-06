@@ -163,6 +163,40 @@ static inline void mavlink_msg_actuation_feedback_send(mavlink_channel_t chan, u
 #endif
 }
 
+#if MAVLINK_MSG_ID_ACTUATION_FEEDBACK_LEN <= MAVLINK_MAX_PAYLOAD_LEN
+/*
+  This varient of _send() can be used to save stack space by re-using
+  memory from the receive buffer.  The caller provides a
+  mavlink_message_t which is the size of a full mavlink message. This
+  is usually the receive buffer for the channel, and allows a reply to an
+  incoming message with minimum stack space usage.
+ */
+static inline void mavlink_msg_actuation_feedback_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  uint64_t timestamp, const float *thrust, const float *angle)
+{
+#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
+	char *buf = (char *)msgbuf;
+	_mav_put_uint64_t(buf, 0, timestamp);
+	_mav_put_float_array(buf, 8, thrust, 6);
+	_mav_put_float_array(buf, 32, angle, 6);
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ACTUATION_FEEDBACK, buf, MAVLINK_MSG_ID_ACTUATION_FEEDBACK_LEN, MAVLINK_MSG_ID_ACTUATION_FEEDBACK_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ACTUATION_FEEDBACK, buf, MAVLINK_MSG_ID_ACTUATION_FEEDBACK_LEN);
+#endif
+#else
+	mavlink_actuation_feedback_t *packet = (mavlink_actuation_feedback_t *)msgbuf;
+	packet->timestamp = timestamp;
+	mav_array_memcpy(packet->thrust, thrust, sizeof(float)*6);
+	mav_array_memcpy(packet->angle, angle, sizeof(float)*6);
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ACTUATION_FEEDBACK, (const char *)packet, MAVLINK_MSG_ID_ACTUATION_FEEDBACK_LEN, MAVLINK_MSG_ID_ACTUATION_FEEDBACK_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ACTUATION_FEEDBACK, (const char *)packet, MAVLINK_MSG_ID_ACTUATION_FEEDBACK_LEN);
+#endif
+#endif
+}
+#endif
+
 #endif
 
 // MESSAGE ACTUATION_FEEDBACK UNPACKING

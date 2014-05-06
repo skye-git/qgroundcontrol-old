@@ -168,6 +168,42 @@ static inline void mavlink_msg_attitude_controller_raw_send(mavlink_channel_t ch
 #endif
 }
 
+#if MAVLINK_MSG_ID_ATTITUDE_CONTROLLER_RAW_LEN <= MAVLINK_MAX_PAYLOAD_LEN
+/*
+  This varient of _send() can be used to save stack space by re-using
+  memory from the receive buffer.  The caller provides a
+  mavlink_message_t which is the size of a full mavlink message. This
+  is usually the receive buffer for the channel, and allows a reply to an
+  incoming message with minimum stack space usage.
+ */
+static inline void mavlink_msg_attitude_controller_raw_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  float M_x, float M_y, float M_z)
+{
+#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
+	char *buf = (char *)msgbuf;
+	_mav_put_float(buf, 0, M_x);
+	_mav_put_float(buf, 4, M_y);
+	_mav_put_float(buf, 8, M_z);
+
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ATTITUDE_CONTROLLER_RAW, buf, MAVLINK_MSG_ID_ATTITUDE_CONTROLLER_RAW_LEN, MAVLINK_MSG_ID_ATTITUDE_CONTROLLER_RAW_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ATTITUDE_CONTROLLER_RAW, buf, MAVLINK_MSG_ID_ATTITUDE_CONTROLLER_RAW_LEN);
+#endif
+#else
+	mavlink_attitude_controller_raw_t *packet = (mavlink_attitude_controller_raw_t *)msgbuf;
+	packet->M_x = M_x;
+	packet->M_y = M_y;
+	packet->M_z = M_z;
+
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ATTITUDE_CONTROLLER_RAW, (const char *)packet, MAVLINK_MSG_ID_ATTITUDE_CONTROLLER_RAW_LEN, MAVLINK_MSG_ID_ATTITUDE_CONTROLLER_RAW_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ATTITUDE_CONTROLLER_RAW, (const char *)packet, MAVLINK_MSG_ID_ATTITUDE_CONTROLLER_RAW_LEN);
+#endif
+#endif
+}
+#endif
+
 #endif
 
 // MESSAGE ATTITUDE_CONTROLLER_RAW UNPACKING

@@ -206,6 +206,48 @@ static inline void mavlink_msg_actuation_configuration_send(mavlink_channel_t ch
 #endif
 }
 
+#if MAVLINK_MSG_ID_ACTUATION_CONFIGURATION_LEN <= MAVLINK_MAX_PAYLOAD_LEN
+/*
+  This varient of _send() can be used to save stack space by re-using
+  memory from the receive buffer.  The caller provides a
+  mavlink_message_t which is the size of a full mavlink message. This
+  is usually the receive buffer for the channel, and allows a reply to an
+  incoming message with minimum stack space usage.
+ */
+static inline void mavlink_msg_actuation_configuration_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  const float *quat_au1, const float *quat_au2, const float *quat_au3, const float *quat_au4, const float *quat_au5, const float *quat_au6)
+{
+#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
+	char *buf = (char *)msgbuf;
+
+	_mav_put_float_array(buf, 0, quat_au1, 4);
+	_mav_put_float_array(buf, 16, quat_au2, 4);
+	_mav_put_float_array(buf, 32, quat_au3, 4);
+	_mav_put_float_array(buf, 48, quat_au4, 4);
+	_mav_put_float_array(buf, 64, quat_au5, 4);
+	_mav_put_float_array(buf, 80, quat_au6, 4);
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ACTUATION_CONFIGURATION, buf, MAVLINK_MSG_ID_ACTUATION_CONFIGURATION_LEN, MAVLINK_MSG_ID_ACTUATION_CONFIGURATION_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ACTUATION_CONFIGURATION, buf, MAVLINK_MSG_ID_ACTUATION_CONFIGURATION_LEN);
+#endif
+#else
+	mavlink_actuation_configuration_t *packet = (mavlink_actuation_configuration_t *)msgbuf;
+
+	mav_array_memcpy(packet->quat_au1, quat_au1, sizeof(float)*4);
+	mav_array_memcpy(packet->quat_au2, quat_au2, sizeof(float)*4);
+	mav_array_memcpy(packet->quat_au3, quat_au3, sizeof(float)*4);
+	mav_array_memcpy(packet->quat_au4, quat_au4, sizeof(float)*4);
+	mav_array_memcpy(packet->quat_au5, quat_au5, sizeof(float)*4);
+	mav_array_memcpy(packet->quat_au6, quat_au6, sizeof(float)*4);
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ACTUATION_CONFIGURATION, (const char *)packet, MAVLINK_MSG_ID_ACTUATION_CONFIGURATION_LEN, MAVLINK_MSG_ID_ACTUATION_CONFIGURATION_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ACTUATION_CONFIGURATION, (const char *)packet, MAVLINK_MSG_ID_ACTUATION_CONFIGURATION_LEN);
+#endif
+#endif
+}
+#endif
+
 #endif
 
 // MESSAGE ACTUATION_CONFIGURATION UNPACKING

@@ -223,6 +223,52 @@ static inline void mavlink_msg_allocation_controller_raw_send(mavlink_channel_t 
 #endif
 }
 
+#if MAVLINK_MSG_ID_ALLOCATION_CONTROLLER_RAW_LEN <= MAVLINK_MAX_PAYLOAD_LEN
+/*
+  This varient of _send() can be used to save stack space by re-using
+  memory from the receive buffer.  The caller provides a
+  mavlink_message_t which is the size of a full mavlink message. This
+  is usually the receive buffer for the channel, and allows a reply to an
+  incoming message with minimum stack space usage.
+ */
+static inline void mavlink_msg_allocation_controller_raw_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  int32_t pos_1, int32_t pos_2, int32_t pos_3, int32_t pos_4, uint16_t thrust_1, uint16_t thrust_2, uint16_t thrust_3, uint16_t thrust_4)
+{
+#if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
+	char *buf = (char *)msgbuf;
+	_mav_put_int32_t(buf, 0, pos_1);
+	_mav_put_int32_t(buf, 4, pos_2);
+	_mav_put_int32_t(buf, 8, pos_3);
+	_mav_put_int32_t(buf, 12, pos_4);
+	_mav_put_uint16_t(buf, 16, thrust_1);
+	_mav_put_uint16_t(buf, 18, thrust_2);
+	_mav_put_uint16_t(buf, 20, thrust_3);
+	_mav_put_uint16_t(buf, 22, thrust_4);
+
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ALLOCATION_CONTROLLER_RAW, buf, MAVLINK_MSG_ID_ALLOCATION_CONTROLLER_RAW_LEN, MAVLINK_MSG_ID_ALLOCATION_CONTROLLER_RAW_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ALLOCATION_CONTROLLER_RAW, buf, MAVLINK_MSG_ID_ALLOCATION_CONTROLLER_RAW_LEN);
+#endif
+#else
+	mavlink_allocation_controller_raw_t *packet = (mavlink_allocation_controller_raw_t *)msgbuf;
+	packet->pos_1 = pos_1;
+	packet->pos_2 = pos_2;
+	packet->pos_3 = pos_3;
+	packet->pos_4 = pos_4;
+	packet->thrust_1 = thrust_1;
+	packet->thrust_2 = thrust_2;
+	packet->thrust_3 = thrust_3;
+	packet->thrust_4 = thrust_4;
+
+#if MAVLINK_CRC_EXTRA
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ALLOCATION_CONTROLLER_RAW, (const char *)packet, MAVLINK_MSG_ID_ALLOCATION_CONTROLLER_RAW_LEN, MAVLINK_MSG_ID_ALLOCATION_CONTROLLER_RAW_CRC);
+#else
+    _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_ALLOCATION_CONTROLLER_RAW, (const char *)packet, MAVLINK_MSG_ID_ALLOCATION_CONTROLLER_RAW_LEN);
+#endif
+#endif
+}
+#endif
+
 #endif
 
 // MESSAGE ALLOCATION_CONTROLLER_RAW UNPACKING

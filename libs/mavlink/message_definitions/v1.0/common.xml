@@ -1880,6 +1880,26 @@
            <field type="uint8_t" name="dgps_numch">Number of DGPS satellites</field>
            <field type="uint32_t" name="dgps_age">Age of DGPS info</field>
          </message>
+          <message id="131" name="SKYE_FEEDBACK_COMBINED">
+               <description>Combined message containing data for actuation configuration estimation.</description>
+               <field type="uint64_t"   name="timestamp">Onboard time</field>
+               <field type="float[3]"   name="omega_raw">Raw angular velocity. IMU frame. rad/sec</field>
+               <field type="float[3]"   name="accel_raw">Raw acceleration. IMU frame. m/s2</field>
+               <field type="float[3]"   name="omega_ekf">Filtered angular velocity. IMU frame. rad/sec</field>
+               <field type="float[4]"   name="quat_ekf">Filtered Orientation. IMU frame. rad/sec</field>
+               <field type="float[6]"   name="thrust">Thrust estimate of actuation units in Newton</field>
+               <field type="float[6]"   name="angle">Orientation readout of actuation units in Degree</field>
+          </message>
+          <message id="132" name="ACTUATOR_LIMITS">
+               <description>Actuator limits for up to 6 actuation units</description>
+               <field type="uint64_t"   name="timestamp">Onboard time</field>
+               <field type="uint8_t[6]" name="valid">Tells wether data is valid</field>
+               <field type="float[6]"   name="th_min">Minimum thrust of actuators</field>
+               <field type="float[6]"   name="th_start">Start thrust of actuators</field>
+               <field type="float[6]"   name="th_max">Maximum thrust of actuators</field>
+               <field type="float[6]"   name="ang_min">Minimum angle of actuators</field>
+               <field type="float[6]"   name="ang_max">Maximum angle of actuators</field>
+          </message>
           <message id="133" name="ACTUATION_CONFIGURATION">
                <description>Settings for up to 6 actuation units: Rotation parameters of AU. This fully describes position on on a spherical hull.</description>
                <field type="float[4]" name="quat_au1">Quaternion q_BM that describes rotation of AU 1 towards UAV</field>
