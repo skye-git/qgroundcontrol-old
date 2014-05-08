@@ -133,7 +133,7 @@ void QGCSkyeTestTimerWidget::timerTimeout()
 					currentState = StateStopped;
 					// emit randomize command:
 					if (ui->checkBoxRandomize->isChecked()) {
-						emit randomizeInputs(ui->doubleSpinBoxRandStd->value());
+						emit randomizeInputs();
 					}
 				}
 				break;
@@ -145,7 +145,7 @@ void QGCSkyeTestTimerWidget::timerTimeout()
 				currentState = StateStopped;
 				// emit randomize command:
 				if (ui->checkBoxRandomize->isChecked()) {
-					emit randomizeInputs(ui->doubleSpinBoxRandStd->value());
+					emit randomizeInputs();
 				}
 				break;
 		}

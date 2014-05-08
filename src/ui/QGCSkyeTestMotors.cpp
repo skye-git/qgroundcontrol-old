@@ -13,6 +13,11 @@ QGCSkyeTestMotors::QGCSkyeTestMotors(bool ppm, QWidget *parent) :
 		QTime time = QTime::currentTime();
 		rand_generator.seed((uint)time.msec());
 	}
+
+	if (!usePpm) {
+		rng_settings_ui = new QGCSkyeTestMotorRngSettings();
+		ui->groupBoxPanel->layout()->addWidget(rng_settings_ui);
+	}
     // Insert 4 Test Widget Panels
     for (int i = 0; i<4; i++)
     {
@@ -28,7 +33,7 @@ QGCSkyeTestMotors::QGCSkyeTestMotors(bool ppm, QWidget *parent) :
 QGCSkyeTestMotors::~QGCSkyeTestMotors()
 {
     //timer->stop();
-    delete ui;
+	delete rng_settings_ui;
 }
 
 void QGCSkyeTestMotors::setUAS(UASInterface* uas)
@@ -48,10 +53,10 @@ void QGCSkyeTestMotors::setUAS(UASInterface* uas)
         connect(this, SIGNAL(valueTestControlChanged(double, double, double, double, double, double, double, double, bool)), this->uas, SLOT(setTestphaseCommandsByWidget(double, double, double, double, double, double, double, double, bool)));
     }
 }
-
-void QGCSkyeTestMotors::randomizeInputs(double std_dev) {
-	for (int i = 0; i<3; i++) {
-		panelMap[i]->randomize(std_dev, rand_generator);
+ void QGCSkyeTestMotors::randomizeInputs() {
+	for (int i = 0; i<panelMap.size(); i++) {
+		panelMap[i]->randomize(rng_settings_ui->getFMean(), rng_settings_ui->getFStd(),
+							   rng_settings_ui->getAFrom(), rng_settings_ui->getATo(), rand_generator);
 	}
 }
 
@@ -66,10 +71,11 @@ void QGCSkyeTestMotors::emitValues(double inverseFactor)
         } else if (inverseFactor < 0.0) {
 			thrust[i] = panelMap[i]->getThrust() * fabs(inverseFactor);
             orient[i] = panelMap[i]->getOrientation();
-            if (orient [i] <= 0.0)
+			if (orient[i] < 0.0) {
                 orient[i] += 180.0;
-            else
+			} else {
                 orient[i] -= 180.0;
+			}
 		} else {
 			thrust[i] = 0.0;
 			orient[i] = panelMap[i]->getOrientation();

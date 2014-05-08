@@ -3,12 +3,16 @@
 #include "UASManager.h"
 
 QGCSkyeTestForce::QGCSkyeTestForce(QWidget *parent) :
-    QGCSkyeTest(parent)
+	QGCSkyeTest(parent),
+	rng_settings_ui(NULL)
 {
 	{
 		QTime time = QTime::currentTime();
 		rand_generator.seed((uint)time.msec());
 	}
+
+	rng_settings_ui = new QGCSkyeTestForceRandomSettings();
+	ui->groupBoxPanel->layout()->addWidget(rng_settings_ui);
     // Insert 3 Force Widget Panels
     for (int i = 0; i<3; i++)
     {
@@ -25,7 +29,7 @@ QGCSkyeTestForce::QGCSkyeTestForce(QWidget *parent) :
 QGCSkyeTestForce::~QGCSkyeTestForce()
 {
     //timer->stop();
-    delete ui;
+	delete rng_settings_ui;
 }
 
 void QGCSkyeTestForce::setUAS(UASInterface* uas)
@@ -42,9 +46,9 @@ void QGCSkyeTestForce::setUAS(UASInterface* uas)
     }
 }
 
-void QGCSkyeTestForce::randomizeInputs(double std_dev) {
-	for (int i = 0; i<3; i++) {
-		panelMap[i]->randomize(std_dev, rand_generator);
+void QGCSkyeTestForce::randomizeInputs() {
+	for (int i = 0; i<panelMap.size(); i++) {
+		panelMap[i]->randomize(rng_settings_ui->getFStd(), rng_settings_ui->getMStd(), rand_generator);
 	}
 }
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>705</width>
-    <height>427</height>
+    <width>984</width>
+    <height>233</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,18 @@
     </widget>
    </item>
    <item>
-    <widget class="QDoubleSpinBox" name="doubleSpinBoxThrust"/>
+    <widget class="QDoubleSpinBox" name="doubleSpinBoxThrust">
+     <property name="maximum">
+      <double>20.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="checkBoxRngThrust">
+     <property name="text">
+      <string>RNG</string>
+     </property>
+    </widget>
    </item>
    <item>
     <spacer name="horizontalSpacer">
@@ -86,6 +97,13 @@
      </property>
      <property name="maximum">
       <number>86016</number>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="checkBoxRngOrientation">
+     <property name="text">
+      <string>RNG</string>
      </property>
     </widget>
    </item>

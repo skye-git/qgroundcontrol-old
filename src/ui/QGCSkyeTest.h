@@ -17,11 +17,11 @@ class QGCSkyeTest : public QWidget
 
 public:
     explicit QGCSkyeTest(QWidget *parent = 0);
-    ~QGCSkyeTest();
+	virtual ~QGCSkyeTest();
 
 public slots:
     virtual void emitValues(double inverseFactor = 1.0) = 0;
-	virtual void randomizeInputs(double std_dev = 0.0) = 0;
+	virtual void randomizeInputs() = 0;
     void activeTabChanged(bool active);
 
 protected:

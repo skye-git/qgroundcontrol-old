@@ -62,8 +62,15 @@ double QGCSkyeTestMotorsPanel::getThrust()
     return ui->doubleSpinBoxThrust->value();
 }
 
-void QGCSkyeTestMotorsPanel::randomize(double std_dev, std::tr1::ranlux64_base_01 &rng) {
-	std::tr1::normal_distribution<double> normal(0.0, std_dev);
+void QGCSkyeTestMotorsPanel::randomize(double f_mean, double f_std, double a_min, double a_max, std::tr1::ranlux64_base_01 &rng) {
+	std::tr1::normal_distribution<double> f_normal(f_mean, f_std);
+	std::tr1::uniform_real<double> a_uni(a_min, a_max);
+	if (ui->checkBoxRngThrust->isChecked()) {
+		ui->doubleSpinBoxThrust->setValue(f_normal(rng));
+	}
+	if (ui->checkBoxRngOrientation->isChecked()) {
+		ui->spinBoxOrientation->setValue(a_uni(rng));
+	}
 }
 
 void QGCSkyeTestMotorsPanel::setZero()

@@ -19,7 +19,7 @@ public:
     ~QGCSkyeTestMotorsPanel();
     double getOrientation();
     double getThrust();
-	void randomize(double std_dev, std::tr1::ranlux64_base_01 &rng);
+	void randomize(double f_mean, double f_std, double a_min, double a_max, std::tr1::ranlux64_base_01 &rng);
 
 public slots:
     void stopAll();

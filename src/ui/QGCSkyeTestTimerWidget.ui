@@ -14,6 +14,9 @@
    <string>Form</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
    <item row="0" column="0">
     <widget class="QCheckBox" name="checkBoxUseTimer">
      <property name="text">
@@ -51,43 +54,6 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0">
-    <widget class="QPushButton" name="pushButtonStart">
-     <property name="text">
-      <string>Start</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="labelRandStd">
-     <property name="text">
-      <string>Random STD [%]</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1">
-    <widget class="QDoubleSpinBox" name="doubleSpinBoxRandStd">
-     <property name="decimals">
-      <number>0</number>
-     </property>
-     <property name="singleStep">
-      <double>5.000000000000000</double>
-     </property>
-     <property name="value">
-      <double>5.000000000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0">
-    <widget class="QCheckBox" name="checkBoxRandomize">
-     <property name="text">
-      <string>Randomize after</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
    <item row="3" column="0">
     <widget class="QLabel" name="labelPause">
      <property name="text">
@@ -105,6 +71,23 @@
      </property>
      <property name="value">
       <double>0.500000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QCheckBox" name="checkBoxRandomize">
+     <property name="text">
+      <string>Randomize after</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QPushButton" name="pushButtonStart">
+     <property name="text">
+      <string>Start</string>
      </property>
     </widget>
    </item>

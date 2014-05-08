@@ -160,7 +160,7 @@ void XboxController::updateInputMode(int inputMode)
     {
         if (!initialized)
         {
-            if (joystick_.init("/dev/input/js1") == 0)
+			if (joystick_.init("/dev/input/js0") == 0)
             {
                 qDebug() << "[xboxcontroller] Initialized xbox controller";
                 initialized=1;

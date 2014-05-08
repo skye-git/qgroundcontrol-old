@@ -17,7 +17,7 @@ public:
     ~QGCSkyeTestForcePanel();
     double getForce();
     double getMoment();
-	void randomize(double std_dev, std::tr1::ranlux64_base_01 &rng);
+	void randomize(double f_std_dev, double m_std_dev, std::tr1::ranlux64_base_01 &rng);
     void stopAll();
 
 private:

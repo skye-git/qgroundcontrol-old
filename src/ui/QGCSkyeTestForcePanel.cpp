@@ -45,14 +45,15 @@ double QGCSkyeTestForcePanel::getMoment()
     return (double)ui->sliderMoment->value() / QGC_MAX_MOMENT;
 }
 
-void QGCSkyeTestForcePanel::randomize(double std_dev, std::tr1::ranlux64_base_01 &rng) {
-	std::tr1::normal_distribution<double> normal(0.0, std_dev);
+void QGCSkyeTestForcePanel::randomize(double f_std_dev, double m_std_dev, std::tr1::ranlux64_base_01 &rng) {
+	std::tr1::normal_distribution<double> f_normal(0.0, f_std_dev);
+	std::tr1::normal_distribution<double> m_normal(0.0, m_std_dev);
 	//qDebug() << "Random value" << normal(rand_generator);
 	if (ui->checkBoxRngForce->isChecked()) {
-		ui->sliderForce->setValue(normal(rng));
+		ui->sliderForce->setValue(f_normal(rng));
 	}
 	if (ui->checkBoxRngMoment->isChecked()) {
-		ui->sliderMoment->setValue(normal(rng));
+		ui->sliderMoment->setValue(m_normal(rng));
 	}
 }
 

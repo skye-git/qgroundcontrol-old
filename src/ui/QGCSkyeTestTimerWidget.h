@@ -30,7 +30,7 @@ private slots:
 
 signals:
 	void emitValues(double inverseFactor);      ///< Set inverseFactor to -1 to send input into inverse (negative) direction. Set to some small negative value to prime the inverse direction.
-	void randomizeInputs(double std_dev);		///< Randomize with std_dev.
+	void randomizeInputs();						///< Randomize with std_dev.
 
 private:
 	enum State {
