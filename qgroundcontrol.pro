@@ -395,7 +395,9 @@ FORMS += \
     src/ui/QGCSkyeTestForcePanel.ui \
     src/ui/QGCSkyeTest.ui \
     src/ui/QGCSkyeTestSetpointsWidget.ui \
-    src/ui/SkyeAUStatusSettingsDialog.ui
+	src/ui/SkyeAUStatusSettingsDialog.ui \
+	src/ui/QGCSkyeTestForceRandomSettings.ui \
+    src/ui/QGCSkyeTestMotorRngSettings.ui
 
 HEADERS += \
     src/MG.h \
@@ -611,7 +613,10 @@ HEADERS += \
     src/ui/QGCSkyeTestForcePanel.h \
     src/ui/QGCSkyeTest.h \
     src/ui/QGCSkyeTestSetpointsWidget.h \
-    src/ui/SkyeAUStatusSettingsDialog.h
+    src/ui/SkyeAUStatusSettingsDialog.h \
+    src/ui/QGCSkyeTestForceRandomSettings.h \
+    src/ui/qgcskyetestmotorrngsettings.h \
+    src/ui/QGCSkyeTestMotorRngSettings.h
 
 SOURCES += \
     src/main.cc \
@@ -816,5 +821,7 @@ SOURCES += \
     src/ui/QGCSkyeTestForcePanel.cpp \
     src/ui/QGCSkyeTest.cpp \
     src/ui/QGCSkyeTestSetpointsWidget.cpp \
-    src/ui/SkyeAUStatusSettingsDialog.cpp
+    src/ui/SkyeAUStatusSettingsDialog.cpp \
+    src/ui/QGCSkyeTestForceRandomSettings.cpp \
+    src/ui/QGCSkyeTestMotorRngSettings.cpp
 
