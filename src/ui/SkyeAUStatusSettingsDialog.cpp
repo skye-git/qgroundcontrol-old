@@ -8,11 +8,16 @@
 #include <QSettings>
 #include <qmath.h>
 
+#include "UASManager.h"
+
 SkyeAUStatusSettingsDialog::SkyeAUStatusSettingsDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SkyeAUStatusSettingsDialog)
-{
+{    
     ui->setupUi(this);
+
+    memset(quaternions, 0.0, sizeof(quaternions));
+    q_valid = false;
 
     // define table size. add 1 row per AU
     ui->tableWidget->setRowCount(SKYE_AU_COUNT_MAX);
@@ -28,12 +33,9 @@ SkyeAUStatusSettingsDialog::SkyeAUStatusSettingsDialog(QWidget *parent) :
     }
     ui->tableWidget->setVerticalHeaderLabels(headerLabels);
 
-//    ui->tableWidget->setItem(0, 1, new QTableWidgetItem(QString("%1").arg(23.3)));
-//    ui->tableWidget->setItem(1, 2, new QTableWidgetItem("QStr"));
-//    ui->tableWidget->setItem(2, 3, new QTableWidgetItem("hello"));
-
     connect(ui->toolButtonBrowseFile, SIGNAL(clicked()), this, SLOT(openFileDialog()));
     connect(ui->pushButtonLoadFile,   SIGNAL(clicked()), this, SLOT(readFromFile()));
+    connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(buttonBoxClicked(QAbstractButton*)));
 
     loadSettings();
 }
@@ -49,8 +51,11 @@ void SkyeAUStatusSettingsDialog::openFileDialog()
     fileInfo.setFile(newFileName);
     storeSettings();
 
-    /* update GUI */
+    /* show path in GUI */
     ui->lineEditFilePath->setText(fileInfo.absoluteFilePath());
+
+    /* read values from file */
+    readFromFile();
 }
 
 void SkyeAUStatusSettingsDialog::readFromFile()
@@ -71,8 +76,10 @@ void SkyeAUStatusSettingsDialog::readFromFile(QString filename)
      * where XX represents a floating point number
      */
 
-    /* reset quaternion */
-    memset(quaternions, 0.0, sizeof(quaternions));
+    /* container for new quaternion */
+    double newQuaternions[SKYE_AU_PARAM_MAX][SKYE_AU_COUNT_MAX];
+    memset(newQuaternions, 0.0, sizeof(quaternions));
+    double newQ_valid = true;
 
     /* read from file */
     QFile textFile(filename);
@@ -87,6 +94,7 @@ void SkyeAUStatusSettingsDialog::readFromFile(QString filename)
     int i = -1;
     while (!textFile.atEnd())
     {
+
         QString line;
         QStringList stringList;
         line = textFile.readLine();
@@ -100,22 +108,29 @@ void SkyeAUStatusSettingsDialog::readFromFile(QString filename)
             double q[4];
             if (!quaternionFromQStringList(q, stringList))
             {
+                newQ_valid = false;
                 break;
             } else {
                 for (int j=0; j<4; j++) {
-                    quaternions[j][i] = q[j];
+                    newQuaternions[j][i] = q[j];
                 }
             }
-            qDebug() << "[readFromFile] quat" << i << "is" << quaternions[0][i] << quaternions[1][i] << quaternions[2][i] << quaternions[3][i];
+            qDebug() << "[readFromFile] new q" << i << "is" << newQuaternions[0][i] << newQuaternions[1][i] << newQuaternions[2][i] << newQuaternions[3][i];
         }
 
         i++;
     }
-
     textFile.close();
 
-    /* Display values in table */
-    updateTable();
+    if (newQ_valid)
+    {
+        /* copy new values */
+        memcpy(quaternions, newQuaternions, sizeof(quaternions));
+        q_valid = true;
+
+        /* Display values in table */
+        updateTable();
+    }
 }
 
 void SkyeAUStatusSettingsDialog::readFromTable()
@@ -150,6 +165,31 @@ void SkyeAUStatusSettingsDialog::updateTable()
             QTableWidgetItem *newItem = new QTableWidgetItem(QString::number(quaternions[row][col], 'f', 6));
             ui->tableWidget->setItem(row, col, newItem);
         }
+    }
+}
+
+void SkyeAUStatusSettingsDialog::buttonBoxClicked(QAbstractButton *button)
+{
+    QDialogButtonBox::StandardButton stdButton = ui->buttonBox->standardButton(button);
+    switch (stdButton) {
+    case QDialogButtonBox::Reset:
+        // XXX reset. e.g. to some default hardcoded values or aquire somewhen default values from system
+        break;
+    case QDialogButtonBox::Apply:
+        if (q_valid)
+        {
+            // reshape quaternion
+            double q[SKYE_AU_PARAM_MAX*SKYE_AU_COUNT_MAX];
+            memcpy(q, quaternions, sizeof(quaternions));
+            emit setSkyeConfiguration(q);
+        }
+        break;
+    case QDialogButtonBox::Cancel:
+        // nothing to do. Dialog will close.
+        break;
+    default:
+        // unknown button
+        break;
     }
 }
 

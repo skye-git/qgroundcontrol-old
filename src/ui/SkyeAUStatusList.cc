@@ -27,6 +27,7 @@ SkyeAUStatusList::SkyeAUStatusList(QWidget *parent) :
     // connect settings button
     settingsDialog = new SkyeAUStatusSettingsDialog(this);
     connect(ui->pushButtonAuSettings, SIGNAL(clicked()), settingsDialog, SLOT(show()));
+    connect(settingsDialog, SIGNAL(setSkyeConfiguration(double*)), this, SLOT(setSkyeConfiguration(double*)));
 
     // connect uas manager
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
@@ -58,7 +59,8 @@ void SkyeAUStatusList::setUAS(UASInterface *uas)
             disconnect(mav, SIGNAL(batteryStatusChanged(mavlink_battery_status_t*)), this, SLOT(checkBatteryStatusId(mavlink_battery_status_t*)));
             disconnect(mav, SIGNAL(batteryCellsStatusChanged(mavlink_battery_cells_status_t*)), this, SLOT(checkBatteryCellsStatusId(mavlink_battery_cells_status_t*)));
             disconnect(mav, SIGNAL(actuationStatusChanged(mavlink_actuation_status_t*)), this, SLOT(checkActuationStatusId(mavlink_actuation_status_t*)));
-            disconnect(this, SIGNAL(requestAllocationCase(int)), mav, SLOT(sendAUConfiguration(int)));
+            disconnect(this, SIGNAL(requestAllocationCase(int)), mav, SLOT(sendAllocationCase(int)));
+            disconnect(this, SIGNAL(sendSkyeConfiguration(double[][])), mav, SLOT(sendSkyeConfiguration(double[][])));
         }
     }
 
@@ -72,7 +74,8 @@ void SkyeAUStatusList::setUAS(UASInterface *uas)
         connect(mav, SIGNAL(batteryStatusChanged(mavlink_battery_status_t*)), this, SLOT(checkBatteryStatusId(mavlink_battery_status_t*)));
         connect(mav, SIGNAL(batteryCellsStatusChanged(mavlink_battery_cells_status_t*)), this, SLOT(checkBatteryCellsStatusId(mavlink_battery_cells_status_t*)));
         connect(mav, SIGNAL(actuationStatusChanged(mavlink_actuation_status_t*)), this, SLOT(checkActuationStatusId(mavlink_actuation_status_t*)));
-        connect(this, SIGNAL(requestAllocationCase(int)), mav, SLOT(sendAUConfiguration(int)));
+        connect(this, SIGNAL(requestAllocationCase(int)), mav, SLOT(sendAllocationCase(int)));
+        connect(this, SIGNAL(sendSkyeConfiguration(double*)), mav, SLOT(sendSkyeConfiguration(double*)));
 
     }
 }
@@ -204,4 +207,10 @@ void SkyeAUStatusList::setAllocationAutoMode(bool allocAuto)
     }
 
     updateAllocationCase();
+}
+
+void SkyeAUStatusList::setSkyeConfiguration(double *quaternions) //[SKYE_AU_PARAM_MAX][SKYE_AU_COUNT_MAX]
+{
+    /* emit new AU orientation quaternion */
+    emit sendSkyeConfiguration(quaternions);
 }

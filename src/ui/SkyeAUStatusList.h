@@ -38,10 +38,14 @@ public slots:
     void showContextMenu(const QPoint& pos);
     /** @brief setAllocationAutoMode */
     void setAllocationAutoMode(bool allocAuto);
+    /** @brief send new motor position configuration to Skye */
+    void setSkyeConfiguration(double*); // [SKYE_AU_PARAM_MAX][SKYE_AU_COUNT_MAX]
 
 signals:
     /** @brief Send a new allocation case to Skye */
     void requestAllocationCase(int alloc);
+    /** @brief Send new Skye AU orientations for new allocation matrix */
+    void sendSkyeConfiguration(double*); // [SKYE_AU_PARAM_MAX][SKYE_AU_COUNT_MAX]
 
 private:
     Ui::SkyeAUStatusList *ui;
