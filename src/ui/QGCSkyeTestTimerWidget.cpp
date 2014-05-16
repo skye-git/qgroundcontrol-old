@@ -59,7 +59,7 @@ void QGCSkyeTestTimerWidget::clickedPushButtonStart()
 	msecPause  = 1000 * ui->doubleSpinBoxPause->value();
 
 	/* Start forward phase: */
-	startPhase(StateForward, msecPeriod);
+	startPhase(StateForwardStart, 0);
 }
 
 void QGCSkyeTestTimerWidget::stopTimer(bool stop)
@@ -105,6 +105,7 @@ void QGCSkyeTestTimerWidget::timerTimeout()
 		case StateContinous:
 		case StateStopped:
 			break;
+		case StateForwardStart:
 		case StateForward:
 		case StatePause:
 		case StateReverse:
@@ -119,6 +120,9 @@ void QGCSkyeTestTimerWidget::timerTimeout()
 			case StateContinous:
 			case StateStopped:
 				// stay in this state.
+				break;
+			case StateForwardStart:
+				startPhase(StateForward, msecPeriod);
 				break;
 			case StateForward:
 				if (ui->checkBoxInvertMovement->isChecked()) {
@@ -155,6 +159,7 @@ void QGCSkyeTestTimerWidget::timerTimeout()
 		case StateContinous:
 			emit emitValues( 1.0);
 			break;
+		case StateForwardStart:
 		case StateStopped:
 			emit emitValues( 0.0);
 			break;
@@ -178,6 +183,7 @@ void QGCSkyeTestTimerWidget::updateLabel()
 		case StateContinous:
 			str = QString("Start");
 			break;
+		case StateForwardStart:
 		case StateStopped:
 			str = QString("Start");
 			break;

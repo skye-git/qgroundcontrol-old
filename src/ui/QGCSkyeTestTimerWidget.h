@@ -36,6 +36,7 @@ private:
 	enum State {
 		StateContinous,
 		StateStopped,
+		StateForwardStart,
 		StateForward,
 		StatePause,
 		StateReverse
