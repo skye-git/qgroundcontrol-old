@@ -105,9 +105,11 @@ public slots:
     void sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t blue, uint8_t mode, float frequency);
 
     /** @brief Send parameter for actuation unit configuration (SKYE_ALOC_CASE) */
-    void sendAUConfiguration(int);
+    void sendAllocationCase(int);
     /** @brief Send AU reset command */
     void sendAUReset(int auId);
+    /** @brief send new motor position configuration to Skye */
+    void sendSkyeConfiguration(double *quaternions); // [4][6]
 
 signals:
     /** @brief Emit new detailed accu info for one accu pack

@@ -83,7 +83,7 @@ void UASSkyeControlAdvancedWidget::setUAS(UASInterface* uas)
             disconnect(this, SIGNAL(yawSliderValueChanged(double)), mav, SLOT(setAddYawValue(double)));
 
             // Disconnect slots for Change of Actuation Unit Configuration
-            disconnect(this, SIGNAL(requestAUConfiguration(int)), mav, SLOT(sendAUConfiguration(int)));
+            disconnect(this, SIGNAL(requestAUConfiguration(int)), mav, SLOT(sendAllocationCase(int)));
             disconnect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocCase(int)));
         }
     }
@@ -109,7 +109,7 @@ void UASSkyeControlAdvancedWidget::setUAS(UASInterface* uas)
         connect(this, SIGNAL(yawSliderValueChanged(double)), mav, SLOT(setAddYawValue(double)));
 
         // Connect slots for Change of Actuation Unit Configuration
-        connect(this, SIGNAL(requestAUConfiguration(int)), mav, SLOT(sendAUConfiguration(int)));
+        connect(this, SIGNAL(requestAUConfiguration(int)), mav, SLOT(sendAllocationCase(int)));
         connect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocCase(int)));
 
         // Initial emitment of spinbox values

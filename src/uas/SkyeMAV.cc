@@ -394,7 +394,7 @@ void SkyeMAV::sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t bl
     qDebug() << "[SkyeMAV] Sent LED Color Message. ledId:" << ledId << "red: " << red << "green: " << green << "blue: " << blue << "mode: " << mode << "frequency" << frequency;
 }
 
-void SkyeMAV::sendAUConfiguration(int disabledAU)
+void SkyeMAV::sendAllocationCase(int disabledAU)
 {
 	//mavlink_message_t msg;
 	//mavlink_msg_param_set_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, this->uasId, (uint8_t)MAV_COMP_ID_ALL, "SKYE_ALOC_CASE", (int32_t)disabledAU, (uint8_t)MAV_PARAM_TYPE_INT32);
@@ -411,6 +411,27 @@ void SkyeMAV::sendAUReset(int auId)
     qDebug() << "[SkyeMAV] Sent reset command for AU id" << auId;
 }
 
+void SkyeMAV::sendSkyeConfiguration(double *quaternions) // [4][6]
+{
+    // reshape multidimensional array
+    double q[4][6];
+    memcpy(q, quaternions, sizeof(q));
+
+    mavlink_message_t msg;
+    mavlink_actuation_configuration_t au_config;
+    for (int i = 0; i<4; i++)
+    {
+        au_config.quat_au1[i] = q[i][0];
+        au_config.quat_au2[i] = q[i][1];
+        au_config.quat_au3[i] = q[i][2];
+        au_config.quat_au4[i] = q[i][3];
+        au_config.quat_au5[i] = q[i][4];
+        au_config.quat_au6[i] = q[i][5];
+    }
+    mavlink_msg_actuation_configuration_encode(mavlink->getSystemId(), mavlink->getComponentId(), &msg, &au_config);
+    sendMessage(msg);
+    qDebug() << "[SkyeMAV] Sent actuation configuration for Skye";
+}
 
 void SkyeMAV::setLiftValue(int val)
 {
