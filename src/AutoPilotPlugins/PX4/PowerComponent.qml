@@ -54,13 +54,13 @@ QGCView {
     function getBatteryImage()
     {
         switch(battNumCells.value) {
-            case 1:  return "/qml/PowerComponentBattery_01cell.svg";
-            case 2:  return "/qml/PowerComponentBattery_02cell.svg"
-            case 3:  return "/qml/PowerComponentBattery_03cell.svg"
-            case 4:  return "/qml/PowerComponentBattery_04cell.svg"
-            case 5:  return "/qml/PowerComponentBattery_05cell.svg"
-            case 6:  return "/qml/PowerComponentBattery_06cell.svg"
-            default: return "/qml/PowerComponentBattery_01cell.svg";
+            case 1:  return "/qmlimages/PowerComponentBattery_01cell.svg";
+            case 2:  return "/qmlimages/PowerComponentBattery_02cell.svg"
+            case 3:  return "/qmlimages/PowerComponentBattery_03cell.svg"
+            case 4:  return "/qmlimages/PowerComponentBattery_04cell.svg"
+            case 5:  return "/qmlimages/PowerComponentBattery_05cell.svg"
+            case 6:  return "/qmlimages/PowerComponentBattery_06cell.svg"
+            default: return "/qmlimages/PowerComponentBattery_01cell.svg";
         }
     }
 
@@ -98,7 +98,7 @@ QGCView {
         onBatteryConnected:     showMessage("ESC Calibration", "Performing calibration. This will take a few seconds..", 0)
         onCalibrationFailed:    showMessage("ESC Calibration failed", errorMessage, StandardButton.Ok)
         onCalibrationSuccess:   showMessage("ESC Calibration", "Calibration complete. You can disconnect your battery now if you like.", StandardButton.Ok)
-        onConnectBattery:       showMessage("ESC Calibration", "WARNING: Props must be removed from vehicle prior to performing ESC calibration.\n\nConnect the battery now and calibration will begin.", 0)
+        onConnectBattery:       showMessage("ESC Calibration", "<font color=\"yellow\">WARNING: Props must be removed from vehicle prior to performing ESC calibration.</font> Connect the battery now and calibration will begin.", 0)
         onDisconnectBattery:    showMessage("ESC Calibration failed", "You must disconnect the battery prior to performing ESC Calibration. Disconnect your battery and try again.", StandardButton.Ok)
     }
 
@@ -179,7 +179,7 @@ QGCView {
                             antialiasing: true
                             Connections {
                                 target: ScreenTools
-                                onRepaintRequestedChanged: {
+                                onRepaintRequested: {
                                     arrows.requestPaint();
                                 }
                             }
@@ -239,7 +239,7 @@ QGCView {
 
             Rectangle {
                 width:              parent.width
-                height:             80
+                height:             140
                 color:              palette.windowShade
 
                 Column {
@@ -248,7 +248,12 @@ QGCView {
                     spacing:            10
 
                     QGCLabel {
-                        text: "WARNING: Props must be removed from vehicle prior to performing ESC calibration."
+                        color:  "yellow"
+                        text:   "<font color=\"yellow\">WARNING: Propellers must be removed from vehicle prior to performing ESC calibration.</font>"
+                    }
+
+                    QGCLabel {
+                        text: "You must use USB connection for this operation."
                     }
 
                     QGCButton {
@@ -269,7 +274,7 @@ QGCView {
                     width: (parent.width / 2) - 5
                     QGCLabel {
                         text: "Propeller Function"
-                        font.pixelSize: ScreenTools.font20;
+                        font.pixelSize: ScreenTools.mediumFontPixelSize
                     }
                     Rectangle {
                         width: parent.width
@@ -282,7 +287,7 @@ QGCView {
                     width: (parent.width / 2) - 5
                     QGCLabel {
                         text: "Magnetometer Distortion"
-                        font.pixelSize: ScreenTools.font20;
+                        font.pixelSize: ScreenTools.mediumFontPixelSize
                     }
                     Rectangle {
                         width: parent.width
@@ -300,9 +305,9 @@ QGCView {
                 text: "Show Advanced Settings"
             }
             QGCLabel {
-                text: "Advanced Power Settings"
-                font.pixelSize: ScreenTools.font20;
-                visible: showAdvanced.checked
+                text:           "Advanced Power Settings"
+                font.pixelSize: ScreenTools.mediumFontPixelSize
+                visible:        showAdvanced.checked
             }
             Rectangle {
                 width: parent.width

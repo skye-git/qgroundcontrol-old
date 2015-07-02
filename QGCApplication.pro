@@ -267,7 +267,8 @@ HEADERS += \
     src/QGCTemporaryFile.h \
     src/QmlControls/MavManager.h \
     src/QmlControls/ParameterEditorController.h \
-    src/QmlControls/ScreenTools.h \
+    src/QmlControls/ScreenToolsController.h \
+    src/SerialPortIds.h \
     src/uas/QGCMAVLinkUASFactory.h \
     src/uas/FileManager.h \
     src/uas/UAS.h \
@@ -398,7 +399,7 @@ SOURCES += \
     src/QGCTemporaryFile.cc \
     src/QmlControls/MavManager.cc \
     src/QmlControls/ParameterEditorController.cc \
-    src/QmlControls/ScreenTools.cc \
+    src/QmlControls/ScreenToolsController.cc \
     src/uas/QGCMAVLinkUASFactory.cc \
     src/uas/FileManager.cc \
     src/uas/UAS.cc \
@@ -591,8 +592,10 @@ HEADERS+= \
 !MobileBuild {
 HEADERS += \
     src/VehicleSetup/FirmwareUpgradeController.h \
-    src/VehicleSetup/PX4Bootloader.h \
-    src/VehicleSetup/PX4FirmwareUpgradeThread.h
+    src/VehicleSetup/Bootloader.h \
+    src/VehicleSetup/PX4FirmwareUpgradeThread.h \
+    src/VehicleSetup/FirmwareImage.h \
+
 }
 
 SOURCES += \
@@ -621,8 +624,10 @@ SOURCES += \
 !MobileBuild {
 SOURCES += \
     src/VehicleSetup/FirmwareUpgradeController.cc \
-    src/VehicleSetup/PX4Bootloader.cc \
-    src/VehicleSetup/PX4FirmwareUpgradeThread.cc
+    src/VehicleSetup/Bootloader.cc \
+    src/VehicleSetup/PX4FirmwareUpgradeThread.cc \
+    src/VehicleSetup/FirmwareImage.cc \
+
 }
 
 # Fact System code

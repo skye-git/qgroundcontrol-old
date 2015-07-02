@@ -242,6 +242,14 @@ UAS::UAS(MAVLinkProtocol* protocol, int id) : UASInterface(),
 */
 UAS::~UAS()
 {
+#ifndef __mobile__
+    stopHil();
+    if (simulation) {
+        // wait for the simulator to exit
+        simulation->wait();
+        simulation->deleteLater();
+    }
+#endif
     writeSettings();
 }
 
@@ -2578,13 +2586,12 @@ void UAS::setExternalControlSetpoint(float roll, float pitch, float yaw, float t
             const float newThrustCommand = thrust * axesScaling;
 
             // Send the MANUAL_COMMAND message
-            mavlink_message_t message;
             mavlink_msg_manual_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId, newPitchCommand, newRollCommand, newThrustCommand, newYawCommand, buttons);
-            sendMessage(message);
-
-            // Emit an update in control values to other UI elements, like the HSI display
-            emit attitudeThrustSetPointChanged(this, roll, pitch, yaw, thrust, QGC::groundTimeMilliseconds());
         }
+
+        sendMessage(message);
+        // Emit an update in control values to other UI elements, like the HSI display
+        emit attitudeThrustSetPointChanged(this, roll, pitch, yaw, thrust, QGC::groundTimeMilliseconds());
     }
 }
 #endif
