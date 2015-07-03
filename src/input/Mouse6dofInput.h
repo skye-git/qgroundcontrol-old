@@ -1,3 +1,19 @@
+//#include <QObject>
+//#include <QThread>
+
+//class Mouse6dofInput : public QThread
+//{
+//    Q_OBJECT
+
+//public:
+//    Mouse6dofInput(QWidget* parent);
+
+//    ~Mouse6dofInput();
+//    void run();
+//};
+
+
+
 /**
  * @file
  *   @brief Definition of 3dConnexion 3dMouse interface for QGroundControl
@@ -12,13 +28,19 @@
 #include <QObject>
 #include <QThread>
 #include <QProcess>
+#include <QTimer>
 
+#ifdef QGC_MOUSE_ENABLED_LINUX
+#include "XdrvlibIncludes.h"
+#endif //QGC_MOUSE_ENABLED_LINUX
 #ifdef QGC_MOUSE_ENABLED_WIN
 #include "Mouse3DInput.h"
 #endif //QGC_MOUSE_ENABLED_WIN
 
 #include "UASInterface.h"
+#ifdef QGC_USE_SKYE_MESSAGES_AAA
 #include "SkyeMAV.h"
+#endif //QGC_USE_SKYE_MESSAGES
 
 class Mouse6dofInput : public QThread
 {
@@ -110,7 +132,9 @@ signals:
     void resetMouseInputStatus(bool active);
 
 public slots:
+#ifdef QGC_USE_SKYE_MESSAGES_AAA
     void setActiveUAS(UASInterface* uas);
+#endif // QGC_USE_SKYE_MESSAGES
 #ifdef QGC_MOUSE_ENABLED_WIN
     /** @brief Get a motion input from 3DMouse */
     void motion3DMouse(std::vector<float> &motionData);

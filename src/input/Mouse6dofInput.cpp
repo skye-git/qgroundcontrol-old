@@ -1,3 +1,33 @@
+//#include "QX11Info"
+//#include "QDebug"
+//#include "XdrvlibIncludes.h"
+//#include "Mouse6dofInput.h"
+
+
+//Mouse6dofInput::Mouse6dofInput(QWidget *parent) {
+
+//MagellanFloatEvent MagellanEvent;
+
+//Display *display = QX11Info::display();
+//if(!display)
+//{
+//    qDebug() << "Cannot open display!" << endl;
+//}
+
+//XEvent *event;
+
+//switch (event->type)
+//{
+//case ClientMessage:
+//  switch( MagellanTranslateEvent( display, event, &MagellanEvent, 1.0, 1.0 ) )
+//  {
+//    case MagellanInputMotionEvent :
+//         MagellanRemoveMotionEvents( display );
+//  }
+//}
+//}
+
+
 /**
  * @file
  *   @brief 3dConnexion 3dMouse interface for QGroundControl
@@ -6,23 +36,17 @@
  *
  */
 
-#include "Mouse6dofInput.h"
 #include "UAS.h"
 #include "UASManager.h"
-#include "QGCMessageBox.h"
+#include "QMessageBox"
 #include "QString"
 #include "QStringList"
 
+#include "Mouse6dofInput.h"
+#include "src/input/QGCInputs.h"
+
 #ifdef QGC_MOUSE_ENABLED_LINUX
 #include <QX11Info>
-#include <X11/Xlib.h>
-#ifdef Success
-#undef Success              // Eigen library doesn't work if Success is defined
-#endif //Success
-extern "C"
-{
-#include "xdrvlib.h"
-}
 #endif // QGC_MOUSE_ENABLED_LINUX
 
 #ifdef QGC_MOUSE_ENABLED_WIN
@@ -59,7 +83,7 @@ Mouse6dofInput::Mouse6dofInput(QWidget* parent) :
     mouse3DMaxC(350.0),   // TODO: check maximum value for plugged device
     parentWidget(parent),
     timerInit3dxDaemon(NULL),
-	uasId(0),
+    uasId(0),
     done(false),
     mouseActive(false),
     translationActive(true),
@@ -81,6 +105,7 @@ Mouse6dofInput::~Mouse6dofInput()
     done = true;
 }
 
+#ifdef QGC_USE_SKYE_MESSAGES_AAA
 void Mouse6dofInput::setActiveUAS(UASInterface* uas)
 {
     if (this->uasId!= 0)
@@ -113,11 +138,14 @@ void Mouse6dofInput::setActiveUAS(UASInterface* uas)
         start();
     }
 }
+#endif //QGC_USE_SKYE_MESSAGES
 
 void Mouse6dofInput::init()
 {
+#ifdef QGC_USE_SKYE_MESSAGES_AAA
     // Make sure active UAS is set
     setActiveUAS(UASManager::instance()->getActiveUAS());
+#endif //QGC_USE_SKYE_MESSAGES
 }
 
 void Mouse6dofInput::run()
@@ -312,7 +340,7 @@ void Mouse6dofInput::handleX11Event(XEvent *event)
 void Mouse6dofInput::updateInputMode(int inputMode)
 {
 #ifdef QGC_MOUSE_ENABLED_WIN
-    if (inputMode & SkyeMAV::QGC_INPUT_MODE_MOUSE)
+    if (inputMode & QGC_INPUT_MODE_MOUSE)
     {
         mouseActive = true;
     }else{
@@ -322,41 +350,45 @@ void Mouse6dofInput::updateInputMode(int inputMode)
 
 #ifdef QGC_MOUSE_ENABLED_LINUX
     qDebug() << "[Mouse6dofInput] update input called with" << inputMode;
-    if (inputMode & SkyeMAV::QGC_INPUT_MODE_MOUSE)
+    if (inputMode & QGC_INPUT_MODE_MOUSE)
     {
-		if (!mouseActive)
-		{
-			///////////////// Reinitialize 3DMouse //////////////////
-			display = QX11Info::display();
-			if(!display)
-			{
-				qDebug() << "[Mouse6dofInput] Cannot open display!" << endl;
-			}
-			if ( !MagellanInit( display, parentWidget->winId() ) )
-			{
-//                QGCMessageBox::critical(tr("No 3DxWare driver is running."),
-//                                        tr("Enter in Terminal 'sudo /etc/3DxWare/daemon/3dxsrv -d usb' and then restart QGroundControl."));
-//                qDebug() << "No 3DxWare driver is running!";
+        if (!mouseActive)
+        {
+            ///////////////// Reinitialize 3DMouse //////////////////
+            display = QX11Info::display();
+            if(!display)
+            {
+                qDebug() << "[Mouse6dofInput] Cannot open display!" << endl;
+            }
+            if ( !MagellanInit( display, parentWidget->winId() ) )
+            {
+    //            QMessageBox msgBox;
+    //            msgBox.setIcon(QMessageBox::Information);
+    //            msgBox.setText(tr("No 3DxWare driver is running."));
+    //            msgBox.setInformativeText(tr("Enter in Terminal 'sudo /etc/3DxWare/daemon/3dxsrv -d usb' and then restart QGroundControl."));
+    //            msgBox.setStandardButtons(QMessageBox::Ok);
+    //            msgBox.setDefaultButton(QMessageBox::Ok);
+    //            msgBox.exec();
 
-				qDebug() << "Starting 3DxWare Daemon for 3dConnexion 3dMouse";
-				QString processProgramm = "gksudo";
-				QStringList processArguments;
-				processArguments << "/etc/3DxWare/daemon/3dxsrv -d usb";
-				process3dxDaemon = new QProcess();
-				process3dxDaemon->start(processProgramm, processArguments);
+                qDebug() << "Starting 3DxWare Daemon for 3dConnexion 3dMouse";
+                QString processProgramm = "gksudo";
+                QStringList processArguments;
+                processArguments << "/etc/3DxWare/daemon/3dxsrv -d usb";
+                process3dxDaemon = new QProcess();
+                process3dxDaemon->start(processProgramm, processArguments);
 
-				// 3dxsrv was not running, therefore deactivate 3dMouse input
+                // 3dxsrv was not running, therefore deactivate 3dMouse input
                 emit resetMouseInputStatus(false);
-			}
-			else
-			{
-				qDebug() << "[Mouse6dofInput] Initialized 3dMouse";
-				mouseActive = true;
+            }
+            else
+            {
+                qDebug() << "[Mouse6dofInput] Initialized 3dMouse";
+                mouseActive = true;
                 emit resetMouseInputStatus(true);
-			}
-		} else {
-			// mouseActive already true. Do nothing.
-		}
+            }
+        } else {
+            // mouseActive already true. Do nothing.
+        }
     }
     else
     {

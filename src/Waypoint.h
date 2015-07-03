@@ -33,10 +33,10 @@ This file is part of the PIXHAWK project
 #ifndef WAYPOINT_H
 #define WAYPOINT_H
 
+#include <QTextStream>
 #include <QObject>
 #include <QString>
 #include <QtQml>
-#include <QTextStream>
 #include "QGCMAVLink.h"
 #include "QGC.h"
 

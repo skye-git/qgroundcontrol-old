@@ -1,0 +1,7 @@
+#
+# Add or remove custom message specs here. The matching mavlink headers are
+# included in the QGCExternalLibs.pri file.
+#
+
+MAVLINK_CONF += skye
+

@@ -50,9 +50,13 @@ This file is part of the QGROUNDCONTROL project
 #ifndef __mobile__
 #include "input/JoystickInput.h"
 #endif
-#if (defined QGC_MOUSE_ENABLED_WIN) | (defined QGC_MOUSE_ENABLED_LINUX)
+#ifdef QGC_MOUSE_ENABLED_WIN
 #include "Mouse6dofInput.h"
 #endif // QGC_MOUSE_ENABLED_WIN
+#ifdef QGC_MOUSE_ENABLED_LINUX
+#include "Mouse6dofInput.h"
+#include "XdrvlibIncludes.h"
+#endif // QGC_MOUSE_ENABLED_LINUX
 #include "ParameterEditorWidget.h"
 #include "HDDisplay.h"
 #include "HSIDisplay.h"
