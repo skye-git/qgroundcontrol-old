@@ -612,8 +612,8 @@ public:
         case MAV_AUTOPILOT_GENERIC:
             return "GENERIC";
             break;
-        case MAV_AUTOPILOT_PIXHAWK:
-            return "PIXHAWK";
+        case MAV_AUTOPILOT_RESERVED:
+            return "RESERVED";
             break;
         case MAV_AUTOPILOT_SLUGS:
             return "SLUGS";
