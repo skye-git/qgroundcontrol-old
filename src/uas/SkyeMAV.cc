@@ -73,11 +73,10 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
 
 
         // Ignore these messages
-//        case MAVLINK_MSG_ID_SETPOINT_6DOF:
-//        case MAVLINK_MSG_ID_SETPOINT_8DOF:
+        case MAVLINK_MSG_ID_SETPOINT_6DOF:
+        case MAVLINK_MSG_ID_SETPOINT_12DOF:
         case MAVLINK_MSG_ID_RANGE_SENSOR_RAW:
         case MAVLINK_MSG_ID_SKYE_FEEDBACK_COMBINED:
-        case MAVLINK_MSG_ID_ALLOCATION_OUTPUT_RAW:
         case MAVLINK_MSG_ID_ATTITUDE_CTRL_OUTPUT_RAW:
         case MAVLINK_MSG_ID_POSITION_CTRL_OUTPUT_RAW:
             break;
