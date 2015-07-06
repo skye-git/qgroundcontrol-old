@@ -129,7 +129,7 @@ contains(DEFINES, DISABLE_XBEE) {
 }
 
 #
-# [OPTIONAL] Magellan 3DxWare library. Provides support for 3DConnexion's 3D mice.
+# [OPTIONAL] Support for 3DConnexion's 3D mice.
 #
 contains(DEFINES, DISABLE_3DMOUSE) {
 	message("Skipping support for 3DConnexion mice (manual override from command line)")
@@ -138,17 +138,16 @@ contains(DEFINES, DISABLE_3DMOUSE) {
 } else:exists(user_config.pri):infile(user_config.pri, DEFINES, DISABLE_3DMOUSE) {
     message("Skipping support for 3DConnexion mice (manual override from user_config.pri)")
 } else:LinuxBuild {
-	exists(/usr/local/lib/libxdrvlib.so) {
+# Open-source alternative to proprietary 3DConnexion device driver and SDK
+        exists(/usr/local/lib/libspnav.so) {
 		message("Including support for 3DConnexion mice")
 
                 DEFINES += \
-		QGC_MOUSE_ENABLED_LINUX \
-                ParameterCheck
-                # Hack: Has to be defined for magellan usage
+                QGC_MOUSE_ENABLED_LINUX
 
 		HEADERS += src/input/Mouse6dofInput.h
 		SOURCES += src/input/Mouse6dofInput.cpp
-		LIBS += -L/usr/local/lib/ -lxdrvlib
+                LIBS += -L/usr/local/lib/ -lspnav
 	} else {
 		warning("Skipping support for 3DConnexion mice (missing libraries, see README)")
 	}

@@ -62,7 +62,6 @@ QT += \
     svg \
     widgets \
     xml \
-    x11extras \
 
 !MobileBuild {
     QT += \
@@ -349,8 +348,7 @@ HEADERS += \
     src/ViewWidgets/ParameterEditorWidget.h \
     src/ViewWidgets/ViewWidgetController.h \
     src/Waypoint.h \
-    src/input/QGCInputs.h \
-    src/input/XdrvlibIncludes.h
+    src/input/QGCInputs.h
 
 !iOSBuild {
 HEADERS += \

@@ -212,9 +212,7 @@ MainWindow::MainWindow(QSplashScreen* splashScreen)
 
 #if QGC_MOUSE_ENABLED_LINUX
     emit initStatusChanged(tr("Initializing 3D mouse interface"), Qt::AlignLeft | Qt::AlignBottom, QColor(62, 93, 141));
-
-    mouse = new Mouse6dofInput(this);
-    connect(this, SIGNAL(x11EventOccured(XEvent*)), mouse, SLOT(handleX11Event(XEvent*)));
+    mouse = new Mouse6dofInput();
 #endif //QGC_MOUSE_ENABLED_LINUX
 
     // These also cause the screen to redraw so we need to update any OpenGL canvases in QML controls
@@ -1171,14 +1169,6 @@ void MainWindow::_linkStateChange(LinkInterface*)
 {
     emit repaintCanvas();
 }
-
-#ifdef QGC_MOUSE_ENABLED_LINUX
-bool MainWindow::x11Event(XEvent *event)
-{
-    emit x11EventOccured(event);
-    return false;
-}
-#endif // QGC_MOUSE_ENABLED_LINUX
 
 #ifdef UNITTEST_BUILD
 void MainWindow::_showQmlTestWidget(void)

@@ -55,7 +55,6 @@ This file is part of the QGROUNDCONTROL project
 #endif // QGC_MOUSE_ENABLED_WIN
 #ifdef QGC_MOUSE_ENABLED_LINUX
 #include "Mouse6dofInput.h"
-#include "XdrvlibIncludes.h"
 #endif // QGC_MOUSE_ENABLED_LINUX
 #include "ParameterEditorWidget.h"
 #include "HDDisplay.h"
@@ -205,11 +204,6 @@ signals:
     /** Emitted when any the Canvas elements within QML wudgets need updating */
     void repaintCanvas();
 
-#ifdef QGC_MOUSE_ENABLED_LINUX
-    /** @brief Forward X11Event to catch 3DMouse inputs */
-    void x11EventOccured(XEvent *event);
-#endif //QGC_MOUSE_ENABLED_LINUX
-
 public:
     QGCMAVLinkLogPlayer* getLogPlayer()
     {
@@ -267,8 +261,6 @@ protected:
 #endif // QGC_MOUSE_ENABLED_WIN
 
 #ifdef QGC_MOUSE_ENABLED_LINUX
-    /** @brief Reimplementation of X11Event to handle 3dMouse Events (magellan) */
-    bool x11Event(XEvent *event);
     Mouse6dofInput* mouse;                  ///< Implementation for 3dMouse input
 #endif // QGC_MOUSE_ENABLED_LINUX
 

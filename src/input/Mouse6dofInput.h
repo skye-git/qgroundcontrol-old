@@ -1,19 +1,3 @@
-//#include <QObject>
-//#include <QThread>
-
-//class Mouse6dofInput : public QThread
-//{
-//    Q_OBJECT
-
-//public:
-//    Mouse6dofInput(QWidget* parent);
-
-//    ~Mouse6dofInput();
-//    void run();
-//};
-
-
-
 /**
  * @file
  *   @brief Definition of 3dConnexion 3dMouse interface for QGroundControl
@@ -30,15 +14,12 @@
 #include <QProcess>
 #include <QTimer>
 
-#ifdef QGC_MOUSE_ENABLED_LINUX
-#include "XdrvlibIncludes.h"
-#endif //QGC_MOUSE_ENABLED_LINUX
 #ifdef QGC_MOUSE_ENABLED_WIN
 #include "Mouse3DInput.h"
 #endif //QGC_MOUSE_ENABLED_WIN
 
 #include "UASInterface.h"
-#ifdef QGC_USE_SKYE_MESSAGES_AAA
+#ifdef QGC_USE_SKYE_MESSAGES
 #include "SkyeMAV.h"
 #endif //QGC_USE_SKYE_MESSAGES
 
@@ -51,7 +32,7 @@ public:
     Mouse6dofInput(Mouse3DInput* mouseInput);
 #endif //QGC_MOUSE_ENABLED_WIN
 #ifdef QGC_MOUSE_ENABLED_LINUX
-    Mouse6dofInput(QWidget* parent);
+    Mouse6dofInput();
 #endif //QGC_MOUSE_ENABLED_LINUX
 
     ~Mouse6dofInput();
@@ -71,20 +52,12 @@ public:
 #endif
 
 protected:
-    void init();
     /** Progressive incremention */
     double progressive(double value);
     /** Saturation to 1.0 */
     double saturate(double value);
     /** 1: greater than zero, 0: equal zero, -1 else */
     int sign(double value);
-
-#ifdef QGC_MOUSE_ENABLED_LINUX
-    QWidget* parentWidget;
-    Display* display;
-    QProcess* process3dxDaemon;
-    QTimer* timerInit3dxDaemon;
-#endif // QGC_MOUSE_ENABLED_LINUX
 
     int uasId;
     bool done;
@@ -132,7 +105,7 @@ signals:
     void resetMouseInputStatus(bool active);
 
 public slots:
-#ifdef QGC_USE_SKYE_MESSAGES_AAA
+#ifdef QGC_USE_SKYE_MESSAGES
     void setActiveUAS(UASInterface* uas);
 #endif // QGC_USE_SKYE_MESSAGES
 #ifdef QGC_MOUSE_ENABLED_WIN
@@ -142,8 +115,8 @@ public slots:
     void button3DMouseDown(int button);
 #endif //QGC_MOUSE_ENABLED_WIN
 #ifdef QGC_MOUSE_ENABLED_LINUX
-    /** @brief Get an XEvent to check it for an 3DMouse event (motion or button) */
-    void handleX11Event(XEvent* event);
+    /** @brief Poll spnav event (motion or button) */
+    void pollSpnavEvent();
 #endif //QGC_MOUSE_ENABLED_LINUX
     /** @brief Input mode changed. Start 3dMouse if requested. */
     void updateInputMode(int inputMode);
