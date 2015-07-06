@@ -155,6 +155,7 @@ public:
         QGC_AIRFRAME_X8,
         QGC_AIRFRAME_VIPER_2_0,
         QGC_AIRFRAME_CAMFLYER_Q,
+        QGC_AIRFRAME_SKYE,
         QGC_AIRFRAME_END_OF_ENUM
     };
 

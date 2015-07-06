@@ -348,7 +348,8 @@ HEADERS += \
     src/ViewWidgets/ParameterEditorWidget.h \
     src/ViewWidgets/ViewWidgetController.h \
     src/Waypoint.h \
-    src/input/QGCInputs.h
+    src/input/QGCInputs.h \
+    src/uas/SkyeMAV.h
 
 !iOSBuild {
 HEADERS += \
@@ -478,6 +479,7 @@ SOURCES += \
     src/ViewWidgets/ParameterEditorWidget.cc \
     src/ViewWidgets/ViewWidgetController.cc \
     src/Waypoint.cc \
+    src/uas/SkyeMAV.cc
 
 !iOSBuild {
 SOURCES += \
