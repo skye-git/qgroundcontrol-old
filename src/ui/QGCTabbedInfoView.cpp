@@ -11,7 +11,20 @@ QGCTabbedInfoView::QGCTabbedInfoView(QWidget *parent) : QWidget(parent)
     //ui.tabWidget->addTab(actionsWidget,"Actions");
     //ui.tabWidget->addTab(rawView,"Status");
     ui.tabWidget->addTab(messageView,"Messages");
+
+#ifdef QGC_USE_SKYE_MESSAGES
+    advancedControl = new UASSkyeControlAdvancedWidget(this);
+    ledControl = new LedControlWidget(this);
+    ui.tabWidget->addTab(advancedControl,"Advanced");
+    ui.tabWidget->addTab(ledControl,"LED color");
+    // set tooltips
+    ui.tabWidget->setTabToolTip(ui.tabWidget->indexOf(advancedControl), "Set advanced settings");
+    ui.tabWidget->setTabToolTip(ui.tabWidget->indexOf(ledControl), "Control LED color");
+    // show default tab
+    ui.tabWidget->setCurrentWidget(advancedControl);
+#endif //QGC_USE_SKYE_MESSAGES
 }
+
 void QGCTabbedInfoView::addSource(MAVLinkDecoder *decoder)
 {
     m_decoder = decoder;

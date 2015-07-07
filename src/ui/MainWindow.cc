@@ -87,6 +87,7 @@ This file is part of the QGROUNDCONTROL project
 const char* MAIN_SETTINGS_GROUP = "QGC_MAINWINDOW";
 
 const char* MainWindow::_uasControlDockWidgetName = "UNMANNED_SYSTEM_CONTROL_DOCKWIDGET";
+const char* MainWindow::_uasSkyeControlDockWidgetName = "SKYE_CONTROL_DOCKWIDGET";
 const char* MainWindow::_uasListDockWidgetName = "UNMANNED_SYSTEM_LIST_DOCKWIDGET";
 const char* MainWindow::_waypointsDockWidgetName = "WAYPOINT_LIST_DOCKWIDGET";
 const char* MainWindow::_mavlinkDockWidgetName = "MAVLINK_INSPECTOR_DOCKWIDGET";
@@ -408,6 +409,7 @@ void MainWindow::_buildCommonWidgets(void)
 
     static const struct DockWidgetInfo rgDockWidgetInfo[] = {
         { _uasControlDockWidgetName,        "Control",                  Qt::LeftDockWidgetArea },
+        { _uasSkyeControlDockWidgetName,    "Skye Control",             Qt::LeftDockWidgetArea },
         { _uasListDockWidgetName,           "Unmanned Systems",         Qt::RightDockWidgetArea },
         { _waypointsDockWidgetName,         "Mission Plan",             Qt::BottomDockWidgetArea },
         { _mavlinkDockWidgetName,           "MAVLink Inspector",        Qt::RightDockWidgetArea },
@@ -513,6 +515,8 @@ void MainWindow::_createInnerDockWidget(const QString& widgetName)
 
     if (widgetName == _uasControlDockWidgetName) {
         widget = new UASControlWidget(this);
+    } else if (widgetName == _uasSkyeControlDockWidgetName) {
+        widget = new UASSkyeControlWidget(this);
     } else if (widgetName == _uasListDockWidgetName) {
         widget = new UASListWidget(this);
     } else if (widgetName == _waypointsDockWidgetName) {

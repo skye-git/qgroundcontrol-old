@@ -43,6 +43,7 @@ This file is part of the QGROUNDCONTROL project
 #include "UASInterface.h"
 #include "UASManager.h"
 #include "UASControlWidget.h"
+#include "UASSkyeControlWidget.h"
 #include "UASInfoWidget.h"
 #include "WaypointList.h"
 #include "CameraView.h"
@@ -301,6 +302,7 @@ private:
 
     // Dock widget names
     static const char* _uasControlDockWidgetName;
+    static const char* _uasSkyeControlDockWidgetName;
     static const char* _uasListDockWidgetName;
     static const char* _waypointsDockWidgetName;
     static const char* _mavlinkDockWidgetName;

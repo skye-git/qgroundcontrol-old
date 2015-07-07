@@ -7,6 +7,12 @@
 #include "UASMessageView.h"
 #include "UASQuickView.h"
 #include "UASRawStatusView.h"
+
+#ifdef QGC_USE_SKYE_MESSAGES
+#include "UASSkyeControlAdvancedWidget.h"
+#include "ledControl/LedControlWidget.h"
+#endif //QGC_USE_SKYE_MESSAGES
+
 class QGCTabbedInfoView : public QWidget
 {
     Q_OBJECT
@@ -21,6 +27,11 @@ private:
     UASMessageViewWidget *messageView;
     UASQuickView *quickView;
     UASRawStatusView *rawView;
+
+#ifdef QGC_USE_SKYE_MESSAGES
+    UASSkyeControlAdvancedWidget *advancedControl;
+    LedControlWidget *ledControl;
+#endif
 };
 
 #endif // QGCTABBEDINFOVIEW_H

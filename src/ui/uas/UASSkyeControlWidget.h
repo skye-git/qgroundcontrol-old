@@ -38,16 +38,16 @@ This file is part of the QGROUNDCONTROL project
 #include <QButtonGroup>
 #include <QTime>
 #include <QErrorMessage>
-#include <QtGui/QApplication>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QHeaderView>
-#include <QtGui/QLabel>
-#include <QtGui/QVBoxLayout>
+#include <QApplication>
+#include <QHBoxLayout>
+#include <QHeaderView>
+#include <QLabel>
+#include <QVBoxLayout>
 #include <ui_UASSkyeControl.h>
 #include <UASInterface.h>
 #include "SkyeMAV.h"
 #include "QGCTabbedInfoView.h"
-#include "UASSkyeInputMixer.h"
+#include "InputMixer.h"
 #include "UASSkyeAlertWidget.h"
 
 /**

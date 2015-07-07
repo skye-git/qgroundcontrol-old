@@ -217,6 +217,13 @@ FORMS += \
     src/ui/WaypointEditableView.ui \
     src/ui/WaypointList.ui \
     src/ui/WaypointViewOnlyView.ui \
+    src/ui/uas/UASSkyeControl.ui \
+    src/ui/uas/UASSkyeControlAdvancedWidget.ui \
+    src/ui/uas/UASSkyeAlertWidget.ui \
+    src/ui/ledControl/LedControlWidget.ui \
+    src/ui/SkyeAUStatus.ui \
+    src/ui/SkyeAUStatusList.ui \
+    src/ui/SkyeAUStatusSettingsDialog.ui
 
 !iOSBuild {
 FORMS += \
@@ -349,7 +356,15 @@ HEADERS += \
     src/ViewWidgets/ViewWidgetController.h \
     src/Waypoint.h \
     src/input/QGCInputs.h \
-    src/uas/SkyeMAV.h
+    src/uas/SkyeMAV.h \
+    src/ui/uas/UASSkyeControlAdvancedWidget.h \
+    src/ui/uas/UASSkyeControlWidget.h \
+    src/ui/uas/UASSkyeAlertWidget.h \
+    src/input/InputMixer.h \
+    src/ui/ledControl/LedControlWidget.h \
+    src/ui/SkyeAUStatus.h \
+    src/ui/SkyeAUStatusList.h \
+    src/ui/SkyeAUStatusSettingsDialog.h
 
 !iOSBuild {
 HEADERS += \
@@ -479,7 +494,15 @@ SOURCES += \
     src/ViewWidgets/ParameterEditorWidget.cc \
     src/ViewWidgets/ViewWidgetController.cc \
     src/Waypoint.cc \
-    src/uas/SkyeMAV.cc
+    src/uas/SkyeMAV.cc \
+    src/ui/uas/UASSkyeControlAdvancedWidget.cc \
+    src/ui/uas/UASSkyeControlWidget.cc \
+    src/ui/uas/UASSkyeAlertWidget.cc \
+    src/input/InputMixer.cc \
+    src/ui/ledControl/LedControlWidget.cc \
+    src/ui/SkyeAUStatus.cc \
+    src/ui/SkyeAUStatusList.cc \
+    src/ui/SkyeAUStatusSettingsDialog.cc
 
 !iOSBuild {
 SOURCES += \

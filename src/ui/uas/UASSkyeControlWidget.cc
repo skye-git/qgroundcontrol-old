@@ -437,7 +437,7 @@ void UASSkyeControlWidget::transmitMode(int mode)
     {
         mav->setModeCommand(mode);
 
-        QString modeStr = UAS::getShortModeTextFor(mode, 0, MAV_AUTOPILOT_PX4);
+        QString modeStr = mav->getShortModeTextFor(mode, 0);
         ui.lastActionLabel->setText(QString("Sent mode %1 to %2").arg(modeStr).arg(mav->getUASName()));
 
         qDebug() << "Send mode" << modeStr << "to" << mav->getUASName();
