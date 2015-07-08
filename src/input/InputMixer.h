@@ -14,7 +14,7 @@ public:
     UASSkyeInputMixer(QWidget *parent = 0);
     ~UASSkyeInputMixer();
     /** @brief accumulate and emit inputs from different devices.
-     *  @note values will be scaled by SkyeMAV class.
+     *  @note values will be scaled by SkyeUAS class.
      **/
     void run();
     /** @brief initialize input values with zeros and current time */

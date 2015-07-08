@@ -356,7 +356,6 @@ HEADERS += \
     src/ViewWidgets/ViewWidgetController.h \
     src/Waypoint.h \
     src/input/QGCInputs.h \
-    src/uas/SkyeMAV.h \
     src/ui/uas/UASSkyeControlAdvancedWidget.h \
     src/ui/uas/UASSkyeControlWidget.h \
     src/ui/uas/UASSkyeAlertWidget.h \
@@ -364,7 +363,8 @@ HEADERS += \
     src/ui/ledControl/LedControlWidget.h \
     src/ui/SkyeAUStatus.h \
     src/ui/SkyeAUStatusList.h \
-    src/ui/SkyeAUStatusSettingsDialog.h
+    src/ui/SkyeAUStatusSettingsDialog.h \
+    src/uas/SkyeUAS.h
 
 !iOSBuild {
 HEADERS += \
@@ -494,7 +494,6 @@ SOURCES += \
     src/ViewWidgets/ParameterEditorWidget.cc \
     src/ViewWidgets/ViewWidgetController.cc \
     src/Waypoint.cc \
-    src/uas/SkyeMAV.cc \
     src/ui/uas/UASSkyeControlAdvancedWidget.cc \
     src/ui/uas/UASSkyeControlWidget.cc \
     src/ui/uas/UASSkyeAlertWidget.cc \
@@ -502,7 +501,8 @@ SOURCES += \
     src/ui/ledControl/LedControlWidget.cc \
     src/ui/SkyeAUStatus.cc \
     src/ui/SkyeAUStatusList.cc \
-    src/ui/SkyeAUStatusSettingsDialog.cc
+    src/ui/SkyeAUStatusSettingsDialog.cc \
+    src/uas/SkyeUAS.cc
 
 !iOSBuild {
 SOURCES += \

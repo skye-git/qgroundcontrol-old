@@ -44,7 +44,7 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     uasId(0),
     uasMode(0),
     engineOn(false),
-    inputMode(SkyeMAV::QGC_INPUT_MODE_NONE),
+    inputMode(SkyeUAS::QGC_INPUT_MODE_NONE),
     mouseTranslationEnabled(true),
     mouseRotationEnabled(true),
     inputMixer(NULL)
@@ -66,10 +66,10 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     ui.rateControlButton->setCheckable(false);
     ui.attControlButton->setCheckable(false);
 
-    ui.mouseButton->setChecked(inputMode & SkyeMAV::QGC_INPUT_MODE_MOUSE);
-    ui.touchButton->setChecked(inputMode & SkyeMAV::QGC_INPUT_MODE_TOUCH);
-    ui.keyboardButton->setChecked(inputMode & SkyeMAV::QGC_INPUT_MODE_KEYBOARD);
-    ui.xboxButton->setChecked(inputMode & SkyeMAV::QGC_INPUT_MODE_XBOX);
+    ui.mouseButton->setChecked(inputMode & SkyeUAS::QGC_INPUT_MODE_MOUSE);
+    ui.touchButton->setChecked(inputMode & SkyeUAS::QGC_INPUT_MODE_TOUCH);
+    ui.keyboardButton->setChecked(inputMode & SkyeUAS::QGC_INPUT_MODE_KEYBOARD);
+    ui.xboxButton->setChecked(inputMode & SkyeUAS::QGC_INPUT_MODE_XBOX);
 
     ui.keyboardButton->hide();
 
@@ -114,12 +114,12 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         UASInterface* oldUAS = UASManager::instance()->getUASForId(this->uasId);
         ui.lastActionLabel->setText("Disconnected from " + oldUAS->getUASName());
         this->uasId = 0;
-        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(oldUAS);
+        SkyeUAS* mav = dynamic_cast<SkyeUAS*>(oldUAS);
         if (mav)
         {
             disconnect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
             disconnect(mav, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
-            disconnect(this, SIGNAL(changedInput(SkyeMAV::QGC_INPUT_MODE, bool)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE, bool)));
+            disconnect(this, SIGNAL(changedInput(SkyeUAS::QGC_INPUT_MODE, bool)), mav, SLOT(setInputMode(SkyeUAS::QGC_INPUT_MODE, bool)));
             disconnect(mav, SIGNAL(inputModeChanged(int)), this, SLOT(updateInput(int)));
 
             disconnect(mav, SIGNAL(mouseButtonRotationChanged(bool)), this, SLOT(changeMouseRotationEnabled(bool)));
@@ -142,7 +142,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
     }
 
 
-    SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uas);
+    SkyeUAS* mav = dynamic_cast<SkyeUAS*>(uas);
     if (mav)
     {
         //ui.controlStatusLabel->setText(tr("Connected to ") + mav->getUASName());
@@ -163,7 +163,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(mav, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
         connect(mav, SIGNAL(batteryLow(double,bool,uint)), alertWidget, SLOT(batteryLow(double,bool,uint)));
 
-        connect(this, SIGNAL(changedInput(SkyeMAV::QGC_INPUT_MODE, bool)), mav, SLOT(setInputMode(SkyeMAV::QGC_INPUT_MODE, bool)));
+        connect(this, SIGNAL(changedInput(SkyeUAS::QGC_INPUT_MODE, bool)), mav, SLOT(setInputMode(SkyeUAS::QGC_INPUT_MODE, bool)));
         connect(mav, SIGNAL(inputModeChanged(int)), this, SLOT(updateInput(int)));
         connect(mav, SIGNAL(resetMouseInput(bool)), this, SLOT(updateMouseInput(bool)));
 
@@ -259,9 +259,9 @@ void UASSkyeControlWidget::updateInput(int input)
 	qDebug() << "[UASSkyeControl] changing input from" << inputMode << "to" << input;
 
     // Update last-action-label when input mode has changed
-    if ( (inputMode & SkyeMAV::QGC_INPUT_MODE_MOUSE) != (input & SkyeMAV::QGC_INPUT_MODE_MOUSE) )
+    if ( (inputMode & SkyeUAS::QGC_INPUT_MODE_MOUSE) != (input & SkyeUAS::QGC_INPUT_MODE_MOUSE) )
     {
-        if (input & SkyeMAV::QGC_INPUT_MODE_MOUSE)
+        if (input & SkyeUAS::QGC_INPUT_MODE_MOUSE)
         {
             ui.lastActionLabel->setText("3dMouse input activated.");
         } else {
@@ -269,9 +269,9 @@ void UASSkyeControlWidget::updateInput(int input)
         }
     }
 
-    if ( (inputMode & SkyeMAV::QGC_INPUT_MODE_TOUCH) != (input & SkyeMAV::QGC_INPUT_MODE_TOUCH) )
+    if ( (inputMode & SkyeUAS::QGC_INPUT_MODE_TOUCH) != (input & SkyeUAS::QGC_INPUT_MODE_TOUCH) )
     {
-        if (input & SkyeMAV::QGC_INPUT_MODE_TOUCH)
+        if (input & SkyeUAS::QGC_INPUT_MODE_TOUCH)
         {
             ui.lastActionLabel->setText("Touch input activated.");
         } else {
@@ -279,9 +279,9 @@ void UASSkyeControlWidget::updateInput(int input)
         }
     }
 
-    if ( (inputMode & SkyeMAV::QGC_INPUT_MODE_XBOX) != (input & SkyeMAV::QGC_INPUT_MODE_XBOX) )
+    if ( (inputMode & SkyeUAS::QGC_INPUT_MODE_XBOX) != (input & SkyeUAS::QGC_INPUT_MODE_XBOX) )
     {
-        if (input & SkyeMAV::QGC_INPUT_MODE_XBOX)
+        if (input & SkyeUAS::QGC_INPUT_MODE_XBOX)
         {
             ui.lastActionLabel->setText("Xbox input activated.");
         } else {
@@ -289,10 +289,10 @@ void UASSkyeControlWidget::updateInput(int input)
         }
     }
 
-    ui.mouseButton->setChecked(input & SkyeMAV::QGC_INPUT_MODE_MOUSE);
-    ui.touchButton->setChecked(input & SkyeMAV::QGC_INPUT_MODE_TOUCH);
-    ui.keyboardButton->setChecked(input & SkyeMAV::QGC_INPUT_MODE_KEYBOARD);
-    ui.xboxButton->setChecked(input & SkyeMAV::QGC_INPUT_MODE_XBOX);
+    ui.mouseButton->setChecked(input & SkyeUAS::QGC_INPUT_MODE_MOUSE);
+    ui.touchButton->setChecked(input & SkyeUAS::QGC_INPUT_MODE_TOUCH);
+    ui.keyboardButton->setChecked(input & SkyeUAS::QGC_INPUT_MODE_KEYBOARD);
+    ui.xboxButton->setChecked(input & SkyeUAS::QGC_INPUT_MODE_XBOX);
 
     inputMode = input;
 
@@ -307,18 +307,18 @@ void UASSkyeControlWidget::updateMouseInput(bool active)
         // 3d mouse has successfully been started
         ui.lastActionLabel->setText("3dMouse started");
 
-        if ((inputMode & SkyeMAV::QGC_INPUT_MODE_MOUSE) == false)
+        if ((inputMode & SkyeUAS::QGC_INPUT_MODE_MOUSE) == false)
         {
-            inputMode += SkyeMAV::QGC_INPUT_MODE_MOUSE;
+            inputMode += SkyeUAS::QGC_INPUT_MODE_MOUSE;
         }
 
     } else {
         // 3d mouse starting not succeeded. User must push the button again
         ui.lastActionLabel->setText("3dMouse was not initialized. Click again to activate...");
 
-        if ((inputMode & SkyeMAV::QGC_INPUT_MODE_MOUSE) == true)
+        if ((inputMode & SkyeUAS::QGC_INPUT_MODE_MOUSE) == true)
         {
-            inputMode -= SkyeMAV::QGC_INPUT_MODE_MOUSE;
+            inputMode -= SkyeUAS::QGC_INPUT_MODE_MOUSE;
         }
     }
 }
@@ -390,7 +390,7 @@ void UASSkyeControlWidget::setInputMouse(bool checked)
 	} else {
         ui.lastActionLabel->setText(tr("Stopping 3dMouse..."));
 	}
-    emit changedInput(SkyeMAV::QGC_INPUT_MODE_MOUSE, checked);
+    emit changedInput(SkyeUAS::QGC_INPUT_MODE_MOUSE, checked);
 
 }
 
@@ -403,7 +403,7 @@ void UASSkyeControlWidget::setInputTouch(bool checked)
         ui.lastActionLabel->setText(tr("Deactivating Touchscreen..."));
     }
 
-    emit changedInput(SkyeMAV::QGC_INPUT_MODE_TOUCH, checked);
+    emit changedInput(SkyeUAS::QGC_INPUT_MODE_TOUCH, checked);
 }
 
 void UASSkyeControlWidget::setInputKeyboard(bool checked)
@@ -415,7 +415,7 @@ void UASSkyeControlWidget::setInputKeyboard(bool checked)
         ui.lastActionLabel->setText(tr("Deactivating Keyboard..."));
     }
 
-    emit changedInput(SkyeMAV::QGC_INPUT_MODE_KEYBOARD, checked);
+    emit changedInput(SkyeUAS::QGC_INPUT_MODE_KEYBOARD, checked);
 }
 
 void UASSkyeControlWidget::setInputXbox(bool checked)
@@ -427,12 +427,12 @@ void UASSkyeControlWidget::setInputXbox(bool checked)
         ui.lastActionLabel->setText(tr("Deactivating Xbox Controller..."));
     }
 
-    emit changedInput(SkyeMAV::QGC_INPUT_MODE_XBOX, checked);
+    emit changedInput(SkyeUAS::QGC_INPUT_MODE_XBOX, checked);
 }
 
 void UASSkyeControlWidget::transmitMode(int mode)
 {
-    SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
+    SkyeUAS* mav = dynamic_cast<SkyeUAS*>(UASManager::instance()->getUASForId(this->uasId));
     if (mav)
     {
         mav->setModeCommand(mode);
@@ -456,7 +456,7 @@ void UASSkyeControlWidget::setInputButtonActivity(bool enabled)
 
 void UASSkyeControlWidget::cycleContextButton()
 {
-	SkyeMAV* mav = dynamic_cast<SkyeMAV*>(UASManager::instance()->getUASForId(this->uasId));
+	SkyeUAS* mav = dynamic_cast<SkyeUAS*>(UASManager::instance()->getUASForId(this->uasId));
     if (mav)
     {
         if (!engineOn)
@@ -482,7 +482,7 @@ void UASSkyeControlWidget::updateStyleSheet()
 {
     QString style = "";
     style.append("QPushButton { min-height: 30; }");
-    if (inputMode == SkyeMAV::QGC_INPUT_MODE_MOUSE)
+    if (inputMode == SkyeUAS::QGC_INPUT_MODE_MOUSE)
     {
 		qDebug() << "3dMouse TRANSLATION is: " << mouseTranslationEnabled << ", ROTATION is: " << mouseRotationEnabled;
         if (mouseTranslationEnabled && mouseRotationEnabled)
@@ -545,7 +545,7 @@ void UASSkyeControlWidget::changeMouseRotationEnabled(bool rotEnabled)
 
 void UASSkyeControlWidget::getMouse6DOFControlCommands(double x, double y, double z, double a, double b, double c)
 {
-    if (inputMode & SkyeMAV::QGC_INPUT_MODE_MOUSE)
+    if (inputMode & SkyeUAS::QGC_INPUT_MODE_MOUSE)
     {
         if (!mouseTranslationEnabled)
         {
@@ -565,7 +565,7 @@ void UASSkyeControlWidget::getMouse6DOFControlCommands(double x, double y, doubl
 
 void UASSkyeControlWidget::getXboxControlCommands(double x, double y, double z, double a, double b, double c)
 {
-    if (inputMode & SkyeMAV::QGC_INPUT_MODE_XBOX)
+    if (inputMode & SkyeUAS::QGC_INPUT_MODE_XBOX)
     {
         inputMixer->updateXboxValues(x, y, z, a, b, c);
     }

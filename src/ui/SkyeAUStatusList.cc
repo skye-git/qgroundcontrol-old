@@ -1,7 +1,7 @@
 #include "SkyeAUStatusList.h"
 #include "ui_SkyeAUStatusList.h"
 #include "UASManager.h"
-#include "SkyeMAV.h"
+#include "SkyeUAS.h"
 
 #include <QDebug>
 
@@ -52,7 +52,7 @@ void SkyeAUStatusList::setUAS(UASInterface *uas)
     {
         UASInterface* oldUAS = UASManager::instance()->getUASForId(this->uasId);
         this->uasId = 0;
-        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(oldUAS);
+        SkyeUAS* mav = dynamic_cast<SkyeUAS*>(oldUAS);
         if (mav)
         {
             // disconnect
@@ -65,7 +65,7 @@ void SkyeAUStatusList::setUAS(UASInterface *uas)
     }
 
 
-    SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uas);
+    SkyeUAS* mav = dynamic_cast<SkyeUAS*>(uas);
     if (mav)
     {
         this->uasId = mav->getUASID();

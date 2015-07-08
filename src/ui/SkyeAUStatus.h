@@ -6,7 +6,7 @@
 #include <QTimer>
 #include "UASInterface.h"
 #include "UASManager.h"
-#include "SkyeMAV.h"
+#include "SkyeUAS.h"
 
 
 namespace Ui {

@@ -53,7 +53,7 @@ void SkyeAUStatus::setUAS(UASInterface *uas)
     {
         UASInterface* oldUAS = UASManager::instance()->getUASForId(this->uasId);
         this->uasId = 0;
-        SkyeMAV* mav = dynamic_cast<SkyeMAV*>(oldUAS);
+        SkyeUAS* mav = dynamic_cast<SkyeUAS*>(oldUAS);
         if (mav)
         {
             // Disconnect
@@ -67,7 +67,7 @@ void SkyeAUStatus::setUAS(UASInterface *uas)
     }
 
 
-    SkyeMAV* mav = dynamic_cast<SkyeMAV*>(uas);
+    SkyeUAS* mav = dynamic_cast<SkyeUAS*>(uas);
     if (mav)
     {
         this->uasId = mav->getUASID();

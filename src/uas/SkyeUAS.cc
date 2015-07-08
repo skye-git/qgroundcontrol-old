@@ -1,6 +1,6 @@
 #include <QDebug>
 #include <qmath.h>
-#include "SkyeMAV.h"
+#include "SkyeUAS.h"
 //#include "UDPLink.h"
 
 SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :

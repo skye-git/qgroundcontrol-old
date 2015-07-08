@@ -20,7 +20,7 @@
 
 #include "UASInterface.h"
 #ifdef QGC_USE_SKYE_MESSAGES
-#include "SkyeMAV.h"
+#include "SkyeUAS.h"
 #endif //QGC_USE_SKYE_MESSAGES
 
 class Mouse6dofInput : public QThread

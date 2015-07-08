@@ -9,7 +9,7 @@
 #include <UASInterface.h>
 
 #include "UASManager.h"
-#include "SkyeMAV.h"
+#include "SkyeUAS.h"
 
 namespace Ui {
 class LedControlWidget;
