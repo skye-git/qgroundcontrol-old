@@ -1,6 +1,8 @@
 #ifndef SkyeUAS_H
 #define SkyeUAS_H
 
+#define QGC_SKYE_DEBUG
+
 #define SKYE_ALARM_VOLTAGE 22.0f
 #define SKYE_CRITICAL_VOLTAGE 23.0f
 
@@ -12,12 +14,11 @@
 #include <QTimer>
 #include <QVector>
 #include "UAS.h"
-
+#include "QGCInputs.h"
 
 #define MAX_LIFT_VALUE 0.2
 #define LIFT_RESOLUTION 999     //values from 0 to LIFT_RESOLUTION are possible
 
-//#include "BluefoxReconfigure.h"
 
 class SkyeUAS : public UAS
 {
@@ -27,13 +28,6 @@ public:
     SkyeUAS(MAVLinkProtocol* mavlink, int id);
     ~SkyeUAS();
 
-    enum QGC_INPUT_MODE {
-        QGC_INPUT_MODE_NONE=0,
-        QGC_INPUT_MODE_MOUSE=1,
-        QGC_INPUT_MODE_TOUCH=2,
-        QGC_INPUT_MODE_KEYBOARD=4,
-        QGC_INPUT_MODE_XBOX=8
-    };
 
     /** @brief Get the airframe */
     int getAirframe() const
@@ -90,9 +84,9 @@ public slots:
     /** @brief Set additive value for yaw manual control */
     void setAddYawValue(double val) {addYawValue = val;}
     /** @brief Set active input flag for this UAS */
-    void setInputMode(SkyeUAS::QGC_INPUT_MODE input, bool active);
+    void setInputMode(QGC_INPUT_MODE input, bool active);
     /** @brief Set active input as exclusive input for this UAS */
-    void setInputMode(SkyeUAS::QGC_INPUT_MODE input);
+    void setInputMode(QGC_INPUT_MODE input);
     /** @brief Reset mouse input mode after initialization */
     void updateMouseInputStatus(bool active);
     /** @brief Report de-/activation of rotative 3DMouse input */
@@ -178,12 +172,6 @@ protected:
     double fromItoC[9];
 
     int inputMode;                          // input device bit flags (see QGC_INPUT_MODE)
-
-    //bool lowBatteryFront;                   ///< true if electronics platform battery is low
-    //int lowBatteryAU;                       ///< id of actuation units that battery is low; -1 otherwise
-    //bool lowBattery;                        ///< true if any battery is low
-    //unsigned int lowBatteryMs;              ///< QGC Groundtime Millisecond when battery droped below critical value
-
 };
 
 #endif // SkyeUAS_H

@@ -47,6 +47,7 @@ This file is part of the QGROUNDCONTROL project
 #include <UASInterface.h>
 #include "SkyeUAS.h"
 #include "QGCTabbedInfoView.h"
+#include "QGCInputs.h"
 #include "InputMixer.h"
 #include "UASSkyeAlertWidget.h"
 
@@ -92,7 +93,7 @@ public slots:
 
 signals:
     void changedMode(int);
-    void changedInput(SkyeUAS::QGC_INPUT_MODE, bool);
+    void changedInput(QGC_INPUT_MODE, bool);
     void changed6DOFControlCommands(double, double, double, double, double, double);
 
     /** @brief change actuation unit configuration parameter */
@@ -120,7 +121,7 @@ signals:
         int uasId;                          ///< Reference to the current uas
         unsigned int uasMode;               ///< Current uas mode
         bool engineOn;                      ///< Engine state
-        int inputMode;                      ///< Active device flags for input (see SkyeUAS::QGC_INPUT_MODE)
+        int inputMode;                      ///< Active device flags for input (see QGC_INPUT_MODE)
         bool mouseTranslationEnabled;       ///< True when translational motions enabled
         bool mouseRotationEnabled;          ///< True when rotational motions enabled
 

@@ -3,7 +3,7 @@
 #include "SkyeUAS.h"
 //#include "UDPLink.h"
 
-SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
+SkyeUAS::SkyeUAS(MAVLinkProtocol* mavlink, int id) :
     UAS(mavlink, id),
     airframe(QGC_AIRFRAME_SKYE),
     manualXThrust(0.0),
@@ -33,15 +33,20 @@ SkyeMAV::SkyeMAV(MAVLinkProtocol* mavlink, int id) :
 //    this->connect(this, SIGNAL(parameterChanged(int,int,QString,QVariant)), this, SLOT(onboardParameterChanged(int,int,QString,QVariant)));
 }
 
-SkyeMAV::~SkyeMAV(void)
+SkyeUAS::~SkyeUAS(void)
 {
 }
 
-void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
+void SkyeUAS::receiveMessage(LinkInterface *link, mavlink_message_t message)
 {
+    qDebug() << "[SkyeUAS] RECEIVED MESSAGE NUMBER" << message.msgid;
+
+
+
+
+
     if (message.sysid == uasId)  // make sure the message is for the right UAV
     {
-        //qDebug() << "[SKYE_MAV] RECEIVED MESSAGE NUMBER" << message.msgid;
         if (!link) return;
         switch (message.msgid)
         {
@@ -85,23 +90,54 @@ void SkyeMAV::receiveMessage(LinkInterface *link, mavlink_message_t message)
         {
             // Let UAS handle the default message set
             UAS::receiveMessage(link, message);
+
+#ifdef QGC_SKYE_DEBUG
+            // DEBUG: create some fake messages
+            {
+                static int id = 0;
+                mavlink_message_t msg;
+
+                mavlink_battery_status_t battery;
+                battery.id = id;
+                battery.battery_function = BATTERY_STATUS_BIT_ATTACHED;
+                for (int i=0; i<6; i++)
+                    battery.voltages[i] = 3500;
+                for (int i=6; i<10; i++)
+                    battery.voltages[i] = 0;
+                mavlink_msg_battery_status_encode(message.sysid,
+                                                  message.compid,
+                                                  &msg,
+                                                  &battery);
+                receiveMessage(link, msg);
+
+                mavlink_actuation_status_t status;
+                status.au_id = id;
+                status.status = MAV_ACTUATION_UNIT_STATUS_READY;
+                mavlink_msg_actuation_status_encode(message.sysid,
+                                                    message.compid,
+                                                    &msg,
+                                                    &status);
+                receiveMessage(link, msg);
+                id++;
+            }
+#endif //QGC_SKYE_DEBUG
         }
         break;
         }
     } else {
-        qDebug() << "[SkyeMAV] Got Message with wrong sysid" << message.sysid;
+        qDebug() << "[SkyeUAS] Got Message with wrong sysid" << message.sysid;
     }
 }
 
-void SkyeMAV::onboardParameterChanged(int uas, int component, QString parameterName, QVariant value) {
+void SkyeUAS::onboardParameterChanged(int uas, int component, QString parameterName, QVariant value) {
 	if (parameterName ==  QString("SKYE_ALOC_CASE"))
 	{
-		//qDebug() << "[SkyeMAV] GOT PARAM" << rawValue.param_value;
+        //qDebug() << "[SkyeUAS] GOT PARAM" << rawValue.param_value;
 		emit allocCaseChanged(value.toInt());
 	}
 }
 
-void SkyeMAV::setManual6DOFControlCommands(double x , double y , double z , double a , double b, double c)
+void SkyeUAS::setManual6DOFControlCommands(double x , double y , double z , double a , double b, double c)
 {
     // make sure input device is defined
     if (inputMode != QGC_INPUT_MODE_NONE)
@@ -125,7 +161,7 @@ void SkyeMAV::setManual6DOFControlCommands(double x , double y , double z , doub
     }
 }
 
-void SkyeMAV::set6DOFCommandsByWidget(double x, double y, double z, double a, double b, double c)
+void SkyeUAS::set6DOFCommandsByWidget(double x, double y, double z, double a, double b, double c)
 {
     // only accept widget inputs when no input device defined
     if (inputMode == QGC_INPUT_MODE_NONE)
@@ -134,7 +170,7 @@ void SkyeMAV::set6DOFCommandsByWidget(double x, double y, double z, double a, do
     }
 }
 
-void SkyeMAV::sendManualControlCommands6DoF(float x, float y, float z, float phi, float theta, float psi)
+void SkyeUAS::sendManualControlCommands6DoF(float x, float y, float z, float phi, float theta, float psi)
 {
     if (this->base_mode & MAV_MODE_FLAG_SAFETY_ARMED)
     {
@@ -166,7 +202,7 @@ void SkyeMAV::sendManualControlCommands6DoF(float x, float y, float z, float phi
     }
 }
 
-void SkyeMAV::setTestphaseCommandsByWidget(double Thrust1 , double Thrust2 , double Thrust3 , double Thrust4 , double Orientation1 , double Orientation2, double Orientation3, double Orientation4, bool usePpm)
+void SkyeUAS::setTestphaseCommandsByWidget(double Thrust1 , double Thrust2 , double Thrust3 , double Thrust4 , double Orientation1 , double Orientation2, double Orientation3, double Orientation4, bool usePpm)
 {
     if (usePpm) {
         // Negative thrust values are interpreted as PPM value (since skye2.1)
@@ -199,7 +235,7 @@ void SkyeMAV::setTestphaseCommandsByWidget(double Thrust1 , double Thrust2 , dou
     }
 }
 
-void SkyeMAV::sendManualControlCommands12DoF(float Thrust1 , float Thrust2 , float Thrust3 , float Thrust4 , float Thrust5 , float Thrust6 , float Orientation1 , float Orientation2, float Orientation3, float Orientation4, float Orientation5, float Orientation6 )
+void SkyeUAS::sendManualControlCommands12DoF(float Thrust1 , float Thrust2 , float Thrust3 , float Thrust4 , float Thrust5 , float Thrust6 , float Orientation1 , float Orientation2, float Orientation3, float Orientation4, float Orientation5, float Orientation6 )
 {
     if ((base_mode & MAV_MODE_FLAG_SAFETY_ARMED) && (base_mode & MAV_MODE_FLAG_TEST_ENABLED))
     {
@@ -227,7 +263,7 @@ void SkyeMAV::sendManualControlCommands12DoF(float Thrust1 , float Thrust2 , flo
 
 }
 
-void SkyeMAV::setModeCommand(int mode)
+void SkyeUAS::setModeCommand(int mode)
 {
 	mavlink_message_t message;
 
@@ -238,20 +274,20 @@ void SkyeMAV::setModeCommand(int mode)
 }
 
 
-uint8_t SkyeMAV::getMode()
+uint8_t SkyeUAS::getMode()
 {
     return this->base_mode;
 }
 
-void SkyeMAV::setInputMode(SkyeMAV::QGC_INPUT_MODE input, bool active)
+void SkyeUAS::setInputMode(QGC_INPUT_MODE input, bool active)
 {
     bool oldInputState = inputMode & input;
-    qDebug() << "[SkyeMAV] setInputMode: request flag" << input << "set from" << oldInputState << "to" << active;
+    qDebug() << "[SkyeUAS] setInputMode: request flag" << input << "set from" << oldInputState << "to" << active;
 
     // check whether input mode has changed
     if (oldInputState != active)
     {
-        qDebug() << "[SkyeMAV] Set input" << input << "to" << active;
+        qDebug() << "[SkyeUAS] Set input" << input << "to" << active;
         if (active)
         {
 			// Activate this input
@@ -264,11 +300,11 @@ void SkyeMAV::setInputMode(SkyeMAV::QGC_INPUT_MODE input, bool active)
         emit inputModeChanged(inputMode);
     } else {
         // do nothing
-        qDebug() << "[SkyeMAV] Input" << input << "was already" << active;
+        qDebug() << "[SkyeUAS] Input" << input << "was already" << active;
     }
 }
 
-void SkyeMAV::setInputMode(SkyeMAV::QGC_INPUT_MODE input)
+void SkyeUAS::setInputMode(QGC_INPUT_MODE input)
 {
     // check if input mode changes
     if (inputMode != input) {
@@ -276,11 +312,11 @@ void SkyeMAV::setInputMode(SkyeMAV::QGC_INPUT_MODE input)
         emit inputModeChanged(inputMode);
     } else {
         // do nothing
-        qDebug() << "[SkyeMAV] Input was already" << inputMode;
+        qDebug() << "[SkyeUAS] Input was already" << inputMode;
     }
 }
 
-void SkyeMAV::updateMouseInputStatus(bool active)
+void SkyeUAS::updateMouseInputStatus(bool active)
 {
     if (active == false)
     {
@@ -302,32 +338,32 @@ void SkyeMAV::updateMouseInputStatus(bool active)
 
 }
 
-void SkyeMAV::sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t blue, uint8_t mode, float frequency)
+void SkyeUAS::sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t blue, uint8_t mode, float frequency)
 {
     mavlink_message_t msg;
     mavlink_msg_led_control_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, ledId, red, green, blue, mode, frequency);
     sendMessage(msg);
-    qDebug() << "[SkyeMAV] Sent LED Color Message. ledId:" << ledId << "red: " << red << "green: " << green << "blue: " << blue << "mode: " << mode << "frequency" << frequency;
+    qDebug() << "[SkyeUAS] Sent LED Color Message. ledId:" << ledId << "red: " << red << "green: " << green << "blue: " << blue << "mode: " << mode << "frequency" << frequency;
 }
 
-void SkyeMAV::sendAllocationCase(int disabledAU)
+void SkyeUAS::sendAllocationCase(int disabledAU)
 {
 	//mavlink_message_t msg;
 	//mavlink_msg_param_set_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, this->uasId, (uint8_t)MAV_COMP_ID_ALL, "SKYE_ALOC_CASE", (int32_t)disabledAU, (uint8_t)MAV_PARAM_TYPE_INT32);
 	//sendMessage(msg);
     //setParameter(mavlink->getComponentId(), QString("SKYE_ALOC_CASE"), QVariant((int32_t)disabledAU));
-    qDebug() << "[SkyeMAV] Sent SKYE_ALOC_CASE" << disabledAU;
+    qDebug() << "[SkyeUAS] ERROR. Set Parameter not available. Not Sent SKYE_ALOC_CASE" << disabledAU;
 }
 
-void SkyeMAV::sendAUReset(int auId)
+void SkyeUAS::sendAUReset(int auId)
 {
     mavlink_message_t msg;
     mavlink_msg_command_long_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, this->uasId, (uint8_t)MAV_COMP_ID_ALL, MAV_CMD_SKYE_RESET_AU, 0, (float)auId, 1.0f, 0, 0, 0, 0, 0);
     sendMessage(msg);
-    qDebug() << "[SkyeMAV] Sent reset command for AU id" << auId;
+    qDebug() << "[SkyeUAS] Sent reset command for AU id" << auId;
 }
 
-void SkyeMAV::sendSkyeConfiguration(double *quaternions) // [4][6]
+void SkyeUAS::sendSkyeConfiguration(double *quaternions) // [4][6]
 {
     // reshape multidimensional array
     double q[4][6];
@@ -346,37 +382,37 @@ void SkyeMAV::sendSkyeConfiguration(double *quaternions) // [4][6]
     }
     mavlink_msg_actuation_configuration_encode(mavlink->getSystemId(), mavlink->getComponentId(), &msg, &au_config);
     sendMessage(msg);
-    qDebug() << "[SkyeMAV] Sent actuation configuration for Skye";
+    qDebug() << "[SkyeUAS] Sent actuation configuration for Skye";
 }
 
-void SkyeMAV::setLiftValue(int val)
+void SkyeUAS::setLiftValue(int val)
 {
     if (val != liftValue and val >= 0 and val <= LIFT_RESOLUTION)
     {
         liftValue = val;
-        qDebug() << "[SkyeMAV] lift factor" << val;
+        qDebug() << "[SkyeUAS] lift factor" << val;
         emit liftValueChanged(liftValue);
         liftValueFloat = liftValue / (float)LIFT_RESOLUTION;
     }
 
 }
 
-void SkyeMAV::setSensitivityFactorTrans(float val)
+void SkyeUAS::setSensitivityFactorTrans(float val)
 {
     if (sensitivityFactorTrans!= val)
     {
         sensitivityFactorTrans = val;
-        qDebug() << "[SkyeMAV] sensitivity translation" << val;
+        qDebug() << "[SkyeUAS] sensitivity translation" << val;
         emit sensitivityTransChanged((double)sensitivityFactorTrans);
     }
 }
 
-void SkyeMAV::setSensitivityFactorRot(float val)
+void SkyeUAS::setSensitivityFactorRot(float val)
 {
     if (sensitivityFactorRot!= val)
     {
         sensitivityFactorRot = val;
-        qDebug() << "[SkyeMAV] sensitivity rotation" << val;
+        qDebug() << "[SkyeUAS] sensitivity rotation" << val;
         emit sensitivityRotChanged((double)sensitivityFactorRot);
     }
 }
