@@ -20,8 +20,17 @@ UASInterface* QGCMAVLinkUASFactory::createUAS(MAVLinkProtocol* mavlink, LinkInte
     }
 
     UASInterface* uasInterface;
+    UAS* uasObject;
 
-    UAS* uasObject = new UAS(mavlink, sysid);
+#ifdef QGC_USE_SKYE_MESSAGES
+    if (heartbeat->type == MAV_TYPE_AIRSHIP) {
+        // This is a Skye
+        uasObject = new SkyeMAV(mavlink, sysid);
+    } else
+#endif //QGC_USE_SKYE_MESSAGES
+    {
+        uasObject = new UAS(mavlink, sysid);
+    }
     Q_CHECK_PTR(uasObject);
     uasInterface = uasObject;
     

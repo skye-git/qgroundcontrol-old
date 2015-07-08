@@ -10,6 +10,9 @@
 
 // INCLUDE ALL MAV/UAS CLASSES USING MAVLINK
 #include "UAS.h"
+#ifdef QGC_USE_SKYE_MESSAGES
+#include "SkyeUAS.h"
+#endif //QGC_USE_SKYE_MESSAGES
 
 class QGCMAVLinkUASFactory : public QObject
 {
