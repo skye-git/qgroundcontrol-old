@@ -30,10 +30,10 @@ public slots:
     void setAU(int id);
     /** @brief update battery status of this actuation unit */
     void updateBatteryStatus(mavlink_battery_status_t *battery);
-    /** @brief update battery cells status of this actuation unit */
-    void updateBatteryCellsStatus(mavlink_battery_cells_status_t *battery);
+//    /** @brief update battery cells status of this actuation unit */
+//    void updateBatteryCellsStatus(mavlink_battery_cells_status_t *battery);
     /** @brief update thruster value of this actuation unit */
-    void updateThrustValue(mavlink_allocation_controller_raw_t *alloc);
+    void updateThrustValue(mavlink_allocation_output_raw_t *alloc);
     /** @brief rewrite tooltip */
     void updateToolTipText();
     /** @brief Regularely check whether data is up-to-date */
@@ -72,7 +72,8 @@ private:
     bool enabled;                       ///< User flag to enable/disable this actuation unit
 
     mavlink_battery_status_t *batt;             ///< battery status of this actuation unit
-    mavlink_battery_cells_status_t *cells;      ///< battery cells status of this actuation unit
+    double voltage;                             ///< total voltage of battery cells
+//    mavlink_battery_cells_status_t *cells;      ///< battery cells status of this actuation unit
     MAV_ACTUATION_UNIT_STATUS status;           ///< actuation status
     uint8_t thrust;                             ///< thrust of this actuation unit in percent [%]
 

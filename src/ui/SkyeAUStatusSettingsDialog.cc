@@ -137,7 +137,7 @@ void SkyeAUStatusSettingsDialog::readFromTable()
 {
     /* update quaternion values given by GUI */
     double newQuaternions[SKYE_AU_PARAM_MAX][SKYE_AU_COUNT_MAX];
-    bool ok;
+
     for (int row=0; row<SKYE_AU_COUNT_MAX; row++) {
         for (int col=0; col<SKYE_AU_PARAM_MAX; col++) {
             QTableWidgetItem *newItem = new QTableWidgetItem();

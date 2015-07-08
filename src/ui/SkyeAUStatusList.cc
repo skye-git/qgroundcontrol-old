@@ -82,21 +82,21 @@ void SkyeAUStatusList::setUAS(UASInterface *uas)
 
 void SkyeAUStatusList::checkBatteryStatusId(mavlink_battery_status_t *battery)
 {
-    if ( createAUStatusWidget(battery->accu_id) )
+    if ( createAUStatusWidget(battery->id) )
     {
         // Widget has been newly created. Forward data.
-        auList.value(battery->accu_id)->updateBatteryStatus(battery);
+        auList.value(battery->id)->updateBatteryStatus(battery);
     }
 }
 
-void SkyeAUStatusList::checkBatteryCellsStatusId(mavlink_battery_cells_status_t *cells)
-{
-    if ( createAUStatusWidget(cells->accu_id) )
-    {
-        // Widget has been newly created. Forward data.
-        auList.value(cells->accu_id)->updateBatteryCellsStatus(cells);
-    }
-}
+//void SkyeAUStatusList::checkBatteryCellsStatusId(mavlink_battery_cells_status_t *cells)
+//{
+//    if ( createAUStatusWidget(cells->accu_id) )
+//    {
+//        // Widget has been newly created. Forward data.
+//        auList.value(cells->accu_id)->updateBatteryCellsStatus(cells);
+//    }
+//}
 
 void SkyeAUStatusList::checkActuationStatusId(mavlink_actuation_status_t *au_status)
 {

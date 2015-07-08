@@ -70,6 +70,10 @@ This file is part of the QGROUNDCONTROL project
 #include "MAVLinkDecoder.h"
 #include "QGCUASFileViewMulti.h"
 
+#ifdef QGC_USE_SKYE_MESSAGES
+#include "SkyeAUStatusList.h"
+#endif //QGC_USE_SKYE_MESSAGES
+
 class QGCMapTool;
 class QGCMAVLinkMessageSender;
 class QGCFirmwareUpdate;
@@ -248,6 +252,10 @@ protected:
     QPointer<MAVLinkDecoder> mavlinkDecoder;
     QPointer<QDockWidget> mavlinkSenderWidget;
     QGCMAVLinkLogPlayer* logPlayer;
+
+#ifdef QGC_USE_SKYE_MESSAGES
+    SkyeAUStatusList* auStatusList;
+#endif //QGC_USE_SKYE_MESSAGES
 
     QPointer<QGCUASFileViewMulti> fileWidget;
 

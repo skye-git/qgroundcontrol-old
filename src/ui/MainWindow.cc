@@ -397,6 +397,11 @@ void MainWindow::_buildCommonWidgets(void)
     logPlayer = new QGCMAVLinkLogPlayer(MAVLinkProtocol::instance(), statusBar());
     statusBar()->addPermanentWidget(logPlayer);
 
+#ifdef QGC_USE_SKYE_MESSAGES
+    auStatusList = new SkyeAUStatusList(this);
+    statusBar()->addPermanentWidget(auStatusList);
+#endif //QGC_USE_SKYE_MESSAGES
+
     // In order for Qt to save and restore state of widgets all widgets must be created ahead of time. We only create the QDockWidget
     // holders. We do not create the actual inner widget until it is needed. This saves memory and cpu from running widgets that are
     // never shown.

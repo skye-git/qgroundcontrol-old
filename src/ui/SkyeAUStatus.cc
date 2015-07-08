@@ -29,9 +29,9 @@ SkyeAUStatus::SkyeAUStatus(int id, QWidget *parent) :
     setUAS(UASManager::instance()->getActiveUAS());
 
     batt = new mavlink_battery_status_t;
-    cells = new mavlink_battery_cells_status_t;
+//    cells = new mavlink_battery_cells_status_t;
     memset(batt, 0, sizeof(*batt));
-    memset(cells, 0, sizeof(*cells));
+//    memset(cells, 0, sizeof(*cells));
 
     // update AU status list a first time
     emitEnabled();
@@ -89,43 +89,44 @@ void SkyeAUStatus::setAU(int id)
     ui->labelName->setText(QString("AU %1").arg(id+1));
 }
 
-void SkyeAUStatus::updateBatteryCellsStatus(mavlink_battery_cells_status_t *battery_cells)
-{
-    if (this->auId == battery_cells->accu_id)
-    {
-        memcpy(cells, battery_cells, sizeof(*battery_cells));
+//void SkyeAUStatus::updateBatteryCellsStatus(mavlink_battery_cells_status_t *battery_cells)
+//{
+//    if (this->auId == battery_cells->accu_id)
+//    {
+//        memcpy(cells, battery_cells, sizeof(*battery_cells));
 
-        updateToolTipText();
-        updateStyleSheets();
-    }
-}
+//        updateToolTipText();
+//        updateStyleSheets();
+//    }
+//}
 
 void SkyeAUStatus::updateBatteryStatus(mavlink_battery_status_t *battery)
 {
-    if (this->auId == battery->accu_id)
+    if (this->auId == battery->id)
     {
         memcpy(batt, battery, sizeof(*battery));
 
-        ui->lcdNumberVoltage->display(battery->voltage/1000.0);
-        ui->lcdNumberCurrent->display(battery->current/1000.0);
-        ui->labelBatteryStatus->setText(getShortStringForAccuStatus((int)battery->status));
-        ui->labelBatteryStatus->setToolTip(getStringForAccuStatus((int)battery->status));
+        // sum up cell voltages
+        voltage = 0;
+        for (int i=0; i<10; i++) {
+            if (batt->voltages[i] > 0) {
+                voltage+=battery->voltages[i];
+            }
+        }
+
+        ui->lcdNumberVoltage->display(voltage/1000.0);
+        ui->lcdNumberCurrent->display(battery->current_battery/1000.0);
+        ui->labelBatteryStatus->setText(getShortStringForAccuStatus((int)battery->battery_function));
+        ui->labelBatteryStatus->setToolTip(getStringForAccuStatus((int)battery->battery_function));
 
         updateToolTipText();
         updateStyleSheets();
     }
 }
 
-void SkyeAUStatus::updateThrustValue(mavlink_allocation_controller_raw_t *alloc)
+void SkyeAUStatus::updateThrustValue(mavlink_allocation_output_raw_t *alloc)
 {
-    switch (this->auId)
-    {
-    case 0: thrust = alloc->thrust_1*100/1000; break;
-    case 1: thrust = alloc->thrust_2*100/1000; break;
-    case 2: thrust = alloc->thrust_3*100/1000; break;
-    case 3: thrust = alloc->thrust_4*100/1000; break;
-    }
-
+    thrust = alloc->thrust[this->auId]*100/1000;
     ui->progressBarThrust->setValue(thrust);
 
 }
@@ -139,18 +140,18 @@ void SkyeAUStatus::updateToolTipText()
                              "Current [A]:\t %8 \n"
                              "Energy since last reset [mAh]: %9 \n"
                              "Charged energy [mAh]: %10 (%11min %12sec)")
-                     .arg(cells->accu_id)
-                     .arg(cells->voltage_cell_1/1000.0)
-                     .arg(cells->voltage_cell_2/1000.0)
-                     .arg(cells->voltage_cell_3/1000.0)
-                     .arg(cells->voltage_cell_4/1000.0)
-                     .arg(cells->voltage_cell_5/1000.0)
-                     .arg(cells->voltage_cell_6/1000.0)
-                     .arg(batt->current/1000.0)
-                     .arg(batt->energy)
-                     .arg(batt->charge)
-                     .arg(batt->time/60)
-                     .arg(batt->time-(batt->time/60)*60));
+                     .arg(batt->id)
+                     .arg(batt->voltages[0]/1000.0)
+                     .arg(batt->voltages[1]/1000.0)
+                     .arg(batt->voltages[2]/1000.0)
+                     .arg(batt->voltages[3]/1000.0)
+                     .arg(batt->voltages[4]/1000.0)
+                     .arg(batt->voltages[5]/1000.0)
+                     .arg(batt->current_battery/1000.0)
+                     .arg(batt->current_consumed)
+                     .arg(batt->current_charged)
+                     .arg(batt->time_charged/60)
+                     .arg(batt->time_charged-(batt->time_charged/60)*60));
 }
 
 void SkyeAUStatus::checkUpToDate()
@@ -170,11 +171,11 @@ void SkyeAUStatus::updateStyleSheets()
     lastUpdate.restart();
 
     // style for voltage display
-    if (batt->voltage > SKYE_CRITICAL_VOLTAGE*1000)
+    if (voltage > SKYE_CRITICAL_VOLTAGE*1000)
     {
         ui->lcdNumberVoltage->setPalette(QColor(50, 205, 50));
     }
-    else if (batt->voltage > SKYE_ALARM_VOLTAGE*1000)
+    else if (voltage > SKYE_ALARM_VOLTAGE*1000)
     {
         ui->lcdNumberVoltage->setPalette(QColor(255, 165, 0));
     }
@@ -182,6 +183,7 @@ void SkyeAUStatus::updateStyleSheets()
     {
         ui->lcdNumberVoltage->setPalette(QColor(255, 0, 0));
     }
+    ui->lcdNumberVoltage->update();
 
     QString str;
 //    switch (status)
@@ -232,17 +234,17 @@ void SkyeAUStatus::updateStyleSheets()
 
     // battery status color (increasing importance)
     QPalette pal(palette());
-    if (batt->status & BATTERY_STATUS_BIT_ATTACHED)
+    if (batt->battery_function & BATTERY_STATUS_BIT_ATTACHED)
     {
         str = "QWidget#widgetBottom {background-color: rgba(0, 0, 0, 255); }";
     } else {
         str = "QWidget#widgetBottom {background-color: rgba(160, 160, 160, 255); }";
     }
-    if (batt->status & BATTERY_STATUS_BIT_UNDERVOLTAGE)
+    if (batt->battery_function & BATTERY_STATUS_BIT_UNDERVOLTAGE)
     {
         str = "QWidget#widgetBottom {background-color: rgba(255, 100, 0, 255); }";
     }
-    if (batt->status & BATTERY_STATUS_BIT_ERROR)
+    if (batt->battery_function & BATTERY_STATUS_BIT_ERROR)
     {
         str = "QWidget#widgetBottom {background-color: rgba(200, 0, 0, 255); }";
     }
