@@ -124,7 +124,7 @@ void SkyeAUStatus::updateBatteryStatus(mavlink_battery_status_t *battery)
     }
 }
 
-void SkyeAUStatus::updateThrustValue(mavlink_allocation_output_raw_t *alloc)
+void SkyeAUStatus::updateThrustValue(mavlink_allocation_output_t *alloc)
 {
     thrust = alloc->thrust[this->auId]*100/1000;
     ui->progressBarThrust->setValue(thrust);

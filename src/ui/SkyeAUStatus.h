@@ -33,7 +33,7 @@ public slots:
 //    /** @brief update battery cells status of this actuation unit */
 //    void updateBatteryCellsStatus(mavlink_battery_cells_status_t *battery);
     /** @brief update thruster value of this actuation unit */
-    void updateThrustValue(mavlink_allocation_output_raw_t *alloc);
+    void updateThrustValue(mavlink_allocation_output_t *alloc);
     /** @brief rewrite tooltip */
     void updateToolTipText();
     /** @brief Regularely check whether data is up-to-date */

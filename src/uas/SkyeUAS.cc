@@ -59,10 +59,10 @@ void SkyeUAS::receiveMessage(LinkInterface *link, mavlink_message_t message)
 
         }
         break;
-        case MAVLINK_MSG_ID_ALLOCATION_OUTPUT_RAW:
+        case MAVLINK_MSG_ID_ALLOCATION_OUTPUT:
         {
-            mavlink_allocation_output_raw_t allocation;
-            mavlink_msg_allocation_output_raw_decode(&message, &allocation);
+            mavlink_allocation_output_t allocation;
+            mavlink_msg_allocation_output_decode(&message, &allocation);
 
             emit allocationValueChanged(&allocation);
         }
@@ -82,8 +82,8 @@ void SkyeUAS::receiveMessage(LinkInterface *link, mavlink_message_t message)
         case MAVLINK_MSG_ID_SETPOINT_12DOF:
         case MAVLINK_MSG_ID_RANGE_SENSOR_RAW:
         case MAVLINK_MSG_ID_SKYE_FEEDBACK_COMBINED:
-        case MAVLINK_MSG_ID_ATTITUDE_CTRL_OUTPUT_RAW:
-        case MAVLINK_MSG_ID_POSITION_CTRL_OUTPUT_RAW:
+        case MAVLINK_MSG_ID_ATTITUDE_CTRL_OUTPUT:
+        case MAVLINK_MSG_ID_POSITION_CTRL_OUTPUT:
             break;
 
         default:
@@ -207,29 +207,29 @@ void SkyeUAS::setTestphaseCommandsByWidget(double Thrust1 , double Thrust2 , dou
     if (usePpm) {
         // Negative thrust values are interpreted as PPM value (since skye2.1)
         sendManualControlCommands12DoF(-(float)Thrust1,
-                                      -(float)Thrust2,
-                                      -(float)Thrust3,
-                                      -(float)Thrust4,
-                                       0,
-                                       0,
-                                      (float)Orientation1,
-                                      (float)Orientation2,
-                                      (float)Orientation3,
-                                      (float)Orientation4,
-                                       0,
-                                       0);
+                                        (float)Orientation1,
+                                       -(float)Thrust2,
+                                        (float)Orientation2,
+                                       -(float)Thrust3,
+                                        (float)Orientation3,
+                                       -(float)Thrust4,
+                                        (float)Orientation4,
+                                        0,
+                                        0,
+                                        0,
+                                        0);
     } else {
         // Positive thrust values are interpreted as Newton (since skye2.1)
         sendManualControlCommands12DoF((float)Thrust1,
-                                      (float)Thrust2,
-                                      (float)Thrust3,
-                                      (float)Thrust4,
+                                       (float)Orientation1,
+                                       (float)Thrust2,
+                                       (float)Orientation2,
+                                       (float)Thrust3,
+                                       (float)Orientation3,
+                                       (float)Thrust4,
+                                       (float)Orientation4,
                                        0,
                                        0,
-                                      (float)Orientation1,
-                                      (float)Orientation2,
-                                      (float)Orientation3,
-                                      (float)Orientation4,
                                        0,
                                        0);
     }
