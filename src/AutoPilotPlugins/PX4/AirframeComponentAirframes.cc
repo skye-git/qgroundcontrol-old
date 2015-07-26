@@ -95,6 +95,11 @@ const AirframeComponentAirframes::AirframeInfo_t AirframeComponentAirframes::_rg
     { NULL,                 0 }
 };
 
+const AirframeComponentAirframes::AirframeInfo_t AirframeComponentAirframes::_rgAirframeInfoAirshipT[] = {
+    { "Skye Tetraeder",     33000 },
+    { NULL,                 0 }
+};
+
 const AirframeComponentAirframes::AirframeType_t AirframeComponentAirframes::rgAirframeTypes[] = {
     { "Standard Airplane",  "qrc:/qmlimages/AirframeStandardPlane.png",   AirframeComponentAirframes::_rgAirframeInfoStandardPlane },
     { "Flying Wing",        "qrc:/qmlimages/AirframeFlyingWing.png",      AirframeComponentAirframes::_rgAirframeInfoFlyingWing },
@@ -105,6 +110,8 @@ const AirframeComponentAirframes::AirframeType_t AirframeComponentAirframes::rgA
     { "OctoRotor X",        "qrc:/qmlimages/AirframeOctoRotorX.png",      AirframeComponentAirframes::_rgAirframeInfoOctoRotorX },
     { "OctoRotor +",        "qrc:/qmlimages/AirframeOctoRotorPlus.png",   AirframeComponentAirframes::_rgAirframeInfoOctoRotorPlus },
     { "QuadRotor H",        "qrc:/qmlimages/AirframeQuadRotorH.png",      AirframeComponentAirframes::_rgAirframeInfoQuadRotorH },
+    { "Airship Tetra",      "qrc:/qmlimages/AirframeAirshipTetra.png",    AirframeComponentAirframes::_rgAirframeInfoAirshipT },
     { "Simulation",         "qrc:/qmlimages/AirframeSimulation.png",      AirframeComponentAirframes::_rgAirframeInfoSimulation },
     { NULL,                 NULL,                                   NULL }
 };
+

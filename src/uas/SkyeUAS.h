@@ -1,7 +1,7 @@
 #ifndef SkyeUAS_H
 #define SkyeUAS_H
 
-#define QGC_SKYE_DEBUG
+#define QGC_SKYE_DEBUG 0
 
 #define SKYE_ALARM_VOLTAGE 22.0f
 #define SKYE_CRITICAL_VOLTAGE 23.0f

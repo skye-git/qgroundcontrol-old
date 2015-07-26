@@ -91,7 +91,7 @@ void SkyeUAS::receiveMessage(LinkInterface *link, mavlink_message_t message)
             // Let UAS handle the default message set
             UAS::receiveMessage(link, message);
 
-#ifdef QGC_SKYE_DEBUG
+#if QGC_SKYE_DEBUG
             // DEBUG: create some fake messages
             {
                 static int id = 0;
