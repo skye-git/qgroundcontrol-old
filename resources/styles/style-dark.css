@@ -578,67 +578,67 @@ WaypointEditableView QCheckBox, WaypointEditableView .QWidget, WaypointViewOnlyV
 
 QPushButton#manControlButtonGray, QPushButton#stab5dofControlButtonGray, QPushButton#stab6dofControlButtonGray, QPushButton#stopAllButton, QPushButton#setZeroButton {
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #999999, stop: 1 #444444);
-    border-radius: 12px;
+    border-radius: 2px;
     min-height: 45px;
     max-height: 60px;
     min-width: 80px;
     max-width: 80px;
-    border: 3px solid;
+    border: 2px solid;
     font-size: 15pt;
 }
 
 QPushButton#manControlButtonGreen, QPushButton#stab5dofControlButtonGreen, QPushButton#stab6dofControlButtonGreen {
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #004433, stop: 1 #228822);
-    border-radius: 12px;
+    border-radius: 2px;
     min-height: 45px;
     max-height: 60px;
     min-width: 80px;
     max-width: 80px;
-    border: 3px solid;
+    border: 2px solid;
     font-size: 15pt;
 }
 
 QPushButton#manControlButtonWhite, QPushButton#stab5dofControlButtonWhite, QPushButton#stab6dofControlButtonWhite {
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DDDDDD, stop: 1 #999999);
-    border-radius: 12px;
+    border-radius: 2px;
     min-height: 45px;
     max-height: 60px;
     min-width: 80px;
     max-width: 80px;
-    border: 3px solid;
+    border: 2px solid;
     font-size: 15pt;
 }
 
 QPushButtona#armButtonRed {
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DD0044, stop: 1 #AA0022); 
     color: yellow;
-    border-radius: 12px;
+    border-radius: 2px;
     min-height: 60px;
     max-height: 80px;
     min-width: 260px;
-    border: 3px solid yellow;
+    border: 2px solid yellow;
     font-size: 15pt;
 }
 
 QPushButton#armButtonGreen {
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #00DD44, stop: 1 #11AA22); 
     color: yellow;
-    border-radius: 12px;x;
+    border-radius: 2px;x;
     min-height: 60px;
     max-height: 80px;
     min-width: 260px;
-    border: 3px solid yellow;
+    border: 2px solid yellow;
     font-size: 15pt;
 }
 
 QPushButton#mouseButton, QPushButton#touchButton, QPushButton#xboxButton, QPushButton#keyboardButton {
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #999999, stop: 1 #444444);
-    border-radius: 12px;
+    border-radius: 2px;
     min-height: 45px;
     max-height: 60px;
     min-width: 80px;
     max-width: 80px;
-    border: 3px solid;
+    border: 2px solid;
     font-size: 15pt;
 }
 
