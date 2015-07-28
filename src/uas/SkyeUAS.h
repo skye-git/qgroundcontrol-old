@@ -94,7 +94,8 @@ public slots:
     /** @brief Report de-/activation of translative 3DMouse input */
     void changeMouseTranslationActive(bool active){emit mouseButtonTranslationChanged(active);}
 
-	void onboardParameterChanged(int uas, int component, QString parameterName, QVariant value);
+	void onboardParameterChanged(int uas, int component, QString parameterName, int parameterCount, int parameterId, int type, QVariant value);
+	//(int uas, int component, QString parameterName, QVariant value);
 
     void sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t blue, uint8_t mode, float frequency);
 
@@ -119,6 +120,7 @@ signals:
     /** @brief Battery is low. Shutdown required */
     void batteryLow(double voltage, bool isLow, unsigned int ms);
     void allocCaseChanged(int allocCase);
+    void mode5dofChanged(int mode5dof);
     void sensitivityTransChanged(double);
     void sensitivityRotChanged(double);
     void liftValueChanged(int);

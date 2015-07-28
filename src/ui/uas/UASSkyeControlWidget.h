@@ -72,7 +72,7 @@ public slots:
     /** @brief Transmit the operation mode */
     void transmitMode(int mode);
     /** @brief Update the mode */
-    void updateMode(int uas,int baseMode);
+    void updateMode(int uas, int baseMode);
     /** @brief Update state */
     void updateState(int state);
     /** @brief Update internal state machine */
@@ -89,7 +89,9 @@ public slots:
     /** @brief Get xbox control commands */
     void getXboxControlCommands(double x, double y, double z, double a, double b, double c);
     /** @brief New allocation case has been set on UAV */
-    void getAllocCase(int allocCase);
+    void updateAllocCase(int allocCase);
+    /** @brief 5 DOF control flag has been set on UAV */
+    void updateMode5dof(int mode5dof);
 
 signals:
     void changedMode(int);
@@ -100,12 +102,12 @@ signals:
     void changeAUConfiguration(int disabledAU);
 
     protected slots:
-        /** @brief Set Direct Control */
-        void setDirectControlMode();
-        /** @brief Set Rate Control */
-        void setRateControlMode();
-        /** @brief Set Attitude Control */
-        void setAttitudeControlMode();
+        /** @brief Set manual Control */
+        void setManualControlMode();
+        /** @brief Set 5 dof Control */
+        void set5dofControlMode();
+        /** @brief Set 6 dof Control */
+        void set6dofControlMode();
         /** @brief Set 3d Mouse as active inpute device */
         void setInputMouse(bool checked);
         /** @brief Set Touchscreen as active inpute device */
@@ -118,8 +120,17 @@ signals:
 
 
     protected:
+
+        enum SKYE_CONTROL_MODE {
+            SKYE_CONTROL_MODE_NONE,
+            SKYE_CONTROL_MODE_MANUAL,
+            SKYE_CONTROL_MODE_5DOF,
+            SKYE_CONTROL_MODE_6DOF
+        }ctrlMode;
+        bool mode5dof;                      ///< Copy of SKYECON_5DOF onboard parameter
+
         int uasId;                          ///< Reference to the current uas
-        unsigned int uasMode;               ///< Current uas mode
+        int baseMode;                       ///< Base mode
         bool engineOn;                      ///< Engine state
         int inputMode;                      ///< Active device flags for input (see QGC_INPUT_MODE)
         bool mouseTranslationEnabled;       ///< True when translational motions enabled

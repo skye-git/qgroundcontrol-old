@@ -30,7 +30,7 @@ SkyeUAS::SkyeUAS(MAVLinkProtocol* mavlink, int id) :
     imagePacketsArrived = 0;
     this->setUASName("SKYE");
 
-//    this->connect(this, SIGNAL(parameterChanged(int,int,QString,QVariant)), this, SLOT(onboardParameterChanged(int,int,QString,QVariant)));
+    this->connect(this, SIGNAL(parameterUpdate(int,int,QString,int,int,int,QVariant)), this, SLOT(onboardParameterChanged(int,int,QString,QVariant)));
 }
 
 SkyeUAS::~SkyeUAS(void)
@@ -39,7 +39,7 @@ SkyeUAS::~SkyeUAS(void)
 
 void SkyeUAS::receiveMessage(LinkInterface *link, mavlink_message_t message)
 {
-    qDebug() << "[SkyeUAS] RECEIVED MESSAGE NUMBER" << message.msgid;
+    //qDebug() << "[SkyeUAS] RECEIVED MESSAGE NUMBER" << message.msgid;
 
 
 
@@ -129,11 +129,12 @@ void SkyeUAS::receiveMessage(LinkInterface *link, mavlink_message_t message)
     }
 }
 
-void SkyeUAS::onboardParameterChanged(int uas, int component, QString parameterName, QVariant value) {
-	if (parameterName ==  QString("SKYE_ALOC_CASE"))
-	{
+void SkyeUAS::onboardParameterChanged(int uas, int component, QString parameterName, int parameterCount, int parameterId, int type, QVariant value) {
+    if (parameterName ==  QString("SKYE_ALOC_CASE")) {
         //qDebug() << "[SkyeUAS] GOT PARAM" << rawValue.param_value;
 		emit allocCaseChanged(value.toInt());
+	} else if (parameterName == QString("SKYECON_5DOF")) {
+		emit mode5dofChanged(value.toInt());
 	}
 }
 

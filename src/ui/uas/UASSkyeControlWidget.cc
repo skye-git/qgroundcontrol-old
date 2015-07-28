@@ -41,8 +41,10 @@ This file is part of the PIXHAWK project
 #include "QGC.h"
 
 UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
+    ctrlMode(SKYE_CONTROL_MODE_NONE),
+    mode5dof(false),
     uasId(0),
-    uasMode(0),
+    baseMode(0),
     engineOn(false),
     inputMode(QGC_INPUT_MODE_NONE),
     mouseTranslationEnabled(true),
@@ -52,19 +54,19 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
 
     ui.setupUi(this);
     ui.manControlButton->setObjectName("manControlButtonGray");
-    ui.rateControlButton->setObjectName("rateControlButtonGray");
-    ui.attControlButton->setObjectName("attControlButtonGray");
+    ui.stab5dofControlButton->setObjectName("stab5dofControlButtonGray");
+    ui.stab6dofControlButton->setObjectName("stab6dofControlButtonGray");
 
     ui.manControlButton->setStyleSheet("");
-    ui.rateControlButton->setStyleSheet("");
-    ui.attControlButton->setStyleSheet("");
+    ui.stab5dofControlButton->setStyleSheet("");
+    ui.stab6dofControlButton->setStyleSheet("");
 
-    ui.controlButton->setObjectName("controlButtonGreen");
-    ui.controlButton->setStyleSheet("");
+    ui.armButton->setObjectName("armButtonGreen");
+    ui.armButton->setStyleSheet("");
 
     ui.manControlButton->setCheckable(false);
-    ui.rateControlButton->setCheckable(false);
-    ui.attControlButton->setCheckable(false);
+    ui.stab5dofControlButton->setCheckable(false);
+    ui.stab6dofControlButton->setCheckable(false);
 
     ui.mouseButton->setChecked(inputMode & QGC_INPUT_MODE_MOUSE);
     ui.touchButton->setChecked(inputMode & QGC_INPUT_MODE_TOUCH);
@@ -83,17 +85,18 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
 
     ui.advancedLayout->addWidget(infoViewWidget);
 
+    this->setUAS(UASManager::instance()->getActiveUAS());
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 
-    connect(ui.manControlButton, SIGNAL(clicked()), this, SLOT(setDirectControlMode()));
-    connect(ui.rateControlButton, SIGNAL(clicked()), this, SLOT(setRateControlMode()));
-    connect(ui.attControlButton, SIGNAL(clicked()), this, SLOT(setAttitudeControlMode()));
+    connect(ui.armButton, SIGNAL(clicked()), this, SLOT(cycleContextButton()));
+    connect(ui.manControlButton, SIGNAL(clicked()), this, SLOT(setManualControlMode()));
+    connect(ui.stab5dofControlButton, SIGNAL(clicked()), this, SLOT(set5dofControlMode()));
+    connect(ui.stab6dofControlButton, SIGNAL(clicked()), this, SLOT(set6dofControlMode()));
 
     connect(ui.mouseButton, SIGNAL(clicked(bool)), this, SLOT(setInputMouse(bool)));
     connect(ui.touchButton, SIGNAL(clicked(bool)), this, SLOT(setInputTouch(bool)));
     connect(ui.keyboardButton, SIGNAL(clicked(bool)), this, SLOT(setInputKeyboard(bool)));
     connect(ui.xboxButton, SIGNAL(clicked(bool)), this, SLOT(setInputXbox(bool)));
-
 
     updateStyleSheet();
 
@@ -129,7 +132,8 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
             disconnect(inputMixer, SIGNAL(changed6DOFInput(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
 
             // Disconnect slots for Change of Actuation Unit Configuration
-            disconnect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(getAllocCase(int)));
+            disconnect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocCase(int)));
+            disconnect(mav, SIGNAL(mode5dofChanged(int)), this, SLOT(updateMode5dof(int)));
 
 
             // stop input mixer
@@ -145,8 +149,9 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
     SkyeUAS* mav = dynamic_cast<SkyeUAS*>(uas);
     if (mav)
     {
-        //ui.controlStatusLabel->setText(tr("Connected to ") + mav->getUASName());
+        ui.lastActionLabel->setText(tr("Connected to ") + mav->getUASName());
         this->uasId = mav->getUASID();
+        qDebug() << "UAS id:" << mav->getUASID() << ", name:" << mav->getUASName();
 
         updateMode(mav->getUASID(), mav->getMode());
         updateState(mav->getState());
@@ -158,7 +163,6 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         inputMixer->start();
 
         // Connect user interface controls
-        connect(ui.controlButton, SIGNAL(clicked()), this, SLOT(cycleContextButton()));
         connect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
         connect(mav, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
         connect(mav, SIGNAL(batteryLow(double,bool,uint)), alertWidget, SLOT(batteryLow(double,bool,uint)));
@@ -169,8 +173,9 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
 
         connect(inputMixer, SIGNAL(changed6DOFInput(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
 
-        // Connect slots for Change of Actuation Unit Configuration
-        connect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(getAllocCase(int)));
+        // Connect slots for onboard parameter changes
+        connect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocCase(int)));
+        connect(mav, SIGNAL(mode5dofChanged(int)), this, SLOT(updateMode5dof(int)));
 
     }
 
@@ -184,59 +189,80 @@ void UASSkyeControlWidget::updateStatemachine()
 {
     if (engineOn)
     {
-        ui.controlButton->setText(tr("DISARM SYSTEM"));
-        ui.controlButton->setObjectName("controlButtonRed");
-        ui.controlButton->setStyleSheet("");
+        ui.armButton->setText(tr("DISARM SYSTEM"));
+        ui.armButton->setObjectName("armButtonRed");
+        ui.armButton->setStyleSheet("");
         //setInputButtonActivity(false);
     }
     else
     {
-        ui.controlButton->setText(tr("ARM SYSTEM"));
-        ui.controlButton->setObjectName("controlButtonGreen");
-        ui.controlButton->setStyleSheet("");
+        ui.armButton->setText(tr("ARM SYSTEM"));
+        ui.armButton->setObjectName("armButtonGreen");
+        ui.armButton->setStyleSheet("");
         //setInputButtonActivity(true);
     }
 }
 
 
-void UASSkyeControlWidget::updateMode(int uas,int baseMode)
+void UASSkyeControlWidget::updateMode(int uas, int baseMode)
 {
-//    qDebug() << "Got uas mode:" << baseMode;
-    if ((uasId == uas) && ((int)uasMode != baseMode))
-    {
-        uasMode = (unsigned int)baseMode;
+    // qDebug() << "Got uas mode:" << baseMode;
+    this->baseMode = baseMode;
 
-		if (uasMode == MAV_MODE_PREFLIGHT)
-        {
-            ui.manControlButton->setObjectName("manControlButtonGray");
-            ui.rateControlButton->setObjectName("rateControlButtonGray");
-            ui.attControlButton->setObjectName("attControlButtonGray");
-		}
+    bool modeChanged = false;
+    if (uasId == uas) {
+        if (baseMode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED) {
 
-        if (uasMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL)
-        {
+
+            if (baseMode & MAV_MODE_FLAG_STABILIZE_ENABLED) {
+                // STABILIZED MODE (6DOF or 5DOF)
+                if (mode5dof == false) {
+                    if (ctrlMode != SKYE_CONTROL_MODE_6DOF) {
+                        ctrlMode  = SKYE_CONTROL_MODE_6DOF;
+                        modeChanged = true;
+                    }
+                } else {
+                    if (ctrlMode != SKYE_CONTROL_MODE_5DOF) {
+                        ctrlMode  = SKYE_CONTROL_MODE_5DOF;
+                        modeChanged = true;
+                    }
+                }
+            } else {
+
+
+                // MANUAL MODE
+                if (ctrlMode != SKYE_CONTROL_MODE_MANUAL) {
+                    ctrlMode  = SKYE_CONTROL_MODE_MANUAL;
+                    modeChanged = true;
+                }
+            }
+        }
+    }
+
+    // Set stylesheets to display active mode
+    if (modeChanged == true) {
+        ui.manControlButton->setObjectName("manControlButtonGray");
+        ui.stab5dofControlButton->setObjectName("stab5dofControlButtonGray");
+        ui.stab6dofControlButton->setObjectName("stab6dofControlButtonGray");
+
+        switch (ctrlMode) {
+        case SKYE_CONTROL_MODE_MANUAL:
             ui.manControlButton->setObjectName("manControlButtonGreen");
-            ui.rateControlButton->setObjectName("rateControlButtonGray");
-            ui.attControlButton->setObjectName("attControlButtonGray");
-        }
-
-        if ((uasMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) && (uasMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE))
-        {
-            ui.manControlButton->setObjectName("manControlButtonGray");
-            ui.rateControlButton->setObjectName("rateControlButtonGreen");
-            ui.attControlButton->setObjectName("attControlButtonGray");
-        }
-
-        if ((uasMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) && !(uasMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE))
-        {
-            ui.manControlButton->setObjectName("manControlButtonGray");
-            ui.rateControlButton->setObjectName("rateControlButtonGray");
-            ui.attControlButton->setObjectName("attControlButtonGreen");
+            break;
+        case SKYE_CONTROL_MODE_5DOF:
+            ui.manControlButton->setObjectName("stabControlButtonGreen");
+            break;
+        case SKYE_CONTROL_MODE_6DOF:
+            ui.manControlButton->setObjectName("stabControlButtonGreen");
+            break;
+        case SKYE_CONTROL_MODE_NONE:
+        default:
+            break;
         }
 
         ui.manControlButton->setStyleSheet("");
-        ui.rateControlButton->setStyleSheet("");
-        ui.attControlButton->setStyleSheet("");
+        ui.stab5dofControlButton->setStyleSheet("");
+        ui.stab6dofControlButton->setStyleSheet("");
     }
 }
 
@@ -323,16 +349,15 @@ void UASSkyeControlWidget::updateMouseInput(bool active)
     }
 }
 
-void UASSkyeControlWidget::setDirectControlMode()
+void UASSkyeControlWidget::setManualControlMode()
 {
-    uint8_t newMode = MAV_MODE_PREFLIGHT;
     if (engineOn) {
+        uint8_t newMode = MAV_MODE_FLAG_SAFETY_ARMED;
 
-        newMode = newMode | MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED;
+        newMode |= MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
         transmitMode(newMode);
 
-        if (uasMode != newMode)
-        {
+        if (ctrlMode != SKYE_CONTROL_MODE_MANUAL) {
             ui.manControlButton->setObjectName("manControlButtonWhite");
             ui.manControlButton->setStyleSheet("");
         }
@@ -343,26 +368,25 @@ void UASSkyeControlWidget::setDirectControlMode()
 
 }
 
-void UASSkyeControlWidget::setRateControlMode()
+void UASSkyeControlWidget::set5dofControlMode()
 {
-    uint8_t newMode = MAV_MODE_PREFLIGHT;
     if (engineOn) {
-        newMode = newMode | MAV_MODE_FLAG_SAFETY_ARMED;
+        uint8_t newMode = MAV_MODE_FLAG_SAFETY_ARMED;
+
         // Set rate control
-        newMode |= MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_CUSTOM_MODE_ENABLED;
+        newMode |= MAV_MODE_FLAG_STABILIZE_ENABLED;
         transmitMode(newMode);
 
-        if (uasMode != newMode)
-        {
-            ui.rateControlButton->setObjectName("rateControlButtonWhite");
-            ui.rateControlButton->setStyleSheet("");
+        if (ctrlMode != SKYE_CONTROL_MODE_5DOF) {
+            ui.stab5dofControlButton->setObjectName("stab5dofControlButtonWhite");
+            ui.stab5dofControlButton->setStyleSheet("");
         }
     } else {
         ui.lastActionLabel->setText("Arm system first");
     }
 }
 
-void UASSkyeControlWidget::setAttitudeControlMode()
+void UASSkyeControlWidget::set6dofControlMode()
 {
     uint8_t newMode = MAV_MODE_PREFLIGHT;
     if (engineOn) {
@@ -371,10 +395,9 @@ void UASSkyeControlWidget::setAttitudeControlMode()
         newMode |= MAV_MODE_FLAG_STABILIZE_ENABLED;
         transmitMode(newMode);
 
-        if (uasMode != newMode)
-        {
-            ui.attControlButton->setObjectName("attControlButtonWhite");
-            ui.attControlButton->setStyleSheet("");
+        if (ctrlMode != SKYE_CONTROL_MODE_6DOF) {
+            ui.stab6dofControlButton->setObjectName("stab6dofControlButtonWhite");
+            ui.stab6dofControlButton->setStyleSheet("");
         }
 
     } else {
@@ -462,12 +485,10 @@ void UASSkyeControlWidget::cycleContextButton()
         if (!engineOn)
         {
             mav->armSystem();
-            mav->setModeCommand(uasMode | MAV_MODE_FLAG_SAFETY_ARMED);
-            ui.lastActionLabel->setText(QString("Enabled motors on %1").arg(mav->getUASName()));
+            ui.lastActionLabel->setText(QString("Requested arming of %1").arg(mav->getUASName()));
         } else {
             mav->disarmSystem();
-            mav->setModeCommand(0);
-            ui.lastActionLabel->setText(QString("Disabled motors on %1").arg(mav->getUASName()));
+            ui.lastActionLabel->setText(QString("Requested disarming of %1").arg(mav->getUASName()));
         }
         // Update state now and in several intervals when MAV might have changed state
         updateStatemachine();
@@ -475,6 +496,11 @@ void UASSkyeControlWidget::cycleContextButton()
         QTimer::singleShot(50, this, SLOT(updateStatemachine()));
         QTimer::singleShot(200, this, SLOT(updateStatemachine()));
 
+    }
+    else
+    {
+        int id = UASManager::instance()->getActiveUAS()->getUASID();
+        ui.lastActionLabel->setText(QString("this UASID is %1, but active UAS is %2").arg(this->uasId).arg(id));
     }
 }
 
@@ -487,26 +513,26 @@ void UASSkyeControlWidget::updateStyleSheet()
 		qDebug() << "3dMouse TRANSLATION is: " << mouseTranslationEnabled << ", ROTATION is: " << mouseRotationEnabled;
         if (mouseTranslationEnabled && mouseRotationEnabled)
         {
-            style.append("QPushButton#mouseButton {image: url(:files/images/skye/input/3dx_spacenavigator_200x198_trans_rot.png);}");
+            style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse_trans_rot.png);}");
         }
         if (mouseTranslationEnabled && !mouseRotationEnabled)
         {
-            style.append("QPushButton#mouseButton {image: url(:files/images/skye/input/3dx_spacenavigator_200x198_trans.png);}");
+            style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse_trans.png);}");
         }
         if (!mouseTranslationEnabled && mouseRotationEnabled)
         {
-            style.append("QPushButton#mouseButton {image: url(:files/images/skye/input/3dx_spacenavigator_200x198_rot.png);}");
+            style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse_rot.png);}");
         }
         if (!mouseTranslationEnabled && !mouseRotationEnabled)
         {
-            style.append("QPushButton#mouseButton {image: url(:files/images/skye/input/3dx_spacenavigator_200x198.png); background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #AA0000, stop: 1 #FF0000);}");
+            style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse.png); background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #AA0000, stop: 1 #FF0000);}");
         }
     }else{
-        style.append("QPushButton#mouseButton {image: url(:files/images/skye/input/3dx_spacenavigator_200x198.png);}");
+        style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse.png);}");
     }
-    style.append("QPushButton#touchButton {image: url(:files/images/skye/input/FingerPointing.png);}");
-    style.append("QPushButton#keyboardButton {image: url(:files/images/skye/input/keyboard-icon_64.png); }");
-    style.append("QPushButton#xboxButton {image: url(:files/images/skye/input/xbox_controller.png); }");
+    style.append("QPushButton#touchButton {image: url(:/res/input/touch.png);}");
+    style.append("QPushButton#keyboardButton {image: url(:/res/input/keyboard.png); }");
+    style.append("QPushButton#xboxButton {image: url(:/res/input/xbox.png); }");
     style.append("QPushButton:disabled {background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #BBBBBB, stop: 1 #444444); color: #333333 }");
     this->setStyleSheet(style);
 }
@@ -571,7 +597,13 @@ void UASSkyeControlWidget::getXboxControlCommands(double x, double y, double z, 
     }
 }
 
-void UASSkyeControlWidget::getAllocCase(int allocCase)
+void UASSkyeControlWidget::updateAllocCase(int allocCase)
 {
-	ui.lastActionLabel->setText(QString("Set allocation case %1").arg(allocCase));
+    ui.lastActionLabel->setText(QString("Set allocation case %1").arg(allocCase));
+}
+
+void UASSkyeControlWidget::updateMode5dof(int mode5dof)
+{
+    this->mode5dof = mode5dof;
+    updateMode(this->uasId, this->baseMode);
 }
