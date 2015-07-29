@@ -49,7 +49,6 @@ This file is part of the QGROUNDCONTROL project
 #include "QGCTabbedInfoView.h"
 #include "QGCInputs.h"
 #include "InputMixer.h"
-#include "UASSkyeAlertWidget.h"
 
 /**
  * @brief Widget controlling one (skye) MAV
@@ -67,16 +66,23 @@ public slots:
     void setUAS(UASInterface* uas);
     /** @brief Block input change buttons */
     void setInputButtonActivity(bool enabled);
+
     /** @brief Trigger next context action */
-    void cycleContextButton();
+    void setArmDisarmStatus();
     /** @brief Transmit the operation mode */
     void transmitMode(int mode);
+
     /** @brief Update the mode */
     void updateMode(int uas, int baseMode);
-    /** @brief Update state */
-    void updateState(int state);
-    /** @brief Update internal state machine */
-    void updateStatemachine();
+    /** @brief Update the mode "flavour" (5DOF or 6DOF) */
+    void updateMode5dof(int mode5dof);
+    /** @brief Update the mode button style sheet */
+    void updateModeStyleSheet();
+    /** @brief Update arm status */
+    void updateArmingState(int state);
+    /** @brief Update arm button style sheet */
+    void updateArmButtonStyleSheet();
+
     /** @brief Update input buttons */
     void updateInput(int input);
     void updateMouseInput(bool active);
@@ -90,8 +96,6 @@ public slots:
     void getXboxControlCommands(double x, double y, double z, double a, double b, double c);
     /** @brief New allocation case has been set on UAV */
     void updateAllocCase(int allocCase);
-    /** @brief 5 DOF control flag has been set on UAV */
-    void updateMode5dof(int mode5dof);
 
 signals:
     void changedMode(int);
@@ -131,27 +135,22 @@ signals:
 
         int uasId;                          ///< Reference to the current uas
         int baseMode;                       ///< Base mode
-        bool engineOn;                      ///< Engine state
+        bool isArmed;                      ///< Engine state
         int inputMode;                      ///< Active device flags for input (see QGC_INPUT_MODE)
         bool mouseTranslationEnabled;       ///< True when translational motions enabled
         bool mouseRotationEnabled;          ///< True when rotational motions enabled
-
-        QTime lastAlertTime;                ///< Time when last low battery alert was prompted
-        bool alertedBatteryLow;             ///< True if system had low battery once
-        QErrorMessage *msgBox;
 
         UASSkyeInputMixer *inputMixer;      ///< Thread to mix and emit inputs
 
         /** @brief Set up widget, don't use ui file */
         void buildWidget();
         /** @brief Update stylesheet for SkyeControlWidget */
-        void updateStyleSheet();
+        void updateInputButtonStyleSheet();
         Ui::uasSkyeControl ui;
         QButtonGroup *modeButtonGroup;
         QButtonGroup *inputButtonGroup;
 
         QGCTabbedInfoView *infoViewWidget;                        ///< sub widget for mavlink messages;
-        UASSkyeAlertWidget *alertWidget;                        ///< sub widget for alert messages
 
 
     };
