@@ -45,6 +45,7 @@ This file is part of the QGROUNDCONTROL project
 #include <QVBoxLayout>
 #include <ui_UASSkyeControl.h>
 #include <UASInterface.h>
+#include <QGCMAVLink.h>
 #include "SkyeUAS.h"
 #include "QGCTabbedInfoView.h"
 #include "QGCInputs.h"
@@ -67,21 +68,23 @@ public slots:
     /** @brief Block input change buttons */
     void setInputButtonActivity(bool enabled);
 
-    /** @brief Trigger next context action */
+    /** @brief Set arm/disarm command */
     void setArmDisarmStatus();
     /** @brief Transmit the operation mode */
-    void transmitMode(int mode);
+    void transmitMode(SKYE_CONTROL_MODE mode);
 
-    /** @brief Update the mode */
-    void updateMode(int uas, int baseMode);
-    /** @brief Update the mode "flavour" (5DOF or 6DOF) */
-    void updateMode5dof(int mode5dof);
-    /** @brief Update the mode button style sheet */
-    void updateModeStyleSheet();
+    QString getControlModeString(SKYE_CONTROL_MODE ctrlMode);
+
     /** @brief Update arm status */
-    void updateArmingState(int state);
+    void updateArmingState(bool armed);
     /** @brief Update arm button style sheet */
     void updateArmButtonStyleSheet();
+//    /** @brief Update the mode */
+//    void updateMode(int uas, int baseMode);
+    /** @brief Update the control mode */
+    void updateControlMode(SKYE_CONTROL_MODE ctrlMode);
+    /** @brief Update the mode button style sheet */
+    void updateControlModeStyleSheet();
 
     /** @brief Update input buttons */
     void updateInput(int input);
@@ -124,18 +127,11 @@ signals:
 
 
     protected:
-
-        enum SKYE_CONTROL_MODE {
-            SKYE_CONTROL_MODE_NONE,
-            SKYE_CONTROL_MODE_MANUAL,
-            SKYE_CONTROL_MODE_5DOF,
-            SKYE_CONTROL_MODE_6DOF
-        }ctrlMode;
-        bool mode5dof;                      ///< Copy of SKYECON_5DOF onboard parameter
+        SKYE_CONTROL_MODE controlMode;      ///< Copy of SKYE_CON_CONTROL_MODE onboard parameter
 
         int uasId;                          ///< Reference to the current uas
         int baseMode;                       ///< Base mode
-        bool isArmed;                      ///< Engine state
+        bool isArmed;                       ///< Engine state
         int inputMode;                      ///< Active device flags for input (see QGC_INPUT_MODE)
         bool mouseTranslationEnabled;       ///< True when translational motions enabled
         bool mouseRotationEnabled;          ///< True when rotational motions enabled
@@ -150,7 +146,7 @@ signals:
         QButtonGroup *modeButtonGroup;
         QButtonGroup *inputButtonGroup;
 
-        QGCTabbedInfoView *infoViewWidget;                        ///< sub widget for mavlink messages;
+        QGCTabbedInfoView *infoViewWidget;  ///< sub widget for mavlink messages;
 
 
     };

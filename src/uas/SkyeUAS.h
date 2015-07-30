@@ -103,8 +103,10 @@ public slots:
     void sendAllocationCase(int);
     /** @brief Send AU reset command */
     void sendAUReset(int auId);
-    /** @brief send new motor position configuration to Skye */
+    /** @brief Send new motor position configuration to Skye */
     void sendSkyeConfiguration(double *quaternions); // [4][6]
+    /** @brief Send control mode*/
+    void sendControlModeCommand(SKYE_CONTROL_MODE ctrlMode);
 
 signals:
     void batteryStatusChanged(mavlink_battery_status_t* battery);
@@ -120,7 +122,7 @@ signals:
     /** @brief Battery is low. Shutdown required */
     void batteryLow(double voltage, bool isLow, unsigned int ms);
     void allocCaseChanged(int allocCase);
-    void mode5dofChanged(int mode5dof);
+    void skyeControlModeChanged(SKYE_CONTROL_MODE ctrlMode);
     void sensitivityTransChanged(double);
     void sensitivityRotChanged(double);
     void liftValueChanged(int);

@@ -609,8 +609,8 @@ QPushButton#manControlButtonWhite, QPushButton#stab5dofControlButtonWhite, QPush
     font-size: 15pt;
 }
 
-QPushButtona#armButtonRed {
-    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DD0044, stop: 1 #AA0022); 
+QPushButton#armButtonRed {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DD0044, stop: 1 #AA0022);
     color: yellow;
     border-radius: 2px;
     min-height: 60px;

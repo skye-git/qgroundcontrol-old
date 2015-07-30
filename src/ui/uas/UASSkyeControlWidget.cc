@@ -41,8 +41,7 @@ This file is part of the PIXHAWK project
 #include "QGC.h"
 
 UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
-    ctrlMode(SKYE_CONTROL_MODE_NONE),
-    mode5dof(false),
+    controlMode(SKYE_CONTROL_MODE_MAX),
     uasId(0),
     baseMode(0),
     isArmed(false),
@@ -113,7 +112,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         if (mav)
         {
             disconnect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
-            disconnect(mav, SIGNAL(statusChanged(int)), this, SLOT(updateArmingState(int)));
+            disconnect(mav, SIGNAL(armingChanged(bool)), this, SLOT(updateArmingState(bool)));
             disconnect(this, SIGNAL(changedInput(QGC_INPUT_MODE, bool)), mav, SLOT(setInputMode(QGC_INPUT_MODE, bool)));
             disconnect(mav, SIGNAL(inputModeChanged(int)), this, SLOT(updateInput(int)));
 
@@ -124,7 +123,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
 
             // Disconnect slots for Change of Actuation Unit Configuration
             disconnect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocCase(int)));
-            disconnect(mav, SIGNAL(mode5dofChanged(int)), this, SLOT(updateMode5dof(int)));
+            disconnect(mav, SIGNAL(skyeControlModeChanged(SKYE_CONTROL_MODE)), this, SLOT(updateControlMode(SKYE_CONTROL_MODE)));
 
 
             // stop input mixer
@@ -144,8 +143,8 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         this->uasId = mav->getUASID();
         qDebug() << "UAS id:" << mav->getUASID() << ", name:" << mav->getUASName();
 
-        updateMode(mav->getUASID(), mav->getMode());
-        updateArmingState(mav->getState());
+        //updateControlMode(mav->getControlMode);
+        updateArmingState(mav->isArmed());
         updateInput(mav->getInputMode());
 
         // start input mixer
@@ -155,7 +154,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
 
         // Connect user interface controls
         connect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
-        connect(mav, SIGNAL(statusChanged(int)), this, SLOT(updateArmingState(int)));
+        connect(mav, SIGNAL(armingChanged(bool)), this, SLOT(updateArmingState(bool)));
 
         connect(this, SIGNAL(changedInput(QGC_INPUT_MODE, bool)), mav, SLOT(setInputMode(QGC_INPUT_MODE, bool)));
         connect(mav, SIGNAL(inputModeChanged(int)), this, SLOT(updateInput(int)));
@@ -165,7 +164,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
 
         // Connect slots for onboard parameter changes
         connect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocCase(int)));
-        connect(mav, SIGNAL(mode5dofChanged(int)), this, SLOT(updateMode5dof(int)));
+        connect(mav, SIGNAL(skyeControlModeChanged(SKYE_CONTROL_MODE)), this, SLOT(updateControlMode(SKYE_CONTROL_MODE)));
 
     }
 }
@@ -174,69 +173,44 @@ UASSkyeControlWidget::~UASSkyeControlWidget()
 {
 }
 
+
+void UASSkyeControlWidget::updateArmingState(bool armed)
+{
+    isArmed = armed;
+
+    updateArmButtonStyleSheet();
+}
+
 void UASSkyeControlWidget::updateArmButtonStyleSheet()
 {
     if (isArmed)
     {
         ui.armButton->setText(tr("DISARM SYSTEM"));
         ui.armButton->setObjectName("armButtonRed");
+        qDebug() << "[] Armed";
     }
     else
     {
         ui.armButton->setText(tr("ARM SYSTEM"));
         ui.armButton->setObjectName("armButtonGreen");
+        qDebug() << "[] Disarmed";
     }
 
     // update stylesheet
     ui.armButton->setStyleSheet("");
 }
 
-
-void UASSkyeControlWidget::updateMode(int uas, int baseMode)
+void UASSkyeControlWidget::updateControlMode(SKYE_CONTROL_MODE ctrlMode)
 {
-    // qDebug() << "Got uas mode:" << baseMode;
-    this->baseMode = baseMode;
-
-    bool modeChanged = false;
-    if (uasId == uas) {
-        if (baseMode & MAV_MODE_FLAG_MANUAL_INPUT_ENABLED) {
-
-
-            if (baseMode & MAV_MODE_FLAG_STABILIZE_ENABLED) {
-                // STABILIZED MODE (6DOF or 5DOF)
-                if (mode5dof == false) {
-                    if (ctrlMode != SKYE_CONTROL_MODE_6DOF) {
-                        ctrlMode  = SKYE_CONTROL_MODE_6DOF;
-                        modeChanged = true;
-                    }
-                } else {
-                    if (ctrlMode != SKYE_CONTROL_MODE_5DOF) {
-                        ctrlMode  = SKYE_CONTROL_MODE_5DOF;
-                        modeChanged = true;
-                    }
-                }
-            } else {
-
-
-                // MANUAL MODE
-                if (ctrlMode != SKYE_CONTROL_MODE_MANUAL) {
-                    ctrlMode  = SKYE_CONTROL_MODE_MANUAL;
-                    modeChanged = true;
-                }
-            }
-        }
+    // only update GUI if control mode has changed
+    if (this->controlMode != ctrlMode) {
+        this->controlMode = ctrlMode;
+        updateControlModeStyleSheet();
     }
-    updateModeStyleSheet();
+    qDebug() << "Control mode is already" << getControlModeString(ctrlMode);
 }
 
-
-void UASSkyeControlWidget::updateMode5dof(int mode5dof)
-{
-    this->mode5dof = mode5dof;
-    updateMode(this->uasId, this->baseMode);
-}
-
-void UASSkyeControlWidget::updateModeStyleSheet()
+void UASSkyeControlWidget::updateControlModeStyleSheet()
 {
     // Set stylesheets to display active mode
 
@@ -244,7 +218,7 @@ void UASSkyeControlWidget::updateModeStyleSheet()
     ui.stab5dofControlButton->setObjectName("stab5dofControlButtonGray");
     ui.stab6dofControlButton->setObjectName("stab6dofControlButtonGray");
 
-    switch (ctrlMode) {
+    switch (controlMode) {
     case SKYE_CONTROL_MODE_MANUAL:
         ui.manControlButton->setObjectName("manControlButtonGreen");
         break;
@@ -254,7 +228,6 @@ void UASSkyeControlWidget::updateModeStyleSheet()
     case SKYE_CONTROL_MODE_6DOF:
         ui.manControlButton->setObjectName("stab6dofControlButtonGreen");
         break;
-    case SKYE_CONTROL_MODE_NONE:
     default:
         break;
     }
@@ -265,23 +238,190 @@ void UASSkyeControlWidget::updateModeStyleSheet()
     ui.stab6dofControlButton->setStyleSheet("");
 }
 
-void UASSkyeControlWidget::updateArmingState(int state)
+
+void UASSkyeControlWidget::setArmDisarmStatus()
 {
-    switch (state)
+    SkyeUAS* mav = dynamic_cast<SkyeUAS*>(UASManager::instance()->getUASForId(this->uasId));
+    if (mav)
     {
-    case (int)MAV_STATE_ACTIVE:
-        isArmed = true;
-        break;
-    case (int)MAV_STATE_STANDBY:
-        isArmed = false;
-        break;
+        if (!isArmed)
+        {
+            mav->armSystem();
+//            mav->setModeArm(MAV_MODE_MANUAL_ARMED, 0);
+            ui.lastActionLabel->setText(QString("Requested arming of %1").arg(mav->getUASName()));
+        } else {
+            mav->disarmSystem();
+//            mav->setMode(MAV_MODE_MANUAL_DISARMED, 0);
+            ui.lastActionLabel->setText(QString("Requested disarming of %1").arg(mav->getUASName()));
+        }
     }
-    updateArmButtonStyleSheet();
+}
+
+void UASSkyeControlWidget::setManualControlMode()
+{
+    if (controlMode != SKYE_CONTROL_MODE_MANUAL) {
+        transmitMode(SKYE_CONTROL_MODE_MANUAL);
+        ui.manControlButton->setObjectName("manControlButtonWhite");
+        ui.manControlButton->setStyleSheet("");
+    } else {
+        ui.lastActionLabel->setText(QString("%s already set").arg(getControlModeString(controlMode)));
+    }
+
+}
+
+void UASSkyeControlWidget::set5dofControlMode()
+{
+    if (controlMode != SKYE_CONTROL_MODE_5DOF) {
+        transmitMode(SKYE_CONTROL_MODE_5DOF);
+        ui.stab5dofControlButton->setObjectName("stab5dofControlButtonWhite");
+        ui.stab5dofControlButton->setStyleSheet("");
+    } else {
+        ui.lastActionLabel->setText(QString("%s already set").arg(getControlModeString(controlMode)));
+    }
+
+}
+
+void UASSkyeControlWidget::set6dofControlMode()
+{
+    if (controlMode != SKYE_CONTROL_MODE_6DOF) {
+        transmitMode(SKYE_CONTROL_MODE_6DOF);
+        ui.stab6dofControlButton->setObjectName("stab6dofControlButtonWhite");
+        ui.stab6dofControlButton->setStyleSheet("");
+    } else {
+        ui.lastActionLabel->setText(QString("%s already set").arg(getControlModeString(controlMode)));
+    }
+}
+
+
+void UASSkyeControlWidget::transmitMode(SKYE_CONTROL_MODE ctrlMode)
+{
+    SkyeUAS* mav = dynamic_cast<SkyeUAS*>(UASManager::instance()->getUASForId(this->uasId));
+    if (mav)
+    {
+        mav->sendControlModeCommand(ctrlMode);
+
+        // Display what has been sent
+        QString modeStr = getControlModeString(ctrlMode);
+        ui.lastActionLabel->setText(QString("Sent mode %1 to %2").arg(modeStr).arg(mav->getUASName()));
+        qDebug() << "Send mode" << modeStr << "to" << mav->getUASName();
+    }
+    else
+    {
+        ui.lastActionLabel->setText("No Skye connected!");
+    }
+}
+
+QString UASSkyeControlWidget::getControlModeString(SKYE_CONTROL_MODE ctrlMode)
+{
+    QString modeStr;
+    switch (ctrlMode) {
+    case SKYE_CONTROL_MODE_MANUAL:
+        modeStr = "MANUAL";
+        break;
+    case SKYE_CONTROL_MODE_5DOF:
+        modeStr = "5DOF";
+        break;
+    case SKYE_CONTROL_MODE_6DOF:
+        modeStr = "6DOF";
+        break;
+    default:
+        modeStr = "UNKNOWN";
+    }
+    return modeStr;
+}
+
+void UASSkyeControlWidget::setInputMouse(bool checked)
+{
+	if (checked)
+	{
+        ui.lastActionLabel->setText(tr("Starting 3dMouse..."));
+	} else {
+        ui.lastActionLabel->setText(tr("Stopping 3dMouse..."));
+	}
+    emit changedInput(QGC_INPUT_MODE_MOUSE, checked);
+
+}
+
+void UASSkyeControlWidget::setInputTouch(bool checked)
+{
+    if (checked)
+    {
+        ui.lastActionLabel->setText(tr("Activating Touchscreen..."));
+    } else {
+        ui.lastActionLabel->setText(tr("Deactivating Touchscreen..."));
+    }
+
+    emit changedInput(QGC_INPUT_MODE_TOUCH, checked);
+}
+
+void UASSkyeControlWidget::setInputKeyboard(bool checked)
+{
+    if (checked)
+    {
+        ui.lastActionLabel->setText(tr("Activating Keyboard..."));
+    } else {
+        ui.lastActionLabel->setText(tr("Deactivating Keyboard..."));
+    }
+
+    emit changedInput(QGC_INPUT_MODE_KEYBOARD, checked);
+}
+
+void UASSkyeControlWidget::setInputXbox(bool checked)
+{
+    if (checked)
+    {
+        ui.lastActionLabel->setText(tr("Activating Xbox Controller..."));
+    } else {
+        ui.lastActionLabel->setText(tr("Deactivating Xbox Controller..."));
+    }
+
+    emit changedInput(QGC_INPUT_MODE_XBOX, checked);
+}
+
+
+void UASSkyeControlWidget::setInputButtonActivity(bool enabled)
+{
+    ui.mouseButton->setEnabled(enabled);
+    ui.touchButton->setEnabled(enabled);
+}
+
+
+void UASSkyeControlWidget::updateInputButtonStyleSheet()
+{
+    QString style = "";
+    style.append("QPushButton { min-height: 30; }");
+    if (inputMode == QGC_INPUT_MODE_MOUSE)
+    {
+		qDebug() << "3dMouse TRANSLATION is: " << mouseTranslationEnabled << ", ROTATION is: " << mouseRotationEnabled;
+        if (mouseTranslationEnabled && mouseRotationEnabled)
+        {
+            style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse_trans_rot.png);}");
+        }
+        if (mouseTranslationEnabled && !mouseRotationEnabled)
+        {
+            style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse_trans.png);}");
+        }
+        if (!mouseTranslationEnabled && mouseRotationEnabled)
+        {
+            style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse_rot.png);}");
+        }
+        if (!mouseTranslationEnabled && !mouseRotationEnabled)
+        {
+            style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse.png); background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #AA0000, stop: 1 #FF0000);}");
+        }
+    }else{
+        style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse.png);}");
+    }
+    style.append("QPushButton#touchButton {image: url(:/res/input/touch.png);}");
+    style.append("QPushButton#keyboardButton {image: url(:/res/input/keyboard.png); }");
+    style.append("QPushButton#xboxButton {image: url(:/res/input/xbox.png); }");
+    style.append("QPushButton:disabled {background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #BBBBBB, stop: 1 #444444); color: #333333 }");
+    this->setStyleSheet(style);
 }
 
 void UASSkyeControlWidget::updateInput(int input)
 {
-	qDebug() << "[UASSkyeControl] changing input from" << inputMode << "to" << input;
+    qDebug() << "[UASSkyeControl] changing input from" << inputMode << "to" << input;
 
     // Update last-action-label when input mode has changed
     if ( (inputMode & QGC_INPUT_MODE_MOUSE) != (input & QGC_INPUT_MODE_MOUSE) )
@@ -346,185 +486,6 @@ void UASSkyeControlWidget::updateMouseInput(bool active)
             inputMode -= QGC_INPUT_MODE_MOUSE;
         }
     }
-}
-
-void UASSkyeControlWidget::setManualControlMode()
-{
-    if (isArmed) {
-        uint8_t newMode = MAV_MODE_FLAG_SAFETY_ARMED;
-
-        newMode |= MAV_MODE_FLAG_MANUAL_INPUT_ENABLED;
-        transmitMode(newMode);
-
-        if (ctrlMode != SKYE_CONTROL_MODE_MANUAL) {
-            ui.manControlButton->setObjectName("manControlButtonWhite");
-            ui.manControlButton->setStyleSheet("");
-        }
-
-    } else {
-        ui.lastActionLabel->setText("Arm system first");
-    }
-
-}
-
-void UASSkyeControlWidget::set5dofControlMode()
-{
-    if (isArmed) {
-        uint8_t newMode = MAV_MODE_FLAG_SAFETY_ARMED;
-
-        // Set rate control
-        newMode |= MAV_MODE_FLAG_STABILIZE_ENABLED;
-        transmitMode(newMode);
-
-        if (ctrlMode != SKYE_CONTROL_MODE_5DOF) {
-            ui.stab5dofControlButton->setObjectName("stab5dofControlButtonWhite");
-            ui.stab5dofControlButton->setStyleSheet("");
-        }
-    } else {
-        ui.lastActionLabel->setText("Arm system first");
-    }
-}
-
-void UASSkyeControlWidget::set6dofControlMode()
-{
-    uint8_t newMode = MAV_MODE_PREFLIGHT;
-    if (isArmed) {
-        newMode = newMode | MAV_MODE_FLAG_SAFETY_ARMED;
-        // Set attitude control
-        newMode |= MAV_MODE_FLAG_STABILIZE_ENABLED;
-        transmitMode(newMode);
-
-        if (ctrlMode != SKYE_CONTROL_MODE_6DOF) {
-            ui.stab6dofControlButton->setObjectName("stab6dofControlButtonWhite");
-            ui.stab6dofControlButton->setStyleSheet("");
-        }
-
-    } else {
-        ui.lastActionLabel->setText("Arm system first");
-    }
-}
-
-void UASSkyeControlWidget::setInputMouse(bool checked)
-{
-	if (checked)
-	{
-        ui.lastActionLabel->setText(tr("Starting 3dMouse..."));
-	} else {
-        ui.lastActionLabel->setText(tr("Stopping 3dMouse..."));
-	}
-    emit changedInput(QGC_INPUT_MODE_MOUSE, checked);
-
-}
-
-void UASSkyeControlWidget::setInputTouch(bool checked)
-{
-    if (checked)
-    {
-        ui.lastActionLabel->setText(tr("Activating Touchscreen..."));
-    } else {
-        ui.lastActionLabel->setText(tr("Deactivating Touchscreen..."));
-    }
-
-    emit changedInput(QGC_INPUT_MODE_TOUCH, checked);
-}
-
-void UASSkyeControlWidget::setInputKeyboard(bool checked)
-{
-    if (checked)
-    {
-        ui.lastActionLabel->setText(tr("Activating Keyboard..."));
-    } else {
-        ui.lastActionLabel->setText(tr("Deactivating Keyboard..."));
-    }
-
-    emit changedInput(QGC_INPUT_MODE_KEYBOARD, checked);
-}
-
-void UASSkyeControlWidget::setInputXbox(bool checked)
-{
-    if (checked)
-    {
-        ui.lastActionLabel->setText(tr("Activating Xbox Controller..."));
-    } else {
-        ui.lastActionLabel->setText(tr("Deactivating Xbox Controller..."));
-    }
-
-    emit changedInput(QGC_INPUT_MODE_XBOX, checked);
-}
-
-void UASSkyeControlWidget::transmitMode(int mode)
-{
-    SkyeUAS* mav = dynamic_cast<SkyeUAS*>(UASManager::instance()->getUASForId(this->uasId));
-    if (mav)
-    {
-        mav->setModeCommand(mode);
-
-        QString modeStr = mav->getShortModeTextFor(mode, 0);
-        ui.lastActionLabel->setText(QString("Sent mode %1 to %2").arg(modeStr).arg(mav->getUASName()));
-
-        qDebug() << "Send mode" << modeStr << "to" << mav->getUASName();
-    }
-    else
-    {
-        ui.lastActionLabel->setText("No Skye activated!");
-    }
-}
-
-void UASSkyeControlWidget::setInputButtonActivity(bool enabled)
-{
-    ui.mouseButton->setEnabled(enabled);
-    ui.touchButton->setEnabled(enabled);
-}
-
-void UASSkyeControlWidget::setArmDisarmStatus()
-{
-	SkyeUAS* mav = dynamic_cast<SkyeUAS*>(UASManager::instance()->getUASForId(this->uasId));
-    if (mav)
-    {
-        if (!isArmed)
-        {
-//            mav->armSystem();
-            mav->setModeArm(MAV_MODE_MANUAL_ARMED, 0);
-            ui.lastActionLabel->setText(QString("Requested arming of %1").arg(mav->getUASName()));
-        } else {
-//            mav->disarmSystem();
-            mav->setMode(MAV_MODE_MANUAL_DISARMED, 0);
-            ui.lastActionLabel->setText(QString("Requested disarming of %1").arg(mav->getUASName()));
-        }
-    }
-}
-
-void UASSkyeControlWidget::updateInputButtonStyleSheet()
-{
-    QString style = "";
-    style.append("QPushButton { min-height: 30; }");
-    if (inputMode == QGC_INPUT_MODE_MOUSE)
-    {
-		qDebug() << "3dMouse TRANSLATION is: " << mouseTranslationEnabled << ", ROTATION is: " << mouseRotationEnabled;
-        if (mouseTranslationEnabled && mouseRotationEnabled)
-        {
-            style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse_trans_rot.png);}");
-        }
-        if (mouseTranslationEnabled && !mouseRotationEnabled)
-        {
-            style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse_trans.png);}");
-        }
-        if (!mouseTranslationEnabled && mouseRotationEnabled)
-        {
-            style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse_rot.png);}");
-        }
-        if (!mouseTranslationEnabled && !mouseRotationEnabled)
-        {
-            style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse.png); background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #AA0000, stop: 1 #FF0000);}");
-        }
-    }else{
-        style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse.png);}");
-    }
-    style.append("QPushButton#touchButton {image: url(:/res/input/touch.png);}");
-    style.append("QPushButton#keyboardButton {image: url(:/res/input/keyboard.png); }");
-    style.append("QPushButton#xboxButton {image: url(:/res/input/xbox.png); }");
-    style.append("QPushButton:disabled {background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #BBBBBB, stop: 1 #444444); color: #333333 }");
-    this->setStyleSheet(style);
 }
 
 void UASSkyeControlWidget::changeMouseTranslationEnabled(bool transEnabled)
