@@ -127,7 +127,7 @@ signals:
 
 
     protected:
-        SKYE_CONTROL_MODE controlMode;      ///< Copy of SKYE_CON_CONTROL_MODE onboard parameter
+        SKYE_CONTROL_MODE controlMode;      ///< Copy of SKYE_C_MODE onboard parameter
 
         int uasId;                          ///< Reference to the current uas
         int baseMode;                       ///< Base mode

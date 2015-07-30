@@ -52,15 +52,15 @@ private:
     Ui::UASSkyeControlAdvancedWidget *ui;
     QString getStyleString(double value);
 
+    int uasId;
+
     bool addRollEnabled;
     bool addPitchEnabled;
     bool addYawEnabled;
 
     int liftValue;
-    double sensitivityRot;
     double sensitivityTrans;
-
-    int uasId;
+    double sensitivityRot;
 
 private slots:
     void changeTransValue(double value);

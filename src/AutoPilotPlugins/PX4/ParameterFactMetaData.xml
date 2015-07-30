@@ -3738,4 +3738,12 @@ otherwise the value indicates the specific rc channel to use</long_desc>
       <short_desc>TEST_DEV</short_desc>
     </parameter>
   </group>
+  <group name="Skye Control">
+    <parameter default="1" name="SKYE_C_MODE" type="INT32">
+      <short_desc>Skye control mode</short_desc>
+      <long_desc>The Skye control mode defines how the system is controlled. 0 means MANUAL control (no attitude controller). 1 means 5DOF control (attitude controller, but roll is blocked). 2 means 6DOF control (attitude controller).</long_desc>
+      <min>0</min>
+      <max>2</max>
+    </parameter>
+  </group>
 </parameters>

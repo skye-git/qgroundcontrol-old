@@ -131,13 +131,12 @@ void SkyeUAS::receiveMessage(LinkInterface *link, mavlink_message_t message)
 
 void SkyeUAS::onboardParameterChanged(int uas, int component, QString parameterName, int parameterCount, int parameterId, int type, QVariant value)
 {
-	qDebug() << "Parameter changed: " << parameterName << value.toFloat() << "float";
-	qDebug() << "Parameter changed: " << parameterName << value.toInt() << "int";
-	if (uas == this->uasId) {
-		if (parameterName ==  QString("SKYE_ALOC_CASE")) {
+	if (uas == this->uasId) {		
+		if (parameterName ==  QString("SKYE_AL_CASE")) {
 			emit allocCaseChanged(value.toInt());
-		} else if (parameterName == QString("SKYE_CON_CONTROL")) {
+		} else if (parameterName == QString("SKYE_C_MODE")) {
 			emit skyeControlModeChanged((SKYE_CONTROL_MODE)value.toInt());
+		} else {
 		}
 	} else {
 		qDebug() << "Received onboard parameter from unknown system id" << uas;
@@ -356,10 +355,43 @@ void SkyeUAS::sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t bl
 void SkyeUAS::sendAllocationCase(int disabledAU)
 {
 	//mavlink_message_t msg;
-	//mavlink_msg_param_set_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, this->uasId, (uint8_t)MAV_COMP_ID_ALL, "SKYE_ALOC_CASE", (int32_t)disabledAU, (uint8_t)MAV_PARAM_TYPE_INT32);
+	//mavlink_msg_param_set_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, this->uasId, (uint8_t)MAV_COMP_ID_ALL, "SKYE_AL_CASE", (int32_t)disabledAU, (uint8_t)MAV_PARAM_TYPE_INT32);
 	//sendMessage(msg);
-    //setParameter(mavlink->getComponentId(), QString("SKYE_ALOC_CASE"), QVariant((int32_t)disabledAU));
-    qDebug() << "[SkyeUAS] ERROR. Set Parameter not available. Not Sent SKYE_ALOC_CASE" << disabledAU;
+	//setParameter(mavlink->getComponentId(), QString("SKYE_AL_CASE"), QVariant((int32_t)disabledAU));
+	qDebug() << "[SkyeUAS] ERROR. Set Parameter not available. Not Sent SKYE_AL_CASE" << disabledAU;
+}
+
+void SkyeUAS::sendParameterFloat(QString param_name, float value)
+{
+    mavlink_message_t msg;
+
+    mavlink_msg_param_set_pack(mavlink->getSystemId(),
+                               mavlink->getComponentId(),
+                               &msg,
+                               this->uasId,
+                               (uint8_t)MAV_COMP_ID_ALL,
+                               param_name.toStdString().c_str(),
+                               value,
+                               (uint8_t)MAV_PARAM_TYPE_REAL32);
+    sendMessage(msg);
+
+}
+
+void SkyeUAS::sendParameterInt32(QString param_name, const void *val)
+{
+    mavlink_message_t msg;
+
+    mavlink_msg_param_set_pack(mavlink->getSystemId(),
+                               mavlink->getComponentId(),
+                               &msg,
+                               this->uasId,
+                               (uint8_t)MAV_COMP_ID_ALL,
+                               param_name.toStdString().c_str(),
+                               *(float*)val,
+                               (uint8_t)MAV_PARAM_TYPE_INT32);
+
+    sendMessage(msg);
+
 }
 
 void SkyeUAS::sendAUReset(int auId)
@@ -394,22 +426,24 @@ void SkyeUAS::sendSkyeConfiguration(double *quaternions) // [4][6]
 
 void SkyeUAS::sendControlModeCommand(SKYE_CONTROL_MODE ctrlMode)
 {
-    mavlink_message_t msg;
-    mavlink_msg_command_long_pack(mavlink->getSystemId(),
-                                  mavlink->getComponentId(),
-                                  &msg,
-                                  uasId,
-                                  0,                                // target component
-                                  MAV_CMD_SET_SKYE_CONTROL_MODE,    // command id
-                                  0,                                // confirmation
-                                  ctrlMode,                         // unused
-                                  0.0f,                             // unused
-                                  0.0f,                             // unused
-                                  0.0f,                             // unused
-                                  0.0f,                             // unused
-                                  0.0f,                             // unused
-                                  0.0f);                            // unused
-    sendMessage(msg);
+    int32_t mode = (int32_t)ctrlMode;
+    sendParameterInt32("SKYE_C_MODE", &mode);
+//    mavlink_message_t msg;
+//    mavlink_msg_command_long_pack(mavlink->getSystemId(),
+//                                  mavlink->getComponentId(),
+//                                  &msg,
+//                                  uasId,
+//                                  0,                                // target component
+//                                  MAV_CMD_SET_SKYE_CONTROL_MODE,    // command id
+//                                  0,                                // confirmation
+//                                  ctrlMode,                         // unused
+//                                  0.0f,                             // unused
+//                                  0.0f,                             // unused
+//                                  0.0f,                             // unused
+//                                  0.0f,                             // unused
+//                                  0.0f,                             // unused
+//                                  0.0f);                            // unused
+//    sendMessage(msg);
 }
 
 void SkyeUAS::setLiftValue(int val)

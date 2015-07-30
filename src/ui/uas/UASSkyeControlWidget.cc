@@ -94,6 +94,8 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     connect(ui.xboxButton, SIGNAL(clicked(bool)), this, SLOT(setInputXbox(bool)));
 
     updateInputButtonStyleSheet();
+    updateControlModeStyleSheet();
+    updateArmButtonStyleSheet();
 
     // TODO: set correct margins instead of min height
     this->setMinimumHeight(220);
@@ -187,13 +189,11 @@ void UASSkyeControlWidget::updateArmButtonStyleSheet()
     {
         ui.armButton->setText(tr("DISARM SYSTEM"));
         ui.armButton->setObjectName("armButtonRed");
-        qDebug() << "[] Armed";
     }
     else
     {
         ui.armButton->setText(tr("ARM SYSTEM"));
         ui.armButton->setObjectName("armButtonGreen");
-        qDebug() << "[] Disarmed";
     }
 
     // update stylesheet
@@ -205,9 +205,11 @@ void UASSkyeControlWidget::updateControlMode(SKYE_CONTROL_MODE ctrlMode)
     // only update GUI if control mode has changed
     if (this->controlMode != ctrlMode) {
         this->controlMode = ctrlMode;
+        qDebug() << "Control mode is now" << getControlModeString(ctrlMode);
         updateControlModeStyleSheet();
+    } else {
+        qDebug() << "Control mode is already" << getControlModeString(ctrlMode);
     }
-    qDebug() << "Control mode is already" << getControlModeString(ctrlMode);
 }
 
 void UASSkyeControlWidget::updateControlModeStyleSheet()
@@ -223,10 +225,10 @@ void UASSkyeControlWidget::updateControlModeStyleSheet()
         ui.manControlButton->setObjectName("manControlButtonGreen");
         break;
     case SKYE_CONTROL_MODE_5DOF:
-        ui.manControlButton->setObjectName("stab5dofControlButtonGreen");
+        ui.stab5dofControlButton->setObjectName("stab5dofControlButtonGreen");
         break;
     case SKYE_CONTROL_MODE_6DOF:
-        ui.manControlButton->setObjectName("stab6dofControlButtonGreen");
+        ui.stab6dofControlButton->setObjectName("stab6dofControlButtonGreen");
         break;
     default:
         break;
@@ -264,7 +266,7 @@ void UASSkyeControlWidget::setManualControlMode()
         ui.manControlButton->setObjectName("manControlButtonWhite");
         ui.manControlButton->setStyleSheet("");
     } else {
-        ui.lastActionLabel->setText(QString("%s already set").arg(getControlModeString(controlMode)));
+        ui.lastActionLabel->setText(QString("Already in %1 mode").arg(getControlModeString(controlMode)));
     }
 
 }
@@ -276,7 +278,7 @@ void UASSkyeControlWidget::set5dofControlMode()
         ui.stab5dofControlButton->setObjectName("stab5dofControlButtonWhite");
         ui.stab5dofControlButton->setStyleSheet("");
     } else {
-        ui.lastActionLabel->setText(QString("%s already set").arg(getControlModeString(controlMode)));
+        ui.lastActionLabel->setText(QString("Already in %1 mode").arg(getControlModeString(controlMode)));
     }
 
 }
@@ -288,7 +290,7 @@ void UASSkyeControlWidget::set6dofControlMode()
         ui.stab6dofControlButton->setObjectName("stab6dofControlButtonWhite");
         ui.stab6dofControlButton->setStyleSheet("");
     } else {
-        ui.lastActionLabel->setText(QString("%s already set").arg(getControlModeString(controlMode)));
+        ui.lastActionLabel->setText(QString("Already in %1 mode").arg(getControlModeString(controlMode)));
     }
 }
 

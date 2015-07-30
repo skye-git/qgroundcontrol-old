@@ -99,8 +99,12 @@ public slots:
 
     void sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t blue, uint8_t mode, float frequency);
 
-    /** @brief Send parameter for actuation unit configuration (SKYE_ALOC_CASE) */
+    /** @brief Send parameter for actuation unit configuration (SKYE_AL_CASE) */
     void sendAllocationCase(int);
+    /** @brief Send parameter (float) */
+    void sendParameterFloat(QString param_id_name, float value);
+    /** @brief Send parameter (float) */
+    void sendParameterInt32(QString param_id_name, const void *val);
     /** @brief Send AU reset command */
     void sendAUReset(int auId);
     /** @brief Send new motor position configuration to Skye */

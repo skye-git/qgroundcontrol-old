@@ -7,13 +7,13 @@
 UASSkyeControlAdvancedWidget::UASSkyeControlAdvancedWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::UASSkyeControlAdvancedWidget),
+    uasId(0),
     addRollEnabled(false),
     addPitchEnabled(false),
     addYawEnabled(false),
-    uasId(0),
+    liftValue(QGC_LIFT_VALUE_DEFAULT*LIFT_RESOLUTION),
     sensitivityTrans(QGC_SENSITIVITY_TRANS_DEFAULT),
-    sensitivityRot(QGC_SENSITIVITY_ROT_DEFAULT),
-    liftValue(QGC_LIFT_VALUE_DEFAULT*LIFT_RESOLUTION)
+    sensitivityRot(QGC_SENSITIVITY_ROT_DEFAULT)
 {
     ui->setupUi(this);
 
