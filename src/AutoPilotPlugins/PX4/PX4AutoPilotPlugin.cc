@@ -213,7 +213,8 @@ const QVariantList& PX4AutoPilotPlugin::vehicleComponents(void)
         Q_CHECK_PTR(_airframeComponent);
         _airframeComponent->setupTriggerSignals();
         _components.append(QVariant::fromValue((VehicleComponent*)_airframeComponent));
-        
+
+#ifndef QGC_USE_SKYE_MESSAGES
         _radioComponent = new RadioComponent(_uas, this);
         Q_CHECK_PTR(_radioComponent);
         _radioComponent->setupTriggerSignals();
@@ -223,7 +224,8 @@ const QVariantList& PX4AutoPilotPlugin::vehicleComponents(void)
         Q_CHECK_PTR(_flightModesComponent);
         _flightModesComponent->setupTriggerSignals();
         _components.append(QVariant::fromValue((VehicleComponent*)_flightModesComponent));
-        
+#endif // QGC_USE_SKYE_MESSAGES
+
         _sensorsComponent = new SensorsComponent(_uas, this);
         Q_CHECK_PTR(_sensorsComponent);
         _sensorsComponent->setupTriggerSignals();
