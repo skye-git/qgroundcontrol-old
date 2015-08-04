@@ -18,11 +18,6 @@
 #include "Mouse3DInput.h"
 #endif //QGC_MOUSE_ENABLED_WIN
 
-#include "UASInterface.h"
-#ifdef QGC_USE_SKYE_MESSAGES
-#include "SkyeUAS.h"
-#endif //QGC_USE_SKYE_MESSAGES
-
 class Mouse6dofInput : public QThread
 {
     Q_OBJECT
@@ -59,9 +54,7 @@ protected:
     /** 1: greater than zero, 0: equal zero, -1 else */
     int sign(double value);
 
-    int uasId;
     bool done;
-    bool mouseActive;
     bool translationActive;
     bool rotationActive;
 
@@ -105,9 +98,6 @@ signals:
     void resetMouseInputStatus(bool active);
 
 public slots:
-#ifdef QGC_USE_SKYE_MESSAGES
-    void setActiveUAS(UASInterface* uas);
-#endif // QGC_USE_SKYE_MESSAGES
 #ifdef QGC_MOUSE_ENABLED_WIN
     /** @brief Get a motion input from 3DMouse */
     void motion3DMouse(std::vector<float> &motionData);
@@ -118,8 +108,6 @@ public slots:
     /** @brief Poll spnav event (motion or button) */
     void pollSpnavEvent();
 #endif //QGC_MOUSE_ENABLED_LINUX
-    /** @brief Input mode changed. Start 3dMouse if requested. */
-    void updateInputMode(int inputMode);
 
 };
 

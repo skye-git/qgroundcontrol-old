@@ -24,9 +24,7 @@
 #ifdef QGC_MOUSE_ENABLED_WIN
 Mouse6dofInput::Mouse6dofInput(Mouse3DInput* mouseInput) :
     mouse3DMax(0.075),   // TODO: check maximum value fot plugged device
-    uas(NULL),
     done(false),
-    mouseActive(false),
     translationActive(true),
     rotationActive(true),
     xValue(0.0),
@@ -53,9 +51,7 @@ Mouse6dofInput::Mouse6dofInput() :
     mouse3DMaxA(350.0),   // TODO: check maximum value for plugged device
     mouse3DMaxB(350.0),   // TODO: check maximum value for plugged device
     mouse3DMaxC(350.0),   // TODO: check maximum value for plugged device
-    uasId(0),
     done(false),
-    mouseActive(false),
     translationActive(true),
     rotationActive(true),
     xValue(0.0),
@@ -88,42 +84,9 @@ Mouse6dofInput::~Mouse6dofInput()
     done = true;
 }
 
-#ifdef QGC_USE_SKYE_MESSAGES
-void Mouse6dofInput::setActiveUAS(UASInterface* uas)
-{
-    if (this->uasId!= 0)
-    {
-        UASInterface* oldUAS = UASManager::instance()->getUASForId(this->uasId);
-        this->uasId = 0;
-        SkyeUAS* mav = dynamic_cast<SkyeUAS*>(oldUAS);
-        if (mav)
-        {
-            disconnect(mav, SIGNAL(inputModeChanged(int)), this, SLOT(updateInputMode(int)));
-        }
-    }
-
-
-    SkyeUAS* mav = dynamic_cast<SkyeUAS*>(uas);
-    if (mav)
-    {
-        this->uasId = mav->getUASID();
-
-        qDebug() << "[Mouse6DOF] connecting uav slots";
-
-        connect(mav, SIGNAL(inputModeChanged(int)), this, SLOT(updateInputMode(int)));
-        connect(this, SIGNAL(resetMouseInputStatus(bool)), mav, SLOT(updateMouseInputStatus(bool)));
-    }
-
-}
-#endif //QGC_USE_SKYE_MESSAGES
-
 void Mouse6dofInput::run()
 {
     qDebug() << "3d Mouse thread started...";
-#ifdef QGC_USE_SKYE_MESSAGES
-    // Make sure active UAS is set
-    setActiveUAS(UASManager::instance()->getActiveUAS());
-#endif //QGC_USE_SKYE_MESSAGES
 
     // start timer for emits
     QTime time;
@@ -141,34 +104,32 @@ void Mouse6dofInput::run()
         pollSpnavEvent();
 #endif //QGC_MOUSE_ENABLED_LINUX
 
+        // Use progressive sensibility
+        xValue = progressive(xValue);
+        yValue = progressive(yValue);
+        zValue = progressive(zValue);
+        aValue = progressive(aValue);
+        bValue = progressive(bValue);
+        cValue = progressive(cValue);
 
-        if (mouseActive)
-        {
-            // Use progressive sensibility
-            xValue = progressive(xValue);
-            yValue = progressive(yValue);
-            zValue = progressive(zValue);
-            aValue = progressive(aValue);
-            bValue = progressive(bValue);
-            cValue = progressive(cValue);
+        // Bound value to +/-1
+        xValue = saturate(xValue);
+        yValue = saturate(yValue);
+        zValue = saturate(zValue);
+        aValue = saturate(aValue);
+        bValue = saturate(bValue);
+        cValue = saturate(cValue);
 
-            // Bound value to +/-1
-            xValue = saturate(xValue);
-            yValue = saturate(yValue);
-            zValue = saturate(zValue);
-            aValue = saturate(aValue);
-            bValue = saturate(bValue);
-            cValue = saturate(cValue);
-
-            // Only emit with certain time interval
-            if (time.elapsed() >= MOUSE3D_EMIT_INTERVAL) {
-                time.restart();
-                emit mouse6dofChanged(xValue, yValue, zValue, aValue, bValue, cValue);
-            }
+        // Only emit with certain time interval
+        if (time.elapsed() >= MOUSE3D_EMIT_INTERVAL) {
+            time.restart();
+//            qDebug() << "[Mouse6dofInput]: Emitting the values:" << xValue << yValue << zValue << aValue << bValue << cValue;
+            emit mouse6dofChanged(xValue, yValue, zValue, aValue, bValue, cValue);
         }
 
-        // Sleep - Update rate of 3d mouse is approx. 20 Hz (1000 ms / 20 Hz = 50 ms)
-        //QGC::SLEEP::msleep(50);
+        // Sleep - But much less than emit: Be ready again with fresh inputs
+        // This is not an exact timer, but quite efficient.
+        QGC::SLEEP::msleep(MOUSE3D_EMIT_INTERVAL * 0.2);
     }
 }
 
@@ -252,7 +213,7 @@ void Mouse6dofInput::pollSpnavEvent()
                  xValue = spacenavEvent.motion.z / mouse3DMaxX;
                  yValue = spacenavEvent.motion.x / mouse3DMaxY;
                  zValue = - spacenavEvent.motion.y / mouse3DMaxZ;
-                 qDebug() << "Unsaturated Mouse value x" << xValue << "\t y" << yValue << "\t z" << zValue;
+//                 qDebug() << "Unsaturated Mouse value x" << xValue << "\t y" << yValue << "\t z" << zValue;
              }else{
                  xValue = 0;
                  yValue = 0;
@@ -264,7 +225,7 @@ void Mouse6dofInput::pollSpnavEvent()
                  aValue = spacenavEvent.motion.rz / mouse3DMaxA;
                  bValue = spacenavEvent.motion.rx / mouse3DMaxB;
                  cValue = - spacenavEvent.motion.ry / mouse3DMaxC;
-                 qDebug() << "Unsaturated Mouse value a" << aValue << "\t b" << bValue << "\t c" << cValue;
+//                 qDebug() << "Unsaturated Mouse value a" << aValue << "\t b" << bValue << "\t c" << cValue;
              }else{
                  aValue = 0;
                  bValue = 0;
@@ -309,16 +270,6 @@ void Mouse6dofInput::pollSpnavEvent()
     }
 }
 #endif //QGC_MOUSE_ENABLED_LINUX
-
-void Mouse6dofInput::updateInputMode(int inputMode)
-{
-    if (inputMode & QGC_INPUT_MODE_MOUSE)
-    {
-        mouseActive = true;
-    }else{
-        mouseActive = false;
-    }
-}
 
 double Mouse6dofInput::progressive(double value)
 {

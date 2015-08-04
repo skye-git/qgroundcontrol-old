@@ -145,6 +145,7 @@ void SkyeUAS::onboardParameterChanged(int uas, int component, QString parameterN
 
 void SkyeUAS::setManual6DOFControlCommands(double x , double y , double z , double a , double b, double c)
 {
+//    qDebug() << "Active:" << (inputMode != QGC_INPUT_MODE_NONE) << x << y << z << a << b << c;
     // make sure input device is defined
     if (inputMode != QGC_INPUT_MODE_NONE)
     {
@@ -155,7 +156,6 @@ void SkyeUAS::setManual6DOFControlCommands(double x , double y , double z , doub
         manualXRot = a * (double)sensitivityFactorRot + addRollValue;
         manualYRot = b * (double)sensitivityFactorRot + addPitchValue;
         manualZRot = c * (double)sensitivityFactorRot + addYawValue;
-        //    qDebug() << ": SENT 6DOF CONTROL MESSAGE: x velocity" << manualXVel << " y velocity: " << manualYVel << " z velocity: " << manualZVel << " x rotation: " << manualXRot << " y rotation: " << manualYRot << " z rotation: " << manualZRot;
         sendManualControlCommands6DoF(manualXVel, manualYVel, manualZVel, manualXRot, manualYRot, manualZRot);
     } else {
         manualXVel = 0.0;
@@ -204,7 +204,7 @@ void SkyeUAS::sendManualControlCommands6DoF(float x, float y, float z, float phi
                                        theta,
                                        psi);
         sendMessage(message);
-        // qDebug() << "SENT 6DOF CONTROL MESSAGE:" << x << y << z << phi << theta << psi;
+        qDebug() << "SENT 6DOF CONTROL MESSAGE:" << x << y << z << phi << theta << psi;
     }
 }
 

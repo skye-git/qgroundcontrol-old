@@ -214,6 +214,10 @@ MainWindow::MainWindow(QSplashScreen* splashScreen)
 #if QGC_MOUSE_ENABLED_LINUX
     emit initStatusChanged(tr("Initializing 3D mouse interface"), Qt::AlignLeft | Qt::AlignBottom, QColor(62, 93, 141));
     mouse = new Mouse6dofInput();
+    if (_skyeControl!=NULL) {
+        connect(mouse, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), _skyeControl, SLOT(getMouse6DOFControlCommands(double,double,double,double,double,double)));
+        qDebug() << "Connected mouse with skyeControl (mouse)";
+    }
 #endif //QGC_MOUSE_ENABLED_LINUX
 
     // These also cause the screen to redraw so we need to update any OpenGL canvases in QML controls
@@ -521,7 +525,14 @@ void MainWindow::_createInnerDockWidget(const QString& widgetName)
     if (widgetName == _uasControlDockWidgetName) {
         widget = new UASControlWidget(this);
     } else if (widgetName == _uasSkyeControlDockWidgetName) {
-        widget = new UASSkyeControlWidget(this);
+        _skyeControl = new UASSkyeControlWidget(this);
+        widget = _skyeControl;
+#ifdef QGC_MOUSE_ENABLED_LINUX
+        if (mouse!=NULL) {
+            connect(mouse, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), _skyeControl, SLOT(getMouse6DOFControlCommands(double,double,double,double,double,double)));
+            qDebug() << "Connected mouse with skyeControl (innerDock)";
+        }
+#endif
     } else if (widgetName == _uasListDockWidgetName) {
         widget = new UASListWidget(this);
     } else if (widgetName == _waypointsDockWidgetName) {

@@ -270,7 +270,7 @@ protected:
 #endif // QGC_MOUSE_ENABLED_WIN
 
 #ifdef QGC_MOUSE_ENABLED_LINUX
-    Mouse6dofInput* mouse;                  ///< Implementation for 3dMouse input
+    Mouse6dofInput* mouse = NULL;           ///< Implementation for 3dMouse input
 #endif // QGC_MOUSE_ENABLED_LINUX
 
     /** User interface actions **/
@@ -329,6 +329,8 @@ private:
     QMap<QString, QDockWidget*>     _mapName2DockWidget;
     QMap<int, QDockWidget*>         _mapUasId2HilDockWidget;
     QMap<QDockWidget*, QAction*>    _mapDockWidget2Action;
+
+    UASSkyeControlWidget*           _skyeControl = NULL;
 
     void _buildPlanView(void);
     void _buildExperimentalPlanView(void);
