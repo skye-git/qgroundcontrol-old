@@ -129,7 +129,7 @@ signals:
     protected:
         SKYE_CONTROL_MODE controlMode;      ///< Copy of SKYE_C_MODE onboard parameter
 
-        int uasId;                          ///< Reference to the current uas
+        UASInterface *uas;                  ///< Reference to the current uas
         int baseMode;                       ///< Base mode
         bool isArmed;                       ///< Engine state
         int inputMode;                      ///< Active device flags for input (see QGC_INPUT_MODE)

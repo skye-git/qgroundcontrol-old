@@ -42,7 +42,7 @@ This file is part of the PIXHAWK project
 
 UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     controlMode(SKYE_CONTROL_MODE_MAX),
-    uasId(0),
+    uas(NULL),
     baseMode(0),
     isArmed(false),
     inputMode(QGC_INPUT_MODE_NONE),
@@ -105,12 +105,11 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
 void UASSkyeControlWidget::setUAS(UASInterface* uas)
 {
     qDebug() << "Slot set UAS called";
-    if (this->uasId!= 0)
+    if (this->uas!= NULL)
     {
-        UASInterface* oldUAS = UASManager::instance()->getUASForId(this->uasId);
-        ui.lastActionLabel->setText("Disconnected from " + oldUAS->getUASName());
-        this->uasId = 0;
-        SkyeUAS* mav = dynamic_cast<SkyeUAS*>(oldUAS);
+        // Disconnect old system
+        ui.lastActionLabel->setText("Disconnected from " + this->uas->getUASName());
+        SkyeUAS* mav = dynamic_cast<SkyeUAS*>(this->uas);
         if (mav)
         {
             disconnect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
@@ -126,7 +125,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
             // Disconnect slots for Change of Actuation Unit Configuration
             disconnect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocCase(int)));
             disconnect(mav, SIGNAL(skyeControlModeChanged(SKYE_CONTROL_MODE)), this, SLOT(updateControlMode(SKYE_CONTROL_MODE)));
-
+            this->uas = NULL;
 
             // stop input mixer
             if (inputMixer)
@@ -137,12 +136,12 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         }
     }
 
-
+    // Connect new system
     SkyeUAS* mav = dynamic_cast<SkyeUAS*>(uas);
     if (mav)
     {
         ui.lastActionLabel->setText(tr("Connected to ") + mav->getUASName());
-        this->uasId = mav->getUASID();
+        this->uas = uas;
         qDebug() << "UAS id:" << mav->getUASID() << ", name:" << mav->getUASName();
 
         //updateControlMode(mav->getControlMode);
@@ -243,7 +242,7 @@ void UASSkyeControlWidget::updateControlModeStyleSheet()
 
 void UASSkyeControlWidget::setArmDisarmStatus()
 {
-    SkyeUAS* mav = dynamic_cast<SkyeUAS*>(UASManager::instance()->getUASForId(this->uasId));
+    SkyeUAS* mav = dynamic_cast<SkyeUAS*>(this->uas);
     if (mav)
     {
         if (!isArmed)
@@ -297,7 +296,7 @@ void UASSkyeControlWidget::set6dofControlMode()
 
 void UASSkyeControlWidget::transmitMode(SKYE_CONTROL_MODE ctrlMode)
 {
-    SkyeUAS* mav = dynamic_cast<SkyeUAS*>(UASManager::instance()->getUASForId(this->uasId));
+    SkyeUAS* mav = dynamic_cast<SkyeUAS*>(this->uas);
     if (mav)
     {
         mav->sendControlModeCommand(ctrlMode);
@@ -524,6 +523,10 @@ void UASSkyeControlWidget::changeMouseRotationEnabled(bool rotEnabled)
 
 void UASSkyeControlWidget::getMouse6DOFControlCommands(double x, double y, double z, double a, double b, double c)
 {
+    // input mixer must exist
+    if (inputMixer == NULL)
+        return;
+
     if (inputMode & QGC_INPUT_MODE_MOUSE)
     {
         if (!mouseTranslationEnabled)
@@ -539,11 +542,17 @@ void UASSkyeControlWidget::getMouse6DOFControlCommands(double x, double y, doubl
             c = 0.0;
         }
         inputMixer->updateMouseValues(x, y, z, a, b, c);
+    } else {
+        inputMixer->updateMouseValues(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     }
 }
 
 void UASSkyeControlWidget::getXboxControlCommands(double x, double y, double z, double a, double b, double c)
 {
+    // input mixer must exist
+    if (inputMixer == NULL)
+        return;
+
     if (inputMode & QGC_INPUT_MODE_XBOX)
     {
         inputMixer->updateXboxValues(x, y, z, a, b, c);
