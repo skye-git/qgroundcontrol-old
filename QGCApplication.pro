@@ -223,7 +223,18 @@ FORMS += \
     src/ui/ledControl/LedControlWidget.ui \
     src/ui/SkyeAUStatus.ui \
     src/ui/SkyeAUStatusList.ui \
-    src/ui/SkyeAUStatusSettingsDialog.ui
+    src/ui/SkyeAUStatusSettingsDialog.ui \
+    src/ui/QGCSkyeTest.ui \
+    src/ui/QGCSkyeTestControl.ui \
+    src/ui/QGCSkyeTestForce.ui \
+    src/ui/QGCSkyeTestForcePanel.ui \
+    src/ui/QGCSkyeTestForceRandomSettings.ui \
+    src/ui/QGCSkyeTestMotorRngSettings.ui \
+    src/ui/QGCSkyeTestMotors.ui \
+    src/ui/QGCSkyeTestMotorsPanel.ui \
+    src/ui/QGCSkyeTestSetpointsWidget.ui \
+    src/ui/QGCSkyeTestTimerWidget.ui \
+    src/ui/QGCSkyeConfig.ui
 
 !iOSBuild {
 FORMS += \
@@ -364,7 +375,18 @@ HEADERS += \
     src/ui/SkyeAUStatus.h \
     src/ui/SkyeAUStatusList.h \
     src/ui/SkyeAUStatusSettingsDialog.h \
-    src/uas/SkyeUAS.h
+    src/uas/SkyeUAS.h \
+    src/ui/QGCSkyeTest.h \
+    src/ui/QGCSkyeTestControl.h \
+    src/ui/QGCSkyeTestForce.h \
+    src/ui/QGCSkyeTestForcePanel.h \
+    src/ui/QGCSkyeTestForceRandomSettings.h \
+    src/ui/QGCSkyeTestMotorRngSettings.h \
+    src/ui/QGCSkyeTestMotors.h \
+    src/ui/QGCSkyeTestMotorsPanel.h \
+    src/ui/QGCSkyeTestSetpointsWidget.h \
+    src/ui/QGCSkyeTestTimerWidget.h \
+    src/ui/QGCSkyeConfig.h
 
 !iOSBuild {
 HEADERS += \
@@ -502,7 +524,18 @@ SOURCES += \
     src/ui/SkyeAUStatus.cc \
     src/ui/SkyeAUStatusList.cc \
     src/ui/SkyeAUStatusSettingsDialog.cc \
-    src/uas/SkyeUAS.cc
+    src/uas/SkyeUAS.cc \
+    src/ui/QGCSkyeTest.cpp \
+    src/ui/QGCSkyeTestControl.cc \
+    src/ui/QGCSkyeTestForce.cpp \
+    src/ui/QGCSkyeTestForcePanel.cpp \
+    src/ui/QGCSkyeTestForceRandomSettings.cpp \
+    src/ui/QGCSkyeTestMotorRngSettings.cpp \
+    src/ui/QGCSkyeTestMotors.cpp \
+    src/ui/QGCSkyeTestMotorsPanel.cpp \
+    src/ui/QGCSkyeTestSetpointsWidget.cpp \
+    src/ui/QGCSkyeTestTimerWidget.cpp \
+    src/ui/QGCSkyeConfig.cc
 
 !iOSBuild {
 SOURCES += \
