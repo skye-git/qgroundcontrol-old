@@ -1,5 +1,4 @@
 #include "QGCSkyeTestControl.h"
-#include "ui_QGCSkyeTestControl.h"
 #include "UASManager.h"
 #include "QGCInputs.h"
 
@@ -16,40 +15,38 @@
 #define STYLE_GREENMODE "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #004433, stop: 1 #228822); border-radius: 12px; min-height: 35px; max-height: 50px; min-width: 80px; max-width: 80px; border: 3px solid; font-size: 15pt;"
 
 
-QGCSkyeTestControl::QGCSkyeTestControl(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::QGCSkyeTestControl),
+QGCSkyeTestControl::QGCSkyeTestControl(QWidget *parent) : QWidget(parent),
     uas(NULL),
     engineOn(false)
 {
-    ui->setupUi(this);
+    ui.setupUi(this);
 
-    ui->pushButtonMan->setStyleSheet(STYLE_GRAYMODE);
-    ui->pushButton5dof->setStyleSheet(STYLE_GRAYMODE);
-    ui->pushButton6dof->setStyleSheet(STYLE_GRAYMODE);
+    ui.pushButtonMan->setStyleSheet(STYLE_GRAYMODE);
+    ui.pushButton5dof->setStyleSheet(STYLE_GRAYMODE);
+    ui.pushButton6dof->setStyleSheet(STYLE_GRAYMODE);
 
-    // 5 DOF might not be wi
-    ui->pushButton5dof->hide();
+    // hide 5DOF button
+    ui.pushButton5dof->hide();
 
-    ui->pushButtonControl->setStyleSheet(STYLE_GREEN);
+    ui.pushButtonControl->setStyleSheet(STYLE_GREEN);
 
-    ui->pushButtonStopAll->setStyleSheet(STYLE_GRAY_RESET);
-    ui->pushButtonSetZero->setStyleSheet(STYLE_GRAY_RESET);
+    ui.pushButtonStopAll->setStyleSheet(STYLE_GRAY_RESET);
+    ui.pushButtonSetZero->setStyleSheet(STYLE_GRAY_RESET);
 
-    //connect UAS activation
+    // connect UAS activation
     connect( UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
-    //connect uas
+    // connect uas
     setUAS( UASManager::instance()->getActiveUAS() );
 
 
     //connect Pushbuttons
-    connect(ui->pushButtonStopAll, SIGNAL(clicked()),this, SLOT(stopAll()));
-    connect(ui->pushButtonSetZero, SIGNAL(clicked()),this, SLOT(setZero()));
-    connect(ui->pushButtonControl, SIGNAL(clicked()), this, SLOT(cycleContextButton()));
+    connect(ui.pushButtonStopAll, SIGNAL(clicked()), this, SLOT(stopAll()));
+    connect(ui.pushButtonSetZero, SIGNAL(clicked()), this, SLOT(setZero()));
+    connect(ui.pushButtonControl, SIGNAL(clicked()), this, SLOT(cycleContextButton()));
 
-    connect(ui->pushButtonMan, SIGNAL(clicked()), this, SLOT(setManualMode()));
-    connect(ui->pushButton5dof, SIGNAL(clicked()), this, SLOT(setRateMode()));
-    connect(ui->pushButton6dof, SIGNAL(clicked()), this, SLOT(setAttMode()));
+    connect(ui.pushButtonMan, SIGNAL(clicked()), this, SLOT(setManualMode()));
+    connect(ui.pushButton5dof, SIGNAL(clicked()), this, SLOT(setRateMode()));
+    connect(ui.pushButton6dof, SIGNAL(clicked()), this, SLOT(setAttMode()));
 
 }
 
@@ -59,23 +56,25 @@ QGCSkyeTestControl::~QGCSkyeTestControl()
     {
         uas->setMode(MAV_MODE_PREFLIGHT, 0);
     }
-    delete ui;
 }
 
 void QGCSkyeTestControl::setUAS(UASInterface *mav)
 {
-    if (uas != 0)
-    {
-        disconnect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
-        disconnect(uas, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
-    }
+    qDebug() << "TestControl: setUAS" << mav;
+    if (mav != NULL) {
+        if (uas != 0)
+        {
+            disconnect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
+            disconnect(uas, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
+        }
 
-    uas = dynamic_cast<SkyeUAS*>(mav);
-    if (this->uas)
-    {
-        connect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
-        connect(uas, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
-        updateState(uas->getState());
+        uas = dynamic_cast<SkyeUAS*>(mav);
+        if (this->uas)
+        {
+            connect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
+            connect(uas, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
+            updateState(uas->getState());
+        }
     }
 }
 
@@ -103,7 +102,7 @@ void QGCSkyeTestControl::setManualMode()
 {
     if (this->uas) {
         if (engineOn) {
-            ui->pushButtonMan->setStyleSheet(STYLE_WHITEMODE);
+            ui.pushButtonMan->setStyleSheet(STYLE_WHITEMODE);
             changeMode(MAV_MODE_FLAG_MANUAL_INPUT_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED);
         }
     }
@@ -113,7 +112,7 @@ void QGCSkyeTestControl::setRateMode()
 {
     if (this->uas) {
         if (engineOn) {
-            ui->pushButton5dof->setStyleSheet(STYLE_WHITEMODE);
+            ui.pushButton5dof->setStyleSheet(STYLE_WHITEMODE);
             changeMode(MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_CUSTOM_MODE_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED);
         }
     }
@@ -123,7 +122,7 @@ void QGCSkyeTestControl::setAttMode()
 {
     if (this->uas) {
         if (engineOn) {
-            ui->pushButton6dof->setStyleSheet(STYLE_WHITEMODE);
+            ui.pushButton6dof->setStyleSheet(STYLE_WHITEMODE);
             changeMode( MAV_MODE_FLAG_STABILIZE_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED);
         }
     }
@@ -159,14 +158,14 @@ void QGCSkyeTestControl::updateState(int state)
     {
     case (int)MAV_STATE_ACTIVE:
         engineOn = true;
-        ui->pushButtonControl->setText(tr("DISARM SYSTEM"));
-        ui->pushButtonControl->setStyleSheet(STYLE_RED);
+        ui.pushButtonControl->setText(tr("DISARM SYSTEM"));
+        ui.pushButtonControl->setStyleSheet(STYLE_RED);
         break;
     case (int)MAV_STATE_STANDBY:
         engineOn = false;
         stopAll();
-        ui->pushButtonControl->setText(tr("ARM SYSTEM"));
-        ui->pushButtonControl->setStyleSheet(STYLE_GREEN);
+        ui.pushButtonControl->setText(tr("ARM SYSTEM"));
+        ui.pushButtonControl->setStyleSheet(STYLE_GREEN);
         break;
     }
 }
@@ -176,33 +175,33 @@ void QGCSkyeTestControl::updateMode(int uas, int baseMode)
     //qDebug() << "QGCSkyeTestControl: update mode:" << baseMode ;
     if (baseMode == MAV_MODE_PREFLIGHT)
     {
-        ui->pushButtonMan->setStyleSheet(STYLE_GRAYMODE);
-        ui->pushButton5dof->setStyleSheet(STYLE_GRAYMODE);
-        ui->pushButton6dof->setStyleSheet(STYLE_GRAYMODE);
+        ui.pushButtonMan->setStyleSheet(STYLE_GRAYMODE);
+        ui.pushButton5dof->setStyleSheet(STYLE_GRAYMODE);
+        ui.pushButton6dof->setStyleSheet(STYLE_GRAYMODE);
     }
 
     if (baseMode & MAV_MODE_FLAG_DECODE_POSITION_MANUAL)
     {
         //qDebug() << "[Skye Test Control] MANUAL";
-        ui->pushButtonMan->setStyleSheet(STYLE_GREENMODE);
-        ui->pushButton5dof->setStyleSheet(STYLE_GRAYMODE);
-        ui->pushButton6dof->setStyleSheet(STYLE_GRAYMODE);
+        ui.pushButtonMan->setStyleSheet(STYLE_GREENMODE);
+        ui.pushButton5dof->setStyleSheet(STYLE_GRAYMODE);
+        ui.pushButton6dof->setStyleSheet(STYLE_GRAYMODE);
     }
 
     if ((baseMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) && (baseMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE))
     {
         //qDebug() << "[Skye Test Control] 5 DOF";
-        ui->pushButtonMan->setStyleSheet(STYLE_GRAYMODE);
-        ui->pushButton5dof->setStyleSheet(STYLE_GREENMODE);
-        ui->pushButton6dof->setStyleSheet(STYLE_GRAYMODE);
+        ui.pushButtonMan->setStyleSheet(STYLE_GRAYMODE);
+        ui.pushButton5dof->setStyleSheet(STYLE_GREENMODE);
+        ui.pushButton6dof->setStyleSheet(STYLE_GRAYMODE);
     }
 
     if ((baseMode & MAV_MODE_FLAG_DECODE_POSITION_STABILIZE) && !(baseMode & MAV_MODE_FLAG_DECODE_POSITION_CUSTOM_MODE))
     {
         //qDebug() << "[Skye Test Control] 6 DOF";
-        ui->pushButtonMan->setStyleSheet(STYLE_GRAYMODE);
-        ui->pushButton5dof->setStyleSheet(STYLE_GRAYMODE);
-        ui->pushButton6dof->setStyleSheet(STYLE_GREENMODE);
+        ui.pushButtonMan->setStyleSheet(STYLE_GRAYMODE);
+        ui.pushButton5dof->setStyleSheet(STYLE_GRAYMODE);
+        ui.pushButton6dof->setStyleSheet(STYLE_GREENMODE);
     }
 
 }
@@ -221,16 +220,16 @@ void QGCSkyeTestControl::tabChanged(int tab)
     switch (tab) {
     case QGC_SKYE_CONFIG_TAB_MOTOR:
     case QGC_SKYE_CONFIG_TAB_MOTOR_PPM:
-        ui->pushButtonMan->hide();
-        ui->pushButton5dof->hide();
-        ui->pushButton6dof->hide();
-        ui->pushButtonSetZero->show();
+        ui.pushButtonMan->hide();
+        ui.pushButton5dof->hide();
+        ui.pushButton6dof->hide();
+        ui.pushButtonSetZero->show();
         break;
     case QGC_SKYE_CONFIG_TAB_FORCE:
-        ui->pushButtonSetZero->hide();
-        ui->pushButtonMan->show();
-        //ui->pushButton5dof->show();
-        ui->pushButton6dof->show();
+        ui.pushButtonSetZero->hide();
+        ui.pushButtonMan->show();
+        //ui.pushButton5dof->show();
+        ui.pushButton6dof->show();
         break;
     default:
         // this should not be the case.
@@ -240,13 +239,14 @@ void QGCSkyeTestControl::tabChanged(int tab)
 
 void QGCSkyeTestControl::showEvent(QShowEvent *event)
 {
-    // Disable all other inputs when test control is shown
-    uas->setInputMode(QGC_INPUT_MODE_NONE);
+    if (uas != NULL) {
+        // Disable all other inputs when test control is shown
+        uas->setInputMode(QGC_INPUT_MODE_NONE);
 
-    // // Disarm on every view change (as in disney configuration)
-    // changeMode(MAV_MODE_PREFLIGHT);
-    // qDebug() << "DISARMED system because Skye config is shown.";
-
+        // // Disarm on every view change (as in disney configuration)
+        // changeMode(MAV_MODE_PREFLIGHT);
+        // qDebug() << "DISARMED system because Skye config is shown.";
+    }
     QWidget::showEvent(event);
 }
 

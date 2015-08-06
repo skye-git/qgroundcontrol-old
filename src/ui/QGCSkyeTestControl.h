@@ -7,6 +7,7 @@
 
 #include <QWidget>
 #include "SkyeUAS.h"
+#include "ui_QGCSkyeTestControl.h"
 
 namespace Ui {
 class QGCSkyeTestControl;
@@ -42,7 +43,7 @@ signals:
     void setZeroRequested();
 
 private:
-    Ui::QGCSkyeTestControl *ui;
+    Ui::QGCSkyeTestControl ui;
     SkyeUAS* uas;
     bool engineOn;
     int tab;

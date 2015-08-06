@@ -51,7 +51,7 @@
      <x>0</x>
      <y>0</y>
      <width>1024</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMGround">
@@ -81,6 +81,7 @@
     <addaction name="actionPlan"/>
     <addaction name="actionFlight"/>
     <addaction name="actionAnalyze"/>
+    <addaction name="actionTest"/>
     <addaction name="separator"/>
     <addaction name="actionFullscreen"/>
     <addaction name="actionNormal"/>
@@ -307,6 +308,17 @@
   <action name="actionExperimentalPlanView">
    <property name="text">
     <string>Experimental Plan View</string>
+   </property>
+  </action>
+  <action name="actionTest">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Test</string>
+   </property>
+   <property name="toolTip">
+    <string>Test motors (on Skye)</string>
    </property>
   </action>
  </widget>

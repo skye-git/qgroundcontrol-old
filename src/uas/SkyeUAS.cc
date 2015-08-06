@@ -312,6 +312,7 @@ void SkyeUAS::setInputMode(QGC_INPUT_MODE input, bool active)
 
 void SkyeUAS::setInputMode(QGC_INPUT_MODE input)
 {
+    qDebug() << "Set input mode" <<input;
     // check if input mode changes
     if (inputMode != input) {
         inputMode = input;

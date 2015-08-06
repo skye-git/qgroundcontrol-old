@@ -294,6 +294,7 @@ MainWindow::MainWindow(QSplashScreen* splashScreen)
     _ui.actionFlight->setShortcut(QApplication::translate("MainWindow", "Ctrl+3", 0));
     _ui.actionAnalyze->setShortcut(QApplication::translate("MainWindow", "Ctrl+4", 0));
     _ui.actionSimulationView->setShortcut(QApplication::translate("MainWindow", "Ctrl+5", 0));
+    _ui.actionTest->setShortcut(QApplication::translate("MainWindow", "Ctrl+6", 0));
     _ui.actionFullscreen->setShortcut(QApplication::translate("MainWindow", "Ctrl+Return", 0));
 #endif
 
@@ -488,6 +489,16 @@ void MainWindow::_buildSimView(void)
         _simView = new QGCMapTool(this);
         _simView->setVisible(false);
     }
+}
+
+void MainWindow::_buildTestView(void)
+{
+#ifdef QGC_USE_SKYE_MESSAGES
+    if (!_testView) {
+        _testView = new QGCSkyeConfig(this);
+        _testView->setVisible(false);
+    }
+#endif //QGC_USE_SKYE_MESSAGES
 }
 
 /// Shows or hides the specified dock widget, creating if necessary
@@ -741,6 +752,7 @@ void MainWindow::connectCommonActions()
     perspectives->addAction(_ui.actionPlan);
     perspectives->addAction(_ui.actionSetup);
     perspectives->addAction(_ui.actionExperimentalPlanView);
+    perspectives->addAction(_ui.actionTest);
     perspectives->setExclusive(true);
 
     // Mark the right one as selected
@@ -774,6 +786,11 @@ void MainWindow::connectCommonActions()
         _ui.actionSetup->setChecked(true);
         _ui.actionSetup->activate(QAction::Trigger);
     }
+    if (_currentView == VIEW_TEST)
+    {
+        _ui.actionTest->setChecked(true);
+        _ui.actionTest->activate(QAction::Trigger);
+    }
 
     // The UAS actions are not enabled without connection to system
     _ui.actionLiftoff->setEnabled(false);
@@ -802,6 +819,7 @@ void MainWindow::connectCommonActions()
     connect(_ui.actionAnalyze, SIGNAL(triggered()), this, SLOT(loadAnalyzeView()));
     connect(_ui.actionPlan, SIGNAL(triggered()), this, SLOT(loadPlanView()));
     connect(_ui.actionExperimentalPlanView, SIGNAL(triggered()), this, SLOT(loadOldPlanView()));
+    connect(_ui.actionTest, SIGNAL(triggered()), this, SLOT(loadTestView()));
 
     // Help Actions
     connect(_ui.actionOnline_Documentation, SIGNAL(triggered()), this, SLOT(showHelp()));
@@ -973,6 +991,12 @@ void MainWindow::_loadCurrentViewState(void)
             defaultWidgets = "UNMANNED_SYSTEM_CONTROL_DOCKWIDGET,WAYPOINT_LIST_DOCKWIDGET,PARAMETER_INTERFACE_DOCKWIDGET,PRIMARY_FLIGHT_DISPLAY_DOCKWIDGET";
             break;
 
+        case VIEW_TEST:
+            _buildTestView();
+            centerView = _testView;
+            defaultWidgets.clear();
+            break;
+
         default:
             Q_ASSERT(false);
             break;
@@ -1022,6 +1046,8 @@ void MainWindow::_loadCurrentViewState(void)
     // There is a bug in Qt where a Canvas element inside a QQuickWidget does not
     // receive update requests. Here we emit a signal for them to get repainted.
     emit repaintCanvas();
+
+    qDebug() << "loadCurrentViewState completed";
 }
 
 void MainWindow::_hideAllHilDockWidgets(void)
@@ -1136,6 +1162,17 @@ void MainWindow::loadSimulationView()
         _storeCurrentViewState();
         _currentView = VIEW_SIMULATION;
         _ui.actionSimulationView->setChecked(true);
+        _loadCurrentViewState();
+    }
+}
+
+void MainWindow::loadTestView()
+{
+    if (_currentView != VIEW_TEST)
+    {
+        _storeCurrentViewState();
+        _currentView = VIEW_TEST;
+        _ui.actionTest->setChecked(true);
         _loadCurrentViewState();
     }
 }

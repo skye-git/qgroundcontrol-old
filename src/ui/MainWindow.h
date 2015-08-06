@@ -72,6 +72,7 @@ This file is part of the QGROUNDCONTROL project
 
 #ifdef QGC_USE_SKYE_MESSAGES
 #include "SkyeAUStatusList.h"
+#include "QGCSkyeConfig.h"
 #endif //QGC_USE_SKYE_MESSAGES
 
 class QGCMapTool;
@@ -161,6 +162,8 @@ public slots:
     void loadPlanView();
     /** @brief Load Old (Qt Widget) Map View (Mission) */
     void loadOldPlanView();
+    /** @brief Loat skye motors test widget view */
+    void loadTestView();
     /** @brief Manage Links */
     void manageLinks();
 
@@ -224,7 +227,7 @@ protected:
         VIEW_FLIGHT,            // Flight/Fly/Operate view mode. Used for 1st-person observation of the vehicle.
         VIEW_SIMULATION,        // HIL Simulation view. Useful overview of the entire system when doing hardware-in-the-loop simulations.
         VIEW_SETUP,             // Setup view. Used for initializing the system for operation. Includes UI for calibration, firmware updating/checking, and parameter modifcation.
-        VIEW_UNUSED1,           // Unused (don't remove, or it will screw up saved settigns indices)
+        VIEW_TEST,              // Test motors (for Skye system)
         VIEW_UNUSED2,           // Unused (don't remove, or it will screw up saved settigns indices)
         VIEW_EXPERIMENTAL_PLAN, // Original (Qt Widget) Mission/Map/Plan view mode. Used for setting mission waypoints and high-level system commands.
     } VIEW_SECTIONS;
@@ -307,6 +310,9 @@ private:
     QPointer<QWidget> _analyzeView;
     QPointer<QWidget> _simView;
     QPointer<QWidget> _terminalView;
+#ifdef QGC_USE_SKYE_MESSAGES
+    QPointer<QWidget> _testView;
+#endif
 
     // Dock widget names
     static const char* _uasControlDockWidgetName;
@@ -330,7 +336,9 @@ private:
     QMap<int, QDockWidget*>         _mapUasId2HilDockWidget;
     QMap<QDockWidget*, QAction*>    _mapDockWidget2Action;
 
+#ifdef QGC_USE_SKYE_MESSAGES
     UASSkyeControlWidget*           _skyeControl = NULL;
+#endif
 
     void _buildPlanView(void);
     void _buildExperimentalPlanView(void);
@@ -339,6 +347,7 @@ private:
     void _buildAnalyzeView(void);
     void _buildSimView(void);
     void _buildTerminalView(void);
+    void _buildTestView(void);
 
     void _storeCurrentViewState(void);
     void _loadCurrentViewState(void);
