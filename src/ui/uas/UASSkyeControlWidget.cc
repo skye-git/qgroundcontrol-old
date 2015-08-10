@@ -112,7 +112,6 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         SkyeUAS* mav = dynamic_cast<SkyeUAS*>(this->uas);
         if (mav)
         {
-            disconnect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
             disconnect(mav, SIGNAL(armingChanged(bool)), this, SLOT(updateArmingState(bool)));
             disconnect(this, SIGNAL(changedInput(QGC_INPUT_MODE, bool)), mav, SLOT(setInputMode(QGC_INPUT_MODE, bool)));
             disconnect(mav, SIGNAL(inputModeChanged(int)), this, SLOT(updateInput(int)));
@@ -154,7 +153,6 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         inputMixer->start();
 
         // Connect user interface controls
-        connect(mav, SIGNAL(modeChanged(int,int)), this, SLOT(updateMode(int,int)));
         connect(mav, SIGNAL(armingChanged(bool)), this, SLOT(updateArmingState(bool)));
 
         connect(this, SIGNAL(changedInput(QGC_INPUT_MODE, bool)), mav, SLOT(setInputMode(QGC_INPUT_MODE, bool)));

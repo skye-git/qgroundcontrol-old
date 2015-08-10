@@ -27,14 +27,15 @@ public slots:
     void stopAll();
     void setZero();
 
-    void changeMode(int mode);
+    void changeMode(SKYE_CONTROL_MODE mode);
     void setManualMode();
-    void setRateMode();
-    void setAttMode();
+    void set5dofMode();
+    void set6dofMode();
 
     void cycleContextButton();
     void updateState(int state);
-    void updateMode(int uas,int baseMode);
+    void updateMode(SKYE_CONTROL_MODE mode);
+    void updateModeStyleSheet();
 
     void tabChanged(int tab);
 
@@ -47,6 +48,7 @@ private:
     SkyeUAS* uas;
     bool engineOn;
     int tab;
+    SKYE_CONTROL_MODE controlMode;
 
     void showEvent(QShowEvent *event);
     void hideEvent(QHideEvent *event);
