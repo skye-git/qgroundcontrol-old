@@ -6,14 +6,13 @@
  *
  */
 
-#include "UAS.h"
-#include "UASManager.h"
-#include "QMessageBox"
-#include "QString"
-#include "QStringList"
+#include <QString>
+#include <QDebug>
+#include <QTime>
 
 #include "Mouse6dofInput.h"
 #include "src/input/QGCInputs.h"
+#include "QGC.h"
 
 #ifdef QGC_MOUSE_ENABLED_LINUX
 #include "spnav.h"
@@ -34,7 +33,7 @@ Mouse6dofInput::Mouse6dofInput(Mouse3DInput* mouseInput) :
     bValue(0.0),
     cValue(0.0)
 {
-    connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setActiveUAS(UASInterface*)));
+    //connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setActiveUAS(UASInterface*)));
     // Connect 3DxWare SDK MotionEvent
     connect(mouseInput, SIGNAL(Move3d(std::vector<float>&)), this, SLOT(motion3DMouse(std::vector<float>&)));
     connect(mouseInput, SIGNAL(On3dmouseKeyDown(int)), this, SLOT(button3DMouseDown(int)));
@@ -61,8 +60,6 @@ Mouse6dofInput::Mouse6dofInput() :
     bValue(0.0),
     cValue(0.0)
 {
-    connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setActiveUAS(UASInterface*)));
-
     if (spnav_open() < 0) {
         qDebug("Failed to open spnav (spacenavigator)");
     } else {
