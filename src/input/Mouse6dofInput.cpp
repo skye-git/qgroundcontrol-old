@@ -63,9 +63,12 @@ Mouse6dofInput::Mouse6dofInput() :
     if (spnav_open() < 0) {
         qDebug("Failed to open spnav (spacenavigator)");
     } else {
-        qDebug() << "[Mouse6dofInput] Opened spnav (spacenavigator)";
+        qDebug() << "[Mouse6dofInput] Opened spnav. But nobody knows.. TODO: Manage input availability.";
 //        mouseActive = true;
 //        emit resetMouseInputStatus(true);
+
+        emit mouseTranslationActiveChanged(translationActive);
+        emit mouseRotationActiveChanged(rotationActive);
     }
 
     if (!isRunning())
@@ -83,8 +86,6 @@ Mouse6dofInput::~Mouse6dofInput()
 
 void Mouse6dofInput::run()
 {
-    qDebug() << "3d Mouse thread started...";
-
     // start timer for emits
     QTime time;
     time.start();

@@ -65,8 +65,6 @@ public:
 public slots:
     /** @brief Set the system this widget controls */
     void setUAS(UASInterface* uas);
-    /** @brief Block input change buttons */
-    void setInputButtonActivity(bool enabled);
 
     /** @brief Set arm/disarm command */
     void setArmDisarmStatus();

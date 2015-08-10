@@ -216,7 +216,9 @@ MainWindow::MainWindow(QSplashScreen* splashScreen)
     mouse = new Mouse6dofInput();
     if (_skyeControl!=NULL) {
         connect(mouse, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), _skyeControl, SLOT(getMouse6DOFControlCommands(double,double,double,double,double,double)));
-        qDebug() << "Connected mouse with skyeControl (mouse)";
+        connect(mouse, SIGNAL(mouseTranslationActiveChanged(bool)), _skyeControl, SLOT(changeMouseTranslationEnabled(bool)));
+        connect(mouse, SIGNAL(mouseRotationActiveChanged(bool)), _skyeControl, SLOT(changeMouseRotationEnabled(bool)));
+//        qDebug() << "Connected mouse with skyeControl (mouse)";
     }
 #endif //QGC_MOUSE_ENABLED_LINUX
 
@@ -541,7 +543,10 @@ void MainWindow::_createInnerDockWidget(const QString& widgetName)
 #ifdef QGC_MOUSE_ENABLED_LINUX
         if (mouse!=NULL) {
             connect(mouse, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), _skyeControl, SLOT(getMouse6DOFControlCommands(double,double,double,double,double,double)));
-            qDebug() << "Connected mouse with skyeControl (innerDock)";
+            connect(mouse, SIGNAL(mouseTranslationActiveChanged(bool)), _skyeControl, SLOT(changeMouseTranslationEnabled(bool)));
+            connect(mouse, SIGNAL(mouseRotationActiveChanged(bool)), _skyeControl, SLOT(changeMouseRotationEnabled(bool)));
+
+//            qDebug() << "Connected mouse with skyeControl (innerDock)";
         }
 #endif
     } else if (widgetName == _uasListDockWidgetName) {

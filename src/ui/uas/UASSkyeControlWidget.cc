@@ -73,6 +73,11 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     ui.xboxButton->setChecked(inputMode & QGC_INPUT_MODE_XBOX);
 
     ui.keyboardButton->hide();
+#ifndef QGC_MOUSE_ENABLED_LINUX
+    ui.mouseButton->setEnabled(false);
+#endif
+    ui.touchButton->setEnabled(false);
+    ui.xboxButton->setEnabled(false);
 
     // tabbed info view widget
     infoViewWidget = new QGCTabbedInfoView(this);
@@ -104,7 +109,6 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
 
 void UASSkyeControlWidget::setUAS(UASInterface* uas)
 {
-    qDebug() << "Slot set UAS called";
     if (this->uas!= NULL)
     {
         // Disconnect old system
@@ -377,40 +381,28 @@ void UASSkyeControlWidget::setInputXbox(bool checked)
     emit changedInput(QGC_INPUT_MODE_XBOX, checked);
 }
 
-
-void UASSkyeControlWidget::setInputButtonActivity(bool enabled)
-{
-    ui.mouseButton->setEnabled(enabled);
-    ui.touchButton->setEnabled(enabled);
-}
-
-
 void UASSkyeControlWidget::updateInputButtonStyleSheet()
 {
     QString style = "";
     style.append("QPushButton { min-height: 30; }");
-    if (inputMode == QGC_INPUT_MODE_MOUSE)
+
+    if (mouseTranslationEnabled && mouseRotationEnabled)
     {
-		qDebug() << "3dMouse TRANSLATION is: " << mouseTranslationEnabled << ", ROTATION is: " << mouseRotationEnabled;
-        if (mouseTranslationEnabled && mouseRotationEnabled)
-        {
-            style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse_trans_rot.png);}");
-        }
-        if (mouseTranslationEnabled && !mouseRotationEnabled)
-        {
-            style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse_trans.png);}");
-        }
-        if (!mouseTranslationEnabled && mouseRotationEnabled)
-        {
-            style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse_rot.png);}");
-        }
-        if (!mouseTranslationEnabled && !mouseRotationEnabled)
-        {
-            style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse.png); background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #AA0000, stop: 1 #FF0000);}");
-        }
-    }else{
-        style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse.png);}");
+        style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse_trans_rot.png);}");
     }
+    if (mouseTranslationEnabled && !mouseRotationEnabled)
+    {
+        style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse_trans.png);}");
+    }
+    if (!mouseTranslationEnabled && mouseRotationEnabled)
+    {
+        style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse_rot.png);}");
+    }
+    if (!mouseTranslationEnabled && !mouseRotationEnabled)
+    {
+        style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse.png); background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #AA0000, stop: 1 #FF0000);}");
+    }
+
     style.append("QPushButton#touchButton {image: url(:/res/input/touch.png);}");
     style.append("QPushButton#keyboardButton {image: url(:/res/input/keyboard.png); }");
     style.append("QPushButton#xboxButton {image: url(:/res/input/xbox.png); }");
