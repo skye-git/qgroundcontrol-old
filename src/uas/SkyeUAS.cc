@@ -178,7 +178,8 @@ void SkyeUAS::set6DOFCommandsByWidget(double x, double y, double z, double a, do
 
 void SkyeUAS::sendManualControlCommands6DoF(float x, float y, float z, float phi, float theta, float psi)
 {
-    if (this->base_mode & MAV_MODE_FLAG_SAFETY_ARMED)
+    // send inputs anyway. Makes debugging much easier.
+    //if (this->base_mode & MAV_MODE_FLAG_SAFETY_ARMED)
     {
         // saturate values to [-1,1]
         x = x > 1.0 ? 1.0 : x;
@@ -359,7 +360,9 @@ void SkyeUAS::sendAllocationCase(int disabledAU)
 	//mavlink_msg_param_set_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, this->uasId, (uint8_t)MAV_COMP_ID_ALL, "SKYE_AL_CASE", (int32_t)disabledAU, (uint8_t)MAV_PARAM_TYPE_INT32);
 	//sendMessage(msg);
 	//setParameter(mavlink->getComponentId(), QString("SKYE_AL_CASE"), QVariant((int32_t)disabledAU));
-	qDebug() << "[SkyeUAS] ERROR. Set Parameter not available. Not Sent SKYE_AL_CASE" << disabledAU;
+
+
+//	qDebug() << "[SkyeUAS] ERROR. Set Parameter not available. Not Sent SKYE_AL_CASE" << disabledAU;
 }
 
 void SkyeUAS::sendParameterFloat(QString param_name, float value)
