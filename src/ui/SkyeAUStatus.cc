@@ -1,7 +1,7 @@
 #include "SkyeAUStatus.h"
 #include "ui_SkyeAUStatus.h"
 
-#define SKYE_AU_STATUS_INTERVAL 5000
+#define SKYE_AU_STATUS_INTERVAL 10000
 
 SkyeAUStatus::SkyeAUStatus(int id, QWidget *parent) :
     QWidget(parent),
