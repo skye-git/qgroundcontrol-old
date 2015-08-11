@@ -32,7 +32,7 @@ public slots:
     void set5dofMode();
     void set6dofMode();
 
-    void cycleContextButton();
+    void setArmDisarmState();
     void updateState(int state);
     void updateMode(SKYE_CONTROL_MODE mode);
     void updateModeStyleSheet();

@@ -29,9 +29,9 @@ QGCSkyeConfig::QGCSkyeConfig(QWidget *parent) :
     connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
     connect(tabWidget, SIGNAL(currentChanged(int)), testControl, SLOT(tabChanged(int)));
 
-    this->tabChanged(QGC_SKYE_CONFIG_TAB_MOTOR);
     testControl->tabChanged(QGC_SKYE_CONFIG_TAB_MOTOR);
     tabWidget->setCurrentIndex(QGC_SKYE_CONFIG_TAB_MOTOR);
+    this->tabChanged(QGC_SKYE_CONFIG_TAB_MOTOR);
 
 }
 
@@ -42,16 +42,16 @@ QGCSkyeConfig::~QGCSkyeConfig()
 
 void QGCSkyeConfig::tabChanged(int tab)
 {
-    // TODO: clarify why tab is not used
+    if (tabWidget->currentIndex() != tab) {
+        qDebug() << "ERROR: SkyeConfig tab has not been updated correctly. Trying again..";
+        tabWidget->setCurrentIndex(tab);
+    }
 
-    for (int i = 0; i < tabWidget->count(); i++)
-    {
-        qDebug() << "tabChanged call" << i << "for current index" << tabWidget->currentIndex();
+    for (int i = 0; i < tabWidget->count(); i++) {
         QGCSkyeTest* skyeTestTab = dynamic_cast<QGCSkyeTest*> (tabWidget->widget(i));
-        if (skyeTestTab)
-        {
+        if (skyeTestTab) {
             /* inform each skyeTest widget about its visibility */
-            skyeTestTab->activeTabChanged(i == tabWidget->currentIndex());
+            skyeTestTab->activeTabChanged(i == tab);
         }
     }
 }

@@ -167,6 +167,12 @@ void SkyeUAS::setManual6DOFControlCommands(double x , double y , double z , doub
     }
 }
 
+void SkyeUAS::setInputOverwrite(bool enable)
+{
+    inputOverwrite = enable;
+    qDebug() << "[SkyeUAS] InputOverwrite is" << enable;
+}
+
 void SkyeUAS::set6DOFCommandsByWidget(double x, double y, double z, double a, double b, double c)
 {
     // only accept widget inputs when no input device defined
@@ -276,8 +282,7 @@ void SkyeUAS::setModeCommand(int mode)
 
 	mavlink_msg_command_long_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId,
 								  (uint8_t)MAV_COMP_ID_ALL, MAV_CMD_DO_SET_MODE, 1, mode, 0, 0, 0, 0, 0, 0);
-
-    sendMessage(message);
+	sendMessage(message);
 }
 
 uint8_t SkyeUAS::getMode()

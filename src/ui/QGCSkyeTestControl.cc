@@ -39,7 +39,7 @@ QGCSkyeTestControl::QGCSkyeTestControl(QWidget *parent) : QWidget(parent),
     //connect Pushbuttons
     connect(ui.pushButtonStopAll, SIGNAL(clicked()), this, SLOT(stopAll()));
     connect(ui.pushButtonSetZero, SIGNAL(clicked()), this, SLOT(setZero()));
-    connect(ui.pushButtonControl, SIGNAL(clicked()), this, SLOT(cycleContextButton()));
+    connect(ui.pushButtonControl, SIGNAL(clicked()), this, SLOT(setArmDisarmState()));
 
     connect(ui.pushButtonMan, SIGNAL(clicked()), this, SLOT(setManualMode()));
     connect(ui.pushButton5dof, SIGNAL(clicked()), this, SLOT(set5dofMode()));
@@ -57,8 +57,8 @@ QGCSkyeTestControl::~QGCSkyeTestControl()
 
 void QGCSkyeTestControl::setUAS(UASInterface *mav)
 {
-    qDebug() << "TestControl: setUAS" << mav;
     if (mav != NULL) {
+        qDebug() << "[QGCSkyeTestControl] setUAS" << mav->getUASName();
         if (uas != 0)
         {
             disconnect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
@@ -123,7 +123,7 @@ void QGCSkyeTestControl::set6dofMode()
     }
 }
 
-void QGCSkyeTestControl::cycleContextButton()
+void QGCSkyeTestControl::setArmDisarmState()
 {
     if (this->uas)
     {
@@ -132,7 +132,7 @@ void QGCSkyeTestControl::cycleContextButton()
             engineOn=true;
 			if (tab == QGC_SKYE_CONFIG_TAB_MOTOR || tab == QGC_SKYE_CONFIG_TAB_MOTOR_PPM)
             {
-				uas->setModeCommand(MAV_MODE_FLAG_TEST_ENABLED | MAV_MODE_FLAG_SAFETY_ARMED);
+                uas->setModeArm(MAV_MODE_FLAG_TEST_ENABLED, 0);
             } else {
                 uas->armSystem();
             }
@@ -243,8 +243,7 @@ void QGCSkyeTestControl::showEvent(QShowEvent *event)
 {
     if (uas != NULL) {
         // Disable all other inputs when test control is shown
-//        uas->setInputMode(QGC_INPUT_MODE_NONE);
-        qDebug() << "WARNING: set inputOverwrite to false IS MISSING";
+        uas->setInputOverwrite(true);
 
         // // Disarm on every view change (as in disney configuration)
         // changeMode(MAV_MODE_PREFLIGHT);
@@ -255,6 +254,8 @@ void QGCSkyeTestControl::showEvent(QShowEvent *event)
 
 void QGCSkyeTestControl::hideEvent(QHideEvent *event)
 {
+    uas->setInputOverwrite(false);
+
     // // Disarm on every view change (as in disney configuration)
     // changeMode(MAV_MODE_PREFLIGHT);
     // qDebug() << "DISARMED system because Skye config has been left.";

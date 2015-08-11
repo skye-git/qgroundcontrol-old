@@ -59,6 +59,8 @@ public slots:
      *  @note  The values are scaled by the sensitivity factors
      *         The additive slider values are added without scaling */
     void setManual6DOFControlCommands(double x , double y , double z , double a , double b, double c);
+    /** @brief Enable device input overwrite. Set this to true, when input is given by test widget */
+    void setInputOverwrite(bool enable);
     /** @brief Send the 6 DOF command (from test config window) to MAV */
     void set6DOFCommandsByWidget(double x , double y , double z , double a , double b, double c);
     /** @brief Send the 8 DOF command (from Testphase Widget) to MAV */
@@ -78,11 +80,11 @@ public slots:
     /** @brief Set additive value for yaw manual control */
     void setAddYawValue(double val) {addYawValue = val;}
 
+	/** @brief Some onboard parameter changes need special actions. Handle them here! */
 	void onboardParameterChanged(int uas, int component, QString parameterName, int parameterCount, int parameterId, int type, QVariant value);
-	//(int uas, int component, QString parameterName, QVariant value);
 
+    /** @brief Send color information */
     void sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t blue, uint8_t mode, float frequency);
-
     /** @brief Send parameter for actuation unit configuration (SKYE_AL_CASE) */
     void sendAllocationCase(int);
     /** @brief Send parameter (float) */
