@@ -44,12 +44,6 @@ public:
     /** @brief Get mode */
     uint8_t getMode();
 
-    /** @brief Get activated input mode flags for this uas */
-    int getInputMode()
-    {
-        return inputMode;
-    }
-
 
 
 public slots:
@@ -83,16 +77,6 @@ public slots:
     void setAddPitchValue(double val) {addPitchValue = val;}
     /** @brief Set additive value for yaw manual control */
     void setAddYawValue(double val) {addYawValue = val;}
-    /** @brief Set active input flag for this UAS */
-    void setInputMode(QGC_INPUT_MODE input, bool active);
-    /** @brief Set active input as exclusive input for this UAS */
-    void setInputMode(QGC_INPUT_MODE input);
-    /** @brief Reset mouse input mode after initialization */
-    void updateMouseInputStatus(bool active);
-    /** @brief Report de-/activation of rotative 3DMouse input */
-    void changeMouseRotationActive(bool active){emit mouseButtonRotationChanged(active);}
-    /** @brief Report de-/activation of translative 3DMouse input */
-    void changeMouseTranslationActive(bool active){emit mouseButtonTranslationChanged(active);}
 
 	void onboardParameterChanged(int uas, int component, QString parameterName, int parameterCount, int parameterId, int type, QVariant value);
 	//(int uas, int component, QString parameterName, QVariant value);
@@ -117,10 +101,6 @@ signals:
     void allocationValueChanged(mavlink_allocation_output_t* allocation);
     void actuationStatusChanged(mavlink_actuation_status_t* au_status);
     void reportUDPLinkFailed(QString errorStr);
-    void mouseButtonRotationChanged(bool active);
-    void mouseButtonTranslationChanged(bool active);
-    void inputModeChanged(int inputMode);
-    void resetMouseInput(bool active);
     /** @brief Battery is low. Shutdown required */
     void batteryLow(double voltage);
     /** @brief Battery is low. Shutdown required */
@@ -179,7 +159,7 @@ protected:
     double sinPsi;
     double fromItoC[9];
 
-    int inputMode;                          // input device bit flags (see QGC_INPUT_MODE)
+    bool inputOverwrite;        ///< True when device inputs are overwritten by test widget
 };
 
 #endif // SkyeUAS_H

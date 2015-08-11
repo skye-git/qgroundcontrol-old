@@ -25,7 +25,7 @@ SkyeUAS::SkyeUAS(MAVLinkProtocol* mavlink, int id) :
     addRollValue(0.0),
     addPitchValue(0.0),
     addYawValue(0.0),
-    inputMode(QGC_INPUT_MODE_NONE)
+    inputOverwrite(false)
 {
     imagePacketsArrived = 0;
     this->setUASName("SKYE");
@@ -145,9 +145,9 @@ void SkyeUAS::onboardParameterChanged(int uas, int component, QString parameterN
 
 void SkyeUAS::setManual6DOFControlCommands(double x , double y , double z , double a , double b, double c)
 {
-//    qDebug() << "Active:" << (inputMode != QGC_INPUT_MODE_NONE) << x << y << z << a << b << c;
+//    qDebug() << "Active:" << (!inputOverwrite) << x << y << z << a << b << c;
     // make sure input device is defined
-    if (inputMode != QGC_INPUT_MODE_NONE)
+    if (!inputOverwrite)
     {
         manualXVel = x * (double)sensitivityFactorTrans;
         manualYVel = y * (double)sensitivityFactorTrans;
@@ -170,7 +170,7 @@ void SkyeUAS::setManual6DOFControlCommands(double x , double y , double z , doub
 void SkyeUAS::set6DOFCommandsByWidget(double x, double y, double z, double a, double b, double c)
 {
     // only accept widget inputs when no input device defined
-    if (inputMode == QGC_INPUT_MODE_NONE)
+    if (inputOverwrite)
     {
         sendManualControlCommands6DoF(x, y, z, a, b, c);
     }
@@ -280,70 +280,9 @@ void SkyeUAS::setModeCommand(int mode)
     sendMessage(message);
 }
 
-
 uint8_t SkyeUAS::getMode()
 {
     return this->base_mode;
-}
-
-void SkyeUAS::setInputMode(QGC_INPUT_MODE input, bool active)
-{
-    bool oldInputState = inputMode & input;
-    qDebug() << "[SkyeUAS] setInputMode: request flag" << input << "set from" << oldInputState << "to" << active;
-
-    // check whether input mode has changed
-    if (oldInputState != active)
-    {
-        qDebug() << "[SkyeUAS] Set input" << input << "to" << active;
-        if (active)
-        {
-			// Activate this input
-			inputMode += input;
-        } else {
-			// Deactivate this input
-            inputMode -= input;
-        }
-
-        emit inputModeChanged(inputMode);
-    } else {
-        // do nothing
-        qDebug() << "[SkyeUAS] Input" << input << "was already" << active;
-    }
-}
-
-void SkyeUAS::setInputMode(QGC_INPUT_MODE input)
-{
-    qDebug() << "Set input mode" <<input;
-    // check if input mode changes
-    if (inputMode != input) {
-        inputMode = input;
-        emit inputModeChanged(inputMode);
-    } else {
-        // do nothing
-        qDebug() << "[SkyeUAS] Input was already" << inputMode;
-    }
-}
-
-void SkyeUAS::updateMouseInputStatus(bool active)
-{
-    if (active == false)
-    {
-        // 3dMouse starting not succeded. User must press button again
-        if ((inputMode & QGC_INPUT_MODE_MOUSE) == true)
-        {
-            inputMode -= QGC_INPUT_MODE_MOUSE;
-        }
-        emit resetMouseInput(false);
-    } else {
-        // 3dMouse starting succeded,
-        if ((inputMode & QGC_INPUT_MODE_MOUSE) == false)
-        {
-            inputMode += QGC_INPUT_MODE_MOUSE;
-        }
-        emit resetMouseInput(true);
-    }
-
-
 }
 
 void SkyeUAS::sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t blue, uint8_t mode, float frequency)

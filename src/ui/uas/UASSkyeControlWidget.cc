@@ -46,6 +46,7 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     baseMode(0),
     isArmed(false),
     inputMode(QGC_INPUT_MODE_NONE),
+    mouseAvailable(false),
     mouseTranslationEnabled(true),
     mouseRotationEnabled(true),
     inputMixer(NULL)
@@ -117,11 +118,6 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         if (mav)
         {
             disconnect(mav, SIGNAL(armingChanged(bool)), this, SLOT(updateArmingState(bool)));
-            disconnect(this, SIGNAL(changedInput(QGC_INPUT_MODE, bool)), mav, SLOT(setInputMode(QGC_INPUT_MODE, bool)));
-            disconnect(mav, SIGNAL(inputModeChanged(int)), this, SLOT(updateInput(int)));
-
-            disconnect(mav, SIGNAL(mouseButtonRotationChanged(bool)), this, SLOT(changeMouseRotationEnabled(bool)));
-            disconnect(mav, SIGNAL(mouseButtonTranslationChanged(bool)), this, SLOT(changeMouseTranslationEnabled(bool)));
 
             disconnect(inputMixer, SIGNAL(changed6DOFInput(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
 
@@ -149,7 +145,6 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
 
         //updateControlMode(mav->getControlMode);
         updateArmingState(mav->isArmed());
-        updateInput(mav->getInputMode());
 
         // start input mixer
         inputMixer = new UASSkyeInputMixer(this);
@@ -158,10 +153,6 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
 
         // Connect user interface controls
         connect(mav, SIGNAL(armingChanged(bool)), this, SLOT(updateArmingState(bool)));
-
-        connect(this, SIGNAL(changedInput(QGC_INPUT_MODE, bool)), mav, SLOT(setInputMode(QGC_INPUT_MODE, bool)));
-        connect(mav, SIGNAL(inputModeChanged(int)), this, SLOT(updateInput(int)));
-        connect(mav, SIGNAL(resetMouseInput(bool)), this, SLOT(updateMouseInput(bool)));
 
         connect(inputMixer, SIGNAL(changed6DOFInput(double,double,double,double,double,double)), mav, SLOT(setManual6DOFControlCommands(double,double,double,double,double,double)));
 
@@ -410,73 +401,33 @@ void UASSkyeControlWidget::updateInputButtonStyleSheet()
     this->setStyleSheet(style);
 }
 
-void UASSkyeControlWidget::updateInput(int input)
+void UASSkyeControlWidget::updateMouseAvailable(bool available)
 {
-    qDebug() << "[UASSkyeControl] changing input from" << inputMode << "to" << input;
-
-    // Update last-action-label when input mode has changed
-    if ( (inputMode & QGC_INPUT_MODE_MOUSE) != (input & QGC_INPUT_MODE_MOUSE) )
-    {
-        if (input & QGC_INPUT_MODE_MOUSE)
-        {
-            ui.lastActionLabel->setText("3dMouse input activated.");
-        } else {
-            ui.lastActionLabel->setText("3dMouse input deactivated.");
-        }
+    mouseAvailable = available;
+    if (!available) {
+        setMouseActive(false);
     }
-
-    if ( (inputMode & QGC_INPUT_MODE_TOUCH) != (input & QGC_INPUT_MODE_TOUCH) )
-    {
-        if (input & QGC_INPUT_MODE_TOUCH)
-        {
-            ui.lastActionLabel->setText("Touch input activated.");
-        } else {
-            ui.lastActionLabel->setText("Touch input deactivated.");
-        }
-    }
-
-    if ( (inputMode & QGC_INPUT_MODE_XBOX) != (input & QGC_INPUT_MODE_XBOX) )
-    {
-        if (input & QGC_INPUT_MODE_XBOX)
-        {
-            ui.lastActionLabel->setText("Xbox input activated.");
-        } else {
-            ui.lastActionLabel->setText("Xbox input deactivated.");
-        }
-    }
-
-    ui.mouseButton->setChecked(input & QGC_INPUT_MODE_MOUSE);
-    ui.touchButton->setChecked(input & QGC_INPUT_MODE_TOUCH);
-    ui.keyboardButton->setChecked(input & QGC_INPUT_MODE_KEYBOARD);
-    ui.xboxButton->setChecked(input & QGC_INPUT_MODE_XBOX);
-
-    inputMode = input;
-
-    updateInputButtonStyleSheet();
 }
 
-void UASSkyeControlWidget::updateMouseInput(bool active)
+void UASSkyeControlWidget::setMouseActive(bool active)
 {
     ui.mouseButton->setChecked(active);
-    if (active)
+    if (active && mouseAvailable)
     {
         // 3d mouse has successfully been started
-        ui.lastActionLabel->setText("3dMouse started");
+        ui.lastActionLabel->setText("3dMouse activated");
 
-        if ((inputMode & QGC_INPUT_MODE_MOUSE) == false)
-        {
-            inputMode += QGC_INPUT_MODE_MOUSE;
-        }
+        inputMode &= QGC_INPUT_MODE_MOUSE;
+
 
     } else {
         // 3d mouse starting not succeeded. User must push the button again
-        ui.lastActionLabel->setText("3dMouse was not initialized. Click again to activate...");
+        ui.lastActionLabel->setText("3dMouse ERROR");
 
-        if ((inputMode & QGC_INPUT_MODE_MOUSE) == true)
-        {
-            inputMode -= QGC_INPUT_MODE_MOUSE;
-        }
+        inputMode &= QGC_INPUT_MODE_MOUSE;
+        inputMode -= QGC_INPUT_MODE_MOUSE;
     }
+
 }
 
 void UASSkyeControlWidget::changeMouseTranslationEnabled(bool transEnabled)

@@ -218,6 +218,7 @@ MainWindow::MainWindow(QSplashScreen* splashScreen)
         connect(mouse, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), _skyeControl, SLOT(getMouse6DOFControlCommands(double,double,double,double,double,double)));
         connect(mouse, SIGNAL(mouseTranslationActiveChanged(bool)), _skyeControl, SLOT(changeMouseTranslationEnabled(bool)));
         connect(mouse, SIGNAL(mouseRotationActiveChanged(bool)), _skyeControl, SLOT(changeMouseRotationEnabled(bool)));
+        connect(mouse, SIGNAL(mouseAvailableChanged(bool)), _skyeControl, SLOT(updateMouseAvailable(bool)));
 //        qDebug() << "Connected mouse with skyeControl (mouse)";
     }
 #endif //QGC_MOUSE_ENABLED_LINUX

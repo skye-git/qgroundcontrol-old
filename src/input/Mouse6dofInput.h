@@ -55,6 +55,7 @@ protected:
     int sign(double value);
 
     bool done;
+    bool initialized;
     bool translationActive;
     bool rotationActive;
 
@@ -92,10 +93,10 @@ signals:
     void mouseRotationActiveChanged(bool rotationEnable);
 
     /**
-      * @brief Reset input mode (to indicate whether initialization succeded)
-      * @param active: true if mouse activated
+      * @brief Inform if mouse driver successfully started
+      * @param active: true if mouse available
       */
-    void resetMouseInputStatus(bool active);
+    void mouseAvailableChanged(bool available);
 
 public slots:
 #ifdef QGC_MOUSE_ENABLED_WIN

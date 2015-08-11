@@ -51,8 +51,9 @@ Mouse6dofInput::Mouse6dofInput() :
     mouse3DMaxB(350.0),   // TODO: check maximum value for plugged device
     mouse3DMaxC(350.0),   // TODO: check maximum value for plugged device
     done(false),
-    translationActive(true),
-    rotationActive(true),
+    initialized(false),
+    translationActive(false),
+    rotationActive(false),
     xValue(0.0),
     yValue(0.0),
     zValue(0.0),
@@ -62,17 +63,21 @@ Mouse6dofInput::Mouse6dofInput() :
 {
     if (spnav_open() < 0) {
         qDebug("Failed to open spnav (spacenavigator)");
+        initialized = false;
+        translationActive = false;
+        rotationActive = false;
     } else {
-        qDebug() << "[Mouse6dofInput] Opened spnav. But nobody knows.. TODO: Manage input availability.";
-//        mouseActive = true;
-//        emit resetMouseInputStatus(true);
-
-        emit mouseTranslationActiveChanged(translationActive);
-        emit mouseRotationActiveChanged(rotationActive);
+        qDebug() << "[Mouse6dofInput] Opened spnav.";
+        initialized = true;
+        translationActive = true;
+        rotationActive = true;
     }
 
-    if (!isRunning())
-    {
+    emit mouseAvailableChanged(initialized);
+    emit mouseTranslationActiveChanged(translationActive);
+    emit mouseRotationActiveChanged(rotationActive);
+
+    if (!isRunning()) {
         start();
     }
 }

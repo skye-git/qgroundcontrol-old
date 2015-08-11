@@ -42,6 +42,8 @@ QGCSkyeConfig::~QGCSkyeConfig()
 
 void QGCSkyeConfig::tabChanged(int tab)
 {
+    // TODO: clarify why tab is not used
+
     for (int i = 0; i < tabWidget->count(); i++)
     {
         qDebug() << "tabChanged call" << i << "for current index" << tabWidget->currentIndex();

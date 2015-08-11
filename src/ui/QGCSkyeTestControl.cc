@@ -243,7 +243,8 @@ void QGCSkyeTestControl::showEvent(QShowEvent *event)
 {
     if (uas != NULL) {
         // Disable all other inputs when test control is shown
-        uas->setInputMode(QGC_INPUT_MODE_NONE);
+//        uas->setInputMode(QGC_INPUT_MODE_NONE);
+        qDebug() << "WARNING: set inputOverwrite to false IS MISSING";
 
         // // Disarm on every view change (as in disney configuration)
         // changeMode(MAV_MODE_PREFLIGHT);

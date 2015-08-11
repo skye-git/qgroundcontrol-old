@@ -62,6 +62,12 @@ public:
     UASSkyeControlWidget(QWidget *parent = 0);
     ~UASSkyeControlWidget();
 
+    QString getControlModeString(SKYE_CONTROL_MODE ctrlMode);
+    /** @brief Update the mode button style sheet */
+    void updateControlModeStyleSheet();
+    /** @brief Update arm button style sheet */
+    void updateArmButtonStyleSheet();
+
 public slots:
     /** @brief Set the system this widget controls */
     void setUAS(UASInterface* uas);
@@ -71,22 +77,15 @@ public slots:
     /** @brief Transmit the operation mode */
     void transmitMode(SKYE_CONTROL_MODE mode);
 
-    QString getControlModeString(SKYE_CONTROL_MODE ctrlMode);
-
     /** @brief Update arm status */
     void updateArmingState(bool armed);
-    /** @brief Update arm button style sheet */
-    void updateArmButtonStyleSheet();
-//    /** @brief Update the mode */
-//    void updateMode(int uas, int baseMode);
     /** @brief Update the control mode */
     void updateControlMode(SKYE_CONTROL_MODE ctrlMode);
-    /** @brief Update the mode button style sheet */
-    void updateControlModeStyleSheet();
 
-    /** @brief Update input buttons */
-    void updateInput(int input);
-    void updateMouseInput(bool active);
+    /** @brief Update if mouse driver is ready */
+    void updateMouseAvailable(bool available);
+    /** @brief De-/activate mouse by check-button */
+    void setMouseActive(bool active);
     /** @brief Update 3dMouse button image */
     void changeMouseTranslationEnabled(bool transEnabled);
     /** @brief Update 3dMouse button image */
@@ -131,6 +130,7 @@ signals:
         int baseMode;                       ///< Base mode
         bool isArmed;                       ///< Engine state
         int inputMode;                      ///< Active device flags for input (see QGC_INPUT_MODE)
+        bool mouseAvailable;                ///< True when mouse driver running
         bool mouseTranslationEnabled;       ///< True when translational motions enabled
         bool mouseRotationEnabled;          ///< True when rotational motions enabled
 
