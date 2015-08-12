@@ -214,13 +214,7 @@ MainWindow::MainWindow(QSplashScreen* splashScreen)
 #if QGC_MOUSE_ENABLED_LINUX
     emit initStatusChanged(tr("Initializing 3D mouse interface"), Qt::AlignLeft | Qt::AlignBottom, QColor(62, 93, 141));
     mouse = new Mouse6dofInput();
-    if (_skyeControl!=NULL) {
-        connect(mouse, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), _skyeControl, SLOT(getMouse6DOFControlCommands(double,double,double,double,double,double)));
-        connect(mouse, SIGNAL(mouseTranslationActiveChanged(bool)), _skyeControl, SLOT(changeMouseTranslationEnabled(bool)));
-        connect(mouse, SIGNAL(mouseRotationActiveChanged(bool)), _skyeControl, SLOT(changeMouseRotationEnabled(bool)));
-        connect(mouse, SIGNAL(mouseAvailableChanged(bool)), _skyeControl, SLOT(updateMouseAvailable(bool)));
-//        qDebug() << "Connected mouse with skyeControl (mouse)";
-    }
+    setup6dofInput();
 #endif //QGC_MOUSE_ENABLED_LINUX
 
     // These also cause the screen to redraw so we need to update any OpenGL canvases in QML controls
@@ -542,13 +536,7 @@ void MainWindow::_createInnerDockWidget(const QString& widgetName)
         _skyeControl = new UASSkyeControlWidget(this);
         widget = _skyeControl;
 #ifdef QGC_MOUSE_ENABLED_LINUX
-        if (mouse!=NULL) {
-            connect(mouse, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), _skyeControl, SLOT(getMouse6DOFControlCommands(double,double,double,double,double,double)));
-            connect(mouse, SIGNAL(mouseTranslationActiveChanged(bool)), _skyeControl, SLOT(changeMouseTranslationEnabled(bool)));
-            connect(mouse, SIGNAL(mouseRotationActiveChanged(bool)), _skyeControl, SLOT(changeMouseRotationEnabled(bool)));
-
-//            qDebug() << "Connected mouse with skyeControl (innerDock)";
-        }
+        setup6dofInput();
 #endif
     } else if (widgetName == _uasListDockWidgetName) {
         widget = new UASListWidget(this);
@@ -1239,3 +1227,17 @@ void MainWindow::_showQmlTestWidget(void)
     new QmlTestWidget();
 }
 #endif
+
+#ifdef QGC_MOUSE_ENABLED_LINUX
+void MainWindow::setup6dofInput()
+{
+    if (_skyeControl!=NULL && mouse!=NULL) {
+        connect(_skyeControl, SIGNAL(changedInput(QGC_INPUT_MODE,bool)), mouse, SLOT(inputModeSet(QGC_INPUT_MODE,bool)));
+        connect(mouse, SIGNAL(mouse6dofChanged(double,double,double,double,double,double)), _skyeControl, SLOT(getMouse6DOFControlCommands(double,double,double,double,double,double)));
+        connect(mouse, SIGNAL(mouseTranslationActiveChanged(bool)), _skyeControl, SLOT(changeMouseTranslationEnabled(bool)));
+        connect(mouse, SIGNAL(mouseRotationActiveChanged(bool)), _skyeControl, SLOT(changeMouseRotationEnabled(bool)));
+        connect(mouse, SIGNAL(mouseAvailableChanged(bool)), _skyeControl, SLOT(updateMouseAvailable(bool)));
+        qDebug() << "[MainWindow] Connected 3D mouse with skyeControlWidget";
+    }
+}
+#endif //QGC_MOUSE_ENABLED_LINUX

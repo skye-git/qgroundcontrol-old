@@ -52,6 +52,7 @@ Mouse6dofInput::Mouse6dofInput() :
     mouse3DMaxC(350.0),   // TODO: check maximum value for plugged device
     done(false),
     initialized(false),
+    plugged(false),
     translationActive(false),
     rotationActive(false),
     xValue(0.0),
@@ -61,25 +62,7 @@ Mouse6dofInput::Mouse6dofInput() :
     bValue(0.0),
     cValue(0.0)
 {
-    if (spnav_open() < 0) {
-        qDebug("Failed to open spnav (spacenavigator)");
-        initialized = false;
-        translationActive = false;
-        rotationActive = false;
-    } else {
-        qDebug() << "[Mouse6dofInput] Opened spnav.";
-        initialized = true;
-        translationActive = true;
-        rotationActive = true;
-    }
 
-    emit mouseAvailableChanged(initialized);
-    emit mouseTranslationActiveChanged(translationActive);
-    emit mouseRotationActiveChanged(rotationActive);
-
-    if (!isRunning()) {
-        start();
-    }
 }
 #endif //QGC_MOUSE_ENABLED_LINUX
 
@@ -87,6 +70,82 @@ Mouse6dofInput::Mouse6dofInput() :
 Mouse6dofInput::~Mouse6dofInput()
 {
     done = true;
+}
+
+void Mouse6dofInput::clear()
+{
+    /* close everything */
+    if (initialized) {
+        if (isRunning()) done = true;
+    }
+
+    /* emit signals */
+    emit mouseTranslationActiveChanged(false);
+    emit mouseRotationActiveChanged(false);
+    emit mouseAvailableChanged(false);
+
+}
+
+void Mouse6dofInput::init()
+{
+    clear();
+
+    /* try to open spnav */
+    if (spnav_open() < 0) {
+        qDebug("[Mouse6dofInput] Failed to open spnav. Check if driver is configured correctly.");
+
+    } else {
+        qDebug() << "[Mouse6dofInput] Opened spnav";
+        initialized = true;
+
+//      TODO: Check if device is plugged in. For now, we just assume it is here
+        plugged = true;
+        translationActive = true;
+        rotationActive = true;
+
+
+//        /* check if device is plugged in */
+//        spnav_event spacenavEvent;
+//        qDebug() << "Wait for spnav event...";
+//        QTime time;
+//        time.start();
+//        int ret = spnav_wait_event(&spacenavEvent);
+//        qDebug() << "continue after" << time.elapsed() << "msec";
+//        if (ret) {
+//            // assume that event is available if device if plugged
+//            qDebug() << "[Mouse6dofInput] Device sent first event";
+//            plugged = true;
+//            translationActive = true;
+//            rotationActive = true;
+//        } else {
+//            qDebug() << "[Mouse6dofInput] No event available. Is device plugged in?";
+//            plugged = false;
+//            translationActive = false;
+//            rotationActive = false;
+//        }
+    }
+
+    /* emit signals */
+    emit mouseTranslationActiveChanged(translationActive);
+    emit mouseRotationActiveChanged(rotationActive);
+    emit mouseAvailableChanged(plugged);
+
+}
+
+void Mouse6dofInput::inputModeSet(QGC_INPUT_MODE mode, bool checked)
+{
+    if (mode == QGC_INPUT_MODE_MOUSE) {
+        if (checked) {
+            /* start reading mouse events */
+            init();
+            if (plugged && !isRunning()) {
+                start();
+            }
+        } else {
+            /* stop reading mouse events */
+            clear();
+        }
+    }
 }
 
 void Mouse6dofInput::run()
@@ -100,7 +159,15 @@ void Mouse6dofInput::run()
         if (done)
         {
            done = false;
+           spnav_close();
+           qDebug() << "[Mouse6dofInput] Closed spnav";
+
+           initialized = false;
+           plugged = false;
+
+           qDebug() << "[Mouse6dofInput] Exit thread";
            exit();
+           return;
         }
 
 #ifdef QGC_MOUSE_ENABLED_LINUX
@@ -271,6 +338,10 @@ void Mouse6dofInput::pollSpnavEvent()
             break;
         }
     }
+
+    /* remove all remaining motion events. We don't want any queue lined up */
+    spnav_remove_events(SPNAV_EVENT_MOTION);
+
 }
 #endif //QGC_MOUSE_ENABLED_LINUX
 

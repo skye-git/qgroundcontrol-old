@@ -18,6 +18,10 @@
 #include "Mouse3DInput.h"
 #endif //QGC_MOUSE_ENABLED_WIN
 
+#ifdef QGC_MOUSE_ENABLED_LINUX
+#include "QGCInputs.h"
+#endif //QGC_MOUSE_ENABLED_LINUX
+
 class Mouse6dofInput : public QThread
 {
     Q_OBJECT
@@ -28,6 +32,8 @@ public:
 #endif //QGC_MOUSE_ENABLED_WIN
 #ifdef QGC_MOUSE_ENABLED_LINUX
     Mouse6dofInput();
+    void clear();
+    void init();
 #endif //QGC_MOUSE_ENABLED_LINUX
 
     ~Mouse6dofInput();
@@ -56,6 +62,7 @@ protected:
 
     bool done;
     bool initialized;
+    bool plugged;
     bool translationActive;
     bool rotationActive;
 
@@ -108,6 +115,7 @@ public slots:
 #ifdef QGC_MOUSE_ENABLED_LINUX
     /** @brief Poll spnav event (motion or button) */
     void pollSpnavEvent();
+    void inputModeSet(QGC_INPUT_MODE mode, bool checked);
 #endif //QGC_MOUSE_ENABLED_LINUX
 
 };

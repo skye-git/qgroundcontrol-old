@@ -240,6 +240,10 @@ protected:
     void loadSettings();
     void storeSettings();
 
+#ifdef QGC_MOUSE_ENABLED_LINUX
+    void setup6dofInput();
+#endif
+
 
     QSettings settings;
 

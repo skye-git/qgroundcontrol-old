@@ -130,7 +130,7 @@ signals:
         int baseMode;                       ///< Base mode
         bool isArmed;                       ///< Engine state
         int inputMode;                      ///< Active device flags for input (see QGC_INPUT_MODE)
-        bool mouseAvailable;                ///< True when mouse driver running
+        bool mouseAvailable;                ///< True when mouse driver running and device plugged in
         bool mouseTranslationEnabled;       ///< True when translational motions enabled
         bool mouseRotationEnabled;          ///< True when rotational motions enabled
 
