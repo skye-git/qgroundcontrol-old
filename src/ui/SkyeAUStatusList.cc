@@ -57,7 +57,6 @@ void SkyeAUStatusList::setUAS(UASInterface *uas)
         {
             // disconnect
             disconnect(mav, SIGNAL(batteryStatusChanged(mavlink_battery_status_t*)), this, SLOT(checkBatteryStatusId(mavlink_battery_status_t*)));
-            disconnect(mav, SIGNAL(batteryCellsStatusChanged(mavlink_battery_cells_status_t*)), this, SLOT(checkBatteryCellsStatusId(mavlink_battery_cells_status_t*)));
             disconnect(mav, SIGNAL(actuationStatusChanged(mavlink_actuation_status_t*)), this, SLOT(checkActuationStatusId(mavlink_actuation_status_t*)));
             disconnect(this, SIGNAL(requestAllocationCase(int)), mav, SLOT(sendAllocationCase(int)));
             disconnect(this, SIGNAL(sendSkyeConfiguration(double[][])), mav, SLOT(sendSkyeConfiguration(double[][])));
@@ -72,7 +71,6 @@ void SkyeAUStatusList::setUAS(UASInterface *uas)
 
         // connect
         connect(mav, SIGNAL(batteryStatusChanged(mavlink_battery_status_t*)), this, SLOT(checkBatteryStatusId(mavlink_battery_status_t*)));
-        connect(mav, SIGNAL(batteryCellsStatusChanged(mavlink_battery_cells_status_t*)), this, SLOT(checkBatteryCellsStatusId(mavlink_battery_cells_status_t*)));
         connect(mav, SIGNAL(actuationStatusChanged(mavlink_actuation_status_t*)), this, SLOT(checkActuationStatusId(mavlink_actuation_status_t*)));
         connect(this, SIGNAL(requestAllocationCase(int)), mav, SLOT(sendAllocationCase(int)));
         connect(this, SIGNAL(sendSkyeConfiguration(double*)), mav, SLOT(sendSkyeConfiguration(double*)));
@@ -88,15 +86,6 @@ void SkyeAUStatusList::checkBatteryStatusId(mavlink_battery_status_t *battery)
         auList.value(battery->id)->updateBatteryStatus(battery);
     }
 }
-
-//void SkyeAUStatusList::checkBatteryCellsStatusId(mavlink_battery_cells_status_t *cells)
-//{
-//    if ( createAUStatusWidget(cells->accu_id) )
-//    {
-//        // Widget has been newly created. Forward data.
-//        auList.value(cells->accu_id)->updateBatteryCellsStatus(cells);
-//    }
-//}
 
 void SkyeAUStatusList::checkActuationStatusId(mavlink_actuation_status_t *au_status)
 {

@@ -24,8 +24,6 @@ public slots:
     void setUAS(UASInterface* uas);
     /** @brief Create new widget for every id */
     void checkBatteryStatusId(mavlink_battery_status_t *battery);
-//    /** @brief Create new widget for every id */
-//    void checkBatteryCellsStatusId(mavlink_battery_cells_status_t *cells);
     /** @brief Create new widget for every id */
     void checkActuationStatusId(mavlink_actuation_status_t *au_status);
     /** @brief Create new widget. Returns true when newly created. Returns false when already existing. */

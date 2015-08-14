@@ -29,9 +29,7 @@ SkyeAUStatus::SkyeAUStatus(int id, QWidget *parent) :
     setUAS(UASManager::instance()->getActiveUAS());
 
     batt = new mavlink_battery_status_t;
-//    cells = new mavlink_battery_cells_status_t;
     memset(batt, 0, sizeof(*batt));
-//    memset(cells, 0, sizeof(*cells));
 
     // update AU status list a first time
     emitEnabled();
@@ -57,7 +55,6 @@ void SkyeAUStatus::setUAS(UASInterface *uas)
         if (mav)
         {
             // Disconnect
-            disconnect(mav, SIGNAL(batteryCellsStatusChanged(mavlink_battery_cells_status_t*)), this, SLOT(updateBatteryCellsStatus(mavlink_battery_cells_status_t*)));
             disconnect(mav, SIGNAL(batteryStatusChanged(mavlink_battery_status_t*)), this, SLOT(updateBatteryStatus(mavlink_battery_status_t*)));
             disconnect(mav, SIGNAL(allocationValueChanged(mavlink_allocation_controller_raw_t*)), this, SLOT(updateThrustValue(mavlink_allocation_controller_raw_t*)));
             disconnect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocationCase(uint)));
@@ -73,7 +70,6 @@ void SkyeAUStatus::setUAS(UASInterface *uas)
         this->uasId = mav->getUASID();
 
         // connect
-        connect(mav, SIGNAL(batteryCellsStatusChanged(mavlink_battery_cells_status_t*)), this, SLOT(updateBatteryCellsStatus(mavlink_battery_cells_status_t*)));
         connect(mav, SIGNAL(batteryStatusChanged(mavlink_battery_status_t*)), this, SLOT(updateBatteryStatus(mavlink_battery_status_t*)));
         connect(mav, SIGNAL(allocationValueChanged(mavlink_allocation_controller_raw_t*)), this, SLOT(updateThrustValue(mavlink_allocation_controller_raw_t*)));
         connect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocationCase(int)));
@@ -89,29 +85,23 @@ void SkyeAUStatus::setAU(int id)
     ui->labelName->setText(QString("AU %1").arg(id+1));
 }
 
-//void SkyeAUStatus::updateBatteryCellsStatus(mavlink_battery_cells_status_t *battery_cells)
-//{
-//    if (this->auId == battery_cells->accu_id)
-//    {
-//        memcpy(cells, battery_cells, sizeof(*battery_cells));
-
-//        updateToolTipText();
-//        updateStyleSheets();
-//    }
-//}
-
 void SkyeAUStatus::updateBatteryStatus(mavlink_battery_status_t *battery)
 {
     if (this->auId == battery->id)
     {
         memcpy(batt, battery, sizeof(*battery));
 
-        // sum up cell voltages
-        voltage = 0;
+        /* sum up cell voltages */
+        voltage = 0.0;
         for (int i=0; i<10; i++) {
             if (batt->voltages[i] > 0) {
-                voltage+=battery->voltages[i];
+                voltage += (double)battery->voltages[i];
             }
+
+//            qDebug() << "BAT ID" << batt->id << "cellvoltage = " <<
+//                        batt->voltages[0] <<
+//                        batt->voltages[1] <<
+//                        batt->voltages[2];
         }
 
         ui->lcdNumberVoltage->display(voltage/1000.0);
