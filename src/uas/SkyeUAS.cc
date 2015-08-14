@@ -282,7 +282,7 @@ void SkyeUAS::sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t bl
 
 void SkyeUAS::sendAllocationCase(int disabledAU)
 {
-    sendParameterInt32(QString("SKYE_AL_CASE"), &(int32_t)disabledAU);
+    sendParameterInt32(QString("SKYE_AL_CASE"), &disabledAU);
     qDebug() << "[SkyeUAS] SENT SKYE_AL_CASE" << disabledAU;
 }
 
