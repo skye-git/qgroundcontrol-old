@@ -14,6 +14,35 @@
 #define STYLE_WHITEMODE "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #DDDDDD, stop: 1 #999999); border-radius: 2px; min-height: 35px; max-height: 50px; min-width: 80px; max-width: 80px; border: 3px solid; font-size: 15pt;"
 #define STYLE_GREENMODE "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #004433, stop: 1 #228822); border-radius: 2px; min-height: 35px; max-height: 50px; min-width: 80px; max-width: 80px; border: 3px solid; font-size: 15pt;"
 
+enum PX4_CUSTOM_MAIN_MODE {
+    PX4_CUSTOM_MAIN_MODE_MANUAL = 1,
+    PX4_CUSTOM_MAIN_MODE_ALTCTL,
+    PX4_CUSTOM_MAIN_MODE_POSCTL,
+    PX4_CUSTOM_MAIN_MODE_AUTO,
+    PX4_CUSTOM_MAIN_MODE_ACRO,
+    PX4_CUSTOM_MAIN_MODE_OFFBOARD,
+    PX4_CUSTOM_MAIN_MODE_STABILIZED,
+};
+
+enum PX4_CUSTOM_SUB_MODE_AUTO {
+    PX4_CUSTOM_SUB_MODE_AUTO_READY = 1,
+    PX4_CUSTOM_SUB_MODE_AUTO_TAKEOFF,
+    PX4_CUSTOM_SUB_MODE_AUTO_LOITER,
+    PX4_CUSTOM_SUB_MODE_AUTO_MISSION,
+    PX4_CUSTOM_SUB_MODE_AUTO_RTL,
+    PX4_CUSTOM_SUB_MODE_AUTO_LAND,
+    PX4_CUSTOM_SUB_MODE_AUTO_RTGS
+};
+
+union px4_custom_mode {
+    struct {
+        uint16_t reserved;
+        uint8_t main_mode;
+        uint8_t sub_mode;
+    };
+    uint32_t data;
+    float data_float;
+};
 
 QGCSkyeTestControl::QGCSkyeTestControl(QWidget *parent) : QWidget(parent),
     uas(NULL),
@@ -132,7 +161,7 @@ void QGCSkyeTestControl::setArmDisarmState()
             engineOn=true;
 			if (tab == QGC_SKYE_CONFIG_TAB_MOTOR || tab == QGC_SKYE_CONFIG_TAB_MOTOR_PPM)
             {
-                uas->setModeArm(MAV_MODE_FLAG_TEST_ENABLED, 0);
+                uas->setModeArm(MAV_MODE_MANUAL_DISARMED, PX4_CUSTOM_MAIN_MODE_OFFBOARD);
             } else {
                 uas->armSystem();
             }
@@ -140,7 +169,7 @@ void QGCSkyeTestControl::setArmDisarmState()
 		} else {
             //emit valueDirectControlChanged( 0, 0, 0, 0, 0, 0 );
             stopAll();
-            uas->setMode(MAV_MODE_PREFLIGHT, 0);
+            uas->setModeArm(MAV_MODE_MANUAL_DISARMED, PX4_CUSTOM_MAIN_MODE_OFFBOARD);
             uas->disarmSystem();
             engineOn=false;
         }
@@ -245,9 +274,16 @@ void QGCSkyeTestControl::showEvent(QShowEvent *event)
         // Disable all other inputs when test control is shown
         uas->setInputOverwrite(true);
 
-        // // Disarm on every view change (as in disney configuration)
-        // changeMode(MAV_MODE_PREFLIGHT);
-        // qDebug() << "DISARMED system because Skye config is shown.";
+        // test mode
+        if (this->uas) {
+            /* disarm when entering test control */
+            this->uas->disarmSystem();
+
+            /* this is offboard control */
+            union px4_custom_mode custom_mode;
+            custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_OFFBOARD;
+            this->uas->setMode(MAV_MODE_FLAG_CUSTOM_MODE_ENABLED, custom_mode.data);
+        }
     }
     QWidget::showEvent(event);
 }
@@ -256,9 +292,17 @@ void QGCSkyeTestControl::hideEvent(QHideEvent *event)
 {
     uas->setInputOverwrite(false);
 
-    // // Disarm on every view change (as in disney configuration)
-    // changeMode(MAV_MODE_PREFLIGHT);
-    // qDebug() << "DISARMED system because Skye config has been left.";
+    // test mode
+    if (this->uas) {
+        /* disarm when leaving test control */
+        this->uas->disarmSystem();
+
+        /* stop offboard control */
+        // TODO: it must not necessary be manual (could also be stab ...)
+        union px4_custom_mode custom_mode;
+        custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_MANUAL;
+        this->uas->setMode(MAV_MODE_FLAG_CUSTOM_MODE_ENABLED, custom_mode.data);
+    }
 
     QWidget::hideEvent(event);
 }

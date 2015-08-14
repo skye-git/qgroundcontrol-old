@@ -52,7 +52,7 @@ private:
     Ui::UASSkyeControlAdvancedWidget *ui;
     QString getStyleString(double value);
 
-    int uasId;
+    UASInterface *uas;
 
     bool addRollEnabled;
     bool addPitchEnabled;

@@ -34,7 +34,7 @@ QGCSkyeTestForce::~QGCSkyeTestForce()
 
 void QGCSkyeTestForce::setUAS(UASInterface* uas)
 {
-    if (this->uas != 0)
+    if (this->uas != NULL)
     {
         disconnect(this, SIGNAL(valueDirectControlChanged(double,double,double,double,double,double)), this->uas, SLOT(set6DOFCommandsByWidget(double,double,double,double,double,double)));
     }

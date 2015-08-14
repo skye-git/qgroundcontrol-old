@@ -40,6 +40,37 @@ This file is part of the PIXHAWK project
 #include "UASManager.h"
 #include "QGC.h"
 
+
+enum PX4_CUSTOM_MAIN_MODE {
+    PX4_CUSTOM_MAIN_MODE_MANUAL = 1,
+    PX4_CUSTOM_MAIN_MODE_ALTCTL,
+    PX4_CUSTOM_MAIN_MODE_POSCTL,
+    PX4_CUSTOM_MAIN_MODE_AUTO,
+    PX4_CUSTOM_MAIN_MODE_ACRO,
+    PX4_CUSTOM_MAIN_MODE_OFFBOARD,
+    PX4_CUSTOM_MAIN_MODE_STABILIZED,
+};
+
+enum PX4_CUSTOM_SUB_MODE_AUTO {
+    PX4_CUSTOM_SUB_MODE_AUTO_READY = 1,
+    PX4_CUSTOM_SUB_MODE_AUTO_TAKEOFF,
+    PX4_CUSTOM_SUB_MODE_AUTO_LOITER,
+    PX4_CUSTOM_SUB_MODE_AUTO_MISSION,
+    PX4_CUSTOM_SUB_MODE_AUTO_RTL,
+    PX4_CUSTOM_SUB_MODE_AUTO_LAND,
+    PX4_CUSTOM_SUB_MODE_AUTO_RTGS
+};
+
+union px4_custom_mode {
+    struct {
+        uint16_t reserved;
+        uint8_t main_mode;
+        uint8_t sub_mode;
+    };
+    uint32_t data;
+    float data_float;
+};
+
 UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     controlMode(SKYE_CONTROL_MODE_MAX),
     uas(NULL),
@@ -161,6 +192,9 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(mav, SIGNAL(skyeControlModeChanged(SKYE_CONTROL_MODE)), this, SLOT(updateControlMode(SKYE_CONTROL_MODE)));
 
     }
+
+    // start always with MANUAL mode
+    setManualControlMode();
 }
 
 UASSkyeControlWidget::~UASSkyeControlWidget()
@@ -292,6 +326,13 @@ void UASSkyeControlWidget::transmitMode(SKYE_CONTROL_MODE ctrlMode)
     SkyeUAS* mav = dynamic_cast<SkyeUAS*>(this->uas);
     if (mav)
     {
+        px4_custom_mode custom_mode;
+        if (ctrlMode > 0) {
+            custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_STABILIZED;
+        } else {
+            custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_MANUAL;
+        }
+        mav->setMode(MAV_MODE_FLAG_CUSTOM_MODE_ENABLED, custom_mode.data);
         mav->sendControlModeCommand(ctrlMode);
 
         // Display what has been sent

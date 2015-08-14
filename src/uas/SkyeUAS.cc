@@ -211,69 +211,51 @@ void SkyeUAS::sendManualControlCommands6DoF(float x, float y, float z, float phi
                                        theta,
                                        psi);
         sendMessage(message);
-        qDebug() << "SENT 6DOF CONTROL MESSAGE:" << x << y << z << phi << theta << psi;
+//        qDebug() << "SENT 6DOF CONTROL MESSAGE:" << x << y << z << phi << theta << psi;
     }
 }
 
 void SkyeUAS::setTestphaseCommandsByWidget(double Thrust1 , double Thrust2 , double Thrust3 , double Thrust4 , double Orientation1 , double Orientation2, double Orientation3, double Orientation4, bool usePpm)
 {
-    if (usePpm) {
-        // Negative thrust values are interpreted as PPM value (since skye2.1)
-        sendManualControlCommands12DoF(-(float)Thrust1,
-                                        (float)Orientation1,
-                                       -(float)Thrust2,
-                                        (float)Orientation2,
-                                       -(float)Thrust3,
-                                        (float)Orientation3,
-                                       -(float)Thrust4,
-                                        (float)Orientation4,
-                                        0,
-                                        0,
-                                        0,
-                                        0);
-    } else {
-        // Positive thrust values are interpreted as Newton (since skye2.1)
-        sendManualControlCommands12DoF((float)Thrust1,
-                                       (float)Orientation1,
-                                       (float)Thrust2,
-                                       (float)Orientation2,
-                                       (float)Thrust3,
-                                       (float)Orientation3,
-                                       (float)Thrust4,
-                                       (float)Orientation4,
-                                       0,
-                                       0,
-                                       0,
-                                       0);
+    if (inputOverwrite) {
+        float inputValues[12];
+        inputValues[0] = Thrust1;
+        inputValues[1] = Orientation1;
+        inputValues[2] = Thrust2;
+        inputValues[3] = Orientation2;
+        inputValues[4] = Thrust3;
+        inputValues[5] = Orientation3;
+        inputValues[6] = Thrust4;
+        inputValues[7] = Orientation4;
+        inputValues[8] = 0.f; //Thrust5;
+        inputValues[9] = 0.f; //Orientation5;
+        inputValues[10] = 0.f; //Thrust6;
+        inputValues[11] = 0.f; //Orientation6;
+
+        if (usePpm) {
+            // Negative thrust values are interpreted as PPM value (since skye2.1)
+            for (int i=0; i<6; i++) {
+                inputValues[2*i] = -inputValues[2*i];
+            }
+        }
+
+        sendManualControlCommands12DoF(inputValues);
+
+//        qDebug() << ": SENT 12 DOF CONTROL MESSAGE: [thrust,angle] ["
+//                 << Thrust1 << "," << Orientation1 << "]  ["
+//                 << Thrust2 << "," << Orientation2 << "]  ["
+//                 << Thrust3 << "," << Orientation3 << "]  ["
+//                 << Thrust4 << "," << Orientation4 << "]";
     }
 }
 
-void SkyeUAS::sendManualControlCommands12DoF(float Thrust1 , float Thrust2 , float Thrust3 , float Thrust4 , float Thrust5 , float Thrust6 , float Orientation1 , float Orientation2, float Orientation3, float Orientation4, float Orientation5, float Orientation6 )
+void SkyeUAS::sendManualControlCommands12DoF(float inputValues[12])
 {
-    if ((base_mode & MAV_MODE_FLAG_SAFETY_ARMED) && (base_mode & MAV_MODE_FLAG_TEST_ENABLED))
-    {
-        mavlink_message_t message;
+    mavlink_message_t message;
 
-        float inputValues[12];
-        inputValues[0] = Thrust1;
-        inputValues[6] = Orientation1;
-        inputValues[1] = Thrust2;
-        inputValues[7] = Orientation2;
-        inputValues[2] = Thrust3;
-        inputValues[8] = Orientation3;
-        inputValues[3] = Thrust4;
-        inputValues[9] = Orientation4;
-        inputValues[4] = Thrust5;
-        inputValues[10] = Orientation5;
-        inputValues[5] = Thrust6;
-        inputValues[11] = Orientation6;
-
-        mavlink_msg_setpoint_12dof_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId,
-                                                    inputValues);
-        sendMessage(message);
-        //qDebug() << ": SENT 8DOF CONTROL MESSAGE: 1Thrust" << Thrust1 << " 2Thrust: " << Thrust2 << " 3Thrust: " << Thrust3 << " 4Thrust: " << Thrust4 << " 1Orientation: " << Orientation1 << " 2Orientation: " << Orientation2 << " 3Orientation: " << Orientation3 << " 4Orientation: " << Orientation4;
-    }
-
+    mavlink_msg_setpoint_12dof_pack(mavlink->getSystemId(), mavlink->getComponentId(), &message, this->uasId,
+                                                inputValues);
+    sendMessage(message);
 }
 
 void SkyeUAS::setModeCommand(int mode)
@@ -300,13 +282,8 @@ void SkyeUAS::sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t bl
 
 void SkyeUAS::sendAllocationCase(int disabledAU)
 {
-	//mavlink_message_t msg;
-	//mavlink_msg_param_set_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, this->uasId, (uint8_t)MAV_COMP_ID_ALL, "SKYE_AL_CASE", (int32_t)disabledAU, (uint8_t)MAV_PARAM_TYPE_INT32);
-	//sendMessage(msg);
-	//setParameter(mavlink->getComponentId(), QString("SKYE_AL_CASE"), QVariant((int32_t)disabledAU));
-
-
-//	qDebug() << "[SkyeUAS] ERROR. Set Parameter not available. Not Sent SKYE_AL_CASE" << disabledAU;
+    sendParameterInt32(QString("SKYE_AL_CASE"), &(int32_t)disabledAU);
+    qDebug() << "[SkyeUAS] SENT SKYE_AL_CASE" << disabledAU;
 }
 
 void SkyeUAS::sendParameterFloat(QString param_name, float value)

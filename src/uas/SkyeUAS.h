@@ -78,7 +78,7 @@ public slots:
     /** @brief Set additive value for pitch manual control */
     void setAddPitchValue(double val) {addPitchValue = val;}
     /** @brief Set additive value for yaw manual control */
-    void setAddYawValue(double val) {addYawValue = val;}
+    void setAddYawValue(double val) {addYawValue = val; qDebug()<<"YAW ADDVALUE ="<<addYawValue;}
 
 	/** @brief Some onboard parameter changes need special actions. Handle them here! */
 	void onboardParameterChanged(int uas, int component, QString parameterName, int parameterCount, int parameterId, int type, QVariant value);
@@ -117,7 +117,7 @@ protected:
     /** Send a Manual 6DoF Control Command to MAV */
     void sendManualControlCommands6DoF(float x, float y, float z, float phi, float theta, float psi);
     /** @brief Send a Testphase Control Command to MAV: */
-    void sendManualControlCommands12DoF(float Thrust1 , float Thrust2 , float Thrust3 , float Thrust4 , float Thrust5 , float Thrust6 , float Orientation1 , float Orientation2, float Orientation3, float Orientation4, float Orientation5, float Orientation6 );
+    void sendManualControlCommands12DoF(float inputValues[12]);
 
     int airframe;                   ///< The airframe type
 

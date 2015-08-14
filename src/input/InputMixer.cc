@@ -80,7 +80,7 @@ void UASSkyeInputMixer::run()
                               valuesAccum[5] );
 
         // Sleep - Emit by approx. 20 Hz (1000 ms / 20 Hz = 50 ms)
-        QGC::SLEEP::msleep(50);
+        QGC::SLEEP::msleep(INPUTMIXER_PERIOD_MS);
     }
 }
 

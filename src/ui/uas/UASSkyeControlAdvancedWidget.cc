@@ -7,7 +7,7 @@
 UASSkyeControlAdvancedWidget::UASSkyeControlAdvancedWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::UASSkyeControlAdvancedWidget),
-    uasId(0),
+    uas(NULL),
     addRollEnabled(false),
     addPitchEnabled(false),
     addYawEnabled(false),
@@ -50,6 +50,7 @@ UASSkyeControlAdvancedWidget::UASSkyeControlAdvancedWidget(QWidget *parent) :
     ui->checkBoxYaw->setChecked(addYawEnabled);
 
     // connect uav activation
+    this->setUAS(UASManager::instance()->getActiveUAS());
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 
 }
@@ -62,11 +63,10 @@ UASSkyeControlAdvancedWidget::~UASSkyeControlAdvancedWidget()
 void UASSkyeControlAdvancedWidget::setUAS(UASInterface* uas)
 {
 
-    if (this->uasId!= 0)
+    if (this->uas!= NULL)
     {
-        UASInterface* oldUAS = UASManager::instance()->getUASForId(this->uasId);
-        this->uasId = 0;
-        SkyeUAS* mav = dynamic_cast<SkyeUAS*>(oldUAS);
+        SkyeUAS* mav = dynamic_cast<SkyeUAS*>(this->uas);
+        this->uas = NULL;
         if (mav)
         {
 
@@ -92,7 +92,7 @@ void UASSkyeControlAdvancedWidget::setUAS(UASInterface* uas)
     SkyeUAS* mav = dynamic_cast<SkyeUAS*>(uas);
     if (mav)
     {
-        this->uasId = mav->getUASID();
+        this->uas = uas;
 
         // Connect user interface controls
 
