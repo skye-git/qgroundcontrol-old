@@ -78,8 +78,8 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     isArmed(false),
     inputMode(QGC_INPUT_MODE_NONE),
     mouseAvailable(false),
-    mouseTranslationEnabled(true),
-    mouseRotationEnabled(true),
+    mouseTranslationEnabled(false),
+    mouseRotationEnabled(false),
     inputMixer(NULL)
 {
 
@@ -282,15 +282,19 @@ void UASSkyeControlWidget::setArmDisarmStatus()
 //            mav->setMode(MAV_MODE_MANUAL_DISARMED, 0);
             ui.lastActionLabel->setText(QString("Requested disarming of %1").arg(mav->getUASName()));
         }
+    } else {
+        ui.lastActionLabel->setText("No Skye connected!");
     }
+
 }
 
 void UASSkyeControlWidget::setManualControlMode()
 {
     if (controlMode != SKYE_CONTROL_MODE_MANUAL) {
-        transmitMode(SKYE_CONTROL_MODE_MANUAL);
-        ui.manControlButton->setObjectName("manControlButtonWhite");
-        ui.manControlButton->setStyleSheet("");
+        if (transmitMode(SKYE_CONTROL_MODE_MANUAL)) {
+            ui.manControlButton->setObjectName("manControlButtonWhite");
+            ui.manControlButton->setStyleSheet("");
+        }
     } else {
         ui.lastActionLabel->setText(QString("Already in %1 mode").arg(getControlModeString(controlMode)));
     }
@@ -300,9 +304,10 @@ void UASSkyeControlWidget::setManualControlMode()
 void UASSkyeControlWidget::set5dofControlMode()
 {
     if (controlMode != SKYE_CONTROL_MODE_5DOF) {
-        transmitMode(SKYE_CONTROL_MODE_5DOF);
-        ui.stab5dofControlButton->setObjectName("stab5dofControlButtonWhite");
-        ui.stab5dofControlButton->setStyleSheet("");
+        if (transmitMode(SKYE_CONTROL_MODE_5DOF)) {
+            ui.stab5dofControlButton->setObjectName("stab5dofControlButtonWhite");
+            ui.stab5dofControlButton->setStyleSheet("");
+        }
     } else {
         ui.lastActionLabel->setText(QString("Already in %1 mode").arg(getControlModeString(controlMode)));
     }
@@ -312,16 +317,17 @@ void UASSkyeControlWidget::set5dofControlMode()
 void UASSkyeControlWidget::set6dofControlMode()
 {
     if (controlMode != SKYE_CONTROL_MODE_6DOF) {
-        transmitMode(SKYE_CONTROL_MODE_6DOF);
-        ui.stab6dofControlButton->setObjectName("stab6dofControlButtonWhite");
-        ui.stab6dofControlButton->setStyleSheet("");
+        if (transmitMode(SKYE_CONTROL_MODE_6DOF)) {
+            ui.stab6dofControlButton->setObjectName("stab6dofControlButtonWhite");
+            ui.stab6dofControlButton->setStyleSheet("");
+        }
     } else {
         ui.lastActionLabel->setText(QString("Already in %1 mode").arg(getControlModeString(controlMode)));
     }
 }
 
 
-void UASSkyeControlWidget::transmitMode(SKYE_CONTROL_MODE ctrlMode)
+bool UASSkyeControlWidget::transmitMode(SKYE_CONTROL_MODE ctrlMode)
 {
     SkyeUAS* mav = dynamic_cast<SkyeUAS*>(this->uas);
     if (mav)
@@ -339,10 +345,12 @@ void UASSkyeControlWidget::transmitMode(SKYE_CONTROL_MODE ctrlMode)
         QString modeStr = getControlModeString(ctrlMode);
         ui.lastActionLabel->setText(QString("Sent mode %1 to %2").arg(modeStr).arg(mav->getUASName()));
         qDebug() << "Send mode" << modeStr << "to" << mav->getUASName();
+        return true;
     }
     else
     {
         ui.lastActionLabel->setText("No Skye connected!");
+        return false;
     }
 }
 
@@ -434,13 +442,13 @@ void UASSkyeControlWidget::updateInputButtonStyleSheet()
     }
     if (!mouseTranslationEnabled && !mouseRotationEnabled)
     {
-        style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse.png); background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #AA0000, stop: 1 #FF0000);}");
+        style.append("QPushButton#mouseButton {image: url(:/res/input/3dmouse.png);}");
     }
 
     style.append("QPushButton#touchButton {image: url(:/res/input/touch.png);}");
     style.append("QPushButton#keyboardButton {image: url(:/res/input/keyboard.png); }");
     style.append("QPushButton#xboxButton {image: url(:/res/input/xbox.png); }");
-    style.append("QPushButton:disabled {background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #BBBBBB, stop: 1 #444444); color: #333333 }");
+    style.append("QPushButton:disabled {background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #444444, stop: 1 #444444); color: #333333 }");
     this->setStyleSheet(style);
 }
 

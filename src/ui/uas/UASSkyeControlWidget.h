@@ -74,8 +74,6 @@ public slots:
 
     /** @brief Set arm/disarm command */
     void setArmDisarmStatus();
-    /** @brief Transmit the operation mode */
-    void transmitMode(SKYE_CONTROL_MODE mode);
 
     /** @brief Update arm status */
     void updateArmingState(bool armed);
@@ -124,6 +122,9 @@ signals:
 
 
     protected:
+        /** @brief Transmit the operation mode. Returns true if mode is transmitted. */
+        bool transmitMode(SKYE_CONTROL_MODE mode);
+
         SKYE_CONTROL_MODE controlMode;      ///< Copy of SKYE_C_MODE onboard parameter
 
         UASInterface *uas;                  ///< Reference to the current uas

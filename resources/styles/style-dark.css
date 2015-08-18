@@ -642,4 +642,15 @@ QPushButton#mouseButton, QPushButton#touchButton, QPushButton#xboxButton, QPushB
     font-size: 15pt;
 }
 
+QPushButton::checked#mouseButton, QPushButton::checked#touchButton, QPushButton::checked#xboxButton, QPushButton::checked#keyboardButton {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #44AA44, stop: 1 #99AA99);
+    border-radius: 2px;
+    min-height: 45px;
+    max-height: 60px;
+    min-width: 80px;
+    max-width: 80px;
+    border: 2px solid;
+    font-size: 15pt;
+}
+
 
