@@ -29,7 +29,7 @@ public:
 signals:
     void transSliderValueChanged(float);
     void rotSliderValueChanged(float);
-    void liftSliderValueChanged(int);
+    void liftSliderValueChanged(double);
     void rollSliderValueChanged(double);
     void pitchSliderValueChanged(double);
     void yawSliderValueChanged(double);
@@ -58,7 +58,7 @@ private:
     bool addPitchEnabled;
     bool addYawEnabled;
 
-    int liftValue;
+    double liftValue;
     double sensitivityTrans;
     double sensitivityRot;
 
@@ -66,7 +66,6 @@ private slots:
     void changeTransValue(double value);
     void changeRotValue(double value);
     void changeLiftValue(double value);
-    void changeLiftValue(int value);
     void changeRollValue(double value);
     void changePitchValue(double value);
     void changeYawValue(double value);

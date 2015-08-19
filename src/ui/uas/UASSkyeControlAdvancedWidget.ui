@@ -101,6 +101,9 @@
        <property name="decimals">
         <number>3</number>
        </property>
+       <property name="minimum">
+        <double>-0.200000000000000</double>
+       </property>
        <property name="maximum">
         <double>0.200000000000000</double>
        </property>

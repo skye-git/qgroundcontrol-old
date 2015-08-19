@@ -8,17 +8,15 @@
 
 #define QGC_SENSITIVITY_TRANS_DEFAULT 0.5f
 #define QGC_SENSITIVITY_ROT_DEFAULT 0.5f
-#define QGC_LIFT_VALUE_DEFAULT 0.0f
+
+#define QGC_SKYE_LIFT_MAX 0.2
+#define QGC_SKYE_LIFT_DEFAULT 0.0
 
 #include <QPolygonF>
 #include <QTimer>
 #include <QVector>
 #include "UAS.h"
 #include "QGCInputs.h"
-
-#define MAX_LIFT_VALUE 0.2
-#define LIFT_RESOLUTION 999     //values from 0 to LIFT_RESOLUTION are possible
-
 
 class SkyeUAS : public UAS
 {
@@ -72,7 +70,7 @@ public slots:
     /** @brief Send mode via mavlink command */
     void setModeCommand(int mode);
     /** @brief Set additive value for z manual control */
-    void setLiftValue(int val);
+    void setLiftValue(double val);
     /** @brief Set additive value for roll manual control */
     void setAddRollValue(double val) {addRollValue = val;}
     /** @brief Set additive value for pitch manual control */
@@ -111,7 +109,6 @@ signals:
     void skyeControlModeChanged(SKYE_CONTROL_MODE ctrlMode);
     void sensitivityTransChanged(double);
     void sensitivityRotChanged(double);
-    void liftValueChanged(int);
 
 protected:
     /** Send a Manual 6DoF Control Command to MAV */
@@ -138,8 +135,7 @@ protected:
     float sensitivityFactorTrans;   ///< Translational factor for manual control [remark: abs(deviceInput) <= 1 ]
     float sensitivityFactorRot;     ///< Rotational factor for manual control [remark: abs(deviceInput) <= 1 ]
 
-    int liftValue;                  ///< Additive term for manual control: int from controller and slider
-    float liftValueFloat;           ///< liftvalue normalized from 0 to 1
+    double liftValue;               ///< liftvalue
     double addRollValue;            ///< Additive term for manual control
     double addPitchValue;           ///< Additive term for manual control
     double addYawValue;             ///< Additive term for manual control

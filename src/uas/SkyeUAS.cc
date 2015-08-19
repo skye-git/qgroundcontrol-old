@@ -20,8 +20,7 @@ SkyeUAS::SkyeUAS(MAVLinkProtocol* mavlink, int id) :
     manualZRot(0.0),
     sensitivityFactorTrans(QGC_SENSITIVITY_TRANS_DEFAULT),
     sensitivityFactorRot(QGC_SENSITIVITY_ROT_DEFAULT),
-    liftValue(QGC_LIFT_VALUE_DEFAULT*LIFT_RESOLUTION),
-    liftValueFloat(QGC_LIFT_VALUE_DEFAULT),
+    liftValue(QGC_SKYE_LIFT_DEFAULT),
     addRollValue(0.0),
     addPitchValue(0.0),
     addYawValue(0.0),
@@ -151,7 +150,7 @@ void SkyeUAS::setManual6DOFControlCommands(double x , double y , double z , doub
     {
         manualXVel = x * (double)sensitivityFactorTrans;
         manualYVel = y * (double)sensitivityFactorTrans;
-        manualZVel = z * (double)sensitivityFactorTrans - (double)liftValueFloat;
+        manualZVel = z * (double)sensitivityFactorTrans - liftValue;
         manualZVel = qMin((double)sensitivityFactorTrans, qMax(-(double)sensitivityFactorTrans, manualZVel));
         manualXRot = a * (double)sensitivityFactorRot + addRollValue;
         manualYRot = b * (double)sensitivityFactorRot + addPitchValue;
@@ -371,14 +370,12 @@ void SkyeUAS::sendControlModeCommand(SKYE_CONTROL_MODE ctrlMode)
 //    sendMessage(msg);
 }
 
-void SkyeUAS::setLiftValue(int val)
+void SkyeUAS::setLiftValue(double val)
 {
-    if (val != liftValue and val >= 0 and val <= LIFT_RESOLUTION)
+    if (val != liftValue and val >= -QGC_SKYE_LIFT_MAX and val <= QGC_SKYE_LIFT_MAX)
     {
         liftValue = val;
         qDebug() << "[SkyeUAS] lift factor" << val;
-        emit liftValueChanged(liftValue);
-        liftValueFloat = liftValue / (float)LIFT_RESOLUTION;
     }
 
 }
