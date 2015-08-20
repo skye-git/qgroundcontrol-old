@@ -66,7 +66,7 @@ private:
     bool enabled;                       ///< true if LED enabled
 
     QColorDialog *dialog;               ///< Dialog to choose color
-    bool dialogVisible;                 ///< boolean to hide/show color dialog
+//    bool dialogVisible;                 ///< boolean to hide/show color dialog
 
     QTime timeOfSubmit;                 ///< Time of last submit
 };

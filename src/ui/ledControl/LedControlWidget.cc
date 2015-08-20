@@ -39,8 +39,8 @@ LedControlWidget::LedControlWidget(QWidget *parent) :
     mode(LED_CONTROL_MODE_CONSTANT),
     frequency(0.0),
     enabled(true),
-    dialog(new QColorDialog),
-    dialogVisible(false)
+    dialog(new QColorDialog)
+//    dialogVisible(false)
 {
     ui->setupUi(this);
 
@@ -128,15 +128,18 @@ void LedControlWidget::setUAS(UASInterface* uas)
 
 void LedControlWidget::changeColorDialogVisibility()
 {
-    if (dialogVisible)
-    {
-        dialog->close();
-        ui->ledColorButton->setText("Show colors");
-    } else {
-        dialog->open();
-        ui->ledColorButton->setText("Hide colors");
+    if (!dialog->isVisible()) {
+        dialog->show();
     }
-    dialogVisible = !dialogVisible;
+//    if (dialogVisible)
+//    {
+//        dialog->close();
+//        ui->ledColorButton->setText("Show colors");
+//    } else {
+//        dialog->open();
+//        ui->ledColorButton->setText("Hide colors");
+//    }
+//    dialogVisible = !dialogVisible;
 }
 
 void LedControlWidget::changeColor(QColor newColor)
