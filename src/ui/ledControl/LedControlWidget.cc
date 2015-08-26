@@ -44,6 +44,8 @@ LedControlWidget::LedControlWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    this->setUAS(UASManager::instance()->getActiveUAS());
+
     // connect active uas
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 
@@ -96,6 +98,7 @@ LedControlWidget::~LedControlWidget()
 
 void LedControlWidget::setUAS(UASInterface* uas)
 {
+    qDebug() << "setUAS (LED)";
     if (this->uasId!= 0)
     {
         UASInterface* oldUAS = UASManager::instance()->getUASForId(this->uasId);
@@ -113,6 +116,7 @@ void LedControlWidget::setUAS(UASInterface* uas)
     SkyeUAS* mav = dynamic_cast<SkyeUAS*>(uas);
     if (mav)
     {
+        qDebug() << "Connected LED CONTROL";
         this->uasId = mav->getUASID();
 
         // start timer and initial submit

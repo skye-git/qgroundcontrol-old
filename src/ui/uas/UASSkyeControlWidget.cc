@@ -141,6 +141,7 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
 
 void UASSkyeControlWidget::setUAS(UASInterface* uas)
 {
+    qDebug() << "setUAS (uasskyecontrol)";
     if (this->uas!= NULL)
     {
         // Disconnect old system
