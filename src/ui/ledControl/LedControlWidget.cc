@@ -38,7 +38,7 @@ LedControlWidget::LedControlWidget(QWidget *parent) :
     blue(0),
     mode(LED_CONTROL_MODE_CONSTANT),
     frequency(0.0),
-    enabled(true),
+    enabled(false),
     dialog(new QColorDialog)
 //    dialogVisible(false)
 {
@@ -69,6 +69,11 @@ LedControlWidget::LedControlWidget(QWidget *parent) :
     ui->spinBoxGreen->setRange(0,COLOR_DEPTH);
     ui->spinBoxBlue->setRange(0,COLOR_DEPTH);
 
+    // set default value of color spinboxes
+    ui->spinBoxRed->setValue(COLOR_DEPTH);
+    ui->spinBoxGreen->setValue(COLOR_DEPTH);
+    ui->spinBoxBlue->setValue(COLOR_DEPTH);
+
     // offer mode settings according to LED_CONTROL_MODE enumerator
     // ui->comboBoxMode->insertItems(0, QStringList() << "CONSTANT" << "BLINK" << "PULS" << "RAINBOW" << "DISCO");
     ui->comboBoxMode->insertItem(LED_CONTROL_MODE_CONSTANT, GetNameForLedColorMode(LED_CONTROL_MODE_CONSTANT));
@@ -83,6 +88,7 @@ LedControlWidget::LedControlWidget(QWidget *parent) :
     // initialize frequency spinbox
     ui->doubleSpinBoxFrequency->setRange(0.0, 100.0);
     ui->doubleSpinBoxFrequency->setSingleStep(0.1);
+    ui->doubleSpinBoxFrequency->setValue(1.0);
     connect(ui->doubleSpinBoxFrequency, SIGNAL(valueChanged(double)), this, SLOT(changeFrequency(double)));
 
     // connect on/off switch and do initial update
