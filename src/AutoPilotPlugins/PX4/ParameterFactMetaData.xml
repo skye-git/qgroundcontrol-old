@@ -3738,12 +3738,118 @@ otherwise the value indicates the specific rc channel to use</long_desc>
       <short_desc>TEST_DEV</short_desc>
     </parameter>
   </group>
-  <group name="Skye Control">
-    <parameter default="1" name="SKYE_C_MODE" type="INT32">
-      <short_desc>Skye control mode</short_desc>
-      <long_desc>The Skye control mode defines how the system is controlled. 0 means MANUAL control (no attitude controller). 1 means 5DOF control (attitude controller, but roll is blocked). 2 means 6DOF control (attitude controller).</long_desc>
-      <min>0</min>
-      <max>2</max>
-    </parameter>
+  <group name="Skye Attcontrol">
+  <parameter default="1" name="SKYE_C_MODE" type="INT32">
+    <short_desc>Skye control mode</short_desc>
+    <long_desc>The Skye control mode defines how the system is controlled. 0 means MANUAL control (no attitude controller). 1 means 5DOF control (attitude controller, but roll is blocked). 2 means 6DOF control (attitude controller).</long_desc>
+    <min>0</min>
+    <max>2</max>
+  </parameter>
+  <parameter default="0.35" name="SKYE_C_ATT_P" type="FLOAT">
+    <short_desc>Skye attitude controller P value</short_desc>
+    <long_desc>Proportional parameter for attitude controller.</long_desc>
+    <min>0</min>
+    <max>10</max>
+  </parameter>
+  <parameter default="4.7" name="SKYE_C_ATT_I" type="FLOAT">
+    <short_desc>Skye attitude controller I value</short_desc>
+    <long_desc>Integral parameter for attitude controller.</long_desc>
+    <min>0</min>
+    <max>10</max>
+  </parameter>
+  <parameter default="3.5" name="SKYE_C_ATTR_P" type="FLOAT">
+    <short_desc>Skye angular rate controller P value</short_desc>
+    <long_desc>Proportional parameter for angular rate controller.</long_desc>
+    <min>0</min>
+    <max>10</max>
+  </parameter>
+  <parameter default="1.0" name="SKYE_MAX_ANGVEL" type="FLOAT">
+    <short_desc>Skye maximum angular velocity.</>
+    <long_desc>Scaling factor for the maximum angular velocity controller input.</long_desc>
+    <min>0</min>
+    <max>10</max>
+    <unit>rad/s</unit>
+  </parameter>
+  <parameter default="24" name="SKYE_MAX_MOM" type="FLOAT">
+    <short_desc>Skye maximum moment</short_desc>
+    <long_desc>In STABALIZED mode: Threshold for maximum moment of attitude controller. In MANUAL mode: Scaling factor for angular input.</long_desc>
+    <min>0</min>
+    <max>50</max>
+    <unit>Nm</unit>
+  </parameter>
+  <parameter default="500" name="SKYE_MAX_MAN_DT" type="FLOAT">
+    <short_desc>Maximum manual input delay</short_desc>
+    <long_desc>Manual input parameter: Input values within specified interval are used for input average.</long_desc>
+    <min>0</min>
+    <max>2000</max>
+    <unit>ms</unit>
+  </parameter>
+  </group>
+  <group name="Skye Poscontrol">
+  <parameter default="5" name="SKYE_MAX_VEL" type="FLOAT">
+    <short_desc>Skye maximum velocity</short_desc>
+    <long_desc>Maxiumum linear velocity for controller input.</long_desc>
+    <min>0</min>
+    <max>10</max>
+    <unit>m/s</unit>
+  </parameter>
+  <parameter default="30" name="SKYE_MAX_FORCE" type="FLOAT">
+    <short_desc>Skye maximum force</short_desc>
+    <long_desc>MANUAL mode: Scaling factor for linear input.</long_desc>
+    <min>0</min>
+    <max>50</max>
+    <unit>N</unit>
+  </parameter>
+  <parameter default="3" name="SKYE_C_PMODE" type="INT32">
+    <short_desc>Skye position control mode</short_desc>
+    <long_desc>Position controller mode. 0: direct control; 1: velocity controller; 2: position controller; 3: direct pitching ball (recommended).</long_desc>
+    <min>0</min>
+    <max>5</max>
+  </parameter>
+  <parameter default="1" name="SKYE_C_POS_A" type="FLOAT">
+    <short_desc>Position controller A value</short_desc>
+    <long_desc>Position control parameter.</long_desc>
+    <min>0</min>
+    <max>50</max>
+  </parameter>
+  <parameter default="0.5" name="SKYE_C_POS_P" type="FLOAT">
+    <short_desc>Position controller P value</short_desc>
+    <long_desc>Position control proportional parameter.</long_desc>
+    <min>0</min>
+    <max>10</max>
+  </parameter>
+  <parameter default="4" name="SKYE_C_POS_TI" type="FLOAT">
+    <short_desc>Position controller TI value</short_desc>
+    <long_desc>Position control time parameter.</long_desc>
+    <min>0</min>
+    <max>50</max>
+  </parameter>
+  <parameter default="5" name="SKYE_C_POS_PI" type="FLOAT">
+    <short_desc>Position controller PI value</short_desc>
+    <long_desc>Proportional parameter for inner position control loop.</long_desc>
+    <min>0</min>
+    <max>50</max>
+  </parameter>
+  <parameter default="9.4" name="SKYE_C_POS_FIL" type="FLOAT">
+    <short_desc>Position control prefilter value</short_desc>
+    <long_desc>Prefilter parameter for position controller.</long_desc>
+    <min>0</min>
+    <max>50</max>
+  </parameter>
+  <parameter default="0" name="SKYE_C_POS_GRAV" type="FLOAT">
+    <short_desc>Gravity compensation</short_desc>
+    <long_desc>Feedforward uplift value. This is only used in pos/vel controller. For manual input, it is directly added to z input.</long_desc>
+    <min>-50</min>
+    <max>50</max>
+    <unit>-</unit>
+  </parameter>
+  </group>
+  <group name="Skye Allocation">
+  <parameter default="0" name="SKYE_AL_CASE" type="INT32">
+    <short_desc>Allocation case</short_desc>
+    <long_desc>Determines which actuation units are used. 0: all AUs; i: all except AU i.</long_desc>
+    <min>0</min>
+    <max>4</max>
+  </parameter>
   </group>
 </parameters>
