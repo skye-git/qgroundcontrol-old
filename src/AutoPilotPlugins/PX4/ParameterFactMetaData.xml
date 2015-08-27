@@ -3852,4 +3852,12 @@ otherwise the value indicates the specific rc channel to use</long_desc>
     <max>4</max>
   </parameter>
   </group>
+  <group name="Skye Interface">
+  <parameter default="0" name="SKYE_LED_GROUP" type="INT32">
+    <short_desc>Active LED group</short_desc>
+    <long_desc>Determines which LED group on LED node are active. -1: all, 0-3 only spefific node.</long_desc>
+    <min>-1</min>
+    <max>3</max>
+  </parameter>
+  </group>
 </parameters>
