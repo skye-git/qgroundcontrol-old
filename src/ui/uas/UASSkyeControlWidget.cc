@@ -192,6 +192,8 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
         connect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocCase(int)));
         connect(mav, SIGNAL(skyeControlModeChanged(SKYE_CONTROL_MODE)), this, SLOT(updateControlMode(SKYE_CONTROL_MODE)));
 
+        // Request parameters
+        mav->requestParameters();
     }
 
     // start always with MANUAL mode

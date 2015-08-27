@@ -18,8 +18,8 @@ SkyeUAS::SkyeUAS(MAVLinkProtocol* mavlink, int id) :
     manualXRot(0.0),
     manualYRot(0.0),
     manualZRot(0.0),
-    sensitivityFactorTrans(QGC_SENSITIVITY_TRANS_DEFAULT),
-    sensitivityFactorRot(QGC_SENSITIVITY_ROT_DEFAULT),
+    maxLinearInputParam(0.0),
+    maxAngularValueParam(0.0),
     liftValue(QGC_SKYE_LIFT_DEFAULT),
     addRollValue(0.0),
     addPitchValue(0.0),
@@ -128,14 +128,31 @@ void SkyeUAS::receiveMessage(LinkInterface *link, mavlink_message_t message)
     }
 }
 
+void SkyeUAS::requestParameters()
+{
+    mavlink_message_t msg;
+    mavlink_param_request_list_t request;
+    request.target_system = mavlink->getSystemId();
+    request.target_component = mavlink->getComponentId();
+    mavlink_msg_param_request_list_encode(mavlink->getSystemId(), mavlink->getComponentId(), &msg, &request);
+    sendMessage(msg);
+}
+
 void SkyeUAS::onboardParameterChanged(int uas, int component, QString parameterName, int parameterCount, int parameterId, int type, QVariant value)
 {
+	Q_UNUSED(component);
+	Q_UNUSED(parameterCount);
+	Q_UNUSED(parameterId);
+	Q_UNUSED(type);
 	if (uas == this->uasId) {		
 		if (parameterName ==  QString("SKYE_AL_CASE")) {
 			emit allocCaseChanged(value.toInt());
 		} else if (parameterName == QString("SKYE_C_MODE")) {
 			emit skyeControlModeChanged((SKYE_CONTROL_MODE)value.toInt());
-		} else {
+		} else if (parameterName == QString("SKYE_MAX_VEL")) {
+			emit maxLinearInputChanged((double)value.toFloat());
+		} else if (parameterName == QString("SKYE_MAX_ANGVEL")) {
+			emit maxAngularInputChanged((double)value.toFloat());
 		}
 	} else {
 		qDebug() << "Received onboard parameter from unknown system id" << uas;
@@ -148,13 +165,13 @@ void SkyeUAS::setManual6DOFControlCommands(double x , double y , double z , doub
     // make sure input device is defined
     if (!inputOverwrite)
     {
-        manualXVel = x * (double)sensitivityFactorTrans;
-        manualYVel = y * (double)sensitivityFactorTrans;
-        manualZVel = z * (double)sensitivityFactorTrans - liftValue;
-        manualZVel = qMin((double)sensitivityFactorTrans, qMax(-(double)sensitivityFactorTrans, manualZVel));
-        manualXRot = a * (double)sensitivityFactorRot + addRollValue;
-        manualYRot = b * (double)sensitivityFactorRot + addPitchValue;
-        manualZRot = c * (double)sensitivityFactorRot + addYawValue;
+        manualXVel = x;
+        manualYVel = y;
+        manualZVel = z - liftValue;
+        manualZVel = qMin(1.0, qMax(-1.0, manualZVel));
+        manualXRot = a + addRollValue;
+        manualYRot = b + addPitchValue;
+        manualZRot = c + addYawValue;
         sendManualControlCommands6DoF(manualXVel, manualYVel, manualZVel, manualXRot, manualYRot, manualZRot);
     } else {
         manualXVel = 0.0;
@@ -380,26 +397,28 @@ void SkyeUAS::setLiftValue(double val)
 
 }
 
-void SkyeUAS::setSensitivityFactorTrans(float val)
+void SkyeUAS::setMaxLinearInputValue(double val)
 {
-    if (sensitivityFactorTrans!= val)
+    if (maxLinearInputParam!= val)
     {
-        sensitivityFactorTrans = val;
-        qDebug() << "[SkyeUAS] sensitivity translation" << val;
-        emit sensitivityTransChanged((double)sensitivityFactorTrans);
+        qDebug() << "[SkyeUAS] max linear input" << val;
+
+        maxLinearInputParam = val;
+        float val_float = (float)val;
+        sendParameterFloat("SKYE_MAX_VEL", val_float);
+        emit maxLinearInputChanged((double)maxLinearInputParam);
     }
 }
 
-void SkyeUAS::setSensitivityFactorRot(float val)
+void SkyeUAS::setMaxAngularInputValue(double val)
 {
-    if (sensitivityFactorRot!= val)
+    if (maxAngularValueParam!= val)
     {
-        sensitivityFactorRot = val;
-        qDebug() << "[SkyeUAS] sensitivity rotation" << val;
-        emit sensitivityRotChanged((double)sensitivityFactorRot);
+        qDebug() << "[SkyeUAS] max angular input" << val;
+
+        maxAngularValueParam = val;
+        float val_float = (float)val;
+        sendParameterFloat("SKYE_MAX_ANGVEL", val_float);
+        emit maxAngularInputChanged(maxAngularValueParam);
     }
 }
-
-
-
-

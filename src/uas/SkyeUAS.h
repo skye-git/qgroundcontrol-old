@@ -6,9 +6,6 @@
 #define SKYE_ALARM_VOLTAGE 22.0f
 #define SKYE_CRITICAL_VOLTAGE 23.0f
 
-#define QGC_SENSITIVITY_TRANS_DEFAULT 1.0f
-#define QGC_SENSITIVITY_ROT_DEFAULT 1.0f
-
 #define QGC_SKYE_LIFT_MAX 0.2
 #define QGC_SKYE_LIFT_DEFAULT 0.0
 
@@ -64,9 +61,9 @@ public slots:
     /** @brief Send the 8 DOF command (from Testphase Widget) to MAV */
     void setTestphaseCommandsByWidget(double Thrust1 , double Thrust2 , double Thrust3 , double Thrust4 , double Orientation1 , double Orientation2, double Orientation3, double Orientation4, bool usePpm);
     /** @brief Set multiplication factor for manual control */
-    void setSensitivityFactorTrans(float val);
+    void setMaxLinearInputValue(double val);
     /** @brief Set multiplication factor for manual control */
-    void setSensitivityFactorRot(float val);
+    void setMaxAngularInputValue(double val);
     /** @brief Send mode via mavlink command */
     void setModeCommand(int mode);
     /** @brief Set additive value for z manual control */
@@ -78,8 +75,11 @@ public slots:
     /** @brief Set additive value for yaw manual control */
     void setAddYawValue(double val) {addYawValue = val; qDebug()<<"YAW ADDVALUE ="<<addYawValue;}
 
+	/** @brief Request parameters from onboard system */
+	void requestParameters();
 	/** @brief Some onboard parameter changes need special actions. Handle them here! */
 	void onboardParameterChanged(int uas, int component, QString parameterName, int parameterCount, int parameterId, int type, QVariant value);
+
 
     /** @brief Send color information */
     void sendLedColor(uint8_t ledId, uint8_t red, uint8_t green, uint8_t blue, uint8_t mode, float frequency);
@@ -107,8 +107,8 @@ signals:
     void batteryLow(double voltage, bool isLow, unsigned int ms);
     void allocCaseChanged(int allocCase);
     void skyeControlModeChanged(SKYE_CONTROL_MODE ctrlMode);
-    void sensitivityTransChanged(double);
-    void sensitivityRotChanged(double);
+    void maxLinearInputChanged(double);
+    void maxAngularInputChanged(double);
 
 protected:
     /** Send a Manual 6DoF Control Command to MAV */
@@ -132,8 +132,8 @@ protected:
     double manualYRot;          ///< Pitch (y axis) set by human pilot
     double manualZRot;          ///< Yaw (z axis) set by human pilot
 
-    float sensitivityFactorTrans;   ///< Translational factor for manual control [remark: abs(deviceInput) <= 1 ]
-    float sensitivityFactorRot;     ///< Rotational factor for manual control [remark: abs(deviceInput) <= 1 ]
+    double maxLinearInputParam; ///< Translational factor for manual control [remark: abs(deviceInput) <= 1 ]
+    double maxAngularValueParam;///< Rotational factor for manual control [remark: abs(deviceInput) <= 1 ]
 
     double liftValue;               ///< liftvalue
     double addRollValue;            ///< Additive term for manual control

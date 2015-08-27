@@ -27,8 +27,8 @@ public:
     ~UASSkyeControlAdvancedWidget();
 
 signals:
-    void transSliderValueChanged(float);
-    void rotSliderValueChanged(float);
+    void linearSliderValueChanged(float);
+    void angularSliderValueChanged(float);
     void liftSliderValueChanged(double);
     void rollSliderValueChanged(double);
     void pitchSliderValueChanged(double);
@@ -59,12 +59,12 @@ private:
     bool addYawEnabled;
 
     double liftValue;
-    double sensitivityTrans;
-    double sensitivityRot;
+    double maxLinearInput;
+    double maxAngularInput;
 
 private slots:
-    void changeTransValue(double value);
-    void changeRotValue(double value);
+    void changeMaxLinearInput(double value);
+    void changeMaxAngularInput(double value);
     void changeLiftValue(double value);
     void changeRollValue(double value);
     void changePitchValue(double value);

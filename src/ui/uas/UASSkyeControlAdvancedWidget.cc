@@ -12,16 +12,16 @@ UASSkyeControlAdvancedWidget::UASSkyeControlAdvancedWidget(QWidget *parent) :
     addPitchEnabled(false),
     addYawEnabled(false),
     liftValue(QGC_SKYE_LIFT_DEFAULT),
-    sensitivityTrans(QGC_SENSITIVITY_TRANS_DEFAULT),
-    sensitivityRot(QGC_SENSITIVITY_ROT_DEFAULT)
+    maxLinearInput(0.0),
+    maxAngularInput(0.0)
 {
     ui->setupUi(this);
 
     ui->groupBoxAllocation->hide();
 
     // connect spinboxes
-    connect(ui->doubleSpinBoxTranslation, SIGNAL(valueChanged(double)), this, SLOT(changeTransValue(double)));
-    connect(ui->doubleSpinBoxRotation, SIGNAL(valueChanged(double)), this, SLOT(changeRotValue(double)));
+    connect(ui->doubleSpinBoxTranslation, SIGNAL(valueChanged(double)), this, SLOT(changeMaxLinearInput(double)));
+    connect(ui->doubleSpinBoxRotation, SIGNAL(valueChanged(double)), this, SLOT(changeMaxAngularInput(double)));
     connect(ui->doubleSpinBoxLift, SIGNAL(valueChanged(double)), this, SLOT(changeLiftValue(double)));
     connect(ui->doubleSpinBoxRoll, SIGNAL(valueChanged(double)), this, SLOT(changeRollValue(double)));
     connect(ui->doubleSpinBoxPitch, SIGNAL(valueChanged(double)), this, SLOT(changePitchValue(double)));
@@ -30,8 +30,8 @@ UASSkyeControlAdvancedWidget::UASSkyeControlAdvancedWidget(QWidget *parent) :
     ui->doubleSpinBoxLift->setRange(-QGC_SKYE_LIFT_MAX, QGC_SKYE_LIFT_MAX);
 
     // update spinboxes
-    ui->doubleSpinBoxTranslation->setValue(sensitivityTrans);
-    ui->doubleSpinBoxRotation->setValue(sensitivityRot);
+    ui->doubleSpinBoxTranslation->setValue(maxLinearInput);
+    ui->doubleSpinBoxRotation->setValue(maxAngularInput);
     ui->doubleSpinBoxLift->setValue(liftValue);
 
     // connect checkboxes
@@ -72,12 +72,12 @@ void UASSkyeControlAdvancedWidget::setUAS(UASInterface* uas)
         if (mav)
         {
 
-            disconnect(this, SIGNAL(transSliderValueChanged(float)), mav, SLOT(setSensitivityFactorTrans(float)));
-            disconnect(this, SIGNAL(rotSliderValueChanged(float)), mav, SLOT(setSensitivityFactorRot(float)));
+            disconnect(this, SIGNAL(linearSliderValueChanged(double)), mav, SLOT(setMaxLinearInputValue(double)));
+            disconnect(this, SIGNAL(angularSliderValueChanged(double)), mav, SLOT(setMaxAngularInputValue(double)));
             disconnect(this, SIGNAL(liftSliderValueChanged(double)), mav, SLOT(setLiftValue(double)));
 
-            disconnect(mav,SIGNAL(sensitivityTransChanged(double)), this, SLOT(changeTransValue(double)));
-            disconnect(mav,SIGNAL(sensitivityRotChanged(double)), this, SLOT(changeRotValue(double)));
+            disconnect(mav,SIGNAL(maxLinearInputChanged(double)), this, SLOT(changeMaxLinearInput(double)));
+            disconnect(mav,SIGNAL(maxAngularInputChanged(double)), this, SLOT(changeMaxAngularInput(double)));
 
             disconnect(this, SIGNAL(rollSliderValueChanged(double)), mav, SLOT(setAddRollValue(double)));
             disconnect(this, SIGNAL(pitchSliderValueChanged(double)), mav, SLOT(setAddPitchValue(double)));
@@ -97,12 +97,12 @@ void UASSkyeControlAdvancedWidget::setUAS(UASInterface* uas)
 
         // Connect user interface controls
 
-        connect(this, SIGNAL(transSliderValueChanged(float)), mav, SLOT(setSensitivityFactorTrans(float)));
-        connect(this, SIGNAL(rotSliderValueChanged(float)), mav, SLOT(setSensitivityFactorRot(float)));
+        connect(this, SIGNAL(linearSliderValueChanged(double)), mav, SLOT(setMaxLinearInputValue(double)));
+        connect(this, SIGNAL(angularSliderValueChanged(double)), mav, SLOT(setMaxAngularInputValue(double)));
         connect(this, SIGNAL(liftSliderValueChanged(double)), mav, SLOT(setLiftValue(double)));
 
-        connect(mav, SIGNAL(sensitivityTransChanged(double)), this, SLOT(changeTransValue(double)));
-        connect(mav, SIGNAL(sensitivityRotChanged(double)), this, SLOT(changeRotValue(double)));
+        connect(mav, SIGNAL(maxLinearInputChanged(double)), this, SLOT(changeMaxLinearInput(double)));
+        connect(mav, SIGNAL(maxAngularInputChanged(double)), this, SLOT(changeMaxAngularInput(double)));
 
         connect(this, SIGNAL(rollSliderValueChanged(double)), mav, SLOT(setAddRollValue(double)));
         connect(this, SIGNAL(pitchSliderValueChanged(double)), mav, SLOT(setAddPitchValue(double)));
@@ -112,9 +112,7 @@ void UASSkyeControlAdvancedWidget::setUAS(UASInterface* uas)
         connect(this, SIGNAL(requestAUConfiguration(int)), mav, SLOT(sendAllocationCase(int)));
         connect(mav, SIGNAL(allocCaseChanged(int)), this, SLOT(updateAllocCase(int)));
 
-        // Initial emitment of spinbox values
-        emit transSliderValueChanged((float)sensitivityTrans);
-        emit rotSliderValueChanged((float)sensitivityRot);
+        // Emit lift slider value
         emit liftSliderValueChanged(liftValue);
     }
 }
@@ -129,37 +127,35 @@ void UASSkyeControlAdvancedWidget::setSliderValues(double transValue, double rot
 
 void UASSkyeControlAdvancedWidget::emitSliderValues()
 {
-    emit transSliderValueChanged(ui->doubleSpinBoxTranslation->value());
-    emit rotSliderValueChanged(ui->doubleSpinBoxRotation->value());
+    emit linearSliderValueChanged(ui->doubleSpinBoxTranslation->value());
+    emit angularSliderValueChanged(ui->doubleSpinBoxRotation->value());
     emit liftSliderValueChanged(ui->doubleSpinBoxLift->value());
     emit rollSliderValueChanged(ui->doubleSpinBoxRoll->value());
     emit pitchSliderValueChanged(ui->doubleSpinBoxPitch->value());
     emit yawSliderValueChanged(ui->doubleSpinBoxYaw->value());
 }
 
-void UASSkyeControlAdvancedWidget::changeTransValue(double value)
+void UASSkyeControlAdvancedWidget::changeMaxLinearInput(double value)
 {
-    if (sensitivityTrans != value)
-    {
-        sensitivityTrans = value;
+    if (maxLinearInput != value) {
+        maxLinearInput = value;
 
-        ui->doubleSpinBoxTranslation->setValue(sensitivityTrans);
+        ui->doubleSpinBoxTranslation->setValue(maxLinearInput);
         ui->doubleSpinBoxTranslation->setStyleSheet(getStyleString(value));
 
-        emit transSliderValueChanged((float)value);
+        emit linearSliderValueChanged((float)value);
     }
 }
 
-void UASSkyeControlAdvancedWidget::changeRotValue(double value)
+void UASSkyeControlAdvancedWidget::changeMaxAngularInput(double value)
 {
-    if (sensitivityRot != value)
-    {
-        sensitivityRot = value;
+    if (maxAngularInput != value) {
+        maxAngularInput = value;
 
-        ui->doubleSpinBoxRotation->setValue(sensitivityRot);
+        ui->doubleSpinBoxRotation->setValue(maxAngularInput);
         ui->doubleSpinBoxRotation->setStyleSheet(getStyleString(value));
 
-        emit rotSliderValueChanged((float)value);
+        emit angularSliderValueChanged((float)value);
     }
 }
 
@@ -179,12 +175,9 @@ void UASSkyeControlAdvancedWidget::changeRollValue(double value)
 {
     ui->doubleSpinBoxRoll->setStyleSheet(getStyleString(value));
 
-    if (ui->checkBoxRoll->isChecked())
-    {
+    if (ui->checkBoxRoll->isChecked()) {
         emit rollSliderValueChanged(value);
-    }
-    else
-    {
+    } else {
         emit rollSliderValueChanged(0.0);
     }
 }
@@ -192,12 +185,9 @@ void UASSkyeControlAdvancedWidget::changeRollValue(double value)
 void UASSkyeControlAdvancedWidget::changePitchValue(double value)
 {
     ui->doubleSpinBoxPitch->setStyleSheet(getStyleString(value));
-    if (ui->checkBoxPitch->isChecked())
-    {
+    if (ui->checkBoxPitch->isChecked()) {
         emit pitchSliderValueChanged(value);
-    }
-    else
-    {
+    } else {
         emit pitchSliderValueChanged(0.0);
     }
 }
@@ -206,12 +196,9 @@ void UASSkyeControlAdvancedWidget::changeYawValue(double value)
 {
     ui->doubleSpinBoxYaw->setStyleSheet(getStyleString(value));
 
-    if (ui->checkBoxYaw->isChecked())
-    {
+    if (ui->checkBoxYaw->isChecked()) {
         emit yawSliderValueChanged(value);
-    }
-    else
-    {
+    } else {
         emit yawSliderValueChanged(0.0);
     }
 }
@@ -223,7 +210,7 @@ QString UASSkyeControlAdvancedWidget::getStyleString(double val)
     int blue = 1;
     int colorStart = (int)(( 1+10*val ) * red + (  10*(1-val)) * green + 6 * blue);
     int colorEnd =   (int)(( 1+14*val ) * red + (  14*(1-val)) * green + 6 * blue);
-    QString style = QString("QSlider::sub-page:horizontal {border: 1px solid #bbb; border-radius: 4px; background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #%1, stop: 1 #%2); }").arg(colorStart, 1, 16).arg(colorEnd, 1, 16);
+    QString style = QString("QDoubleSpinBox {border: 1px solid #bbb; border-radius: 4px; background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #%1, stop: 1 #%2); }").arg(colorStart, 1, 16).arg(colorEnd, 1, 16);
 
     return style;
 }
