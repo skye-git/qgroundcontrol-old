@@ -141,9 +141,7 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
 
 void UASSkyeControlWidget::setUAS(UASInterface* uas)
 {
-    qDebug() << "setUAS (uasskyecontrol)";
-    if (this->uas!= NULL)
-    {
+    if (this->uas!= NULL) {
         // Disconnect old system
         ui.lastActionLabel->setText("Disconnected from " + this->uas->getUASName());
         SkyeUAS* mav = dynamic_cast<SkyeUAS*>(this->uas);
@@ -169,8 +167,7 @@ void UASSkyeControlWidget::setUAS(UASInterface* uas)
 
     // Connect new system
     SkyeUAS* mav = dynamic_cast<SkyeUAS*>(uas);
-    if (mav)
-    {
+    if (mav) {
         ui.lastActionLabel->setText(tr("Connected to ") + mav->getUASName());
         this->uas = uas;
         qDebug() << "UAS id:" << mav->getUASID() << ", name:" << mav->getUASName();

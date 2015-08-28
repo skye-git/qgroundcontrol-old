@@ -20,7 +20,7 @@ SkyeUAS::SkyeUAS(MAVLinkProtocol* mavlink, int id) :
     manualZRot(0.0),
     maxLinearInputParam(0.0),
     maxAngularValueParam(0.0),
-    liftValue(QGC_SKYE_LIFT_DEFAULT),
+    upliftParam(0.0),
     addRollValue(0.0),
     addPitchValue(0.0),
     addYawValue(0.0),
@@ -153,6 +153,8 @@ void SkyeUAS::onboardParameterChanged(int uas, int component, QString parameterN
 			emit maxLinearInputChanged((double)value.toFloat());
 		} else if (parameterName == QString("SKYE_MAX_ANGVEL")) {
 			emit maxAngularInputChanged((double)value.toFloat());
+		} else if (parameterName == QString("SKYE_UPLIFT")) {
+			emit liftValueChanged((double)value.toFloat());
 		}
 	} else {
 		qDebug() << "Received onboard parameter from unknown system id" << uas;
@@ -167,7 +169,7 @@ void SkyeUAS::setManual6DOFControlCommands(double x , double y , double z , doub
     {
         manualXVel = x;
         manualYVel = y;
-        manualZVel = z - liftValue;
+        manualZVel = z - upliftParam;
         manualZVel = qMin(1.0, qMax(-1.0, manualZVel));
         manualXRot = a + addRollValue;
         manualYRot = b + addPitchValue;
@@ -227,7 +229,7 @@ void SkyeUAS::sendManualControlCommands6DoF(float x, float y, float z, float phi
                                        theta,
                                        psi);
         sendMessage(message);
-//        qDebug() << "SENT 6DOF CONTROL MESSAGE:" << x << y << z << phi << theta << psi;
+        qDebug() << "SENT 6DOF CONTROL MESSAGE:" << x << y << z << phi << theta << psi;
     }
 }
 
@@ -351,8 +353,7 @@ void SkyeUAS::sendSkyeConfiguration(double *quaternions) // [4][6]
 
     mavlink_message_t msg;
     mavlink_actuation_configuration_t au_config;
-    for (int i = 0; i<4; i++)
-    {
+    for (int i = 0; i<4; i++) {
         au_config.quat_au1[i] = q[i][0];
         au_config.quat_au2[i] = q[i][1];
         au_config.quat_au3[i] = q[i][2];
@@ -389,18 +390,18 @@ void SkyeUAS::sendControlModeCommand(SKYE_CONTROL_MODE ctrlMode)
 
 void SkyeUAS::setLiftValue(double val)
 {
-    if (val != liftValue and val >= -QGC_SKYE_LIFT_MAX and val <= QGC_SKYE_LIFT_MAX)
-    {
-        liftValue = val;
+    if (val != upliftParam and val >= -QGC_SKYE_LIFT_MAX and val <= QGC_SKYE_LIFT_MAX) {
         qDebug() << "[SkyeUAS] lift factor" << val;
-    }
 
+        upliftParam = val;
+        sendParameterFloat("SKYE_UPLIFT", (float)val);
+        emit liftValueChanged(val);
+    }
 }
 
 void SkyeUAS::setMaxLinearInputValue(double val)
 {
-    if (maxLinearInputParam!= val)
-    {
+    if (maxLinearInputParam!= val) {
         qDebug() << "[SkyeUAS] max linear input" << val;
 
         maxLinearInputParam = val;
@@ -412,8 +413,7 @@ void SkyeUAS::setMaxLinearInputValue(double val)
 
 void SkyeUAS::setMaxAngularInputValue(double val)
 {
-    if (maxAngularValueParam!= val)
-    {
+    if (maxAngularValueParam!= val) {
         qDebug() << "[SkyeUAS] max angular input" << val;
 
         maxAngularValueParam = val;

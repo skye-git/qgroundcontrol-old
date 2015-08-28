@@ -3764,13 +3764,27 @@ otherwise the value indicates the specific rc channel to use</long_desc>
     <max>10</max>
   </parameter>
   <parameter default="1.0" name="SKYE_MAX_ANGVEL" type="FLOAT">
-    <short_desc>Skye maximum angular velocity.</>
+    <short_desc>Skye maximum angular velocity.</short_desc>
     <long_desc>Scaling factor for the maximum angular velocity controller input.</long_desc>
     <min>0</min>
     <max>10</max>
     <unit>rad/s</unit>
   </parameter>
-  <parameter default="24" name="SKYE_MAX_MOM" type="FLOAT">
+  <parameter default="0.01" name="SKYE_ALIGN_SAT" type="FLOAT">
+    <short_desc>Skye horizontal alignment saturation.</short_desc>
+    <long_desc>Saturation of angular velocity of the horizontal alignment correction.</long_desc>
+    <min>0</min>
+    <max>10</max>
+    <unit>rad/s</unit>
+  </parameter>
+  <parameter default="10.0" name="SKYE_MAX_PITCH" type="FLOAT">
+    <short_desc>Skye pitch threshold for horizontal alignment.</short_desc>
+    <long_desc>Horizontal alignment is not performed when pitch is larger than +/- VALUE.</long_desc>
+    <min>0</min>
+    <max>90</max>
+    <unit>deg</unit>
+  </parameter>
+  <parameter default="10" name="SKYE_MAX_MOM" type="FLOAT">
     <short_desc>Skye maximum moment</short_desc>
     <long_desc>In STABALIZED mode: Threshold for maximum moment of attitude controller. In MANUAL mode: Scaling factor for angular input.</long_desc>
     <min>0</min>
@@ -3836,7 +3850,7 @@ otherwise the value indicates the specific rc channel to use</long_desc>
     <min>0</min>
     <max>50</max>
   </parameter>
-  <parameter default="0" name="SKYE_C_POS_GRAV" type="FLOAT">
+  <parameter default="0" name="SKYE_UPLIFT" type="FLOAT">
     <short_desc>Gravity compensation</short_desc>
     <long_desc>Feedforward uplift value. This is only used in pos/vel controller. For manual input, it is directly added to z input.</long_desc>
     <min>-50</min>

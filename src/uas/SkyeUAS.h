@@ -7,7 +7,6 @@
 #define SKYE_CRITICAL_VOLTAGE 23.0f
 
 #define QGC_SKYE_LIFT_MAX 0.2
-#define QGC_SKYE_LIFT_DEFAULT 0.0
 
 #include <QPolygonF>
 #include <QTimer>
@@ -60,14 +59,14 @@ public slots:
     void set6DOFCommandsByWidget(double x , double y , double z , double a , double b, double c);
     /** @brief Send the 8 DOF command (from Testphase Widget) to MAV */
     void setTestphaseCommandsByWidget(double Thrust1 , double Thrust2 , double Thrust3 , double Thrust4 , double Orientation1 , double Orientation2, double Orientation3, double Orientation4, bool usePpm);
-    /** @brief Set multiplication factor for manual control */
+    /** @brief Set maximum linear position control output */
     void setMaxLinearInputValue(double val);
-    /** @brief Set multiplication factor for manual control */
+    /** @brief Set maximum angular attitude control output*/
     void setMaxAngularInputValue(double val);
+    /** @brief Set additive value for z direction uplift */
+    void setLiftValue(double val);
     /** @brief Send mode via mavlink command */
     void setModeCommand(int mode);
-    /** @brief Set additive value for z manual control */
-    void setLiftValue(double val);
     /** @brief Set additive value for roll manual control */
     void setAddRollValue(double val) {addRollValue = val;}
     /** @brief Set additive value for pitch manual control */
@@ -109,6 +108,7 @@ signals:
     void skyeControlModeChanged(SKYE_CONTROL_MODE ctrlMode);
     void maxLinearInputChanged(double);
     void maxAngularInputChanged(double);
+    void liftValueChanged(double);
 
 protected:
     /** Send a Manual 6DoF Control Command to MAV */
@@ -135,7 +135,7 @@ protected:
     double maxLinearInputParam; ///< Translational factor for manual control [remark: abs(deviceInput) <= 1 ]
     double maxAngularValueParam;///< Rotational factor for manual control [remark: abs(deviceInput) <= 1 ]
 
-    double liftValue;               ///< liftvalue
+    double upliftParam;             ///< liftvalue
     double addRollValue;            ///< Additive term for manual control
     double addPitchValue;           ///< Additive term for manual control
     double addYawValue;             ///< Additive term for manual control

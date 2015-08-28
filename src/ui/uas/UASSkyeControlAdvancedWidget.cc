@@ -11,7 +11,7 @@ UASSkyeControlAdvancedWidget::UASSkyeControlAdvancedWidget(QWidget *parent) :
     addRollEnabled(false),
     addPitchEnabled(false),
     addYawEnabled(false),
-    liftValue(QGC_SKYE_LIFT_DEFAULT),
+    liftValue(0.0),
     maxLinearInput(0.0),
     maxAngularInput(0.0)
 {
@@ -103,6 +103,7 @@ void UASSkyeControlAdvancedWidget::setUAS(UASInterface* uas)
 
         connect(mav, SIGNAL(maxLinearInputChanged(double)), this, SLOT(changeMaxLinearInput(double)));
         connect(mav, SIGNAL(maxAngularInputChanged(double)), this, SLOT(changeMaxAngularInput(double)));
+        connect(mav, SIGNAL(liftValueChanged(double)), this, SLOT(changeLiftValue(double)));
 
         connect(this, SIGNAL(rollSliderValueChanged(double)), mav, SLOT(setAddRollValue(double)));
         connect(this, SIGNAL(pitchSliderValueChanged(double)), mav, SLOT(setAddPitchValue(double)));
@@ -143,7 +144,7 @@ void UASSkyeControlAdvancedWidget::changeMaxLinearInput(double value)
         ui->doubleSpinBoxTranslation->setValue(maxLinearInput);
         ui->doubleSpinBoxTranslation->setStyleSheet(getStyleString(value));
 
-        emit linearSliderValueChanged((float)value);
+        emit linearSliderValueChanged(value);
     }
 }
 
@@ -155,16 +156,16 @@ void UASSkyeControlAdvancedWidget::changeMaxAngularInput(double value)
         ui->doubleSpinBoxRotation->setValue(maxAngularInput);
         ui->doubleSpinBoxRotation->setStyleSheet(getStyleString(value));
 
-        emit angularSliderValueChanged((float)value);
+        emit angularSliderValueChanged(value);
     }
 }
 
 void UASSkyeControlAdvancedWidget::changeLiftValue(double value)
 {
-    if (liftValue != value)
-    {
+    if (liftValue != value) {
         liftValue = value;
 
+        ui->doubleSpinBoxLift->setValue(value);
         ui->doubleSpinBoxLift->setStyleSheet(getStyleString(value));
 
         emit liftSliderValueChanged(liftValue);
@@ -210,7 +211,7 @@ QString UASSkyeControlAdvancedWidget::getStyleString(double val)
     int blue = 1;
     int colorStart = (int)(( 1+10*val ) * red + (  10*(1-val)) * green + 6 * blue);
     int colorEnd =   (int)(( 1+14*val ) * red + (  14*(1-val)) * green + 6 * blue);
-    QString style = QString("QDoubleSpinBox {border: 1px solid #bbb; border-radius: 4px; background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #%1, stop: 1 #%2); }").arg(colorStart, 1, 16).arg(colorEnd, 1, 16);
+    QString style = QString("QSlider {border: 1px solid #bbb; border-radius: 4px; background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #%1, stop: 1 #%2); }").arg(colorStart, 1, 16).arg(colorEnd, 1, 16);
 
     return style;
 }

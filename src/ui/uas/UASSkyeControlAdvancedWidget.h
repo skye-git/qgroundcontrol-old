@@ -27,8 +27,8 @@ public:
     ~UASSkyeControlAdvancedWidget();
 
 signals:
-    void linearSliderValueChanged(float);
-    void angularSliderValueChanged(float);
+    void linearSliderValueChanged(double);
+    void angularSliderValueChanged(double);
     void liftSliderValueChanged(double);
     void rollSliderValueChanged(double);
     void pitchSliderValueChanged(double);
