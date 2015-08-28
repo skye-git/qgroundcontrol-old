@@ -161,46 +161,19 @@ void SkyeAUStatus::updateStyleSheets()
     lastUpdate.restart();
 
     // style for voltage display
-    if (voltage > SKYE_CRITICAL_VOLTAGE*1000)
-    {
-        ui->lcdNumberVoltage->setPalette(QColor(50, 205, 50));
+    if (voltage > SKYE_CRITICAL_VOLTAGE) {
+        ui->lcdNumberVoltage->setPalette(QColor(50, 205, 50));  // GREEN
+    } else if (voltage > SKYE_ALARM_VOLTAGE) {
+        ui->lcdNumberVoltage->setPalette(QColor(255, 165, 0));  // ORANGE
+    } else {
+        ui->lcdNumberVoltage->setPalette(QColor(255, 0, 0));    // RED
     }
-    else if (voltage > SKYE_ALARM_VOLTAGE*1000)
-    {
-        ui->lcdNumberVoltage->setPalette(QColor(255, 165, 0));
-    }
-    else
-    {
-        ui->lcdNumberVoltage->setPalette(QColor(255, 0, 0));
-    }
+    // TODO: check here why color does not always display properly
     ui->lcdNumberVoltage->update();
 
     QString str;
-//    switch (status)
-//    {
-//    case MAV_ACTUATION_UNIT_STATUS_ERROR:
-//    case MAV_ACTUATION_UNIT_STATUS_DETACHED:
-//    case MAV_ACTUATION_UNIT_STATUS_DISABLED:
-//        str = "SkyeAUStatus {background-color: rgba(255, 0, 0, 170);}";
-//        break;
-//    case MAV_ACTUATION_UNIT_STATUS_READY:
-//        str = "SkyeAUStatus {background-color: rgba(0, 200, 0, 170);}";
-//        break;
-//    case MAV_ACTUATION_UNIT_STATUS_INITIALIZING:
-//        str = "SkyeAUStatus {background-color: rgba(255, 140, 0, 170);}";
-//        break;
-//    case MAV_ACTUATION_UNIT_STATUS_HOMING:
-//        str = "SkyeAUStatus {background-color: rgba(255, 255, 0, 170);}";
-//        break;
-//    default:
-//        str = "SkyeAUStatus {background-color: rgba(0, 0, 0, 0);}";
-//        break;
-//    }
-//    this->setStyleSheet(str);
 
-
-    switch (status)
-    {
+    switch (status) {
     case MAV_ACTUATION_UNIT_STATUS_ERROR:
     case MAV_ACTUATION_UNIT_STATUS_DETACHED:
     case MAV_ACTUATION_UNIT_STATUS_DISABLED:
@@ -224,18 +197,16 @@ void SkyeAUStatus::updateStyleSheets()
 
     // battery status color (increasing importance)
     QPalette pal(palette());
-    if (batt->battery_function & BATTERY_STATUS_BIT_ATTACHED)
-    {
+    if (batt->battery_function & BATTERY_STATUS_BIT_ATTACHED) {
         str = "QWidget#widgetBottom {background-color: rgba(0, 0, 0, 255); }";
     } else {
         str = "QWidget#widgetBottom {background-color: rgba(160, 160, 160, 255); }";
     }
-    if (batt->battery_function & BATTERY_STATUS_BIT_UNDERVOLTAGE)
-    {
+
+    if (batt->battery_function & BATTERY_STATUS_BIT_UNDERVOLTAGE) {
         str = "QWidget#widgetBottom {background-color: rgba(255, 100, 0, 255); }";
     }
-    if (batt->battery_function & BATTERY_STATUS_BIT_ERROR)
-    {
+    if (batt->battery_function & BATTERY_STATUS_BIT_ERROR) {
         str = "QWidget#widgetBottom {background-color: rgba(200, 0, 0, 255); }";
     }
     ui->widgetBottom->setStyleSheet(str);
