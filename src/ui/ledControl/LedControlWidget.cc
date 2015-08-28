@@ -44,9 +44,27 @@ LedControlWidget::LedControlWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->setUAS(UASManager::instance()->getActiveUAS());
+    buttonColors[0].setRgb(255,255,255);
+    buttonColors[1].setRgb(255,  0,  0);
+    buttonColors[2].setRgb(  0,255,  0);
+    buttonColors[3].setRgb(  0,  0,255);
+    for (int i=0; i<QGC_LED_COLOR_BUTTONS_MAX; i++) {
+       QString colorStr = colorStr.sprintf("QWidget { background-color: #%02X%02X%02X; }", buttonColors[i].red(), buttonColors[i].green(), buttonColors[i].blue());
+       colorButtons[i].setStyleSheet(colorStr);
+       ui->colorLayout->addWidget(&colorButtons[i]);
+       colorButtons[i].setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+       colorButtons[i].setMinimumSize(QSize(19, 19));
+       colorButtons[i].setMaximumSize(QSize(20, 20));
+    }
+    // TODO: Find better way to assign color to buttons
+    connect(&colorButtons[0], SIGNAL(clicked(bool)), this, SLOT(colorButton0Clicked(bool)));
+    connect(&colorButtons[1], SIGNAL(clicked(bool)), this, SLOT(colorButton1Clicked(bool)));
+    connect(&colorButtons[2], SIGNAL(clicked(bool)), this, SLOT(colorButton2Clicked(bool)));
+    connect(&colorButtons[3], SIGNAL(clicked(bool)), this, SLOT(colorButton2Clicked(bool)));
+
 
     // connect active uas
+    this->setUAS(UASManager::instance()->getActiveUAS());
     connect(UASManager::instance(), SIGNAL(activeUASSet(UASInterface*)), this, SLOT(setUAS(UASInterface*)));
 
     // connect color dialog
@@ -92,8 +110,8 @@ LedControlWidget::LedControlWidget(QWidget *parent) :
     connect(ui->doubleSpinBoxFrequency, SIGNAL(valueChanged(double)), this, SLOT(changeFrequency(double)));
 
     // connect on/off switch and do initial update
-    connect(ui->ledOnOffButton, SIGNAL(toggled(bool)), this, SLOT(setLedEnabled(bool)));
-    ui->ledOnOffButton->setChecked(enabled);
+    connect(ui->checkBoxOnOff, SIGNAL(toggled(bool)), this, SLOT(setLedEnabled(bool)));
+    ui->checkBoxOnOff->setChecked(enabled);
 
 }
 
@@ -215,8 +233,8 @@ void LedControlWidget::sendColor()
 {
     if (this->uasId)
     {
-        // rate limit transmission to 200ms (5Hz)
-        if (timeOfSubmit.elapsed() > 200)
+        // rate limit transmission to 10ms (100Hz)
+        if (timeOfSubmit.elapsed() > 10)
         {
             if (enabled) {
                 timeOfSubmit.restart();
@@ -274,12 +292,32 @@ void LedControlWidget::setLedEnabled(bool checked)
     if (enabled == true) {
         // update to current color and mode
         emit transmitColor(0, (uint8_t)red, (uint8_t)green, (uint8_t)blue, mode, (float)frequency);
-        ui->ledOnOffButton->setText("LED ON");
-        ui->ledOnOffButton->setToolTip("LED illumination is ON. Uncheck to switch OFF.");
     } else {
         // black is off
         emit transmitColor(0, (uint8_t)0, (uint8_t)0, (uint8_t)0, LED_CONTROL_MODE_CONSTANT, 0.0f);
-        ui->ledOnOffButton->setText("LED OFF");
-        ui->ledOnOffButton->setToolTip("LED illumination is OFF. Uncheck to switch ON.");
     }
+}
+
+void LedControlWidget::colorButton0Clicked(bool checked)
+{
+    color.setRgb(buttonColors[0].rgb());
+    sendColor();
+}
+
+void LedControlWidget::colorButton1Clicked(bool checked)
+{
+    color.setRgb(buttonColors[1].rgb());
+    sendColor();
+}
+
+void LedControlWidget::colorButton2Clicked(bool checked)
+{
+    color.setRgb(buttonColors[2].rgb());
+    sendColor();
+}
+
+void LedControlWidget::colorButton3Clicked(bool checked)
+{
+    color.setRgb(buttonColors[3].rgb());
+    sendColor();
 }

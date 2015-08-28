@@ -11,6 +11,8 @@
 #include "UASManager.h"
 #include "SkyeUAS.h"
 
+#define QGC_LED_COLOR_BUTTONS_MAX 4
+
 namespace Ui {
 class LedControlWidget;
 }
@@ -51,10 +53,17 @@ private slots:
     /** Switch LED on/off */
     void setLedEnabled(bool checked);
 
+    void colorButton0Clicked(bool checked);
+    void colorButton1Clicked(bool checked);
+    void colorButton2Clicked(bool checked);
+    void colorButton3Clicked(bool checked);
+
 private:
     QString GetNameForLedColorMode(LED_CONTROL_MODE m);
 
     Ui::LedControlWidget *ui;
+    QPushButton colorButtons[QGC_LED_COLOR_BUTTONS_MAX];
+    QColor buttonColors[QGC_LED_COLOR_BUTTONS_MAX];
     int uasId;                          ///< Reference to the current uas
     QColor color;                       ///< current color in QColor format
     int red;                            ///< current red RGB part for led color
