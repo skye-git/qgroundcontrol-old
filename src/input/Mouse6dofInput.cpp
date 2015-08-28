@@ -8,7 +8,6 @@
 
 #include <QString>
 #include <QDebug>
-#include <QTime>
 
 #include "Mouse6dofInput.h"
 #include "src/input/QGCInputs.h"
@@ -18,7 +17,8 @@
 #include "spnav.h"
 #endif // QGC_MOUSE_ENABLED_LINUX
 
-#define MOUSE3D_EMIT_INTERVAL 50 // Emit mouse values with approx. every 50ms (=20Hz)
+#define MOUSE3D_EMIT_INTERVAL 50    // Emit mouse values with approx. every 50ms (=20Hz)
+#define MOUSE3D_MAX_DELAY 500       // Maximum age for mouse data [ms]
 
 #ifdef QGC_MOUSE_ENABLED_WIN
 Mouse6dofInput::Mouse6dofInput(Mouse3DInput* mouseInput) :
@@ -192,9 +192,13 @@ void Mouse6dofInput::run()
 
         // Only emit with certain time interval
         if (time.elapsed() >= MOUSE3D_EMIT_INTERVAL) {
-            time.restart();
+            if (timestamp.elapsed() <= MOUSE3D_EMIT_INTERVAL) {
 //            qDebug() << "[Mouse6dofInput]: Emitting the values:" << xValue << yValue << zValue << aValue << bValue << cValue;
-            emit mouse6dofChanged(xValue, yValue, zValue, aValue, bValue, cValue);
+                emit mouse6dofChanged(xValue, yValue, zValue, aValue, bValue, cValue);
+            } else {
+                emit mouse6dofChanged(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+            }
+                time.restart();
         }
 
         // Sleep - But much less than emit: Be ready again with fresh inputs
@@ -301,6 +305,8 @@ void Mouse6dofInput::pollSpnavEvent()
                  bValue = 0;
                  cValue = 0;
              }
+
+             timestamp.restart();
         break;
 
         case SPNAV_EVENT_BUTTON :

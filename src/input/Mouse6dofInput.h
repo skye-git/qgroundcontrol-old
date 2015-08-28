@@ -13,6 +13,7 @@
 #include <QThread>
 #include <QProcess>
 #include <QTimer>
+#include <QTime>
 
 #ifdef QGC_MOUSE_ENABLED_WIN
 #include "Mouse3DInput.h"
@@ -66,6 +67,9 @@ protected:
     bool translationActive;
     bool rotationActive;
 
+#ifdef QGC_MOUSE_ENABLED_LINUX
+    QTime timestamp;
+#endif
     double xValue;
     double yValue;
     double zValue;
