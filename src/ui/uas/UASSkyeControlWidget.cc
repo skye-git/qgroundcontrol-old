@@ -87,10 +87,12 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     ui.manControlButton->setObjectName("manControlButtonGray");
     ui.stab5dofControlButton->setObjectName("stab5dofControlButtonGray");
     ui.stab6dofControlButton->setObjectName("stab6dofControlButtonGray");
+    ui.stab6dofiControlButton->setObjectName("stab6dofControlButtonGray");
 
     ui.manControlButton->setStyleSheet("");
     ui.stab5dofControlButton->setStyleSheet("");
     ui.stab6dofControlButton->setStyleSheet("");
+    ui.stab6dofiControlButton->setStyleSheet("");
 
     ui.armButton->setObjectName("armButtonGreen");
     ui.armButton->setStyleSheet("");
@@ -98,6 +100,7 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     ui.manControlButton->setCheckable(false);
     ui.stab5dofControlButton->setCheckable(false);
     ui.stab6dofControlButton->setCheckable(false);
+    ui.stab6dofiControlButton->setCheckable(false);
 
     ui.mouseButton->setChecked(inputMode & QGC_INPUT_MODE_MOUSE);
     ui.touchButton->setChecked(inputMode & QGC_INPUT_MODE_TOUCH);
@@ -124,6 +127,7 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     connect(ui.manControlButton, SIGNAL(clicked()), this, SLOT(setManualControlMode()));
     connect(ui.stab5dofControlButton, SIGNAL(clicked()), this, SLOT(set5dofControlMode()));
     connect(ui.stab6dofControlButton, SIGNAL(clicked()), this, SLOT(set6dofControlMode()));
+    connect(ui.stab6dofiControlButton, SIGNAL(clicked()), this, SLOT(set6dofiControlMode()));
 
     connect(ui.mouseButton, SIGNAL(clicked(bool)), this, SLOT(setInputMouse(bool)));
     connect(ui.touchButton, SIGNAL(clicked(bool)), this, SLOT(setInputTouch(bool)));
@@ -245,6 +249,7 @@ void UASSkyeControlWidget::updateControlModeStyleSheet()
     ui.manControlButton->setObjectName("manControlButtonGray");
     ui.stab5dofControlButton->setObjectName("stab5dofControlButtonGray");
     ui.stab6dofControlButton->setObjectName("stab6dofControlButtonGray");
+    ui.stab6dofiControlButton->setObjectName("stab6dofControlButtonGray");
 
     switch (controlMode) {
     case SKYE_CONTROL_MODE_MANUAL:
@@ -256,6 +261,9 @@ void UASSkyeControlWidget::updateControlModeStyleSheet()
     case SKYE_CONTROL_MODE_6DOF:
         ui.stab6dofControlButton->setObjectName("stab6dofControlButtonGreen");
         break;
+    case SKYE_CONTROL_MODE_6DOFI:
+        ui.stab6dofiControlButton->setObjectName("stab6dofControlButtonGreen");
+        break;
     default:
         break;
     }
@@ -264,6 +272,7 @@ void UASSkyeControlWidget::updateControlModeStyleSheet()
     ui.manControlButton->setStyleSheet("");
     ui.stab5dofControlButton->setStyleSheet("");
     ui.stab6dofControlButton->setStyleSheet("");
+    ui.stab6dofiControlButton->setStyleSheet("");
 }
 
 
@@ -326,6 +335,18 @@ void UASSkyeControlWidget::set6dofControlMode()
     }
 }
 
+void UASSkyeControlWidget::set6dofiControlMode()
+{
+    if (controlMode != SKYE_CONTROL_MODE_6DOFI) {
+        if (transmitMode(SKYE_CONTROL_MODE_6DOFI)) {
+            ui.stab6dofControlButton->setObjectName("stab6dofiControlButtonWhite");
+            ui.stab6dofControlButton->setStyleSheet("");
+        }
+    } else {
+        ui.lastActionLabel->setText(QString("Already in %1 mode").arg(getControlModeString(controlMode)));
+    }
+}
+
 
 bool UASSkyeControlWidget::transmitMode(SKYE_CONTROL_MODE ctrlMode)
 {
@@ -366,6 +387,9 @@ QString UASSkyeControlWidget::getControlModeString(SKYE_CONTROL_MODE ctrlMode)
         break;
     case SKYE_CONTROL_MODE_6DOF:
         modeStr = "6DOF";
+        break;
+    case SKYE_CONTROL_MODE_6DOFI:
+        modeStr = "6DOFI";
         break;
     default:
         modeStr = "UNKNOWN";

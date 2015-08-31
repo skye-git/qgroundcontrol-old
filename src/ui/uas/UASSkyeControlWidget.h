@@ -110,6 +110,8 @@ signals:
         void set5dofControlMode();
         /** @brief Set 6 dof Control */
         void set6dofControlMode();
+        /** @brief Set 6 dof inertial frame Control */
+        void set6dofiControlMode();
         /** @brief Set 3d Mouse as active inpute device */
         void setInputMouse(bool checked);
         /** @brief Set Touchscreen as active inpute device */
