@@ -60,7 +60,7 @@ LedControlWidget::LedControlWidget(QWidget *parent) :
     connect(&colorButtons[0], SIGNAL(clicked(bool)), this, SLOT(colorButton0Clicked(bool)));
     connect(&colorButtons[1], SIGNAL(clicked(bool)), this, SLOT(colorButton1Clicked(bool)));
     connect(&colorButtons[2], SIGNAL(clicked(bool)), this, SLOT(colorButton2Clicked(bool)));
-    connect(&colorButtons[3], SIGNAL(clicked(bool)), this, SLOT(colorButton2Clicked(bool)));
+    connect(&colorButtons[3], SIGNAL(clicked(bool)), this, SLOT(colorButton3Clicked(bool)));
 
 
     // connect active uas
@@ -249,7 +249,6 @@ void LedControlWidget::sendColor()
 
 void LedControlWidget::updateWidget()
 {
-    // TODO: make color visible
 }
 
 QString LedControlWidget::GetNameForLedColorMode(LED_CONTROL_MODE m)
@@ -300,24 +299,24 @@ void LedControlWidget::setLedEnabled(bool checked)
 
 void LedControlWidget::colorButton0Clicked(bool checked)
 {
-    color.setRgb(buttonColors[0].rgb());
-    sendColor();
+    Q_UNUSED(checked);
+    changeColor(buttonColors[0]);
 }
 
 void LedControlWidget::colorButton1Clicked(bool checked)
 {
-    color.setRgb(buttonColors[1].rgb());
-    sendColor();
+    Q_UNUSED(checked);
+    changeColor(buttonColors[1]);
 }
 
 void LedControlWidget::colorButton2Clicked(bool checked)
 {
-    color.setRgb(buttonColors[2].rgb());
-    sendColor();
+    Q_UNUSED(checked);
+    changeColor(buttonColors[2]);
 }
 
 void LedControlWidget::colorButton3Clicked(bool checked)
 {
-    color.setRgb(buttonColors[3].rgb());
-    sendColor();
+    Q_UNUSED(checked);
+    changeColor(buttonColors[3]);
 }
