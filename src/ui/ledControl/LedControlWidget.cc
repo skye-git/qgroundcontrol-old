@@ -49,7 +49,8 @@ LedControlWidget::LedControlWidget(QWidget *parent) :
     buttonColors[2].setRgb(  0,255,  0);
     buttonColors[3].setRgb(  0,  0,255);
     for (int i=0; i<QGC_LED_COLOR_BUTTONS_MAX; i++) {
-       QString colorStr = colorStr.sprintf("QWidget { background-color: #%02X%02X%02X; }", buttonColors[i].red(), buttonColors[i].green(), buttonColors[i].blue());
+       QString colorStr;
+       colorStr.sprintf("QWidget { background-color: #%02X%02X%02X; }", buttonColors[i].red(), buttonColors[i].green(), buttonColors[i].blue());
        colorButtons[i].setStyleSheet(colorStr);
        ui->colorLayout->addWidget(&colorButtons[i]);
        colorButtons[i].setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
