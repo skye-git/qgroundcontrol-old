@@ -290,12 +290,12 @@ void QGCSkyeTestControl::showEvent(QShowEvent *event)
 
 void QGCSkyeTestControl::hideEvent(QHideEvent *event)
 {
-    uas->setInputOverwrite(false);
 
     // test mode
     if (this->uas) {
         /* disarm when leaving test control */
         this->uas->disarmSystem();
+        this->uas->setInputOverwrite(false);
 
         /* stop offboard control */
         // TODO: it must not necessary be manual (could also be stab ...)
