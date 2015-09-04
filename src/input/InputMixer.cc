@@ -24,6 +24,7 @@ void UASSkyeInputMixer::init()
     {
         valuesMouse[i] = 0.0;
         valuesTouch[i] = 0.0;
+        valuesXbox[i] = 0.0;
 
         valuesAccum[i] = 0.0;
     }
