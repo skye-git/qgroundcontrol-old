@@ -46,6 +46,8 @@ private slots:
     void changeMode(int newMode);
     /** update frequency */
     void changeFrequency (double newFrequency);
+    /** read all values from GUI */
+    void updateValues();
     /** update widget style according to color */
     void updateWidget();
     /** Send new color to UAS */

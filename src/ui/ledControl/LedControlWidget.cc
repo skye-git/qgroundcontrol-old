@@ -145,6 +145,7 @@ void LedControlWidget::setUAS(UASInterface* uas)
         this->uasId = mav->getUASID();
 
         // start timer and initial submit
+        updateValues();
         timeOfSubmit.start();
         emit transmitColor(0, (uint8_t)red, (uint8_t)green, (uint8_t)blue, mode, (float)frequency);
 
@@ -238,6 +239,7 @@ void LedControlWidget::sendColor()
         if (timeOfSubmit.elapsed() > 10)
         {
             if (enabled) {
+                updateValues();
                 timeOfSubmit.restart();
                 emit transmitColor(0, (uint8_t)red, (uint8_t)green, (uint8_t)blue, mode, (float)frequency);
             } else {
@@ -247,6 +249,14 @@ void LedControlWidget::sendColor()
     }
 }
 
+void LedControlWidget::updateValues()
+{
+    red = ui->spinBoxRed->value();
+    green = ui->spinBoxGreen->value();
+    blue = ui->spinBoxBlue->value();
+    frequency = ui->doubleSpinBoxFrequency->value();
+    mode = (LED_CONTROL_MODE)ui->comboBoxMode->currentIndex();
+}
 
 void LedControlWidget::updateWidget()
 {
@@ -291,9 +301,12 @@ void LedControlWidget::setLedEnabled(bool checked)
 
     if (enabled == true) {
         // update to current color and mode
+        updateValues();
+        timeOfSubmit.restart();
         emit transmitColor(0, (uint8_t)red, (uint8_t)green, (uint8_t)blue, mode, (float)frequency);
     } else {
         // black is off
+        timeOfSubmit.restart();
         emit transmitColor(0, (uint8_t)0, (uint8_t)0, (uint8_t)0, LED_CONTROL_MODE_CONSTANT, 0.0f);
     }
 }
