@@ -117,6 +117,10 @@ bool SkyeAUStatusList::createAUStatusWidget(int id)
 
 void SkyeAUStatusList::changeAUStatus(uint auId, bool ready, bool enabled)
 {
+    // we dont use the data. we pull it from all AUs again.
+    Q_UNUSED(auId);
+    Q_UNUSED(ready);
+    Q_UNUSED(enabled);
     updateAllocationCase();
 }
 
@@ -127,10 +131,8 @@ void SkyeAUStatusList::updateAllocationCase()
 
     // update au status maps
     QMap<int, SkyeAUStatus*>::iterator i;
-    for (i = auList.begin(); i != auList.end(); ++i)
-    {
-        if (allocationAuto == true)
-        {
+    for (i = auList.begin(); i != auList.end(); ++i) {
+        if (allocationAuto == true) {
             // AUTO ALLOACTION: AU must be ready and enabled
             auActiveList[i.key()] = (i.value()->isAUReady() && i.value()->isAUEnabled());
         } else {
@@ -141,18 +143,14 @@ void SkyeAUStatusList::updateAllocationCase()
     }
 
 
-    if (numberOfActiveAUs == auActiveList.size())
-    {
+    if (numberOfActiveAUs == auActiveList.size()) {
         // all AUs are enabled. AllocationCase 0
         emit requestAllocationCase( 0 );
     }
-    else if (numberOfActiveAUs == auActiveList.size() - 1)
-    {
+    else if (numberOfActiveAUs == auActiveList.size() - 1) {
         // one AU is disabled. Submit AlloctionCase = au_id + 1
         emit requestAllocationCase( auActiveList.key(false)+1 );
-    }
-    else
-    {
+    } else {
         // invalid allocationCase
         emit requestAllocationCase( -1 );
     }
