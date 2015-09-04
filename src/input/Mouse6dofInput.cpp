@@ -14,7 +14,7 @@
 #include "QGC.h"
 
 #ifdef QGC_MOUSE_ENABLED_LINUX
-#include "spnav.h"
+#include <spnav.h>
 #endif // QGC_MOUSE_ENABLED_LINUX
 
 #define MOUSE3D_EMIT_INTERVAL 50    // Emit mouse values with approx. every 50ms (=20Hz)

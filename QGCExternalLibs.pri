@@ -139,7 +139,7 @@ contains(DEFINES, DISABLE_3DMOUSE) {
     message("Skipping support for 3DConnexion mice (manual override from user_config.pri)")
 } else:LinuxBuild {
 # Open-source alternative to proprietary 3DConnexion device driver and SDK
-        exists(/usr/local/lib/libspnav.so) {
+        exists(/usr/local/lib/libspnav.so.0) {
 		message("Including support for 3DConnexion mice")
 
                 DEFINES += \
