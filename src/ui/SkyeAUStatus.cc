@@ -160,17 +160,6 @@ void SkyeAUStatus::updateStyleSheets()
 {
     lastUpdate.restart();
 
-    // style for voltage display
-    if (voltage > SKYE_CRITICAL_VOLTAGE) {
-        ui->lcdNumberVoltage->setPalette(QColor(50, 205, 50));  // GREEN
-    } else if (voltage > SKYE_ALARM_VOLTAGE) {
-        ui->lcdNumberVoltage->setPalette(QColor(255, 165, 0));  // ORANGE
-    } else {
-        ui->lcdNumberVoltage->setPalette(QColor(255, 0, 0));    // RED
-    }
-    // TODO: check here why color does not always display properly
-    ui->lcdNumberVoltage->update();
-
     QString str;
 
     switch (status) {
@@ -195,19 +184,27 @@ void SkyeAUStatus::updateStyleSheets()
     ui->widgetTop->setStyleSheet(str);
 
 
-    // battery status color (increasing importance)
-    QPalette pal(palette());
-    if (batt->battery_function & BATTERY_STATUS_BIT_ATTACHED) {
-        str = "QWidget#widgetBottom {background-color: rgba(0, 0, 0, 255); }";
-    } else {
-        str = "QWidget#widgetBottom {background-color: rgba(160, 160, 160, 255); }";
-    }
+//    // battery status color (increasing importance)
+//    if (batt->battery_function & BATTERY_STATUS_BIT_ATTACHED) {
+//        str = "QWidget#widgetBottom {background-color: rgba(0, 0, 0, 255); }";
+//    } else {
+//        str = "QWidget#widgetBottom {background-color: rgba(160, 160, 160, 255); }";
+//    }
+//    if (batt->battery_function & BATTERY_STATUS_BIT_UNDERVOLTAGE) {
+//        str = "QWidget#widgetBottom {background-color: rgba(255, 100, 0, 255); }";
+//    }
+//    if (batt->battery_function & BATTERY_STATUS_BIT_ERROR) {
+//        str = "QWidget#widgetBottom {background-color: rgba(200, 0, 0, 255); }";
+//    }
+//    ui->widgetBottom->setStyleSheet(str);
 
-    if (batt->battery_function & BATTERY_STATUS_BIT_UNDERVOLTAGE) {
-        str = "QWidget#widgetBottom {background-color: rgba(255, 100, 0, 255); }";
-    }
-    if (batt->battery_function & BATTERY_STATUS_BIT_ERROR) {
-        str = "QWidget#widgetBottom {background-color: rgba(200, 0, 0, 255); }";
+    // style for voltage display
+    if (voltage > SKYE_CRITICAL_VOLTAGE) {
+        str = "QWidget#widgetBottom {background-color: rgba(0, 0, 0, 255); }";      // TRANSPARENT
+    } else if (voltage > SKYE_ALARM_VOLTAGE) {
+        str = "QWidget#widgetBottom {background-color: rgba(255, 165, 0, 255); }";  // ORANGE
+    } else {
+        str = "QWidget#widgetBottom {background-color: rgba(255, 0, 0, 255); }";    // RED
     }
     ui->widgetBottom->setStyleSheet(str);
 }
@@ -256,7 +253,7 @@ QString SkyeAUStatus::getStringForAccuStatus(int status)
 
 QString SkyeAUStatus::getShortStringForAccuStatus(int status)
 {
-    QString str = "";
+    QString str = "accu:";
 
     if (status & BATTERY_STATUS_BIT_ATTACHED)
     {
