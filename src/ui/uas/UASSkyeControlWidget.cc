@@ -101,6 +101,7 @@ UASSkyeControlWidget::UASSkyeControlWidget(QWidget *parent) : QWidget(parent),
     ui.stab5dofControlButton->setCheckable(false);
     ui.stab6dofControlButton->setCheckable(false);
     ui.stab6dofiControlButton->setCheckable(false);
+    ui.stab6dofiControlButton->hide();  // TODO: remove this line for NED/6dof inertial frame control mode
 
     ui.mouseButton->setChecked(inputMode & QGC_INPUT_MODE_MOUSE);
     ui.touchButton->setChecked(inputMode & QGC_INPUT_MODE_TOUCH);
