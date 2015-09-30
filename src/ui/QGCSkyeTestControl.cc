@@ -87,7 +87,6 @@ QGCSkyeTestControl::~QGCSkyeTestControl()
 void QGCSkyeTestControl::setUAS(UASInterface *mav)
 {
     if (mav != NULL) {
-        qDebug() << "[QGCSkyeTestControl] setUAS" << mav->getUASName();
         if (uas != 0)
         {
             disconnect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
@@ -95,8 +94,9 @@ void QGCSkyeTestControl::setUAS(UASInterface *mav)
         }
 
         uas = dynamic_cast<SkyeUAS*>(mav);
-        if (this->uas)
+        if (uas)
         {
+            qDebug() << "[QGCSkyeTestControl] setUAS" << mav->getUASName();
             connect(uas, SIGNAL(statusChanged(int)), this, SLOT(updateState(int)));
             connect(uas, SIGNAL(skyeControlModeChanged(SKYE_CONTROL_MODE)), this, SLOT(updateMode(SKYE_CONTROL_MODE)));
             updateState(uas->getState());
@@ -158,10 +158,9 @@ void QGCSkyeTestControl::setArmDisarmState()
     {
         if (!engineOn)
         {
-            engineOn=true;
 			if (tab == QGC_SKYE_CONFIG_TAB_MOTOR || tab == QGC_SKYE_CONFIG_TAB_MOTOR_PPM)
             {
-                uas->setModeArm(MAV_MODE_MANUAL_DISARMED, PX4_CUSTOM_MAIN_MODE_OFFBOARD);
+                uas->setModeArm(MAV_MODE_MANUAL_ARMED, PX4_CUSTOM_MAIN_MODE_OFFBOARD);
             } else {
                 uas->armSystem();
             }
@@ -169,9 +168,8 @@ void QGCSkyeTestControl::setArmDisarmState()
 		} else {
             //emit valueDirectControlChanged( 0, 0, 0, 0, 0, 0 );
             stopAll();
-            uas->setModeArm(MAV_MODE_MANUAL_DISARMED, PX4_CUSTOM_MAIN_MODE_OFFBOARD);
+            uas->setMode(MAV_MODE_MANUAL_DISARMED, PX4_CUSTOM_MAIN_MODE_OFFBOARD);
             uas->disarmSystem();
-            engineOn=false;
         }
     }
 }
