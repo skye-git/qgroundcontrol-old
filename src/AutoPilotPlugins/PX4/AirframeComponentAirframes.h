@@ -63,6 +63,7 @@ private:
     static const AirframeInfo_t _rgAirframeInfoHexaRotorPlus[];
     static const AirframeInfo_t _rgAirframeInfoQuadRotorH[];
     static const AirframeInfo_t _rgAirframeInfoAirshipT[];
+    static const AirframeInfo_t _rgAirframeInfoAirshipP[];
     static const AirframeInfo_t _rgAirframeInfoSimulation[];
 };
 

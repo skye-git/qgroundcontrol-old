@@ -27,6 +27,7 @@
         <file alias="AirframeHexaRotorPlus.png">src/AutoPilotPlugins/PX4/Images/AirframeHexaRotorPlus.png</file>
         <file alias="AirframeQuadRotorH.png">src/AutoPilotPlugins/PX4/Images/AirframeQuadRotorH.png</file>
         <file alias="AirframeAirshipTetra.png">src/AutoPilotPlugins/PX4/Images/AirframeAirshipTetra.png</file>
+        <file alias="AirframeAirshipProjector.png">src/AutoPilotPlugins/PX4/Images/AirframeAirshipProjector.png</file>
         <file alias="AirframeSimulation.png">src/AutoPilotPlugins/PX4/Images/AirframeSimulation.png</file>
         <file alias="arrow-down.png">src/QmlControls/arrow-down.png</file>
         <file alias="subMenuButtonImage.png">resources/CogWheels.png</file>
