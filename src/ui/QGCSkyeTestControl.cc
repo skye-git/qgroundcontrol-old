@@ -159,17 +159,23 @@ void QGCSkyeTestControl::setArmDisarmState()
         if (!engineOn)
         {
 			if (tab == QGC_SKYE_CONFIG_TAB_MOTOR || tab == QGC_SKYE_CONFIG_TAB_MOTOR_PPM)
-            {
-                uas->setModeArm(MAV_MODE_MANUAL_ARMED, PX4_CUSTOM_MAIN_MODE_OFFBOARD);
-            } else {
-                uas->armSystem();
-            }
+			{
+				/* this is offboard control */
+				union px4_custom_mode custom_mode;
+				custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_OFFBOARD;
+				this->uas->setModeArm(MAV_MODE_FLAG_CUSTOM_MODE_ENABLED + MAV_MODE_FLAG_SAFETY_ARMED, custom_mode.data);
 
+
+//				this->uas->setModeArm(MAV_MODE_FLAG_CUSTOM_MODE_ENABLED + MAV_MODE_FLAG_SAFETY_ARMED, PX4_CUSTOM_MAIN_MODE_OFFBOARD);
+
+            }
 		} else {
             //emit valueDirectControlChanged( 0, 0, 0, 0, 0, 0 );
             stopAll();
-            uas->setMode(MAV_MODE_MANUAL_DISARMED, PX4_CUSTOM_MAIN_MODE_OFFBOARD);
-            uas->disarmSystem();
+            union px4_custom_mode custom_mode;
+            custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_OFFBOARD;
+            this->uas->setMode(MAV_MODE_FLAG_CUSTOM_MODE_ENABLED, custom_mode.data);
+            this->uas->disarmSystem();
         }
     }
 }
@@ -281,6 +287,7 @@ void QGCSkyeTestControl::showEvent(QShowEvent *event)
             union px4_custom_mode custom_mode;
             custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_OFFBOARD;
             this->uas->setMode(MAV_MODE_FLAG_CUSTOM_MODE_ENABLED, custom_mode.data);
+//            this->uas->setMode(MAV_MODE_FLAG_CUSTOM_MODE_ENABLED, PX4_CUSTOM_MAIN_MODE_OFFBOARD);
         }
     }
     QWidget::showEvent(event);
@@ -300,6 +307,7 @@ void QGCSkyeTestControl::hideEvent(QHideEvent *event)
         union px4_custom_mode custom_mode;
         custom_mode.main_mode = PX4_CUSTOM_MAIN_MODE_MANUAL;
         this->uas->setMode(MAV_MODE_FLAG_CUSTOM_MODE_ENABLED, custom_mode.data);
+//        this->uas->setMode(MAV_MODE_FLAG_CUSTOM_MODE_ENABLED, PX4_CUSTOM_MAIN_MODE_MANUAL);
     }
 
     QWidget::hideEvent(event);

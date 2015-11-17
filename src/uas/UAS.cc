@@ -1715,7 +1715,7 @@ void UAS::setModeArm(uint8_t newBaseMode, uint32_t newCustomMode)
         mavlink_msg_set_mode_pack(mavlink->getSystemId(), mavlink->getComponentId(), &msg, (uint8_t)uasId, newBaseMode, newCustomMode);
         qDebug() << "mavlink_msg_set_mode_pack 1";
         sendMessage(msg);
-        qDebug() << "SENDING REQUEST TO SET MODE TO SYSTEM" << uasId << ", MODE " << newBaseMode << " " << newCustomMode;
+        qDebug() << "SENDING REQUEST TO SET MODE TO SYSTEM" << uasId << ", MODE " << newBaseMode << " CUSTOM " << newCustomMode;
     }
     else
     {
