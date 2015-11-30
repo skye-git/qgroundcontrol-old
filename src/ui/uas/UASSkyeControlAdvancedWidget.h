@@ -12,6 +12,7 @@
 
 #include <QWidget>
 #include <QString>
+#include <QTime>
 #include <UASInterface.h>
 
 namespace Ui {
@@ -62,6 +63,8 @@ private:
     double maxLinearInput;
     double maxAngularInput;
 
+    QTime lastTimeLiftValueChanged;
+
 private slots:
     void changeMaxLinearInput(double value);
     void changeMaxAngularInput(double value);
@@ -69,6 +72,7 @@ private slots:
     void changeRollValue(double value);
     void changePitchValue(double value);
     void changeYawValue(double value);
+    void updateLiftValue(double value);
     void clickedRollCheckBox(bool active);
     void clickedPitchCheckBox(bool active);
     void clickedYawCheckBox(bool active);

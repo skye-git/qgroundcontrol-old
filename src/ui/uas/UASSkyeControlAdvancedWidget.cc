@@ -17,6 +17,9 @@ UASSkyeControlAdvancedWidget::UASSkyeControlAdvancedWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // reset all timers
+    lastTimeLiftValueChanged.restart();
+
     ui->groupBoxAllocation->hide();
 
     // connect spinboxes
@@ -103,7 +106,7 @@ void UASSkyeControlAdvancedWidget::setUAS(UASInterface* uas)
 
         connect(mav, SIGNAL(maxLinearInputChanged(double)), this, SLOT(changeMaxLinearInput(double)));
         connect(mav, SIGNAL(maxAngularInputChanged(double)), this, SLOT(changeMaxAngularInput(double)));
-        connect(mav, SIGNAL(liftValueChanged(double)), this, SLOT(changeLiftValue(double)));
+        connect(mav, SIGNAL(liftValueChanged(double)), this, SLOT(updateLiftValue(double)));
 
         connect(this, SIGNAL(rollSliderValueChanged(double)), mav, SLOT(setAddRollValue(double)));
         connect(this, SIGNAL(pitchSliderValueChanged(double)), mav, SLOT(setAddPitchValue(double)));
@@ -163,11 +166,8 @@ void UASSkyeControlAdvancedWidget::changeMaxAngularInput(double value)
 void UASSkyeControlAdvancedWidget::changeLiftValue(double value)
 {
     if (liftValue != value) {
-        liftValue = value;
-
-        ui->doubleSpinBoxLift->setValue(value);
-        ui->doubleSpinBoxLift->setStyleSheet(getStyleString(value));
-
+        lastTimeLiftValueChanged.restart();
+        updateLiftValue(value);
         emit liftSliderValueChanged(liftValue);
     }
 }
@@ -201,6 +201,16 @@ void UASSkyeControlAdvancedWidget::changeYawValue(double value)
         emit yawSliderValueChanged(value);
     } else {
         emit yawSliderValueChanged(0.0);
+    }
+}
+
+void UASSkyeControlAdvancedWidget::updateLiftValue(double value)
+{
+    if (lastTimeLiftValueChanged.elapsed() <= 500) { // magically 500ms
+
+        ui->doubleSpinBoxLift->setValue(value);
+        ui->doubleSpinBoxLift->setStyleSheet(getStyleString(value));
+
     }
 }
 
