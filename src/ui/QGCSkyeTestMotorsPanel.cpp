@@ -3,7 +3,7 @@
 #include <QDebug>
 #include "UASManager.h"
 
-#define QGC_MAX_NEWTON      15.0
+#define QGC_MAX_NEWTON      1.0
 #define QGC_MAX_PPM        800.0
 #define QGC_MAX_ABS_DEGREE 400
 
@@ -23,7 +23,7 @@ QGCSkyeTestMotorsPanel::QGCSkyeTestMotorsPanel(int index, bool ppm, QWidget *par
         ui->labelThrust->setText(QString("Thrust %1 [PPM]").arg(index+1));
     } else {
 		ui->doubleSpinBoxThrust->setDecimals(1);
-		ui->doubleSpinBoxThrust->setSingleStep(0.1);
+		ui->doubleSpinBoxThrust->setSingleStep(0.01);
         ui->labelThrust->setText(QString("Thrust %1 [N]").arg(index+1));
     }
     ui->labelOrientation->setText(QString("Orientation %1 [deg]").arg(index+1));
