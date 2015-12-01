@@ -453,14 +453,15 @@ QSizeGrip {
 
 QSpinBox, QDoubleSpinBox {
     min-height: 14px;
-    max-height: 18px;
+    max-height: 38px;
     border: 1px solid #777;
     border-radius: 5px;
+    font-size: 15pt;
 }
 
 QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
     image: url(:/res/DownArrow);
-    width: 16px;
+    width: 36px;
 }
 
 QSpinBox::down-button, QDoubleSpinBox::down-button {
@@ -469,7 +470,7 @@ QSpinBox::down-button, QDoubleSpinBox::down-button {
 
 QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {
     image: url(:/res/UpArrow);
-    width: 16px;
+    width: 36px;
 }
 
 QSpinBox::up-button, QDoubleSpinBox::up-button {
@@ -650,6 +651,10 @@ QPushButton::checked#mouseButton, QPushButton::checked#touchButton, QPushButton:
     min-width: 80px;
     max-width: 80px;
     border: 2px solid;
+    font-size: 15pt;
+}
+
+QCheckBox, QLabel {
     font-size: 15pt;
 }
 

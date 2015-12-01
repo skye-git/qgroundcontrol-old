@@ -19,6 +19,8 @@ UASSkyeControlAdvancedWidget::UASSkyeControlAdvancedWidget(QWidget *parent) :
 
     // reset all timers
     lastTimeLiftValueChanged.restart();
+    lastTimeMaxAngularInputChanged.restart();
+    lastTimeMaxLinearInputChanged.restart();
 
     ui->groupBoxAllocation->hide();
 
@@ -104,8 +106,8 @@ void UASSkyeControlAdvancedWidget::setUAS(UASInterface* uas)
         connect(this, SIGNAL(angularSliderValueChanged(double)), mav, SLOT(setMaxAngularInputValue(double)));
         connect(this, SIGNAL(liftSliderValueChanged(double)), mav, SLOT(setLiftValue(double)));
 
-        connect(mav, SIGNAL(maxLinearInputChanged(double)), this, SLOT(changeMaxLinearInput(double)));
-        connect(mav, SIGNAL(maxAngularInputChanged(double)), this, SLOT(changeMaxAngularInput(double)));
+        connect(mav, SIGNAL(maxLinearInputChanged(double)), this, SLOT(updateMaxLinearInput(double)));
+        connect(mav, SIGNAL(maxAngularInputChanged(double)), this, SLOT(updateMaxAngularInput(double)));
         connect(mav, SIGNAL(liftValueChanged(double)), this, SLOT(updateLiftValue(double)));
 
         connect(this, SIGNAL(rollSliderValueChanged(double)), mav, SLOT(setAddRollValue(double)));
@@ -142,11 +144,8 @@ void UASSkyeControlAdvancedWidget::emitSliderValues()
 void UASSkyeControlAdvancedWidget::changeMaxLinearInput(double value)
 {
     if (maxLinearInput != value) {
-        maxLinearInput = value;
-
-        ui->doubleSpinBoxTranslation->setValue(maxLinearInput);
-        ui->doubleSpinBoxTranslation->setStyleSheet(getStyleString(value));
-
+        lastTimeMaxLinearInputChanged.restart();
+        updateMaxLinearInput(value);
         emit linearSliderValueChanged(value);
     }
 }
@@ -154,11 +153,8 @@ void UASSkyeControlAdvancedWidget::changeMaxLinearInput(double value)
 void UASSkyeControlAdvancedWidget::changeMaxAngularInput(double value)
 {
     if (maxAngularInput != value) {
-        maxAngularInput = value;
-
-        ui->doubleSpinBoxRotation->setValue(maxAngularInput);
-        ui->doubleSpinBoxRotation->setStyleSheet(getStyleString(value));
-
+        lastTimeMaxAngularInputChanged.restart();
+        updateMaxAngularInput(value);
         emit angularSliderValueChanged(value);
     }
 }
@@ -204,13 +200,31 @@ void UASSkyeControlAdvancedWidget::changeYawValue(double value)
     }
 }
 
+void UASSkyeControlAdvancedWidget::updateMaxLinearInput(double value)
+{
+    if (lastTimeMaxLinearInputChanged.elapsed() <= 500) { // magically 500ms
+
+        ui->doubleSpinBoxTranslation->setValue(value);
+        ui->doubleSpinBoxTranslation->setStyleSheet(getStyleString(value));
+    }
+}
+
+void UASSkyeControlAdvancedWidget::updateMaxAngularInput(double value)
+{
+    if (lastTimeMaxAngularInputChanged.elapsed() <= 500) { // magically 500ms
+
+        ui->doubleSpinBoxRotation->setValue(value);
+        ui->doubleSpinBoxRotation->setStyleSheet(getStyleString(value));
+
+    }
+}
+
 void UASSkyeControlAdvancedWidget::updateLiftValue(double value)
 {
     if (lastTimeLiftValueChanged.elapsed() <= 500) { // magically 500ms
 
         ui->doubleSpinBoxLift->setValue(value);
         ui->doubleSpinBoxLift->setStyleSheet(getStyleString(value));
-
     }
 }
 

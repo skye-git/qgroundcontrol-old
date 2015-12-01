@@ -63,6 +63,8 @@ private:
     double maxLinearInput;
     double maxAngularInput;
 
+    QTime lastTimeMaxLinearInputChanged;
+    QTime lastTimeMaxAngularInputChanged;
     QTime lastTimeLiftValueChanged;
 
 private slots:
@@ -72,6 +74,8 @@ private slots:
     void changeRollValue(double value);
     void changePitchValue(double value);
     void changeYawValue(double value);
+    void updateMaxLinearInput(double value);
+    void updateMaxAngularInput(double value);
     void updateLiftValue(double value);
     void clickedRollCheckBox(bool active);
     void clickedPitchCheckBox(bool active);
