@@ -3,9 +3,10 @@
 #include <QDebug>
 #include "UASManager.h"
 
-#define QGC_MAX_NEWTON      1.0
-#define QGC_MAX_PPM        800.0
-#define QGC_MAX_ABS_DEGREE 400
+#define QGC_MAX_NEWTON      0.4
+#define QGC_MAX_PPM        2000.0
+#define QGC_MAX_ABS_DEGREE 180
+#define QGC_SINGLE_STEP_DEGREE 90.0
 
 #define QGC_SLIDER_STEPS 1000
 
@@ -19,10 +20,13 @@ QGCSkyeTestMotorsPanel::QGCSkyeTestMotorsPanel(int index, bool ppm, QWidget *par
     // label
     if (ppm) {
 		ui->doubleSpinBoxThrust->setDecimals(0);
-		ui->doubleSpinBoxThrust->setSingleStep(5);
-        ui->labelThrust->setText(QString("Thrust %1 [PPM]").arg(index+1));
+		ui->doubleSpinBoxThrust->setSingleStep(1);
+		ui->labelThrust->setText(QString("Thrust %1 [PPM]").arg(index+1));
+		ui->dialOrientation->setValue(0);
+		ui->dialOrientation->setSingleStep(90);
+		ui->spinBoxOrientation->setSingleStep(90);
     } else {
-		ui->doubleSpinBoxThrust->setDecimals(1);
+        ui->doubleSpinBoxThrust->setDecimals(2);
 		ui->doubleSpinBoxThrust->setSingleStep(0.01);
         ui->labelThrust->setText(QString("Thrust %1 [N]").arg(index+1));
     }
@@ -43,6 +47,9 @@ QGCSkyeTestMotorsPanel::QGCSkyeTestMotorsPanel(int index, bool ppm, QWidget *par
     connect(ui->doubleSpinBoxThrust, SIGNAL(valueChanged(double)), this, SLOT(setThrust(double)));
     connect(ui->dialOrientation, SIGNAL(valueChanged(int)), ui->spinBoxOrientation, SLOT(setValue(int)));
     connect(ui->spinBoxOrientation, SIGNAL(valueChanged(int)), ui->dialOrientation, SLOT(setValue(int)));
+
+    connect(ui->dialOrientation, SIGNAL(valueChanged(int)), this, SLOT(updateOrientation(int)));
+    connect(ui->spinBoxOrientation, SIGNAL(valueChanged(int)), this, SLOT(updateOrientation(int)));
 }
 
 QGCSkyeTestMotorsPanel::~QGCSkyeTestMotorsPanel()
@@ -54,6 +61,14 @@ double QGCSkyeTestMotorsPanel::getOrientation()
 {
     // no scaling. degree
     return (double)ui->dialOrientation->value();
+}
+
+void QGCSkyeTestMotorsPanel::updateOrientation(int angle)
+{
+    // round to single step
+    int angleSingleStep = (int)(QGC_SINGLE_STEP_DEGREE * round((double)angle / QGC_SINGLE_STEP_DEGREE));
+    ui->spinBoxOrientation->setValue(angleSingleStep);
+
 }
 
 double QGCSkyeTestMotorsPanel::getThrust()

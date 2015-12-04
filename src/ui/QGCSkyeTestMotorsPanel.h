@@ -29,6 +29,7 @@ private slots:
     /// There is no floating point slider UI. Therefore the setThrust slot is needed to switch between integers and doubles
     void setThrust(double thrust);
     void setThrustBySlider(int thrust);
+    void updateOrientation(int angle);
 
 private:
     Ui::QGCSkyeTestMotorsPanel *ui;
