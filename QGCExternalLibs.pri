@@ -139,7 +139,7 @@ contains(DEFINES, DISABLE_3DMOUSE) {
     message("Skipping support for 3DConnexion mice (manual override from user_config.pri)")
 } else:LinuxBuild {
 # Open-source alternative to proprietary 3DConnexion device driver and SDK
-        exists(/usr/local/lib/libspnav.so.0) {
+        exists(/usr/lib/libspnav.so.0) {
 		message("Including support for 3DConnexion mice")
 
                 DEFINES += \
@@ -147,7 +147,7 @@ contains(DEFINES, DISABLE_3DMOUSE) {
 
 		HEADERS += src/input/Mouse6dofInput.h
 		SOURCES += src/input/Mouse6dofInput.cpp
-                LIBS += -L/usr/local/lib/ -lspnav
+                LIBS += -L/usr/lib/ -lspnav
 	} else {
 		warning("Skipping support for 3DConnexion mice (missing libraries, see README)")
 	}
