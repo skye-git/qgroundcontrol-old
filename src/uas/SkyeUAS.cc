@@ -390,12 +390,14 @@ void SkyeUAS::sendControlModeCommand(SKYE_CONTROL_MODE ctrlMode)
 
 void SkyeUAS::setLiftValue(double val)
 {
-    if (val != upliftParam and val >= -QGC_SKYE_LIFT_MAX and val <= QGC_SKYE_LIFT_MAX) {
+    if (val != upliftParam && val >= -QGC_SKYE_LIFT_MAX && val <= QGC_SKYE_LIFT_MAX) {
         qDebug() << "[SkyeUAS] lift factor" << val;
 
         upliftParam = val;
         sendParameterFloat("SKYE_UPLIFT", (float)val);
         emit liftValueChanged(val);
+    } else {
+        qDebug() << "[SkyeUAS] Invalid lift factor" << val;
     }
 }
 

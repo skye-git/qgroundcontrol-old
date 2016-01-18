@@ -163,8 +163,7 @@ void UASSkyeControlAdvancedWidget::changeLiftValue(double value)
 {
     if (liftValue != value) {
         lastTimeLiftValueChanged.restart();
-        updateLiftValue(value);
-        emit liftSliderValueChanged(liftValue);
+        emit liftSliderValueChanged(value);
     }
 }
 
@@ -221,7 +220,7 @@ void UASSkyeControlAdvancedWidget::updateMaxAngularInput(double value)
 
 void UASSkyeControlAdvancedWidget::updateLiftValue(double value)
 {
-    if (lastTimeLiftValueChanged.elapsed() <= 500) { // magically 500ms
+    if (lastTimeLiftValueChanged.elapsed() >= 500) { // magically 500ms
 
         ui->doubleSpinBoxLift->setValue(value);
         ui->doubleSpinBoxLift->setStyleSheet(getStyleString(value));
